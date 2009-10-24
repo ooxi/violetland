@@ -45,7 +45,7 @@ float aspect = 1 / 3;
 
 int framesCount;
 int fpsCountingStart;
-int fpsLimit = 0;
+int fpsLimit = 10;
 int fps = 0;
 bool showFps = false;
 
@@ -237,8 +237,8 @@ void startGame() {
 	clearEnemies();
 	clearBullets();
 	clearMessages();
-	msgQueue.push_back(text->getObject("Try to survive as long as you can.",
-			0, 0, TextManager::LEFT));
+	msgQueue.push_back(text->getObject("Try to survive as long as you can.", 0,
+			0, TextManager::LEFT));
 	msgQueue.push_back(text->getObject(
 			"Shoot monsters to receive experience and other bonuses.", 0, 0,
 			TextManager::LEFT));
@@ -604,7 +604,15 @@ void handleEnemies() {
 						if (playerHitSoundChannel == -1 || Mix_Playing(
 								playerHitSoundChannel) == 0) {
 							playerHitSoundChannel
-									= Mix_PlayChannel(-1, playerHitSounds[(player->getHealth() < player->MaxHealth() ? player->getHealth() : player->getHealth() - 0.01f) / player->MaxHealth() * playerHitSounds.size()], 0);
+									= Mix_PlayChannel(
+											-1,
+											playerHitSounds[(player->getHealth()
+													< player->MaxHealth() ? player->getHealth()
+													: player->getHealth()
+													- 0.01f)
+											/ player->MaxHealth()
+											* playerHitSounds.size()],
+											0);
 						}
 					}
 
@@ -815,6 +823,24 @@ void drawHelp() {
 	text->draw("Pause game: P", l, fh * 17, TextManager::LEFT);
 }
 
+void drawMessagesQueue() {
+	const int fh = text->getFontHeight();
+
+	if (!msgQueue.empty()) {
+		int s = msgQueue.size();
+		for (int i = s - 1; i >= 0; i--) {
+			msgQueue[i]->draw(true, msgQueue[i]->X, screenHeight - s * fh + i
+					* fh);
+			msgQueue[i]->AMask -= 0.0001 * deltaTime;
+
+			if (msgQueue[i]->AMask <= 0) {
+				delete msgQueue[i];
+				msgQueue.erase(msgQueue.begin() + i);
+			}
+		}
+	}
+}
+
 void drawHud() {
 	const int fh = text->getFontHeight();
 
@@ -863,26 +889,14 @@ void drawHud() {
 		text->draw("PAUSE", screenWidth / 2, screenHeight / 2,
 				TextManager::CENTER);
 
+	drawMessagesQueue();
+
 	if (showChar) {
 		drawCharStats();
 	}
 
 	if (showHelp) {
 		drawHelp();
-	}
-
-	if (!msgQueue.empty()) {
-		int s = msgQueue.size();
-		for (int i = s - 1; i >= 0; i--) {
-			msgQueue[i]->draw(true, msgQueue[i]->X, screenHeight - s * fh + i
-					* fh);
-			msgQueue[i]->AMask -= 0.0001 * deltaTime;
-
-			if (msgQueue[i]->AMask <= 0) {
-				delete msgQueue[i];
-				msgQueue.erase(msgQueue.begin() + i);
-			}
-		}
 	}
 }
 
@@ -1174,19 +1188,19 @@ void loadWeapons() {
 void loadResources() {
 	loadWeapons();
 
-	enemyHitSounds.push_back(
-			Mix_LoadWAV(fileUtility->getFullSoundPath("zombie_hit_1.ogg").c_str()));
-	enemyHitSounds.push_back(
-			Mix_LoadWAV(fileUtility->getFullSoundPath("zombie_hit_2.ogg").c_str()));
+	enemyHitSounds.push_back(Mix_LoadWAV(fileUtility->getFullSoundPath(
+					"zombie_hit_1.ogg").c_str()));
+	enemyHitSounds.push_back(Mix_LoadWAV(fileUtility->getFullSoundPath(
+					"zombie_hit_2.ogg").c_str()));
 
-	playerKilledSound
-			= Mix_LoadWAV(fileUtility->getFullSoundPath("player_killed.ogg").c_str());
-	playerHitSounds.push_back(
-			Mix_LoadWAV(fileUtility->getFullSoundPath("player_hit_0.ogg").c_str()));
-	playerHitSounds.push_back(
-			Mix_LoadWAV(fileUtility->getFullSoundPath("player_hit_1.ogg").c_str()));
-	playerHitSounds.push_back(
-			Mix_LoadWAV(fileUtility->getFullSoundPath("player_hit_2.ogg").c_str()));
+	playerKilledSound = Mix_LoadWAV(fileUtility->getFullSoundPath(
+					"player_killed.ogg").c_str());
+	playerHitSounds.push_back(Mix_LoadWAV(fileUtility->getFullSoundPath(
+					"player_hit_0.ogg").c_str()));
+	playerHitSounds.push_back(Mix_LoadWAV(fileUtility->getFullSoundPath(
+					"player_hit_1.ogg").c_str()));
+	playerHitSounds.push_back(Mix_LoadWAV(fileUtility->getFullSoundPath(
+					"player_hit_2.ogg").c_str()));
 
 	playerArmsTex = new Texture(ImageUtility::loadImage(
 			fileUtility->getFullImagePath("player_top.png")), GL_TEXTURE_2D,
@@ -1308,15 +1322,19 @@ void parsePreferences(int argc, char *argv[]) {
 			printf("\t\t\t\t\t(from 0 to 128; 30 by default)\n");
 			printf("\t--noreload\t\t\tDisable automatic reloading\n");
 			printf("\t--fps <fps_count>\t\tLimit game fps by <fps_count>\n");
+			printf("\t\t\t\t\tDefault value of <fps_count> is 100\n");
+			printf("\t\t\t\t\tSeting <fps_count> to 0 will disable\n");
+			printf("\t\t\t\t\trestriction\n");
 			printf("\t--showfps\t\t\tShow fps in game\n");
 			printf("\t--monsters <count>\t\tImmediately spawn\n");
 			printf("\t\t\t\t\t<count> monsters at start\n");
-			printf("\t--aimca <color>\t\tSet first color of aim cursor\n");
-			printf("\t--aimcb <color>\t\tSet second color of aim cursor\n");
-			printf("\t\t\t\t\t<color> must be hex number of RGB sort like\n");
-			printf("\t\t\t\t\t0x000000 for black and 0xFFFFFF for white\n");
-			printf("\t\t\t\t\t(this is default values for\n");
-			printf("\t\t\t\t\ta and b colors respectively)\n");
+			printf("\t--aimca <color>\t\t\tSet first color of aim cursor\n");
+			printf("\t--aimcb <color>\t\t\tSet second color of aim cursor\n");
+			printf("\t\t\t\t\t<color> must be hex number of\n");
+			printf("\t\t\t\t\tRGB sort like 0x000000 for black\n");
+			printf("\t\t\t\t\tand 0xFFFFFF for white (this is\n");
+			printf("\t\t\t\t\tdefault values for a and b\n");
+			printf("\t\t\t\t\tcolors respectively)\n");
 			exit(0);
 		}
 
@@ -1344,8 +1362,10 @@ void parsePreferences(int argc, char *argv[]) {
 			aimColorLight = strtol(argv[i + 1], NULL, 16);
 		}
 
-		if (arg.compare("--fps") == 0 && i + 1 < argc)
-			fpsLimit = 1000 / strtol(argv[i + 1], NULL, 10);
+		if (arg.compare("--fps") == 0 && i + 1 < argc) {
+			int lim = strtol(argv[i + 1], NULL, 10);
+			fpsLimit = lim > 0 ? 1000 / lim : 0;
+		}
 
 		if (arg.compare("--noreload") == 0)
 			autoReload = false;
