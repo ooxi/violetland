@@ -17,10 +17,8 @@ public:
 	StaticObject(float x, float y, int w, int h, Texture *texture,
 			bool takeCareOfTexture);
 	GLuint createComplexFace(int facesCount);
-	void drawQuad(float texRight, float texBottom);
 	void draw(bool reflection);
 	void draw(bool reflection, float x, float y, float angle, float scale);
-	void draw(bool outlined, float x, float y);
 	void draw(GLuint dListId);
 	void setTexture(Texture* texture, bool takeCareOfTexture);
 	Texture* getTexture();

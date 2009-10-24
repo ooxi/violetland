@@ -5,24 +5,30 @@
 #include "SDL_ttf.h"
 #include "ImageUtility.h"
 #include "Texture.h"
-#include "StaticObject.h"
+#include "TextObject.h"
 
-#ifndef TEXTOBJECT_H_
-#define TEXTOBJECT_H_
+#ifndef TEXTMANAGER_H_
+#define TEXTMANAGER_H_
 
 class TextManager {
 private:
 	TTF_Font *m_font;
+	int m_ident, m_height;
 public:
-	enum TextAlignFlag {
+	enum TextHAlignFlag {
 		LEFT, CENTER, RIGHT
 	};
+	enum TextVAlignFlag {
+		TOP, MIDDLE, BOTTOM
+	};
 	TextManager(string fontPath, int fontSize);
-	void draw(const char *textBuf, float x, float y, TextAlignFlag align);
-	const int getFontHeight();
-	StaticObject* getObject(const char *textBuf, float x, float y,
-			TextAlignFlag align);
+	void draw(const char *textBuf, float x, float y, TextHAlignFlag halign,
+			TextVAlignFlag valign);
+	const int getHeight();
+	const int getIndent();
+	TextObject* getObject(const char *textBuf, float x, float y,
+			TextHAlignFlag halign, TextVAlignFlag valign);
 	virtual ~TextManager();
 };
 
-#endif /* TEXTOBJECT_H_ */
+#endif /* TEXTMANAGER_H_ */

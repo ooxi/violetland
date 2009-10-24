@@ -35,6 +35,7 @@ set(srcFileList
 	${srcSystemDir}/LiveObject.cpp
 	${srcSystemDir}/StaticObject.cpp
 	${srcSystemDir}/DynamicObject.cpp
+	${srcSystemDir}/TextObject.cpp
 	${srcSystemDir}/Aim.cpp
 )
 

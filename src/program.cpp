@@ -94,7 +94,7 @@ vector<Powerup*> powerups;
 vector<Enemy*> enemies;
 vector<Bullet*> bullets;
 
-vector<StaticObject*> msgQueue;
+vector<TextObject*> msgQueue;
 
 TextManager *text;
 
@@ -238,13 +238,13 @@ void startGame() {
 	clearBullets();
 	clearMessages();
 	msgQueue.push_back(text->getObject("Try to survive as long as you can.", 0,
-			0, TextManager::LEFT));
+			0, TextManager::LEFT, TextManager::MIDDLE));
 	msgQueue.push_back(text->getObject(
 			"Shoot monsters to receive experience and other bonuses.", 0, 0,
-			TextManager::LEFT));
+			TextManager::LEFT, TextManager::MIDDLE));
 	msgQueue.push_back(text->getObject(
 			"Press F1 at any moment to get additional instructions.", 0, 0,
-			TextManager::LEFT));
+			TextManager::LEFT, TextManager::MIDDLE));
 
 	createTerrain();
 
@@ -419,7 +419,7 @@ void loseGame() {
 	Mix_PlayChannel(-1, playerKilledSound, 0);
 
 	msgQueue.push_back(text->getObject("Player is dead.", 0, vScrHeight,
-			TextManager::LEFT));
+			TextManager::LEFT, TextManager::BOTTOM));
 
 	writeHighScores();
 
@@ -703,101 +703,118 @@ void handleBullets() {
 }
 
 void drawCharStats() {
-	const int fh = text->getFontHeight();
 	const int l = screenWidth * 0.1f;
 	const int r = screenWidth * 0.6f;
 	char *buf;
 
 	sprintf(buf = new char[100], "Current player level: %i",
 			(int) (player->Level));
-	text->draw(buf, l, fh * 4.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 4.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
 	sprintf(buf = new char[100], "Available improvement points: %i",
 			(int) (player->LevelPoints));
-	text->draw(buf, l, fh * 5.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 5.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
 	sprintf(buf = new char[100], "Strength: %i", (int) (player->Strength * 100));
-	text->draw(buf, l, fh * 7.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 7.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
 	sprintf(buf = new char[100], "Agility: %i", (int) (player->Agility * 100));
-	text->draw(buf, l, fh * 8.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 8.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
 	sprintf(buf = new char[100], "Vitality: %i", (int) (player->Vitality * 100));
-	text->draw(buf, l, fh * 9.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 9.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
 	sprintf(buf = new char[100], "HP: %i / Max HP: %i",
 			(int) (player->getHealth() * 100),
 			(int) (player->MaxHealth() * 100));
-	text->draw(buf, l, fh * 11.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 11.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
 	sprintf(buf = new char[100], "Melee damage: %i", (int) (player->Damage()
 			* 100));
-	text->draw(buf, l, fh * 12.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 12.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
 	sprintf(buf = new char[100], "Chance of block: %i%%",
 			(int) (player->ChanceToEvade() * 100));
-	text->draw(buf, l, fh * 13.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 13.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
 	sprintf(buf = new char[100], "Reloading speed modifier: %i%%",
 			(int) (player->ReloadSpeedMod() * 100));
-	text->draw(buf, l, fh * 14.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 14.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
 	sprintf(buf = new char[100], "Accuracy deviation modifier: %i%%",
 			(int) (player->WeaponRetForceMod() * 100));
-	text->draw(buf, l, fh * 15.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 15.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
 	sprintf(buf = new char[100], "Health regeneration: %.2f/min",
 			(player->HealthRegen() * 6000000));
-	text->draw(buf, l, fh * 16.0f, TextManager::LEFT);
+	text->draw(buf, l, text->getHeight() * 16.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 	delete[] buf;
 
-	text->draw("Perks:", r, fh * 4.0f, TextManager::LEFT);
+	text->draw("Perks:", r, text->getHeight() * 4.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 
 	if (player->Unstoppable)
-		text->draw("+", r, fh * 6.0f, TextManager::CENTER);
-	text->draw("Unstoppable", r + fh * 2.0f, fh * 6.0f, TextManager::LEFT);
+		text->draw("+", r, text->getHeight() * 6.0f, TextManager::CENTER,
+				TextManager::MIDDLE);
+	text->draw("Unstoppable", r + text->getHeight() * 2.0f, text->getHeight()
+			* 6.0f, TextManager::LEFT, TextManager::MIDDLE);
 	if (player->PoisonBullets)
-		text->draw("+", r, fh * 7.0f, TextManager::CENTER);
-	text->draw("Poison bullets", r + fh * 2.0f, fh * 7.0f, TextManager::LEFT);
+		text->draw("+", r, text->getHeight() * 7.0f, TextManager::CENTER,
+				TextManager::MIDDLE);
+	text->draw("Poison bullets", r + text->getHeight() * 2.0f,
+			text->getHeight() * 7.0f, TextManager::LEFT, TextManager::MIDDLE);
 
 	if (input->getPressInput(InputHandler::Fire)) {
 		float gmx = input->mouseX;
 		float gmy = input->mouseY;
 
-		if (gmx > l && gmx < screenWidth / 2 && gmy > fh * 6.5f && gmy < fh
-				* 7.5f && player->LevelPoints > 0) {
+		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 6.5f
+				&& gmy < text->getHeight() * 7.5f && player->LevelPoints > 0) {
 			player->Strength += 0.1;
 			player->LevelPoints--;
 		}
-		if (gmx > l && gmx < screenWidth / 2 && gmy > fh * 7.5f && gmy < fh
-				* 8.5f && player->LevelPoints > 0) {
+		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 7.5f
+				&& gmy < text->getHeight() * 8.5f && player->LevelPoints > 0) {
 			player->Agility += 0.1;
 			player->LevelPoints--;
 		}
-		if (gmx > l && gmx < screenWidth / 2 && gmy > fh * 8.5f && gmy < fh
-				* 9.5f && player->LevelPoints > 0) {
+		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 8.5f
+				&& gmy < text->getHeight() * 9.5f && player->LevelPoints > 0) {
 			float ch = player->getHealth() / player->MaxHealth();
 			player->Vitality += 0.1;
 			player->LevelPoints--;
 			player->setHealth(player->MaxHealth() * ch);
 		}
-		if (gmx > r && gmx < screenWidth && gmy > fh * 5.5f && gmy < fh * 6.5f
-				&& !player->Unstoppable && player->LevelPoints > 0) {
+		if (gmx > r && gmx < screenWidth && gmy > text->getHeight() * 5.5f
+				&& gmy < text->getHeight() * 6.5f && !player->Unstoppable
+				&& player->LevelPoints > 0) {
 			player->Unstoppable = true;
 			player->LevelPoints--;
 		}
-		if (gmx > r && gmx < screenWidth && gmy > fh * 6.5f && gmy < fh * 7.5f
-				&& !player->PoisonBullets && player->LevelPoints > 0) {
+		if (gmx > r && gmx < screenWidth && gmy > text->getHeight() * 6.5f
+				&& gmy < text->getHeight() * 7.5f && !player->PoisonBullets
+				&& player->LevelPoints > 0) {
 			player->PoisonBullets = true;
 			player->LevelPoints--;
 		}
@@ -805,32 +822,43 @@ void drawCharStats() {
 }
 
 void drawHelp() {
-	const int fh = text->getFontHeight();
 	const int l = screenWidth * 0.1f;
 
-	text->draw("Game controls:", l, fh * 4, TextManager::LEFT);
-	text->draw("Move up: W", l, fh * 6, TextManager::LEFT);
-	text->draw("Move left: A", l, fh * 7, TextManager::LEFT);
-	text->draw("Move down: S", l, fh * 8, TextManager::LEFT);
-	text->draw("Move right: D", l, fh * 9, TextManager::LEFT);
-	text->draw("Fire: Left mouse button", l, fh * 10, TextManager::LEFT);
-	text->draw("Reload: Right mouse button", l, fh * 11, TextManager::LEFT);
-	text->draw("Toggle flashlight: F", l, fh * 12, TextManager::LEFT);
-	text->draw("Toggle laser aim: G", l, fh * 13, TextManager::LEFT);
-	text->draw("Restart game: Enter", l, fh * 14, TextManager::LEFT);
-	text->draw("Quit game: Esc", l, fh * 15, TextManager::LEFT);
-	text->draw("Open player char stats: C", l, fh * 16, TextManager::LEFT);
-	text->draw("Pause game: P", l, fh * 17, TextManager::LEFT);
+	text->draw("Game controls:", l, text->getHeight() * 4, TextManager::LEFT,
+			TextManager::MIDDLE);
+	text->draw("Move up: W", l, text->getHeight() * 6, TextManager::LEFT,
+			TextManager::MIDDLE);
+	text->draw("Move left: A", l, text->getHeight() * 7, TextManager::LEFT,
+			TextManager::MIDDLE);
+	text->draw("Move down: S", l, text->getHeight() * 8, TextManager::LEFT,
+			TextManager::MIDDLE);
+	text->draw("Move right: D", l, text->getHeight() * 9, TextManager::LEFT,
+			TextManager::MIDDLE);
+	text->draw("Fire: Left mouse button", l, text->getHeight() * 10,
+			TextManager::LEFT, TextManager::MIDDLE);
+	text->draw("Reload: Right mouse button", l, text->getHeight() * 11,
+			TextManager::LEFT, TextManager::MIDDLE);
+	text->draw("Toggle flashlight: F", l, text->getHeight() * 12,
+			TextManager::LEFT, TextManager::MIDDLE);
+	text->draw("Toggle laser aim: G", l, text->getHeight() * 13,
+			TextManager::LEFT, TextManager::MIDDLE);
+	text->draw("Restart game: Enter", l, text->getHeight() * 14,
+			TextManager::LEFT, TextManager::MIDDLE);
+	text->draw("Quit game: Esc", l, text->getHeight() * 15, TextManager::LEFT,
+			TextManager::MIDDLE);
+	text->draw("Open player char stats: C", l, text->getHeight() * 16,
+			TextManager::LEFT, TextManager::MIDDLE);
+	text->draw("Pause game: P", l, text->getHeight() * 17, TextManager::LEFT,
+			TextManager::MIDDLE);
 }
 
 void drawMessagesQueue() {
-	const int fh = text->getFontHeight();
-
 	if (!msgQueue.empty()) {
 		int s = msgQueue.size();
 		for (int i = s - 1; i >= 0; i--) {
-			msgQueue[i]->draw(true, msgQueue[i]->X, screenHeight - s * fh + i
-					* fh);
+			msgQueue[i]->draw(true, msgQueue[i]->X + text->getIndent(),
+					screenHeight - s * text->getHeight() + i
+							* text->getHeight());
 			msgQueue[i]->AMask -= 0.0001 * deltaTime;
 
 			if (msgQueue[i]->AMask <= 0) {
@@ -842,8 +870,6 @@ void drawMessagesQueue() {
 }
 
 void drawHud() {
-	const int fh = text->getFontHeight();
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -859,35 +885,40 @@ void drawHud() {
 
 	sprintf(buf = new char[30], "Health: %.2f%%", player->getHealth()
 			/ player->MaxHealth() * 100.0f);
-	text->draw(buf, 0, fh, TextManager::LEFT);
+	text->draw(buf, text->getIndent(), text->getIndent(), TextManager::LEFT,
+			TextManager::TOP);
 	delete[] buf;
 
 	sprintf(buf = new char[30], "%s: %d/%d", player->getWeaponName().c_str(),
 			player->getAmmo(), player->getMaxAmmo());
-	text->draw(buf, 0, fh * 2, TextManager::LEFT);
+	text->draw(buf, text->getIndent(), text->getIndent() + text->getHeight(),
+			TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
 
 	sprintf(buf = new char[30], "Time: %dm %ds", minutes, seconds);
-	text->draw(buf, screenWidth, fh, TextManager::RIGHT);
+	text->draw(buf, screenWidth - text->getIndent(), text->getIndent(),
+			TextManager::RIGHT, TextManager::TOP);
 	delete[] buf;
 
 	sprintf(buf = new char[30], "Xp: %d (%d)", player->Xp, player->NextLevelXp);
-	text->draw(buf, screenWidth, fh * 2, TextManager::RIGHT);
+	text->draw(buf, screenWidth - text->getIndent(), text->getIndent()
+			+ text->getHeight(), TextManager::RIGHT, TextManager::TOP);
 	delete[] buf;
 
 	if (showFps) {
 		sprintf(buf = new char[30], "FPS: %i", fps);
-		text->draw(buf, screenWidth, screenHeight - fh, TextManager::RIGHT);
+		text->draw(buf, screenWidth - text->getIndent(), screenHeight
+				- text->getIndent(), TextManager::RIGHT, TextManager::BOTTOM);
 		delete[] buf;
 	}
 
 	if (lose && !gamePaused)
 		text->draw("They have overcome...", screenWidth / 2, screenHeight / 2,
-				TextManager::CENTER);
+				TextManager::CENTER, TextManager::MIDDLE);
 
 	if (gamePaused)
 		text->draw("PAUSE", screenWidth / 2, screenHeight / 2,
-				TextManager::CENTER);
+				TextManager::CENTER, TextManager::MIDDLE);
 
 	drawMessagesQueue();
 
@@ -917,7 +948,7 @@ void handlePowerups() {
 			case Powerup::medikit:
 				msgQueue.push_back(text->getObject(
 						"Player has taken a medical kit.", 0, vScrHeight,
-						TextManager::LEFT));
+						TextManager::LEFT, TextManager::MIDDLE));
 				player->setHealth(player->getHealth()
 						+ *(float*) powerups[i]->Object);
 				break;
@@ -927,7 +958,7 @@ void handlePowerups() {
 				sprintf(buf = new char[200], "Player has taken the %s.",
 						player->getWeaponName().c_str());
 				msgQueue.push_back(text->getObject(buf, 0, vScrHeight,
-						TextManager::LEFT));
+						TextManager::LEFT, TextManager::MIDDLE));
 				delete[] buf;
 				break;
 			}
@@ -975,7 +1006,7 @@ void levelUp() {
 	player->LevelPoints += 1;
 
 	msgQueue.push_back(text->getObject("The player has reached new level.", 0,
-			vScrHeight, TextManager::LEFT));
+			vScrHeight, TextManager::LEFT, TextManager::MIDDLE));
 
 	player->setHealth(player->MaxHealth());
 }
