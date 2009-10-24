@@ -45,7 +45,7 @@ float aspect = 1 / 3;
 
 int framesCount;
 int fpsCountingStart;
-int fpsLimit = 10;
+int fpsLimit = 0;
 int fps = 0;
 bool showFps = false;
 
@@ -1353,7 +1353,7 @@ void parsePreferences(int argc, char *argv[]) {
 			printf("\t\t\t\t\t(from 0 to 128; 30 by default)\n");
 			printf("\t--noreload\t\t\tDisable automatic reloading\n");
 			printf("\t--fps <fps_count>\t\tLimit game fps by <fps_count>\n");
-			printf("\t\t\t\t\tDefault value of <fps_count> is 100\n");
+			printf("\t\t\t\t\tDefault value of <fps_count> is 0\n");
 			printf("\t\t\t\t\tSeting <fps_count> to 0 will disable\n");
 			printf("\t\t\t\t\trestriction\n");
 			printf("\t--showfps\t\t\tShow fps in game\n");
