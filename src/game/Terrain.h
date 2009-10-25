@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include "../system/StaticObject.h"
+#include "../system/Camera.h"
 
 #ifndef TERRAIN_H_
 #define TERRAIN_H_
@@ -20,7 +21,7 @@ public:
 	void beginDrawOn();
 	void drawOn(StaticObject *piece);
 	void endDrawOn();
-	void draw();
+	void draw(Camera *cam);
 	const int getTileWidth();
 	const int getTileHeight();
 	~Terrain();

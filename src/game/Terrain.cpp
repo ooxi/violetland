@@ -94,9 +94,13 @@ void Terrain::endDrawOn() {
 	glViewport(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
 }
 
-void Terrain::draw() {
+void Terrain::draw(Camera* cam) {
 	for (unsigned int i = 0; i < m_tiles.size(); i++) {
-		m_tiles[i]->draw(m_tileDList);
+		if (m_tiles[i]->getLeft() < cam->X + cam->getHalfW()
+				&& m_tiles[i]->getRight() > cam->X - cam->getHalfW()
+				&& m_tiles[i]->getTop() < cam->Y + cam->getHalfH()
+				&& m_tiles[i]->getBottom() > cam->Y - cam->getHalfH())
+			m_tiles[i]->draw(m_tileDList);
 	}
 }
 

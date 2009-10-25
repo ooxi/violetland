@@ -28,14 +28,14 @@
 #include "game/Terrain.h"
 #include "system/Texture.h"
 #include "system/Aim.h"
+#include "system/Camera.h"
 
 const string PROJECT = "violetland";
 const string VERSION = "0.2.0";
 const int GAME_AREA_SIZE = 2048;
 const int SCREEN_COLOR = 16;
 
-int vScrWidth = 1600;
-int vScrHeight = 1200;
+Camera* cam;
 
 int screenWidth = 800;
 int screenHeight = 600;
@@ -54,8 +54,6 @@ int masterVolume = 30;
 unsigned int spawnMonstersAtStart = 2;
 
 bool fullScreen = false;
-float camX = 0;
-float camY = 0;
 
 double gameHardness;
 bool game;
@@ -252,7 +250,7 @@ void startGame() {
 	SDL_ShowCursor(0);
 
 	for (unsigned int i = 0; i < spawnMonstersAtStart; i++) {
-		spawnEnemy(vScrWidth);
+		spawnEnemy(cam->getW());
 	}
 }
 
@@ -294,10 +292,11 @@ void initSystem() {
 			SDL_SetVideoMode(screenWidth, screenHeight, SCREEN_COLOR,
 					fullScreen ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
 
+	cam = new Camera();
 	aspect = (float) screenWidth / screenHeight;
-	vScrHeight = vScrWidth / aspect;
-	widthK = (float) screenWidth / vScrWidth;
-	heightK = (float) screenHeight / vScrHeight;
+	cam->setH(cam->getW() / aspect);
+	widthK = (float) screenWidth / cam->getW();
+	heightK = (float) screenHeight / cam->getH();
 
 	if (screen == NULL) {
 		fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
@@ -418,7 +417,7 @@ void loseGame() {
 	}
 	Mix_PlayChannel(-1, playerKilledSound, 0);
 
-	msgQueue.push_back(text->getObject("Player is dead.", 0, vScrHeight,
+	msgQueue.push_back(text->getObject("Player is dead.", 0, 0,
 			TextManager::LEFT, TextManager::BOTTOM));
 
 	writeHighScores();
@@ -489,8 +488,8 @@ void handlePlayer() {
 	if (player->Y > GAME_AREA_SIZE)
 		player->setY(GAME_AREA_SIZE);
 
-	player->TargetX = input->mouseX / widthK - vScrWidth / 2 + camX;
-	player->TargetY = input->mouseY / heightK - vScrHeight / 2 + camY;
+	player->TargetX = input->mouseX / widthK - cam->getHalfW() + cam->X;
+	player->TargetY = input->mouseY / heightK - cam->getHalfH() + cam->Y;
 
 	player->process(deltaTime);
 
@@ -859,7 +858,7 @@ void drawMessagesQueue() {
 			msgQueue[i]->draw(true, msgQueue[i]->X + text->getIndent(),
 					screenHeight - s * text->getHeight() + i
 							* text->getHeight());
-			msgQueue[i]->AMask -= 0.0001 * deltaTime;
+			msgQueue[i]->AMask -= 0.0001f * deltaTime;
 
 			if (msgQueue[i]->AMask <= 0) {
 				delete msgQueue[i];
@@ -947,7 +946,7 @@ void handlePowerups() {
 			switch (powerups[i]->Type) {
 			case Powerup::medikit:
 				msgQueue.push_back(text->getObject(
-						"Player has taken a medical kit.", 0, vScrHeight,
+						"Player has taken a medical kit.", 0, 0,
 						TextManager::LEFT, TextManager::MIDDLE));
 				player->setHealth(player->getHealth()
 						+ *(float*) powerups[i]->Object);
@@ -957,7 +956,7 @@ void handlePowerups() {
 				char *buf;
 				sprintf(buf = new char[200], "Player has taken the %s.",
 						player->getWeaponName().c_str());
-				msgQueue.push_back(text->getObject(buf, 0, vScrHeight,
+				msgQueue.push_back(text->getObject(buf, 0, 0,
 						TextManager::LEFT, TextManager::MIDDLE));
 				delete[] buf;
 				break;
@@ -974,31 +973,6 @@ void handlePowerups() {
 	}
 }
 
-void setCamera() {
-	camX = player->X;
-	camY = player->Y;
-
-	if (camX < -GAME_AREA_SIZE + vScrWidth * 0.5)
-		camX = -GAME_AREA_SIZE + vScrWidth * 0.5;
-	if (camX > GAME_AREA_SIZE - vScrWidth * 0.5)
-		camX = GAME_AREA_SIZE - vScrWidth * 0.5;
-	if (camY < -GAME_AREA_SIZE + vScrHeight * 0.5)
-		camY = -GAME_AREA_SIZE + vScrHeight * 0.5;
-	if (camY > GAME_AREA_SIZE - vScrHeight * 0.5)
-		camY = GAME_AREA_SIZE - vScrHeight * 0.5;
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	int a = vScrWidth / 2;
-	int b = vScrHeight / 2;
-
-	glOrtho(camX - a, camX + a, camY + b, camY - b, -1.0, 1.0);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-}
-
 void levelUp() {
 	player->NextLevelXp *= 2;
 
@@ -1006,7 +980,7 @@ void levelUp() {
 	player->LevelPoints += 1;
 
 	msgQueue.push_back(text->getObject("The player has reached new level.", 0,
-			vScrHeight, TextManager::LEFT, TextManager::MIDDLE));
+			0, TextManager::LEFT, TextManager::MIDDLE));
 
 	player->setHealth(player->MaxHealth());
 }
@@ -1041,7 +1015,19 @@ void processGame() {
 }
 
 void drawGame() {
-	setCamera();
+	cam->X = player->X;
+	cam->Y = player->Y;
+
+	if (cam->X < -GAME_AREA_SIZE + cam->getHalfW())
+		cam->X = -GAME_AREA_SIZE + cam->getHalfW();
+	if (cam->X > GAME_AREA_SIZE - cam->getHalfW())
+		cam->X = GAME_AREA_SIZE - cam->getHalfW();
+	if (cam->Y < -GAME_AREA_SIZE + cam->getHalfH())
+		cam->Y = -GAME_AREA_SIZE + cam->getHalfH();
+	if (cam->Y > GAME_AREA_SIZE - cam->getHalfH())
+		cam->Y = GAME_AREA_SIZE - cam->getHalfH();
+
+	cam->apply();
 
 	glEnable(GL_LIGHTING);
 
@@ -1076,7 +1062,7 @@ void drawGame() {
 		glPopMatrix();
 	}
 
-	terrain->draw();
+	terrain->draw(cam);
 
 	if (!lose)
 		player->draw();
@@ -1086,10 +1072,10 @@ void drawGame() {
 	}
 
 	for (unsigned int i = 0; i < enemies.size(); i++) {
-		if (enemies[i]->getLeft() < camX + vScrWidth / 2
-				&& enemies[i]->getRight() > camX - vScrWidth / 2
-				&& enemies[i]->getTop() < camY + vScrHeight / 2
-				&& enemies[i]->getBottom() > camY - vScrHeight / 2)
+		if (enemies[i]->getLeft() < cam->X + cam->getHalfW()
+				&& enemies[i]->getRight() > cam->X - cam->getHalfW()
+				&& enemies[i]->getTop() < cam->Y + cam->getHalfH()
+				&& enemies[i]->getBottom() > cam->Y - cam->getHalfH())
 			enemies[i]->draw();
 	}
 
@@ -1117,8 +1103,8 @@ void drawGame() {
 		const float rad = (player->getArmsDirection() - 90) * M_PI / 180;
 		glVertex3f(player->X + 50 * cos(rad), player->Y + 50 * sin(rad), 0);
 		glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
-		glVertex3f(player->X + vScrHeight * 0.75f * cos(rad), player->Y
-				+ vScrHeight * 0.75f * sin(rad), 0);
+		glVertex3f(player->X + cam->getH() * 0.75f * cos(rad), player->Y
+				+ cam->getH() * 0.75f * sin(rad), 0);
 		glEnd();
 	}
 

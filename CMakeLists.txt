@@ -37,6 +37,7 @@ set(srcFileList
 	${srcSystemDir}/DynamicObject.cpp
 	${srcSystemDir}/TextObject.cpp
 	${srcSystemDir}/Aim.cpp
+	${srcSystemDir}/Camera.cpp
 )
 
 add_executable(violetland ${srcFileList})

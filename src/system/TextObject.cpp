@@ -32,7 +32,7 @@ void TextObject::draw(bool outlined, float x, float y) {
 	glScalef(1.0f, 1.0f, 1.0f);
 
 	glPushMatrix();
-	glColor4f(0.0f, 0.0f, 0.0f, pow(AMask,2));
+	glColor4f(0.0f, 0.0f, 0.0f, pow(AMask, 3));
 	glTranslatef(x - 1.0f, y, 0.0f);
 	drawQuad();
 	glPopMatrix();
