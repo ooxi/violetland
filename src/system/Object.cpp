@@ -71,13 +71,11 @@ float Object::calculateAngle(float x1, float y1, float x2, float y2) {
 	return angle;
 }
 
-const float Object::getWidth()
-{
+const float Object::getWidth() {
 	return m_width;
 }
 
-const float Object::getHeight()
-{
+const float Object::getHeight() {
 	return m_width;
 }
 
@@ -110,5 +108,41 @@ const float Object::getBottom() {
 }
 
 const bool Object::detectCollide(Object *refObj) {
-	return calculateDistance(X, Y, refObj->X, refObj->Y) < HitR * Scale * m_width + refObj->HitR * refObj->Scale * refObj->getWidth();
+	return calculateDistance(X, Y, refObj->X, refObj->Y) < HitR * Scale
+			* m_width + refObj->HitR * refObj->Scale * refObj->getWidth();
+}
+
+const bool Object::detectCollide(float x1, float y1, float x2, float y2) {
+	float k = (y1 - y2) / (x1 - x2);
+	float b = y1 - k * x1;
+	float r = HitR * Scale * m_width;
+
+	float d = (pow((2 * k * b - 2 * X - 2 * Y * k), 2) - (4 + 4 * k * k) * (b
+			* b - r * r + X * X + Y * Y - 2 * Y * b));
+
+	if (d < 0) {
+		return false;
+	}
+
+	float resX1 =
+			((-(2 * k * b - 2* X - 2 * Y * k) - sqrt(d)) / (2 + 2* k * k));
+	//	float resX2 = ((-(2* k * b - 2* targetX - 2* targetY * k) + sqrt(d)) / (2
+	//			+ 2* k * k));
+	//
+	//	float resY1 = k * resX1 + b;
+
+	if (std::abs(x1 - resX1) + std::abs(x2 - resX1) == std::abs(x2 - x1)) {
+		return true;
+	}
+
+	//	if (resX1 == resX2) {
+	//	one intersection at resX1, y1
+	//		return true;
+	//	}
+
+	// two intersections: resX1, y1 и resX2, y2
+	// float y1 = k * resX1 + b;
+	// float y2 = k * resX2 + b;
+
+	return false;
 }

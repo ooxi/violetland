@@ -40,7 +40,7 @@ void Enemy::hit(Bullet* bullet, float pX, float pY) {
 }
 
 bool Enemy::isBleeding() {
-	if (!m_bleeds.empty() && m_bleeding > 300) {
+	if (!m_bleeds.empty() && m_bleeding > 600) {
 		m_bleeding = 0;
 		return true;
 	} else {

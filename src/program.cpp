@@ -645,13 +645,19 @@ void handleEnemies() {
 }
 
 void handleBullets() {
-	if (!bullets.empty())
+	if (!bullets.empty()) {
 		for (int i = bullets.size() - 1; i >= 0; i--) {
+			float prevX = bullets[i]->X;
+			float prevY = bullets[i]->Y;
+
+			bullets[i]->process(deltaTime);
+
 			bool eraseBullet = bullets[i]->isFall();
 
 			if (!enemies.empty()) {
 				for (int j = enemies.size() - 1; j >= 0; j--) {
-					if (bullets[i]->detectCollide(enemies[j])) {
+					if (enemies[j]->detectCollide(prevX, prevY, bullets[i]->X,
+							bullets[i]->Y)) {
 						player->Xp += (int) ((1.5 - dayLight * -0.5)
 								* bullets[i]->Damage * 10);
 						enemies[j]->hit(bullets[i], player->X, player->Y);
@@ -680,16 +686,15 @@ void handleBullets() {
 				continue;
 			}
 
-			bullets[i]->process(deltaTime);
-
 			StaticObject *newBulletLoop = new StaticObject(bullets[i]->X,
 					bullets[i]->Y, 32, 32, bullets[i]->getTextureRef(), false);
 			newBulletLoop->AMask = 0.5;
 			newBulletLoop->Angle = bullets[i]->Angle;
 			bulletLoops.push_back(newBulletLoop);
 		}
+	}
 
-	if (!bulletLoops.empty())
+	if (!bulletLoops.empty()) {
 		for (int i = bulletLoops.size() - 1; i >= 0; i--) {
 			if (bulletLoops[i]->AMask <= 0) {
 				delete bulletLoops[i];
@@ -699,6 +704,7 @@ void handleBullets() {
 
 			bulletLoops[i]->AMask -= deltaTime * 0.002;
 		}
+	}
 }
 
 void drawCharStats() {
