@@ -42,7 +42,7 @@ void Player::move(char movementX, char movementY, int deltaTime) {
 
 		float newAngle = Object::calculateAngle(0, 0, movementX, movementY);
 
-		if (abs(m_legs->Angle - newAngle) < 0.5)
+		if (abs(m_legs->Angle - newAngle) < 0.5 * deltaTime)
 			m_legs->Angle = newAngle;
 		else
 			m_legs->turn(newAngle, 0.5, deltaTime);

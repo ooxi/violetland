@@ -1113,8 +1113,8 @@ void drawGame() {
 				player->AccuracyDeviation * M_PI / 180)
 				* Object::calculateDistance(player->X, player->Y,
 						player->TargetX, player->TargetY) / 25.0f,
-				player->getReloadState() > 0 ? 1.1f - player->getReloadState()
-						: 0.1f);
+				player->getReloadState() > 0 ? 1.2f - player->getReloadState()
+						: 0.2f);
 	}
 }
 

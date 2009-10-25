@@ -9,8 +9,8 @@ class Aim {
 private:
 	GLuint m_aimDListId;
 	GLuint m_pointDListId;
-	void drawCircle();
-	void drawFilledCircle();
+	void drawCircle(float r);
+	void drawFilledCircle(float r);
 public:
 	Aim(int colorDark, int colorLight);
 	void draw(float x, float y, float scale, float pointScale);
