@@ -282,6 +282,10 @@ void initSystem() {
 	printf("SDL_GL_SetAttribute SDL_GL_DOUBLEBUFFER...\n");
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+	// seems that this code is supported only by windows
+	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
+	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+
 	char *buf;
 	sprintf(buf = new char[50], "SDL_SetVideoMode %ix%i (%c)...\n",
 			screenWidth, screenHeight, fullScreen ? 'f' : 'w');
@@ -888,11 +892,15 @@ void drawHud() {
 
 	char *buf;
 
-	sprintf(buf = new char[30], "Health: %.2f%%", player->getHealth()
-			/ player->MaxHealth() * 100.0f);
-	text->draw(buf, text->getIndent(), text->getIndent(), TextManager::LEFT,
-			TextManager::TOP);
+	float health = player->getHealth() / player->MaxHealth() * 100.0f;
+	sprintf(buf = new char[30], "Health: %.2f%%", health);
+	TextObject* healthMsg = text->getObject(buf, text->getIndent(),
+			text->getIndent(), TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
+	if (health < 34)
+		healthMsg->GMask = healthMsg->BMask = 0.0f;
+	healthMsg->draw(true, healthMsg->X, healthMsg->Y);
+	delete healthMsg;
 
 	sprintf(buf = new char[30], "%s: %d/%d", player->getWeaponName().c_str(),
 			player->getAmmo(), player->getMaxAmmo());
@@ -1152,7 +1160,6 @@ void runGameLoop() {
 
 		drawGame();
 
-		//		glDepthRange(0.0, 0.9);
 		drawHud();
 
 		SDL_GL_SwapBuffers();
