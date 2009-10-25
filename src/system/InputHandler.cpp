@@ -36,10 +36,10 @@ bool InputHandler::getPressInput(GameInputEvents evnt) {
 	}
 }
 
-void InputHandler::process(int deltaTime) {
+void InputHandler::process() {
 	SDL_Event event;
 
-	if (SDL_PollEvent(&event)) {
+	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 		case SDL_KEYDOWN:
 			for (int i = 0; i < GameInputEventsCount - 2; i++) {

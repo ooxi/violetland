@@ -1137,7 +1137,7 @@ void runGameLoop() {
 		if (fpsLimit > 0 && deltaTime < fpsLimit)
 			SDL_Delay(fpsLimit - deltaTime);
 
-		input->process(deltaTime);
+		input->process();
 
 		handleCommonControls();
 
@@ -1146,7 +1146,7 @@ void runGameLoop() {
 
 		drawGame();
 
-		glDepthRange(0.0, 0.9);
+		//		glDepthRange(0.0, 0.9);
 		drawHud();
 
 		SDL_GL_SwapBuffers();

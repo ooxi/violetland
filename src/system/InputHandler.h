@@ -22,7 +22,7 @@ public:
 		GameInputEventsCount
 	};
 	InputHandler();
-	void process(int deltaTime);
+	void process();
 	bool getDownInput(GameInputEvents evnt);
 	bool getPressInput(GameInputEvents evnt);
 	int mouseX, mouseY;
