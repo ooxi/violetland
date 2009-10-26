@@ -1,6 +1,8 @@
 #include "InputHandler.h"
 
 InputHandler::InputHandler() {
+	printf("InputHandler...\n");
+
 	for (int i = 0; i < GameInputEventsCount; i++) {
 		m_event[i] = false;
 	}

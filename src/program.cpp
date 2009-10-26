@@ -16,19 +16,19 @@
 #include "SDL_image.h"
 #include "SDL_opengl.h"
 #include "SDL_ttf.h"
-#include "SDL_mixer.h"
 #include "system/ImageUtility.h"
 #include "system/InputHandler.h"
 #include "system/TextManager.h"
+#include "system/FileUtility.h"
+#include "system/Texture.h"
+#include "system/Aim.h"
+#include "system/Camera.h"
+#include "system/SoundManager.h"
 #include "game/Enemy.h"
 #include "game/Bullet.h"
 #include "game/Player.h"
 #include "game/Powerup.h"
-#include "system/FileUtility.h"
 #include "game/Terrain.h"
-#include "system/Texture.h"
-#include "system/Aim.h"
-#include "system/Camera.h"
 
 const string PROJECT = "violetland";
 const string VERSION = "0.2.1";
@@ -65,16 +65,16 @@ bool showHelp;
 
 float dayLight = 1.0;
 
-Mix_Chunk *playerKilledSound;
-vector<Mix_Chunk*> playerHitSounds;
-int playerHitSoundChannel = -1;
+Sound* playerKilledSound;
+vector<Sound*> playerHitSounds;
+int playerHitSndPlaying = 0;
 
 Texture *medikitTex;
 Texture *playerArmsTex;
 Sprite *playerLegsSprite;
 vector<Texture*> bloodTex;
 
-vector<Mix_Chunk*> enemyHitSounds;
+vector<Sound*> enemyHitSounds;
 vector<Sprite*> enemySprites;
 Sprite* bleedSprite;
 
@@ -103,6 +103,7 @@ Terrain *terrain;
 
 FileUtility *fileUtility;
 InputHandler *input;
+SoundManager *sndManager;
 
 void clearBloodStains() {
 	for (unsigned int i = 0; i < bloodStains.size(); i++) {
@@ -282,7 +283,7 @@ void initSystem() {
 	printf("SDL_GL_SetAttribute SDL_GL_DOUBLEBUFFER...\n");
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	// seems that this code is supported only by windows
+	// seems that this code is supported only in windows
 	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 
@@ -346,18 +347,8 @@ void initSystem() {
 	printf("glViewport...\n");
 	glViewport(0, 0, screenWidth, screenHeight);
 
-	printf("Mix_OpenAudio...\n");
-	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) != 0) {
-		fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
-		exit(3);
-	}
+	sndManager = new SoundManager(fileUtility, masterVolume);
 
-	sprintf(buf = new char[30], "Mix_Volume (master) %i...\n", masterVolume);
-	printf(buf);
-	delete[] buf;
-	Mix_Volume(-1, masterVolume);
-
-	printf("InputHandler...\n");
 	input = new InputHandler();
 }
 
@@ -416,10 +407,10 @@ void writeHighScores() {
 
 void loseGame() {
 	lose = true;
-	if (playerHitSoundChannel != -1 && Mix_Playing(playerHitSoundChannel) != 0) {
-		Mix_HaltChannel(playerHitSoundChannel);
-	}
-	Mix_PlayChannel(-1, playerKilledSound, 0);
+	if (playerHitSounds[playerHitSndPlaying]->isPlaying())
+		playerHitSounds[playerHitSndPlaying]->stop();
+
+	playerKilledSound->play();
 
 	msgQueue.push_back(text->getObject("Player is dead.", 0, 0,
 			TextManager::LEFT, TextManager::BOTTOM));
@@ -604,18 +595,13 @@ void handleEnemies() {
 					if (rand() % 100 > player->ChanceToEvade() * 100) {
 						player->setHealth(player->getHealth()
 								- enemies[i]->Damage());
-						if (playerHitSoundChannel == -1 || Mix_Playing(
-								playerHitSoundChannel) == 0) {
-							playerHitSoundChannel
-									= Mix_PlayChannel(
-											-1,
-											playerHitSounds[(player->getHealth()
-													< player->MaxHealth() ? player->getHealth()
-													: player->getHealth()
-													- 0.01f)
-											/ player->MaxHealth()
-											* playerHitSounds.size()],
-											0);
+						if (!playerHitSounds[playerHitSndPlaying]->isPlaying()) {
+							playerHitSndPlaying = (player->getHealth()
+									< player->MaxHealth() ? player->getHealth()
+									: player->getHealth() - 0.01f)
+									/ player->MaxHealth()
+									* playerHitSounds.size();
+							playerHitSounds[playerHitSndPlaying]->play();
 						}
 					}
 
@@ -1185,20 +1171,19 @@ void loadWeapons() {
 	while (1) {
 		char bulletPath[2000] = "";
 		char droppedImagePath[2000] = "";
-		char shotSoundPath[2000] = "";
-		char reloadSoundPath[2000] = "";
+		char shotSound[2000] = "";
+		char reloadSound[2000] = "";
 		char name[30] = "";
 		in >> bulletPath;
 		if (strlen(bulletPath) < 1)
 			break;
 		in >> droppedImagePath;
-		in >> shotSoundPath;
-		in >> reloadSoundPath;
+		in >> shotSound;
+		in >> reloadSound;
 		in >> name;
 		Weapon *weapon = new Weapon(fileUtility->getFullImagePath(bulletPath),
 				fileUtility->getFullImagePath(droppedImagePath),
-				fileUtility->getFullSoundPath(shotSoundPath),
-				fileUtility->getFullSoundPath(reloadSoundPath));
+				sndManager->create(shotSound), sndManager->create(reloadSound));
 		weapon->Name = name;
 		in >> weapon->AmmoClipSize;
 		weapon->Ammo = weapon->AmmoClipSize;
@@ -1218,19 +1203,13 @@ void loadWeapons() {
 void loadResources() {
 	loadWeapons();
 
-	enemyHitSounds.push_back(Mix_LoadWAV(fileUtility->getFullSoundPath(
-					"zombie_hit_1.ogg").c_str()));
-	enemyHitSounds.push_back(Mix_LoadWAV(fileUtility->getFullSoundPath(
-					"zombie_hit_2.ogg").c_str()));
+	enemyHitSounds.push_back(sndManager->create("zombie_hit_1.ogg"));
+	enemyHitSounds.push_back(sndManager->create("zombie_hit_2.ogg"));
 
-	playerKilledSound = Mix_LoadWAV(fileUtility->getFullSoundPath(
-					"player_killed.ogg").c_str());
-	playerHitSounds.push_back(Mix_LoadWAV(fileUtility->getFullSoundPath(
-					"player_hit_0.ogg").c_str()));
-	playerHitSounds.push_back(Mix_LoadWAV(fileUtility->getFullSoundPath(
-					"player_hit_1.ogg").c_str()));
-	playerHitSounds.push_back(Mix_LoadWAV(fileUtility->getFullSoundPath(
-					"player_hit_2.ogg").c_str()));
+	playerKilledSound = sndManager->create("player_killed.ogg");
+	playerHitSounds.push_back(sndManager->create("player_hit_0.ogg"));
+	playerHitSounds.push_back(sndManager->create("player_hit_1.ogg"));
+	playerHitSounds.push_back(sndManager->create("player_hit_2.ogg"));
 
 	playerArmsTex = new Texture(ImageUtility::loadImage(
 			fileUtility->getFullImagePath("player_top.png")), GL_TEXTURE_2D,
@@ -1293,7 +1272,7 @@ void loadResources() {
 }
 
 void unloadResources() {
-	Mix_FreeChunk(playerKilledSound);
+	delete playerKilledSound;
 	delete text;
 	delete aim;
 	delete playerArmsTex;
@@ -1323,11 +1302,11 @@ void unloadResources() {
 	clearMessages();
 
 	for (unsigned int i = 0; i < enemyHitSounds.size(); i++) {
-		Mix_FreeChunk(enemyHitSounds[i]);
+		delete enemyHitSounds[i];
 	}
 	enemyHitSounds.clear();
 	for (unsigned int i = 0; i < playerHitSounds.size(); i++) {
-		Mix_FreeChunk(playerHitSounds[i]);
+		delete playerHitSounds[i];
 	}
 	playerHitSounds.clear();
 }
@@ -1425,7 +1404,7 @@ int main(int argc, char *argv[]) {
 
 	unloadResources();
 
-	Mix_CloseAudio();
+	delete sndManager;
 	delete input;
 	delete fileUtility;
 

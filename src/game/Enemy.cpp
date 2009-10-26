@@ -4,14 +4,14 @@
 #include "Enemy.h"
 
 Enemy::Enemy(float x, float y, Sprite *sprite, Sprite *bleedSprite,
-		Mix_Chunk *hitSound) :
+		Sound* hitSound) :
 	LiveObject(x, y, 128, 128) {
 	m_body = new DynamicObject(x, y, sprite);
 	TargetX = 0.0f;
 	TargetY = 0.0f;
 	m_bleedSprite = bleedSprite;
 	m_hitSound = hitSound;
-	m_hitSoundChannel = -1;
+	m_hitSoundChannel = 0;
 	m_bleeding = 0;
 	DoNotDisturb = false;
 	Angry = false;
@@ -27,10 +27,9 @@ void Enemy::hit(Bullet* bullet, float pX, float pY) {
 	newBleed->Scale = Scale;
 	newBleed->Angle = Object::fixAngle(M_PI - bullet->Angle - 90);
 	m_bleeds.push_back(newBleed);
-	if (m_hitSoundChannel == -1 || Mix_Playing(m_hitSoundChannel) == 0) {
-		m_hitSoundChannel = Mix_PlayChannel(-1, m_hitSound, 0);
-		Mix_SetPosition(m_hitSoundChannel,
-				Object::calculateAngle(pX, pY, X, Y),
+	if (!m_hitSound->isPlaying()) {
+		m_hitSound->play();
+		m_hitSound->setPos(Object::calculateAngle(pX, pY, X, Y),
 				Object::calculateDistance(pX, pY, X, Y));
 	}
 	setHealth(getHealth() - bullet->Damage);

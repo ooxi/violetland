@@ -38,6 +38,8 @@ set(srcFileList
 	${srcSystemDir}/TextObject.cpp
 	${srcSystemDir}/Aim.cpp
 	${srcSystemDir}/Camera.cpp
+	${srcSystemDir}/Sound.cpp
+	${srcSystemDir}/SoundManager.cpp
 )
 
 add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")

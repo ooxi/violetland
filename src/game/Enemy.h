@@ -5,6 +5,7 @@
 #include "SDL_mixer.h"
 #include "SDL_image.h"
 #include "../system/Texture.h"
+#include "../system/Sound.h"
 #include "Bullet.h"
 
 #ifndef ENEMY_H_
@@ -15,12 +16,12 @@ private:
 	DynamicObject* m_body;
 	Sprite *m_bleedSprite;
 	std::vector<DynamicObject*> m_bleeds;
-	Mix_Chunk *m_hitSound;
+	Sound* m_hitSound;
 	int m_hitSoundChannel;
 	int m_bleeding;
 public:
 	Enemy(float x, float y, Sprite *sprite, Sprite *bleedSprite,
-			Mix_Chunk *hitSound);
+			Sound* hitSound);
 	void hit(Bullet* bullet, float pX, float pY);
 	void process(int deltaTime);
 	void draw();

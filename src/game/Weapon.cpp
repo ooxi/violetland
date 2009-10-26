@@ -1,13 +1,13 @@
 #include "Weapon.h"
 
 Weapon::Weapon(std::string bulletImage, std::string droppedImage,
-		std::string shotSound, std::string reloadSound) {
+		Sound* shotSound, Sound* reloadSound) {
 	m_bulletTex = new Texture(ImageUtility::loadImage(bulletImage),
 			GL_TEXTURE_2D, GL_LINEAR, true);
 	m_droppedTex = new Texture(ImageUtility::loadImage(droppedImage),
 			GL_TEXTURE_2D, GL_LINEAR, true);
-	m_shotSound = Mix_LoadWAV(shotSound.c_str());
-	m_reloadSound = Mix_LoadWAV(reloadSound.c_str());
+	m_shotSound = shotSound;
+	m_reloadSound = reloadSound;
 	Damage = 1.0;
 	FireDelayTime = 1000;
 	ReloadTime = 1000;
@@ -54,7 +54,7 @@ std::vector<Bullet*> *Weapon::fire() {
 		newBullets->push_back(newBullet);
 	}
 
-	Mix_PlayChannel(-1, m_shotSound, 0);
+	m_shotSound->playInf();
 	Ammo--;
 	m_fireDelay = FireDelayTime;
 
@@ -63,9 +63,7 @@ std::vector<Bullet*> *Weapon::fire() {
 
 bool Weapon::reload(float timeMod) {
 	if (m_reload <= 0) {
-		if (m_reloadSndCh == -1 || Mix_Playing(m_reloadSndCh) == 0) {
-			m_reloadSndCh = Mix_PlayChannel(-1, m_reloadSound, 0);
-		}
+		m_reloadSound->play();
 		m_reload = ReloadTime * timeMod;
 		return true;
 	} else
@@ -82,8 +80,8 @@ float Weapon::getReloadState() {
 void Weapon::deleteResources() {
 	delete m_bulletTex;
 	delete m_droppedTex;
-	Mix_FreeChunk(m_shotSound);
-	Mix_FreeChunk(m_reloadSound);
+	delete m_shotSound;
+	delete m_reloadSound;
 }
 
 Weapon::~Weapon() {

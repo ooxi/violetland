@@ -1,11 +1,12 @@
-#include "Bullet.h"
-#include "../system/ImageUtility.h"
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
 #include "SDL_opengl.h"
 #include "SDL_mixer.h"
 #include "../system/Texture.h"
+#include "../system/ImageUtility.h"
+#include "../system/Sound.h"
+#include "Bullet.h"
 
 #ifndef WEAPON_H_
 #define WEAPON_H_
@@ -16,12 +17,12 @@ private:
 	int m_reload;
 	Texture *m_droppedTex;
 	Texture *m_bulletTex;
-	Mix_Chunk *m_shotSound;
-	Mix_Chunk *m_reloadSound;
+	Sound* m_shotSound;
+	Sound* m_reloadSound;
 	int m_reloadSndCh;
 public:
-	Weapon(std::string bulletImage, std::string droppedImage,
-			std::string shotSound, std::string reloadSound);
+	Weapon(std::string bulletImage, std::string droppedImage, Sound* shotSound,
+			Sound* reloadSound);
 	void process(int deltaTime);
 	std::vector<Bullet*> *fire();
 	bool reload(float timeMod);
