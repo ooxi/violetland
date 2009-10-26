@@ -31,7 +31,7 @@
 #include "system/Camera.h"
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.0";
+const string VERSION = "0.2.1";
 const int GAME_AREA_SIZE = 2048;
 const int SCREEN_COLOR = 16;
 

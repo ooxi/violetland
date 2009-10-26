@@ -40,6 +40,8 @@ set(srcFileList
 	${srcSystemDir}/Camera.cpp
 )
 
+add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
+
 add_executable(violetland ${srcFileList})
 
 target_link_libraries(violetland ${libList})

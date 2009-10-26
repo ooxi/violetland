@@ -22,10 +22,10 @@ int FileUtility::getFilesCountFromDir(std::string dir) {
 			if (!(ep->data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			files++;
 #endif //_WIN32W
-#ifdef linux
-			if (ep->d_type == 0x8)
+#if defined linux || defined __FreeBSD__
+			if (ep->d_type == DT_REG)
 				files++;
-#endif //linux
+#endif //linux || __FreeBSD__
 		(void) closedir(dp);
 	}
 
@@ -49,20 +49,28 @@ FileUtility::FileUtility(char *argPath) {
 	m_usrPath = m_resPath;
 	delete[] exePath;
 #endif //_WIN32
-#ifdef linux
+#if defined linux || defined __FreeBSD__
 	char result[PATH_MAX];
-	readlink("/proc/self/exe", result, PATH_MAX);
-	FileUtility::truncateFullPathToDir(result);
-	m_appPath = result;
-	m_resPath = m_appPath;
-	m_resPath.append("/../share/violetland/");
+	if (readlink("/proc/self/exe", result, PATH_MAX) != -1) {
+		FileUtility::truncateFullPathToDir(result);
+		m_appPath = result;
+		m_resPath = m_appPath;
+		m_resPath.append("/../share/violetland/");
+	} else {
+#ifndef INSTALL_PREFIX
+#define INSTALL_PREFIX "/usr/local";
+#endif //INSTALL_PREFIX
+		m_appPath = m_resPath = INSTALL_PREFIX;
+		m_appPath.append("/bin");
+		m_resPath.append("/share/violetland/");
+	}
 	m_usrPath = getenv("HOME");
 	m_usrPath.append("/.config");
 	mkdir(m_usrPath.c_str(), S_IRWXU | S_IRGRP | S_IROTH);
 	m_usrPath.append("/violetland");
 	mkdir(m_usrPath.c_str(), S_IRWXU | S_IRGRP | S_IROTH);
 	m_usrPath.append("/");
-#endif //linux
+#endif //linux || __FreeBSD__
 	traceResPath();
 }
 
