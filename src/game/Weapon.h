@@ -8,6 +8,7 @@
 #include "../system/Sound.h"
 #include "Bullet.h"
 #include "StandardBullet.h"
+#include "LaserBullet.h"
 
 #ifndef WEAPON_H_
 #define WEAPON_H_
@@ -22,8 +23,9 @@ private:
 	Sound* m_reloadSound;
 	int m_reloadSndCh;
 public:
-	Weapon(std::string bulletImage, std::string droppedImage, Sound* shotSound,
+	Weapon(Bullet::BulletType type, std::string droppedImage, Sound* shotSound,
 			Sound* reloadSound);
+	void setBulletImage(std::string image);
 	void process(int deltaTime);
 	std::vector<Bullet*> *fire(float x, float y);
 	bool reload(float timeMod);

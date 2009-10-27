@@ -25,6 +25,7 @@ set(srcFileList
 	${srcGameDir}/Enemy.cpp 
 	${srcGameDir}/Bullet.cpp
 	${srcGameDir}/StandardBullet.cpp
+	${srcGameDir}/LaserBullet.cpp
 	${srcGameDir}/Terrain.cpp
 	${srcSystemDir}/FileUtility.cpp 
 	${srcSystemDir}/TextManager.cpp 

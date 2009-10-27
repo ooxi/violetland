@@ -635,8 +635,7 @@ void handleBullets() {
 
 			if (bullets[i]->isActive() && !enemies.empty()) {
 				for (int j = enemies.size() - 1; j >= 0; j--) {
-					if (enemies[j]->detectCollide(prevX, prevY, bullets[i]->X,
-							bullets[i]->Y)) {
+					if (bullets[i]->checkHit(enemies[j])) {
 						player->Xp += (int) ((1.5 - dayLight * -0.5)
 								* bullets[i]->Damage * 10);
 						enemies[j]->hit(bullets[i], player->X, player->Y);
@@ -652,11 +651,11 @@ void handleBullets() {
 											% 200) / 1000.0;
 							bloodStains.push_back(newBloodStain);
 						}
-
-						bullets[i]->deactivate();
-						break;
 					}
 				}
+
+				//if (bullets[i]->Type == Bullet::BulletType::laser)
+				//	bullets[i]->deactivate();
 			}
 
 			if (bullets[i]->isReadyToRemove()) {
@@ -1138,7 +1137,9 @@ void loadWeapons() {
 		fprintf(stderr, "Couldn't load weapons list.\n");
 		exit(4);
 	}
-	while (1) {
+	while (in) {
+		int weaponType;
+		in >> weaponType;
 		char bulletPath[2000] = "";
 		char droppedImagePath[2000] = "";
 		char shotSound[2000] = "";
@@ -1150,10 +1151,14 @@ void loadWeapons() {
 		in >> droppedImagePath;
 		in >> shotSound;
 		in >> reloadSound;
-		in >> name;
-		Weapon *weapon = new Weapon(fileUtility->getFullImagePath(bulletPath),
+		Weapon *weapon = new Weapon((Bullet::BulletType)weaponType, 
 				fileUtility->getFullImagePath(droppedImagePath),
 				sndManager->create(shotSound), sndManager->create(reloadSound));
+		if (weaponType > 1)
+		{
+			weapon->setBulletImage(fileUtility->getFullImagePath(bulletPath));
+		}
+		in >> name;
 		weapon->Name = name;
 		in >> weapon->AmmoClipSize;
 		weapon->Ammo = weapon->AmmoClipSize;

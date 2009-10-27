@@ -10,11 +10,12 @@ protected:
 	float m_range;
 public:
 	enum BulletType {
-		standard
+		standard, laser
 	};
 	Bullet(float x, float y, BulletType type);
 	virtual void process(int deltaTime) {};
 	virtual void draw() {};
+	virtual bool checkHit(Object* objRef) { return false; };
 	bool isActive();
 	bool isReadyToRemove();
 	void deactivate();
@@ -22,6 +23,7 @@ public:
 	float MaxRange;
 	bool Poisoned;
 	BulletType Type;
+	virtual ~Bullet() {};
 };
 
 #endif /* BULLET_H_ */
