@@ -81,7 +81,6 @@ install(FILES
 	images/blood_1.png
 	images/blood_2.png
 	images/player_top.png 
-	images/pistol_bullet.png 
 	images/medikit.png
 	images/pm.png
 	images/ak.png
