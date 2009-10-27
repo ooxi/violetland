@@ -7,6 +7,7 @@
 #include "../system/ImageUtility.h"
 #include "../system/Sound.h"
 #include "Bullet.h"
+#include "StandardBullet.h"
 
 #ifndef WEAPON_H_
 #define WEAPON_H_
@@ -24,13 +25,14 @@ public:
 	Weapon(std::string bulletImage, std::string droppedImage, Sound* shotSound,
 			Sound* reloadSound);
 	void process(int deltaTime);
-	std::vector<Bullet*> *fire();
+	std::vector<Bullet*> *fire(float x, float y);
 	bool reload(float timeMod);
 	void pickup();
 	float getReloadState();
 	void deleteResources();
 	Texture *getDroppedTex();
 	~Weapon();
+	Bullet::BulletType Type;
 	std::string Name;
 	int FireDelayTime;
 	int ReloadTime;

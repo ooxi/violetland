@@ -1,24 +1,25 @@
 #include "Bullet.h"
 
-Bullet::Bullet(float x, float y, Texture *texture) :
-	StaticObject(x, y, 32, 32, texture, false) {
-	m_tex = texture;
-	Speed = 3;
-	Damage = 1;
-	MaxRange = 1000;
+Bullet::Bullet(float x, float y, BulletType type) :
+	Object(x, y, 1, 1) {
+	startX = x;
+	startY = y;
+	m_active = true;
+	m_readyToRemove = false;
+	Type = type;
 	m_range = 0;
 	Poisoned = false;
 }
 
-Texture *Bullet::getTextureRef() {
-	return m_tex;
+bool Bullet::isActive() {
+	return m_active;
 }
 
-void Bullet::process(int deltaTime) {
-	Object::move(deltaTime);
-	m_range += Speed * deltaTime;
+bool Bullet::isReadyToRemove() {
+	return m_readyToRemove;
 }
 
-bool Bullet::isFall() {
-	return m_range >= MaxRange;
+void Bullet::deactivate()
+{
+	m_active = false;
 }

@@ -3,16 +3,18 @@ violetland
 
 1. INFORMATION
 
-Violetland is an open source cross platform crimsonland game clone. Except reimplementing the original game we are adding some other cool features such as dynamic changing of day and night, network play and more.
+Violetland is an opensource crossplatform game similar to crimsonland.
 
-http://nike.homeunix.com/violetland
-svn://nike.homeunix.com:119/svn_rep/cpp/violetland/trunk
+In this game the player should help a girl by name of Violet to struggle with hordes of monsters. For this purpose the various weapon, and also the special abilities of the heroine which are opening with experience can be used. In game there are elements of RPG in the form of strength-agility-vitality and derivatives. Also there is an unique feature: dynamic change of day and night.
+
+http://code.google.com/p/violetland/
+http://groups.google.com/group/violetland
 
 2. SYSTEM REQUIREMENTS
 
 Before you enjoy the game make sure that you have a 3D-accelerated video card and latest drivers for your card with 3D-acceleration support.
 
-Only windows and linux operation systems are currently supported.
+Currently are supported: windows, linux, freebsd.
 
 3. WINDOWS
 

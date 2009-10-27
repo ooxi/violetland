@@ -73,20 +73,19 @@ void Player::move(char movementX, char movementY, int deltaTime) {
 }
 
 std::vector<Bullet*> *Player::fire() {
-	std::vector<Bullet*> *newBullets = m_weapon->fire();
+	const float rad = (getArmsDirection() - 90) * M_PI / 180;
+	std::vector<Bullet*> *newBullets = m_weapon->fire(m_arms->X + 50 * cos(rad), m_arms->Y + 50 * sin(rad));
 
 	if (!newBullets->empty()) {
+		std::vector<Bullet*>::iterator it;
+
 		if (AccuracyDeviation < 25)
 			AccuracyDeviation
 					+= m_weapon->BulletsAtOnce > 1 ? m_weapon->ReturnForce
 							: m_weapon->ReturnForce * WeaponRetForceMod();
 
-		std::vector<Bullet*>::iterator it;
 		for (it = newBullets->begin(); it != (newBullets->end()); it++) {
 			Bullet* bullet = *(it);
-
-			bullet->X = m_arms->X;
-			bullet->Y = m_arms->Y;
 			bullet->Poisoned = PoisonBullets;
 			bullet->Angle = AccuracyDeviation < 1 ? m_arms->Angle
 					: m_arms->Angle + (rand() % (int) (AccuracyDeviation * 2))

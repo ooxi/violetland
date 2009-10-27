@@ -84,7 +84,6 @@ Aim* aim;
 
 Player *player;
 vector<StaticObject*> bloodStains;
-vector<StaticObject*> bulletLoops;
 
 vector<Weapon*> weapons;
 
@@ -110,13 +109,6 @@ void clearBloodStains() {
 		delete bloodStains[i];
 	}
 	bloodStains.clear();
-}
-
-void clearBulletLoops() {
-	for (unsigned int i = 0; i < bulletLoops.size(); i++) {
-		delete bulletLoops[i];
-	}
-	bulletLoops.clear();
 }
 
 void clearEnemies() {
@@ -232,7 +224,6 @@ void startGame() {
 
 	clearBloodStains();
 	clearPowerups();
-	clearBulletLoops();
 	clearEnemies();
 	clearBullets();
 	clearMessages();
@@ -640,11 +631,9 @@ void handleBullets() {
 			float prevX = bullets[i]->X;
 			float prevY = bullets[i]->Y;
 
-			bullets[i]->process(deltaTime);
+			bullets[i]->process(deltaTime);			
 
-			bool eraseBullet = bullets[i]->isFall();
-
-			if (!enemies.empty()) {
+			if (bullets[i]->isActive() && !enemies.empty()) {
 				for (int j = enemies.size() - 1; j >= 0; j--) {
 					if (enemies[j]->detectCollide(prevX, prevY, bullets[i]->X,
 							bullets[i]->Y)) {
@@ -664,35 +653,16 @@ void handleBullets() {
 							bloodStains.push_back(newBloodStain);
 						}
 
-						eraseBullet = true;
+						bullets[i]->deactivate();
 						break;
 					}
 				}
 			}
 
-			if (eraseBullet) {
+			if (bullets[i]->isReadyToRemove()) {
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
-				continue;
 			}
-
-			StaticObject *newBulletLoop = new StaticObject(bullets[i]->X,
-					bullets[i]->Y, 32, 32, bullets[i]->getTextureRef(), false);
-			newBulletLoop->AMask = 0.5;
-			newBulletLoop->Angle = bullets[i]->Angle;
-			bulletLoops.push_back(newBulletLoop);
-		}
-	}
-
-	if (!bulletLoops.empty()) {
-		for (int i = bulletLoops.size() - 1; i >= 0; i--) {
-			if (bulletLoops[i]->AMask <= 0) {
-				delete bulletLoops[i];
-				bulletLoops.erase(bulletLoops.begin() + i);
-				continue;
-			}
-
-			bulletLoops[i]->AMask -= deltaTime * 0.002;
 		}
 	}
 }
@@ -1086,15 +1056,15 @@ void drawGame() {
 
 	glDisable(GL_LIGHTING);
 
-	for (unsigned int i = 0; i < bulletLoops.size(); i++) {
+	/*for (unsigned int i = 0; i < bulletLoops.size(); i++) {
 		bulletLoops[i]->draw(false);
-	}
-
-	for (unsigned int i = 0; i < bullets.size(); i++) {
-		bullets[i]->draw(false);
-	}
+	}*/
 
 	glBindTexture(GL_TEXTURE_2D, NULL);
+
+	for (unsigned int i = 0; i < bullets.size(); i++) {
+		bullets[i]->draw();
+	}
 
 	if (!lose && player->getLaser()) {
 		glLineWidth(0.5f);
@@ -1296,7 +1266,6 @@ void unloadResources() {
 	weapons.clear();
 	clearBloodStains();
 	clearPowerups();
-	clearBulletLoops();
 	clearEnemies();
 	clearBullets();
 	clearMessages();

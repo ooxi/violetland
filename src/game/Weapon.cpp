@@ -20,6 +20,7 @@ Weapon::Weapon(std::string bulletImage, std::string droppedImage,
 	m_fireDelay = 0;
 	m_reload = 0;
 	m_reloadSndCh = -1;
+	Type = Bullet::standard;
 }
 
 Texture *Weapon::getDroppedTex() {
@@ -38,18 +39,17 @@ void Weapon::process(int deltaTime) {
 	}
 }
 
-std::vector<Bullet*> *Weapon::fire() {
+std::vector<Bullet*> *Weapon::fire(float x, float y) {
 	std::vector<Bullet*> *newBullets = new std::vector<Bullet*>();
 
 	if (m_reload > 0 || m_fireDelay > 0 || Ammo < 1)
 		return newBullets;
 
 	for (int i = 0; i < BulletsAtOnce; i++) {
-		Bullet *newBullet = new Bullet(0, 0, m_bulletTex);
+		Bullet *newBullet = new StandardBullet(x, y);
 		newBullet->Damage = Damage;
 		newBullet->Speed = BulletSpeed;
 		newBullet->MaxRange = FireRange;
-		newBullet->HitR = 0.1f;
 
 		newBullets->push_back(newBullet);
 	}

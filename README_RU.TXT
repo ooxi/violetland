@@ -5,14 +5,14 @@ violetland
 
 Violetland - это кроссплатформенный клон игры crimsonland с открытым исходным кодом. Помимо воссоздания оригинальной игры стоит задача ввести такие уникальные вещи как динамическая смена дня и ночи и многопользовательский режим.
 
-http://nike.homeunix.com/violetland
-svn://nike.homeunix.com:119/svn_rep/cpp/violetland/trunk
+http://code.google.com/p/violetland/
+http://groups.google.com/group/violetland
 
 2. СИСТЕМНЫЕ ТРЕБОВАНИЯ
 
 Прежде чем скачивать игру, убедитесь, что у вас установлена видеокарта и свежие драйвера для нее с поддержкой аппаратного ускорения OpenGL.
 
-На данный момент поддерживаются только операционные системы linux и windows.
+На данный момент поддерживаются операционные системы linux, windows и freebsd.
 
 3. WINDOWS
 
