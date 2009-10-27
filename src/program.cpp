@@ -25,7 +25,6 @@
 #include "system/Camera.h"
 #include "system/SoundManager.h"
 #include "game/Enemy.h"
-#include "game/Bullet.h"
 #include "game/Player.h"
 #include "game/Powerup.h"
 #include "game/Terrain.h"
@@ -653,9 +652,6 @@ void handleBullets() {
 						}
 					}
 				}
-
-				//if (bullets[i]->Type == Bullet::BulletType::laser)
-				//	bullets[i]->deactivate();
 			}
 
 			if (bullets[i]->isReadyToRemove()) {
@@ -1151,7 +1147,7 @@ void loadWeapons() {
 		in >> droppedImagePath;
 		in >> shotSound;
 		in >> reloadSound;
-		Weapon *weapon = new Weapon((Bullet::BulletType)weaponType, 
+		Weapon *weapon = new Weapon((BulletType)weaponType, 
 				fileUtility->getFullImagePath(droppedImagePath),
 				sndManager->create(shotSound), sndManager->create(reloadSound));
 		if (weaponType > 1)

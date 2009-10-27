@@ -6,7 +6,6 @@
 #include "../system/Texture.h"
 #include "../system/ImageUtility.h"
 #include "../system/Sound.h"
-#include "Bullet.h"
 #include "StandardBullet.h"
 #include "LaserBullet.h"
 
@@ -23,7 +22,7 @@ private:
 	Sound* m_reloadSound;
 	int m_reloadSndCh;
 public:
-	Weapon(Bullet::BulletType type, std::string droppedImage, Sound* shotSound,
+	Weapon(BulletType Type, std::string droppedImage, Sound* shotSound,
 			Sound* reloadSound);
 	void setBulletImage(std::string image);
 	void process(int deltaTime);
@@ -34,7 +33,7 @@ public:
 	void deleteResources();
 	Texture *getDroppedTex();
 	~Weapon();
-	Bullet::BulletType Type;
+	BulletType Type;
 	std::string Name;
 	int FireDelayTime;
 	int ReloadTime;

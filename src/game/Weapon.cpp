@@ -1,6 +1,6 @@
 #include "Weapon.h"
 
-Weapon::Weapon(Bullet::BulletType type, std::string droppedImage,
+Weapon::Weapon(BulletType type, std::string droppedImage,
 		Sound* shotSound, Sound* reloadSound) {
 	m_droppedTex = new Texture(ImageUtility::loadImage(droppedImage),
 			GL_TEXTURE_2D, GL_LINEAR, true);
@@ -52,10 +52,10 @@ std::vector<Bullet*> *Weapon::fire(float x, float y) {
 		Bullet* newBullet;
 		switch (Type)
 		{
-		case Bullet::BulletType::standard:
+		case BulletType::standard:
 			newBullet = new StandardBullet(x, y);
 			break;
-		case Bullet::BulletType::laser:
+		case BulletType::laser:
 			newBullet = new LaserBullet(x, y);
 			break;
 		}

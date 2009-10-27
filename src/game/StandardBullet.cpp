@@ -1,6 +1,6 @@
 #include "StandardBullet.h"
 
-StandardBullet::StandardBullet(float x, float y) : Bullet(x, y, Bullet::BulletType::standard) 
+StandardBullet::StandardBullet(float x, float y) : Bullet(x, y, BulletType::standard) 
 {
 	Speed = 3;
 	Damage = 1;

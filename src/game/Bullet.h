@@ -3,15 +3,16 @@
 #ifndef BULLET_H_
 #define BULLET_H_
 
+enum BulletType {
+		standard, laser
+	};
+
 class Bullet : public Object {
 protected:
 	bool m_active, m_readyToRemove;
 	float startX, startY;
 	float m_range;
 public:
-	enum BulletType {
-		standard, laser
-	};
 	Bullet(float x, float y, BulletType type);
 	virtual void process(int deltaTime) {};
 	virtual void draw() {};

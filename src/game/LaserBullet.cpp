@@ -1,6 +1,6 @@
 #include "LaserBullet.h"
 
-LaserBullet::LaserBullet(float x, float y) : Bullet(x, y, Bullet::BulletType::laser) 
+LaserBullet::LaserBullet(float x, float y) : Bullet(x, y, BulletType::laser) 
 {
 	Speed = 3;
 	Damage = 1;

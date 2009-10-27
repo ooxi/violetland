@@ -1,4 +1,3 @@
-#include <iostream>
 #include "SDL_opengl.h"
 #include "Bullet.h"
 
