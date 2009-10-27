@@ -627,10 +627,7 @@ void handleEnemies() {
 void handleBullets() {
 	if (!bullets.empty()) {
 		for (int i = bullets.size() - 1; i >= 0; i--) {
-			float prevX = bullets[i]->X;
-			float prevY = bullets[i]->Y;
-
-			bullets[i]->process(deltaTime);			
+			bullets[i]->process(deltaTime);
 
 			if (bullets[i]->isActive() && !enemies.empty()) {
 				for (int j = enemies.size() - 1; j >= 0; j--) {
@@ -1052,8 +1049,8 @@ void drawGame() {
 	glDisable(GL_LIGHTING);
 
 	/*for (unsigned int i = 0; i < bulletLoops.size(); i++) {
-		bulletLoops[i]->draw(false);
-	}*/
+	 bulletLoops[i]->draw(false);
+	 }*/
 
 	glBindTexture(GL_TEXTURE_2D, NULL);
 
@@ -1147,11 +1144,10 @@ void loadWeapons() {
 		in >> droppedImagePath;
 		in >> shotSound;
 		in >> reloadSound;
-		Weapon *weapon = new Weapon((BulletType)weaponType, 
+		Weapon *weapon = new Weapon((Bullet::BulletType) weaponType,
 				fileUtility->getFullImagePath(droppedImagePath),
 				sndManager->create(shotSound), sndManager->create(reloadSound));
-		if (weaponType > 1)
-		{
+		if (weaponType > 1) {
 			weapon->setBulletImage(fileUtility->getFullImagePath(bulletPath));
 		}
 		in >> name;

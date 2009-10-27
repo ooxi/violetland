@@ -6,11 +6,11 @@
 class Powerup: public StaticObject {
 public:
 	enum PowerupType {
-		medikit, weapon
+		medikit = 0, weapon
 	};
 	Powerup(float x, float y, Texture *tex);
 	void *Object;
-	PowerupType Type;
+	Powerup::PowerupType Type;
 	int Time;
 };
 

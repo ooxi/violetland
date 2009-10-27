@@ -22,7 +22,7 @@ private:
 	Sound* m_reloadSound;
 	int m_reloadSndCh;
 public:
-	Weapon(BulletType Type, std::string droppedImage, Sound* shotSound,
+	Weapon(Bullet::BulletType Type, std::string droppedImage, Sound* shotSound,
 			Sound* reloadSound);
 	void setBulletImage(std::string image);
 	void process(int deltaTime);
@@ -33,7 +33,7 @@ public:
 	void deleteResources();
 	Texture *getDroppedTex();
 	~Weapon();
-	BulletType Type;
+	Bullet::BulletType Type;
 	std::string Name;
 	int FireDelayTime;
 	int ReloadTime;

@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-Bullet::Bullet(float x, float y, BulletType type) :
+Bullet::Bullet(float x, float y, Bullet::BulletType type) :
 	Object(x, y, 1, 1) {
 	startX = x;
 	startY = y;
@@ -11,6 +11,18 @@ Bullet::Bullet(float x, float y, BulletType type) :
 	Poisoned = false;
 }
 
+void Bullet::process(int deltaTime) {
+	//nothing
+}
+
+void Bullet::draw() {
+	//nothing
+}
+
+bool Bullet::checkHit(Object* objRef) {
+	return false;
+}
+
 bool Bullet::isActive() {
 	return m_active;
 }
@@ -19,7 +31,10 @@ bool Bullet::isReadyToRemove() {
 	return m_readyToRemove;
 }
 
-void Bullet::deactivate()
-{
+void Bullet::deactivate() {
 	m_active = false;
+}
+
+Bullet::~Bullet() {
+	//nothing
 }

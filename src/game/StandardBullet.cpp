@@ -1,7 +1,7 @@
 #include "StandardBullet.h"
 
-StandardBullet::StandardBullet(float x, float y) : Bullet(x, y, BulletType::standard) 
-{
+StandardBullet::StandardBullet(float x, float y) :
+	Bullet(x, y, Bullet::standard) {
 	Speed = 3;
 	Damage = 1;
 	MaxRange = 1000;
@@ -11,8 +11,7 @@ StandardBullet::StandardBullet(float x, float y) : Bullet(x, y, BulletType::stan
 }
 
 void StandardBullet::process(int deltaTime) {
-	if (m_active)
-	{
+	if (m_active) {
 		prevX = X;
 		prevY = Y;
 		X -= cos((Angle + 90) * M_PI / 180) * deltaTime * Speed;
@@ -31,19 +30,15 @@ void StandardBullet::draw() {
 	glColor4f(1.0f, 1.0f, 1.0f, Alpha);
 	glVertex3f(X, Y, 0);
 	glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
-	glVertex3f(startX, startY, 0);	
+	glVertex3f(startX, startY, 0);
 	glEnd();
 }
 
-bool StandardBullet::checkHit(Object* objRef)
-{
-	if (m_active && objRef->detectCollide(prevX, prevY, X, Y))
-	{
+bool StandardBullet::checkHit(Object* objRef) {
+	if (m_active && objRef->detectCollide(prevX, prevY, X, Y)) {
 		deactivate();
 		return true;
-	}
-	else
-	{
+	} else {
 		return false;
 	}
 }
