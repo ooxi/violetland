@@ -19,6 +19,7 @@ Weapon::Weapon(Bullet::BulletType type, std::string droppedImage,
 	m_reload = 0;
 	m_reloadSndCh = -1;
 	Type = type;
+	m_bulletTex = NULL;
 }
 
 void Weapon::setBulletImage(std::string image) {
@@ -89,7 +90,8 @@ float Weapon::getReloadState() {
 }
 
 void Weapon::deleteResources() {
-	delete m_bulletTex;
+	if (m_bulletTex)
+		delete m_bulletTex;
 	delete m_droppedTex;
 	delete m_shotSound;
 	delete m_reloadSound;
