@@ -44,7 +44,7 @@ float aspect = 1 / 3;
 
 int framesCount;
 int fpsCountingStart;
-int fpsLimit = 0;
+int fpsLimit = 10;
 int fps = 0;
 bool showFps = false;
 
@@ -637,10 +637,10 @@ void handleBullets() {
 						float damageLoss = enemies[j]->getHealth();
 						enemies[j]->hit(bullets[i], player->X, player->Y);
 
-						if (bullets[i]->BigCalibre)
-						{
+						if (bullets[i]->BigCalibre) {
 							bullets[i]->Damage -= damageLoss;
-							if (bullets[i]->Damage <= 0) bullets[i]->deactivate();
+							if (bullets[i]->Damage <= 0)
+								bullets[i]->deactivate();
 						}
 
 						if (bloodStains.size() < 3) {
@@ -751,8 +751,8 @@ void drawCharStats() {
 	if (player->BigCalibre)
 		text->draw("+", r, text->getHeight() * 8.0f, TextManager::CENTER,
 				TextManager::MIDDLE);
-	text->draw("Big calibre", r + text->getHeight() * 2.0f,
-			text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE);
+	text->draw("Big calibre", r + text->getHeight() * 2.0f, text->getHeight()
+			* 8.0f, TextManager::LEFT, TextManager::MIDDLE);
 
 	if (input->getPressInput(InputHandler::Fire)) {
 		float gmx = input->mouseX;

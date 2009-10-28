@@ -62,7 +62,6 @@ install(FILES fonts/harabara.ttf DESTINATION ${relResPath}/fonts)
 install(FILES
 	sounds/ak-47_reload.ogg
 	sounds/ak-47_shot.ogg
-	sounds/ambient_zombie.ogg
 	sounds/player_hit_0.ogg
 	sounds/player_hit_1.ogg
 	sounds/player_hit_2.ogg
@@ -73,6 +72,8 @@ install(FILES
 	sounds/remington_reload.ogg
 	sounds/uzi_reload.ogg
 	sounds/uzi_shot.ogg
+	sounds/laser_reload.ogg
+	sounds/laser_shot.ogg
 	sounds/zombie_hit_1.ogg
 	sounds/zombie_hit_2.ogg
 DESTINATION ${relResPath}/sounds)
@@ -83,6 +84,7 @@ install(FILES
 	images/player_top.png 
 	images/medikit.png
 	images/pm.png
+	images/laser.png
 	images/ak.png
 	images/uzi.png
 	images/remington.png 
