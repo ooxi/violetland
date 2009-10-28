@@ -21,8 +21,11 @@ public:
 	void deactivate();
 	float Damage;
 	float MaxRange;
-	bool Poisoned;
 	Bullet::BulletType Type;
+
+	bool Poisoned;
+	bool BigCalibre;
+
 	virtual ~Bullet();
 };
 

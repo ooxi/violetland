@@ -52,6 +52,7 @@ public:
 
 	bool Unstoppable;
 	bool PoisonBullets;
+	bool BigCalibre;
 };
 
 #endif /* PLAYER_H_ */

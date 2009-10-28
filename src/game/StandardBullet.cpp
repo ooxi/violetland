@@ -36,7 +36,7 @@ void StandardBullet::draw() {
 
 bool StandardBullet::checkHit(Object* objRef) {
 	if (m_active && objRef->detectCollide(prevX, prevY, X, Y)) {
-		deactivate();
+		if (!BigCalibre) deactivate();
 		return true;
 	} else {
 		return false;

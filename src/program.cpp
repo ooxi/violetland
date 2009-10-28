@@ -50,7 +50,7 @@ bool showFps = false;
 
 bool autoReload = true;
 int masterVolume = 30;
-unsigned int spawnMonstersAtStart = 2;
+unsigned int spawnMonstersAtStart = 5;
 
 bool fullScreen = false;
 
@@ -215,7 +215,7 @@ void startGame() {
 	player->Acceleration = 0.0004;
 
 	gameTime = 0;
-	gameHardness = 9995.0;
+	gameHardness = 9994.0;
 	lose = false;
 	gamePaused = false;
 	showChar = false;
@@ -634,7 +634,14 @@ void handleBullets() {
 					if (bullets[i]->checkHit(enemies[j])) {
 						player->Xp += (int) ((1.5 - dayLight * -0.5)
 								* bullets[i]->Damage * 10);
+						float damageLoss = enemies[j]->getHealth();
 						enemies[j]->hit(bullets[i], player->X, player->Y);
+
+						if (bullets[i]->BigCalibre)
+						{
+							bullets[i]->Damage -= damageLoss;
+							if (bullets[i]->Damage <= 0) bullets[i]->deactivate();
+						}
 
 						if (bloodStains.size() < 3) {
 							StaticObject *newBloodStain = new StaticObject(
@@ -741,6 +748,11 @@ void drawCharStats() {
 				TextManager::MIDDLE);
 	text->draw("Poison bullets", r + text->getHeight() * 2.0f,
 			text->getHeight() * 7.0f, TextManager::LEFT, TextManager::MIDDLE);
+	if (player->BigCalibre)
+		text->draw("+", r, text->getHeight() * 8.0f, TextManager::CENTER,
+				TextManager::MIDDLE);
+	text->draw("Big calibre", r + text->getHeight() * 2.0f,
+			text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE);
 
 	if (input->getPressInput(InputHandler::Fire)) {
 		float gmx = input->mouseX;
@@ -773,6 +785,12 @@ void drawCharStats() {
 				&& gmy < text->getHeight() * 7.5f && !player->PoisonBullets
 				&& player->LevelPoints > 0) {
 			player->PoisonBullets = true;
+			player->LevelPoints--;
+		}
+		if (gmx > r && gmx < screenWidth && gmy > text->getHeight() * 7.5f
+				&& gmy < text->getHeight() * 8.5f && !player->BigCalibre
+				&& player->LevelPoints > 0) {
+			player->BigCalibre = true;
 			player->LevelPoints--;
 		}
 	}

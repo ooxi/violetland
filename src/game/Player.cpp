@@ -32,6 +32,7 @@ Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex,
 
 	Unstoppable = false;
 	PoisonBullets = false;
+	BigCalibre = false;
 }
 
 void Player::move(char movementX, char movementY, int deltaTime) {
@@ -86,7 +87,8 @@ std::vector<Bullet*> *Player::fire() {
 
 		for (it = newBullets->begin(); it != (newBullets->end()); it++) {
 			Bullet* bullet = *(it);
-			bullet->Poisoned = PoisonBullets;
+			bullet->Poisoned = m_weapon->Type == Bullet::standard && PoisonBullets;
+			bullet->BigCalibre = m_weapon->Type == Bullet::standard && BigCalibre;
 			bullet->Angle = AccuracyDeviation < 1 ? m_arms->Angle
 					: m_arms->Angle + (rand() % (int) (AccuracyDeviation * 2))
 							- AccuracyDeviation;
