@@ -179,28 +179,40 @@ void createTerrain() {
 void spawnEnemy(float r) {
 	float spawnAngle = (rand() % 6300) / 1000.0;
 
-	float scale = pow((rand() % 100) / (double) 130, 3);
-	scale = (rand() % 100) > 50 ? 1 + scale : 1 - scale;
+	int lvl = player->Level * 0.5f + player->Level * pow((rand() % 100) / 125.0f, 2);
+	if (lvl < 1) lvl = 1;
 
-	Enemy *newEnemy = new Enemy(r * cos(spawnAngle), r * sin(spawnAngle), scale
-			< 1.0 ? enemySprites[1] : enemySprites[0], bleedSprite,
-			enemyHitSounds[rand() % enemyHitSounds.size()]);
-	newEnemy->HitR = 0.3;
+	float scale = 0.1f + sqrt((float) lvl / player->Level);
 
-	if (scale < 0.8f || scale > 1.2f) {
-		newEnemy->GMask = (rand() % 50) / 100.0 + 0.5;
-		newEnemy->RMask = (rand() % 50) / 100.0 + 0.5;
-		newEnemy->BMask = (rand() % 50) / 100.0 + 0.5;
-	} else {
-		newEnemy->GMask = 1.0f;
-		newEnemy->RMask = 1.0f;
-		newEnemy->BMask = 0.7f;
+	float param[3] = { 0.9f, 0.7f, 0.9f };
+
+	if (lvl > 1)
+		for (int i = 0; i < lvl; i++)
+		{
+			int s = (rand() % 299) / 100;
+			param[s] += 0.1f;
+		}
+
+	float hi = 0.0f;
+	for (int i = 0; i < 3; i++)
+	{
+		if (param[i] > hi) hi = param[i];
 	}
 
+	Enemy *newEnemy = new Enemy(r * cos(spawnAngle), r * sin(spawnAngle), param[1] > (param[0] + param[1] + param[2]) / 3.0f ? enemySprites[1] : enemySprites[0], bleedSprite,
+			enemyHitSounds[rand() % enemyHitSounds.size()]);
+
+	newEnemy->Strength = param[0];
+	newEnemy->Agility = param[1];
+	newEnemy->Vitality = param[2];
+
+	newEnemy->HitR = 0.3;
+
+	newEnemy->RMask = newEnemy->Vitality / hi;
+	newEnemy->GMask = newEnemy->Strength / hi;
+	newEnemy->BMask = newEnemy->Agility / hi * 0.7f;
 	newEnemy->Scale = scale;
-	newEnemy->Strength = scale * 0.5f;
-	newEnemy->Agility = 0.5f / scale;
-	newEnemy->Vitality = scale * 0.8f;
+	
 	newEnemy->setHealth(newEnemy->MaxHealth());
 	newEnemy->Speed = newEnemy->MaxSpeed();
 	enemies.push_back(newEnemy);
@@ -967,7 +979,7 @@ void levelUp() {
 
 void processGame() {
 	if (!lose) {
-		gameHardness -= deltaTime * 0.0001;
+		gameHardness -= deltaTime * 0.0002;
 		gameTime += deltaTime;
 
 		handlePlayer();

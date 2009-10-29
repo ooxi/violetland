@@ -6,7 +6,7 @@ SoundManager::SoundManager(FileUtility* fileUtility, int mastVol) {
 	m_fileUtility = fileUtility;
 	m_mastVol = mastVol;
 
-	fprintf(stdout, "Mix_OpenAudio (freq %i, chan %i, chunksize %i)...\n",
+	fprintf(stdout, "Mix_OpenAudio (freq %i)...\n",
 			MIX_DEFAULT_FREQUENCY, 2, 2048);
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) != 0) {
 		m_enabled = false;
