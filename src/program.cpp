@@ -30,7 +30,7 @@
 #include "game/Terrain.h"
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.1";
+const string VERSION = "0.2.2";
 const int GAME_AREA_SIZE = 2048;
 const int SCREEN_COLOR = 16;
 
@@ -270,6 +270,25 @@ void printVersion() {
 	delete[] buf;
 }
 
+void renderSplash()
+{
+	StaticObject* splash = new StaticObject(0,0,1000, 1000, new Texture(ImageUtility::loadImage(
+			fileUtility->getFullImagePath("splash.png")), GL_TEXTURE_2D,
+			GL_LINEAR, true), true);
+
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	cam->X =cam->Y=0.0f;
+
+	cam->apply();
+
+	splash->draw(false);
+
+	SDL_GL_SwapBuffers();
+
+	delete splash;
+}
+
 void initSystem() {
 	printVersion();
 
@@ -310,8 +329,6 @@ void initSystem() {
 		exit(2);
 	}
 
-	TTF_Init();
-
 	buf = getProjectTitle();
 	SDL_WM_SetCaption(buf, NULL);
 	delete[] buf;
@@ -323,31 +340,35 @@ void initSystem() {
 
 	glEnable(GL_TEXTURE_2D);
 
+	glDisable(GL_DEPTH_TEST);
+
+	printf("glViewport...\n");
+	glViewport(0, 0, screenWidth, screenHeight);
+
+	renderSplash();
+
 	GLfloat lightColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	//flashlight
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightColor);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightColor);
-	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0);
-	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.001);
+	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0f);
+	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.001f);
 
 	//selflight
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor);
 	glLightfv(GL_LIGHT1, GL_AMBIENT, lightColor);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, lightColor);
-	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0);
-	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.0001);
+	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0f);
+	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.0001f);
 
 	glEnable(GL_LIGHT2);
-
-	glDisable(GL_DEPTH_TEST);
 
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-	printf("glViewport...\n");
-	glViewport(0, 0, screenWidth, screenHeight);
+	TTF_Init();
 
 	sndManager = new SoundManager(fileUtility, masterVolume);
 
@@ -1392,6 +1413,7 @@ int main(int argc, char *argv[]) {
 	parsePreferences(argc, argv);
 
 	initSystem();
+
 	loadResources();
 
 	startGame();

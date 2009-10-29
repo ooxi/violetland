@@ -87,7 +87,8 @@ install(FILES
 	images/laser.png
 	images/ak.png
 	images/uzi.png
-	images/remington.png 
+	images/remington.png
+	images/splash.png 
 DESTINATION ${relResPath}/images)
 install (FILES
 	images/terrain/base_0.png
