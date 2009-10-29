@@ -3,8 +3,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
-#include "ImageUtility.h"
-#include "Texture.h"
+#include "../../utility/ImageUtility.h"
+#include "../Texture.h"
 #include "TextObject.h"
 
 #ifndef TEXTMANAGER_H_

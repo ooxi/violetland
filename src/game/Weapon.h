@@ -3,9 +3,9 @@
 #include <vector>
 #include "SDL_opengl.h"
 #include "SDL_mixer.h"
-#include "../system/Texture.h"
-#include "../system/ImageUtility.h"
-#include "../system/Sound.h"
+#include "../system/graphic/Texture.h"
+#include "../system/utility/ImageUtility.h"
+#include "../system/sound/Sound.h"
 #include "StandardBullet.h"
 #include "LaserBullet.h"
 

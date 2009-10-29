@@ -16,6 +16,10 @@ include_directories(${incDirList})
 set(srcDir src)
 set(srcGameDir ${srcDir}/game)
 set(srcSystemDir ${srcDir}/system)
+set(srcGraphicDir ${srcSystemDir}/graphic)
+set(srcTextDir ${srcGraphicDir}/text)
+set(srcSoundDir ${srcSystemDir}/sound)
+set(srcUtilityDir ${srcSystemDir}/utility)
 
 set(srcFileList	
 	${srcDir}/program.cpp
@@ -27,21 +31,21 @@ set(srcFileList
 	${srcGameDir}/StandardBullet.cpp
 	${srcGameDir}/LaserBullet.cpp
 	${srcGameDir}/Terrain.cpp
-	${srcSystemDir}/FileUtility.cpp 
-	${srcSystemDir}/TextManager.cpp 
-	${srcSystemDir}/InputHandler.cpp 
-	${srcSystemDir}/ImageUtility.cpp
-	${srcSystemDir}/Texture.cpp
-	${srcSystemDir}/Sprite.cpp
+	${srcSystemDir}/InputHandler.cpp
+	${srcUtilityDir}/FileUtility.cpp
+	${srcUtilityDir}/ImageUtility.cpp
+	${srcGraphicDir}/Texture.cpp
+	${srcGraphicDir}/Sprite.cpp 
+	${srcGraphicDir}/StaticObject.cpp
+	${srcGraphicDir}/DynamicObject.cpp
+	${srcGraphicDir}/Aim.cpp
+	${srcGraphicDir}/Camera.cpp
+	${srcTextDir}/TextManager.cpp 
+	${srcTextDir}/TextObject.cpp 
 	${srcSystemDir}/Object.cpp
 	${srcSystemDir}/LiveObject.cpp
-	${srcSystemDir}/StaticObject.cpp
-	${srcSystemDir}/DynamicObject.cpp
-	${srcSystemDir}/TextObject.cpp
-	${srcSystemDir}/Aim.cpp
-	${srcSystemDir}/Camera.cpp
-	${srcSystemDir}/Sound.cpp
-	${srcSystemDir}/SoundManager.cpp
+	${srcSoundDir}/Sound.cpp
+	${srcSoundDir}/SoundManager.cpp
 )
 
 add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")

@@ -1,6 +1,6 @@
 #include "SDL_opengl.h"
-#include "ImageUtility.h"
-#include "Object.h"
+#include "../utility/ImageUtility.h"
+#include "../Object.h"
 #include "Texture.h"
 
 #ifndef STATICOBJECT_H_

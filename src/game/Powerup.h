@@ -1,4 +1,4 @@
-#include "./../system/StaticObject.h"
+#include "../system/graphic/StaticObject.h"
 
 #ifndef POWERUP_H_
 #define POWERUP_H_

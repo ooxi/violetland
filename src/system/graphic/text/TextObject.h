@@ -1,5 +1,5 @@
-#include "Texture.h"
-#include "Object.h"
+#include "../Texture.h"
+#include "../../Object.h"
 
 #ifndef TEXTOBJECT_H_
 #define TEXTOBJECT_H_

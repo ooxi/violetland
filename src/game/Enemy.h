@@ -1,11 +1,11 @@
-#include "./../system/DynamicObject.h"
+#include "../system/graphic/DynamicObject.h"
 #include "./../system/LiveObject.h"
 #include <cmath>
 #include <vector>
 #include "SDL_mixer.h"
 #include "SDL_image.h"
-#include "../system/Texture.h"
-#include "../system/Sound.h"
+#include "../system/graphic/Texture.h"
+#include "../system/sound/Sound.h"
 #include "Bullet.h"
 
 #ifndef ENEMY_H_

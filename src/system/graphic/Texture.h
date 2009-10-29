@@ -1,4 +1,4 @@
-#include "../system/ImageUtility.h"
+#include "../../system/utility/ImageUtility.h"
 
 #ifndef TEXTURE_H_
 #define TEXTURE_H_

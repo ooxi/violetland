@@ -1,6 +1,6 @@
 #include <iostream>
 #include "SDL_mixer.h"
-#include "FileUtility.h"
+#include "../utility/FileUtility.h"
 #include "Sound.h"
 
 #ifndef SOUNDMANAGER_H_

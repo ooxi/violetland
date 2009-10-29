@@ -1,5 +1,5 @@
-#include "./../system/DynamicObject.h"
-#include "./../system/StaticObject.h"
+#include "../system/graphic/DynamicObject.h"
+#include "./../system/graphic/StaticObject.h"
 #include "./../system/LiveObject.h"
 #include "SDL.h"
 #include "SDL_image.h"

@@ -1,8 +1,8 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-#include "../system/StaticObject.h"
-#include "../system/Camera.h"
+#include "../system/graphic/StaticObject.h"
+#include "../system/graphic/Camera.h"
 
 #ifndef TERRAIN_H_
 #define TERRAIN_H_
