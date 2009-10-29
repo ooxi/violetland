@@ -179,28 +179,32 @@ void createTerrain() {
 void spawnEnemy(float r) {
 	float spawnAngle = (rand() % 6300) / 1000.0;
 
-	int lvl = player->Level * 0.5f + player->Level * pow((rand() % 100) / 125.0f, 2);
-	if (lvl < 1) lvl = 1;
+	int lvl = player->Level * 0.5f + player->Level * pow((rand() % 100)
+			/ 125.0f, 2);
+	if (lvl < 1)
+		lvl = 1;
 
-	float scale = 0.1f + sqrt((float) lvl / player->Level);
+	float scale = 0.15f + sqrt((float) lvl / player->Level);
 
-	float param[3] = { 0.9f, 0.7f, 0.9f };
+	float param[3] = { 0.8f, 0.6f, 0.8f };
 
 	if (lvl > 1)
-		for (int i = 0; i < lvl; i++)
-		{
+		for (int i = 0; i < lvl; i++) {
 			int s = (rand() % 299) / 100;
 			param[s] += 0.1f;
 		}
 
 	float hi = 0.0f;
-	for (int i = 0; i < 3; i++)
-	{
-		if (param[i] > hi) hi = param[i];
+	for (int i = 0; i < 3; i++) {
+		if (param[i] > hi)
+			hi = param[i];
 	}
 
-	Enemy *newEnemy = new Enemy(r * cos(spawnAngle), r * sin(spawnAngle), param[1] > (param[0] + param[1] + param[2]) / 3.0f ? enemySprites[1] : enemySprites[0], bleedSprite,
-			enemyHitSounds[rand() % enemyHitSounds.size()]);
+	Enemy *newEnemy =
+			new Enemy(r * cos(spawnAngle), r * sin(spawnAngle), param[1]
+					> (param[0] + param[1] + param[2]) / 3.0f ? enemySprites[1]
+					: enemySprites[0], bleedSprite, enemyHitSounds[rand()
+					% enemyHitSounds.size()]);
 
 	newEnemy->Strength = param[0];
 	newEnemy->Agility = param[1];
@@ -212,7 +216,7 @@ void spawnEnemy(float r) {
 	newEnemy->GMask = newEnemy->Strength / hi;
 	newEnemy->BMask = newEnemy->Agility / hi * 0.7f;
 	newEnemy->Scale = scale;
-	
+
 	newEnemy->setHealth(newEnemy->MaxHealth());
 	newEnemy->Speed = newEnemy->MaxSpeed();
 	enemies.push_back(newEnemy);
@@ -270,15 +274,14 @@ void printVersion() {
 	delete[] buf;
 }
 
-void renderSplash()
-{
-	StaticObject* splash = new StaticObject(0,0,1000, 1000, new Texture(ImageUtility::loadImage(
-			fileUtility->getFullImagePath("splash.png")), GL_TEXTURE_2D,
-			GL_LINEAR, true), true);
+void renderSplash() {
+	StaticObject* splash = new StaticObject(0, 0, 1000, 1000,
+			new Texture(ImageUtility::loadImage(fileUtility->getFullImagePath(
+					"splash.png")), GL_TEXTURE_2D, GL_LINEAR, true), true);
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	cam->X =cam->Y=0.0f;
+	cam->X = cam->Y = 0.0f;
 
 	cam->apply();
 
@@ -560,6 +563,23 @@ void killEnemy(int index) {
 	enemies.erase(enemies.begin() + index);
 }
 
+void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
+	StaticObject *newBloodStain = new StaticObject(x, y, 128, 128,
+			bloodTex[(rand() % 299) / 100], false);
+
+	newBloodStain->Scale = scale;
+	newBloodStain->Angle = angle;
+	if (poisoned) {
+		newBloodStain->GMask = 1.0f - (rand() % 200) / 1000.0f;
+		newBloodStain->RMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
+	} else {
+		newBloodStain->RMask = 1.0f - (rand() % 200) / 1000.0f;
+		newBloodStain->GMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
+
+	}
+	bloodStains.push_back(newBloodStain);
+}
+
 void handleEnemies() {
 	if (!lose)
 		for (int i = 0; i < deltaTime; i++) {
@@ -643,15 +663,9 @@ void handleEnemies() {
 				enemies[i]->rollFrame(true);
 			}
 
-			if (enemies[i]->isBleeding() && bloodStains.size() < 3) {
-				StaticObject *newBloodStain = new StaticObject(enemies[i]->X,
-						enemies[i]->Y, 128, 128,
-						bloodTex[(rand() % 299) / 100], false);
-				newBloodStain->Scale = (rand() % 10) / 50.0 + 0.1;
-				newBloodStain->Angle = enemies[i]->Angle;
-				newBloodStain->RMask = newBloodStain->GMask
-						= newBloodStain->BMask = 1.0 - (rand() % 200) / 1000.0;
-				bloodStains.push_back(newBloodStain);
+			if (enemies[i]->isBleeding() && bloodStains.size() < 9) {
+				addBloodStain(enemies[i]->X, enemies[i]->Y, enemies[i]->Angle,
+						(rand() % 10) / 50.0f + 0.1f, enemies[i]->Poisoned);
 			}
 		}
 	}
@@ -665,6 +679,23 @@ void handleBullets() {
 			if (bullets[i]->isActive() && !enemies.empty()) {
 				for (int j = enemies.size() - 1; j >= 0; j--) {
 					if (bullets[i]->checkHit(enemies[j])) {
+						if (bloodStains.size() < 9) {
+							for (int k = 0; k < 3; k++) {
+								int angleDev = (rand() % 90) - 45;
+								float distance = (rand() % 100);
+								float bX = enemies[j]->X - cos(
+										(bullets[i]->Angle + 90 + angleDev)
+												* M_PI / 180.0f) * distance;
+								float bY = enemies[j]->Y - sin(
+										(bullets[i]->Angle + 90 + angleDev)
+												* M_PI / 180.0f) * distance;
+
+								addBloodStain(bX, bY, enemies[j]->Angle,
+										enemies[j]->Scale * 0.5f,
+										enemies[j]->Poisoned);
+							}
+						}
+
 						player->Xp += (int) ((1.5 - dayLight * -0.5)
 								* bullets[i]->Damage * 10);
 						float damageLoss = enemies[j]->getHealth();
@@ -674,18 +705,6 @@ void handleBullets() {
 							bullets[i]->Damage -= damageLoss;
 							if (bullets[i]->Damage <= 0)
 								bullets[i]->deactivate();
-						}
-
-						if (bloodStains.size() < 3) {
-							StaticObject *newBloodStain = new StaticObject(
-									enemies[j]->X, enemies[j]->Y, 128, 128,
-									bloodTex[(rand() % 299) / 100], false);
-							newBloodStain->Scale = enemies[j]->Scale;
-							newBloodStain->Angle = enemies[j]->Angle;
-							newBloodStain->RMask = newBloodStain->GMask
-									= newBloodStain->BMask = 1.0 - (rand()
-											% 200) / 1000.0;
-							bloodStains.push_back(newBloodStain);
 						}
 					}
 				}
