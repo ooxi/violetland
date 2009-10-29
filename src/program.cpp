@@ -28,6 +28,7 @@
 #include "game/Player.h"
 #include "game/Powerup.h"
 #include "game/Terrain.h"
+#include "game/MusicManager.h"
 
 const string PROJECT = "violetland";
 const string VERSION = "0.2.2";
@@ -92,16 +93,16 @@ vector<Bullet*> bullets;
 
 vector<TextObject*> msgQueue;
 
-TextManager *text;
-
 int currentTime = 0;
 int deltaTime = 0;
 
-Terrain *terrain;
+Terrain* terrain;
 
-FileUtility *fileUtility;
-InputHandler *input;
-SoundManager *sndManager;
+TextManager* text;
+FileUtility* fileUtility;
+InputHandler* input;
+SoundManager* sndManager;
+MusicManager* musicManager;
 
 void clearBloodStains() {
 	for (unsigned int i = 0; i < bloodStains.size(); i++) {
@@ -275,9 +276,12 @@ void printVersion() {
 }
 
 void renderSplash() {
-	StaticObject* splash = new StaticObject(0, 0, 1000, 1000,
-			new Texture(ImageUtility::loadImage(fileUtility->getFullImagePath(
-					"splash.png")), GL_TEXTURE_2D, GL_LINEAR, true), true);
+	Texture* tex = new Texture(ImageUtility::loadImage(
+			fileUtility->getFullImagePath("splash.png")), GL_TEXTURE_2D,
+			GL_LINEAR, true);
+
+	StaticObject* splash = new StaticObject(0, 0, tex->getWidth(),
+			tex->getHeight(), tex, true);
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -374,6 +378,8 @@ void initSystem() {
 	TTF_Init();
 
 	sndManager = new SoundManager(fileUtility, masterVolume);
+	musicManager = new MusicManager(fileUtility, sndManager);
+	musicManager->process();
 
 	input = new InputHandler();
 }
@@ -1170,6 +1176,7 @@ void runGameLoop() {
 			SDL_Delay(fpsLimit - deltaTime);
 
 		input->process();
+		musicManager->process(player, &enemies, gameTime);
 
 		handleCommonControls();
 
@@ -1441,6 +1448,7 @@ int main(int argc, char *argv[]) {
 
 	unloadResources();
 
+	delete musicManager;
 	delete sndManager;
 	delete input;
 	delete fileUtility;

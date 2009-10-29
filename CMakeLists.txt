@@ -31,6 +31,7 @@ set(srcFileList
 	${srcGameDir}/StandardBullet.cpp
 	${srcGameDir}/LaserBullet.cpp
 	${srcGameDir}/Terrain.cpp
+	${srcGameDir}/MusicManager.cpp
 	${srcSystemDir}/InputHandler.cpp
 	${srcUtilityDir}/FileUtility.cpp
 	${srcUtilityDir}/ImageUtility.cpp
