@@ -62,7 +62,8 @@ install(FILES
 	weapons
 	README_EN.TXT
 	README_RU.TXT
-	icon.png
+	icon-dark.png
+	icon-light.png
 DESTINATION ${relResPath})
 install(FILES fonts/harabara.ttf DESTINATION ${relResPath}/fonts)
 install(FILES
