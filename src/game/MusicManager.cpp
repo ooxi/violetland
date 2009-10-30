@@ -13,6 +13,8 @@ MusicManager::MusicManager(FileUtility* fileUtility, SoundManager* soundManager)
 				m_soundManager->create(m_fileUtility->getFullPath(
 						FileUtility::music, musicFiles[i]))));
 	}
+
+	fprintf(stdout, "\tfound %i tracks\n", (int) musicFiles.size());
 }
 
 void MusicManager::process(Player* player, std::vector<Enemy*>* enemies,

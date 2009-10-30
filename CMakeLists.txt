@@ -62,6 +62,7 @@ install(FILES
 	weapons
 	README_EN.TXT
 	README_RU.TXT
+	icon.png
 DESTINATION ${relResPath})
 install(FILES fonts/harabara.ttf DESTINATION ${relResPath}/fonts)
 install(FILES
@@ -93,7 +94,8 @@ install(FILES
 	images/ak.png
 	images/uzi.png
 	images/remington.png
-	images/splash.png 
+	images/splash_0.png
+	images/splash_1.png 
 DESTINATION ${relResPath}/images)
 install (FILES
 	images/terrain/base_0.png
@@ -214,3 +216,6 @@ install (FILES
 	images/anima/player/legs-23.png
 	images/anima/player/legs-24.png
 DESTINATION ${relResPath}/images/anima/player)
+install (FILES
+	music/Dzaibatsu2.ogg
+DESTINATION ${relResPath}/music)

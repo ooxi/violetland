@@ -1235,7 +1235,10 @@ void loadWeapons() {
 		in >> reloadSound;
 		Weapon *weapon = new Weapon((Bullet::BulletType) weaponType,
 				fileUtility->getFullPath(FileUtility::image, droppedImagePath),
-				sndManager->create(shotSound), sndManager->create(reloadSound));
+				sndManager->create(fileUtility->getFullPath(FileUtility::sound,
+						shotSound)), sndManager->create(
+						fileUtility->getFullPath(FileUtility::sound,
+								reloadSound)));
 		if (weaponType > 1) {
 			weapon->setBulletImage(fileUtility->getFullPath(FileUtility::image,
 					bulletPath));
@@ -1260,13 +1263,19 @@ void loadWeapons() {
 void loadResources() {
 	loadWeapons();
 
-	enemyHitSounds.push_back(sndManager->create("zombie_hit_1.ogg"));
-	enemyHitSounds.push_back(sndManager->create("zombie_hit_2.ogg"));
+	enemyHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
+			FileUtility::sound, "zombie_hit_1.ogg")));
+	enemyHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
+			FileUtility::sound, "zombie_hit_2.ogg")));
 
-	playerKilledSound = sndManager->create("player_killed.ogg");
-	playerHitSounds.push_back(sndManager->create("player_hit_0.ogg"));
-	playerHitSounds.push_back(sndManager->create("player_hit_1.ogg"));
-	playerHitSounds.push_back(sndManager->create("player_hit_2.ogg"));
+	playerKilledSound = sndManager->create(fileUtility->getFullPath(
+			FileUtility::sound, "player_killed.ogg"));
+	playerHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
+			FileUtility::sound, "player_hit_0.ogg")));
+	playerHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
+			FileUtility::sound, "player_hit_1.ogg")));
+	playerHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
+			FileUtility::sound, "player_hit_2.ogg")));
 
 	playerArmsTex = new Texture(ImageUtility::loadImage(
 			fileUtility->getFullPath(FileUtility::image, "player_top.png")),
