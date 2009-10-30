@@ -197,7 +197,7 @@ void spawnEnemy(float r, int lvl) {
 	}
 
 	Enemy *newEnemy =
-			new Enemy(r * cos(spawnAngle), r * sin(spawnAngle), param[1]
+			new Enemy(r * cos(spawnAngle), r * sin(spawnAngle), param[1] * 1.6f
 					> (param[0] + param[1] + param[2]) / 3.0f ? enemySprites[1]
 					: enemySprites[0], bleedSprite, enemyHitSounds[rand()
 					% enemyHitSounds.size()]);
@@ -1022,7 +1022,7 @@ void handlePowerups() {
 }
 
 void levelUp() {
-	spawnEnemy(GAME_AREA_SIZE * 1.5f, player->Level * 2 + 5);
+	spawnEnemy(GAME_AREA_SIZE * 1.5f, player->Level * 2 + 8);
 
 	player->NextLevelXp *= 2;
 
