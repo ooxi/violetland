@@ -177,17 +177,12 @@ void createTerrain() {
 	tiles.clear();
 }
 
-void spawnEnemy(float r) {
+void spawnEnemy(float r, int lvl) {
 	float spawnAngle = (rand() % 6300) / 1000.0;
 
-	int lvl = player->Level * 0.5f + player->Level * pow((rand() % 100)
-			/ 125.0f, 2);
-	if (lvl < 1)
-		lvl = 1;
+	float scale = pow((float) lvl / player->Level, 0.25f);
 
-	float scale = 0.15f + sqrt((float) lvl / player->Level);
-
-	float param[3] = { 0.8f, 0.6f, 0.8f };
+	float param[3] = { 0.8f, 0.5f, 0.8f };
 
 	if (lvl > 1)
 		for (int i = 0; i < lvl; i++) {
@@ -211,7 +206,7 @@ void spawnEnemy(float r) {
 	newEnemy->Agility = param[1];
 	newEnemy->Vitality = param[2];
 
-	newEnemy->HitR = 0.35;
+	newEnemy->HitR = 0.3;
 
 	newEnemy->RMask = newEnemy->Vitality / hi;
 	newEnemy->GMask = newEnemy->Strength / hi;
@@ -258,7 +253,7 @@ void startGame() {
 	SDL_ShowCursor(0);
 
 	for (unsigned int i = 0; i < spawnMonstersAtStart; i++) {
-		spawnEnemy(cam->getW());
+		spawnEnemy(cam->getW(), 1);
 	}
 }
 
@@ -591,8 +586,13 @@ void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 void handleEnemies() {
 	if (!lose)
 		for (int i = 0; i < deltaTime; i++) {
-			if (rand() % 10000 > gameHardness)
-				spawnEnemy(GAME_AREA_SIZE * 1.5);
+			if (rand() % 10000 > gameHardness) {
+				int lvl = player->Level * 0.5f + player->Level * pow((rand()
+						% 100) / 125.0f, 2);
+				if (lvl < 1)
+					lvl = 1;
+				spawnEnemy(GAME_AREA_SIZE * 1.5, lvl);
+			}
 		}
 
 	if (!enemies.empty()) {
@@ -689,8 +689,6 @@ void handleBullets() {
 			if (bullets[i]->isActive() && !enemies.empty()) {
 				for (int j = enemies.size() - 1; j >= 0; j--) {
 					if (bullets[i]->checkHit(enemies[j])) {
-						bullets[i]->X = enemies[j]->X;
-						bullets[i]->Y = enemies[j]->Y;
 
 						if (bloodStains.size() < 9) {
 							for (int k = 0; k < 3; k++) {
@@ -1019,6 +1017,8 @@ void handlePowerups() {
 }
 
 void levelUp() {
+	spawnEnemy(GAME_AREA_SIZE * 1.5f, player->Level * 2 + 5);
+
 	player->NextLevelXp *= 2;
 
 	player->Level += 1;
@@ -1032,7 +1032,7 @@ void levelUp() {
 
 void processGame() {
 	if (!lose) {
-		gameHardness -= deltaTime * 0.0002;
+		gameHardness -= deltaTime * 0.00012;
 		gameTime += deltaTime;
 
 		handlePlayer();

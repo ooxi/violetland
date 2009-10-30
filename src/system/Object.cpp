@@ -113,6 +113,12 @@ const bool Object::detectCollide(Object *refObj) {
 }
 
 const bool Object::detectCollide(float x1, float y1, float x2, float y2) {
+	float tx, ty;
+	return detectCollide(x1, y1, x2, y2, &tx, &ty);
+}
+
+const bool Object::detectCollide(float x1, float y1, float x2, float y2,
+		float* ix, float* iy) {
 	float k = (y1 - y2) / (x1 - x2);
 	float b = y1 - k * x1;
 	float r = HitR * Scale * m_width;
@@ -129,9 +135,11 @@ const bool Object::detectCollide(float x1, float y1, float x2, float y2) {
 	//	float resX2 = ((-(2* k * b - 2* targetX - 2* targetY * k) + sqrt(d)) / (2
 	//			+ 2* k * k));
 	//
-	//	float resY1 = k * resX1 + b;
+	float resY1 = k * resX1 + b;
 
 	if (std::abs(x1 - resX1) + std::abs(x2 - resX1) == std::abs(x2 - x1)) {
+		*ix = resX1;
+		*iy = resY1;
 		return true;
 	}
 

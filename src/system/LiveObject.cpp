@@ -10,7 +10,7 @@ LiveObject::LiveObject(float x, float y, int w, int h) :
 }
 
 const float LiveObject::MaxHealth() {
-	return Vitality > 0.7f ? 1.0f + (Vitality - 1.0f) * 2.0f : 0.4f;
+	return Vitality > 0.8f ? 1.0f + (Vitality - 1.0f) * 4.0f : 0.5f;
 }
 
 const float LiveObject::ChanceToEvade() {
@@ -56,7 +56,7 @@ void LiveObject::setHealth(float value) {
 	m_health = value;
 	if (m_health > MaxHealth())
 		m_health = MaxHealth();
-	if (m_health < 0 )
+	if (m_health < 0)
 		m_health = 0;
 }
 
