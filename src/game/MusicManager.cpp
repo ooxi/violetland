@@ -19,9 +19,9 @@ void MusicManager::process(Player* player, std::vector<Enemy*>* enemies,
 }
 
 void MusicManager::process() {
-	if (!m_music["Dzaibatsu2.ogg"]->isPlaying()) {
-		m_music["Dzaibatsu2.ogg"]->play();
-	}
+	if (m_music.size() > 0)
+		if (!m_music["Dzaibatsu2.ogg"]->isPlaying())
+			m_music["Dzaibatsu2.ogg"]->play();
 }
 
 MusicManager::~MusicManager() {
