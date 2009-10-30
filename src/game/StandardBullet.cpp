@@ -1,7 +1,7 @@
 #include "StandardBullet.h"
 
-StandardBullet::StandardBullet(float x, float y) :
-	Bullet(x, y, Bullet::standard) {
+StandardBullet::StandardBullet(float x, float y, float dX, float dY) :
+	Bullet(x, y, dX, dY, Bullet::standard) {
 	Speed = 3;
 	Damage = 1;
 	MaxRange = 1000;
@@ -30,7 +30,7 @@ void StandardBullet::draw() {
 	glColor4f(1.0f, 1.0f, 1.0f, Alpha);
 	glVertex3f(X, Y, 0);
 	glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
-	glVertex3f(startX, startY, 0);
+	glVertex3f(dStartX, dStartY, 0);
 	glEnd();
 }
 

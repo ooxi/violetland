@@ -43,9 +43,8 @@ void Weapon::process(int deltaTime) {
 	}
 }
 
-std::vector<Bullet*> *Weapon::fire(float x, float y) {
+std::vector<Bullet*> *Weapon::fire(float x, float y, float dX, float dY) {
 	std::vector<Bullet*> *newBullets = new std::vector<Bullet*>();
-
 	if (m_reload > 0 || m_fireDelay > 0 || Ammo < 1)
 		return newBullets;
 
@@ -53,10 +52,10 @@ std::vector<Bullet*> *Weapon::fire(float x, float y) {
 		Bullet* newBullet;
 		switch (Type) {
 		case Bullet::standard:
-			newBullet = new StandardBullet(x, y);
+			newBullet = new StandardBullet(x, y, dX, dY);
 			break;
 		case Bullet::laser:
-			newBullet = new LaserBullet(x, y);
+			newBullet = new LaserBullet(x, y, dX, dY);
 			break;
 		}
 		newBullet->Damage = Damage;

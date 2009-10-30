@@ -9,7 +9,7 @@ private:
 	float Alpha;
 	float prevX, prevY;
 public:
-	StandardBullet(float x, float y);
+	StandardBullet(float x, float y, float dX, float dY);
 	virtual void process(int deltaTime);
 	virtual void draw();
 	virtual bool checkHit(Object* objRef);

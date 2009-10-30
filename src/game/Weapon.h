@@ -26,7 +26,7 @@ public:
 			Sound* reloadSound);
 	void setBulletImage(std::string image);
 	void process(int deltaTime);
-	std::vector<Bullet*> *fire(float x, float y);
+	std::vector<Bullet*> *fire(float x, float y, float dX, float dY);
 	bool reload(float timeMod);
 	void pickup();
 	float getReloadState();

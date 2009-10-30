@@ -681,9 +681,14 @@ void handleEnemies() {
 void handleBullets() {
 	if (!bullets.empty()) {
 		for (int i = bullets.size() - 1; i >= 0; i--) {
+			bullets[i]->process(deltaTime);
+
 			if (bullets[i]->isActive() && !enemies.empty()) {
 				for (int j = enemies.size() - 1; j >= 0; j--) {
 					if (bullets[i]->checkHit(enemies[j])) {
+						bullets[i]->X = enemies[j]->X;
+						bullets[i]->Y = enemies[j]->Y;
+
 						if (bloodStains.size() < 9) {
 							for (int k = 0; k < 3; k++) {
 								int angleDev = (rand() % 90) - 45;
@@ -714,8 +719,6 @@ void handleBullets() {
 					}
 				}
 			}
-
-			bullets[i]->process(deltaTime);
 
 			if (bullets[i]->isReadyToRemove()) {
 				delete bullets[i];

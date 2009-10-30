@@ -7,12 +7,13 @@ class Bullet: public Object {
 protected:
 	bool m_active, m_readyToRemove;
 	float startX, startY;
+	float dStartX, dStartY;
 	float m_range;
 public:
 	enum BulletType {
 		standard = 0, laser
 	};
-	Bullet(float x, float y, BulletType type);
+	Bullet(float x, float y, float dX, float dY, BulletType type);
 	virtual void process(int deltaTime);
 	virtual void draw();
 	virtual bool checkHit(Object* objRef);

@@ -1,9 +1,11 @@
 #include "Bullet.h"
 
-Bullet::Bullet(float x, float y, Bullet::BulletType type) :
+Bullet::Bullet(float x, float y, float dX, float dY, Bullet::BulletType type) :
 	Object(x, y, 1, 1) {
 	startX = x;
 	startY = y;
+	dStartX = dX;
+	dStartY = dY;
 	m_active = true;
 	m_readyToRemove = false;
 	Type = type;
