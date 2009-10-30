@@ -1,3 +1,5 @@
+#include <map>
+#include <string>
 #include "../system/utility/FileUtility.h"
 #include "../system/sound/SoundManager.h"
 #include "Enemy.h"
@@ -10,7 +12,7 @@ class MusicManager {
 private:
 	FileUtility* m_fileUtility;
 	SoundManager* m_soundManager;
-	Sound* m_music;
+	std::map<std::string, Sound*> m_music;
 public:
 	MusicManager(FileUtility* fileUtility, SoundManager* soundManager);
 	void process(Player* player, std::vector<Enemy*>* enemies, int gameTime);

@@ -15,17 +15,17 @@ class FileUtility {
 private:
 	std::string m_appPath, m_resPath, m_usrPath;
 public:
+	enum PathType
+	{
+		common = 0, image, anima, sound, music, user
+	};
 	FileUtility(char *argPath);
 	static void truncateFullPathToDir(char *path);
 	static bool copyFile(const char srcPath[], const char destPath[]);
 	void traceResPath();
 	void setFullResPath(std::string path);
-	std::string getFullResPath(std::string resource);
-	std::string getFullImagePath(std::string resource);
-	std::string getFullAimPath(std::string resource);
-	std::string getFullAnimaPath(std::string resource);
-	std::string getFullSoundPath(std::string resource);
-	std::string getFullUserPath(std::string resource);
+	std::string getFullPath(PathType type, std::string resource);
+	std::vector<std::string> getFilesFromDir(std::string dir);
 	int getFilesCountFromDir(std::string dir);
 };
 

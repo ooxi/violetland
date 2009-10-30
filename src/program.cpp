@@ -144,10 +144,10 @@ void createTerrain() {
 		delete terrain;
 
 	int baseTexCount = fileUtility->getFilesCountFromDir(
-			fileUtility->getFullImagePath("terrain"));
+		fileUtility->getFullPath(FileUtility::image, "terrain"));
 	int baseTex = (rand() % (baseTexCount * 100 - 1) / 100);
 
-	string tilesDir = fileUtility->getFullImagePath("terrain");
+	string tilesDir = fileUtility->getFullPath(FileUtility::image,"terrain");
 	tilesDir.append("/%i");
 	char *buf;
 	sprintf(buf = new char[2000], tilesDir.c_str(), baseTex);
@@ -156,14 +156,14 @@ void createTerrain() {
 
 	sprintf(buf = new char[100], "terrain/base_%i.png", baseTex);
 	SDL_Surface *terrainSurface = ImageUtility::loadImage(
-			fileUtility->getFullImagePath(buf), 1);
+			fileUtility->getFullPath(FileUtility::image,buf), 1);
 	delete[] buf;
 
 	vector<SDL_Surface*> tiles;
 	for (int i = 0; i < tilesCount; i++) {
 		sprintf(buf = new char[100], "terrain/%i/%i.png", baseTex, i);
 		SDL_Surface *tile = ImageUtility::loadImage(
-				fileUtility->getFullImagePath(buf), 1);
+				fileUtility->getFullPath(FileUtility::image,buf), 1);
 		tiles.push_back(tile);
 		delete[] buf;
 	}
@@ -211,7 +211,7 @@ void spawnEnemy(float r) {
 	newEnemy->Agility = param[1];
 	newEnemy->Vitality = param[2];
 
-	newEnemy->HitR = 0.3;
+	newEnemy->HitR = 0.35;
 
 	newEnemy->RMask = newEnemy->Vitality / hi;
 	newEnemy->GMask = newEnemy->Strength / hi;
@@ -277,7 +277,7 @@ void printVersion() {
 
 void renderSplash() {
 	Texture* tex = new Texture(ImageUtility::loadImage(
-			fileUtility->getFullImagePath("splash.png")), GL_TEXTURE_2D,
+			fileUtility->getFullPath(FileUtility::image, "splash.png")), GL_TEXTURE_2D,
 			GL_LINEAR, true);
 
 	StaticObject* splash = new StaticObject(0, 0, tex->getWidth(),
@@ -387,9 +387,12 @@ void initSystem() {
 void writeHighScores() {
 	printf("Updating scores...\n");
 
+	string hsFile = fileUtility->getFullPath(FileUtility::user, "highscores");
+	string hsTempFile = fileUtility->getFullPath(FileUtility::user, "highscores~");
+
 	vector<int> scores;
 	ifstream in;
-	in.open(fileUtility->getFullUserPath("highscores").c_str());
+	in.open(hsFile.c_str());
 	if (in) {
 		while (in) {
 			int score;
@@ -414,20 +417,18 @@ void writeHighScores() {
 		scores.push_back(player->Xp);
 
 	ofstream out;
-	out.open(fileUtility->getFullUserPath("highscores~").c_str());
+	out.open(hsTempFile.c_str());
 	if (out) {
 		for (unsigned int i = 0; i < (scores.size() < 10 ? scores.size() : 10); i++) {
 			out << scores[i] << endl;
 		}
 		out.close();
 
-		remove(fileUtility->getFullUserPath("highscores").c_str());
+		remove(hsFile.c_str());
 
-		FileUtility::copyFile(
-				fileUtility->getFullUserPath("highscores~").c_str(),
-				fileUtility->getFullUserPath("highscores").c_str());
+		FileUtility::copyFile(hsTempFile.c_str(), hsFile.c_str());
 
-		remove(fileUtility->getFullUserPath("highscores~").c_str());
+		remove(hsTempFile.c_str());
 
 		printf("Scores was updated.\n");
 	} else {
@@ -680,8 +681,6 @@ void handleEnemies() {
 void handleBullets() {
 	if (!bullets.empty()) {
 		for (int i = bullets.size() - 1; i >= 0; i--) {
-			bullets[i]->process(deltaTime);
-
 			if (bullets[i]->isActive() && !enemies.empty()) {
 				for (int j = enemies.size() - 1; j >= 0; j--) {
 					if (bullets[i]->checkHit(enemies[j])) {
@@ -715,6 +714,8 @@ void handleBullets() {
 					}
 				}
 			}
+
+			bullets[i]->process(deltaTime);
 
 			if (bullets[i]->isReadyToRemove()) {
 				delete bullets[i];
@@ -1202,7 +1203,7 @@ void loadWeapons() {
 	}
 
 	ifstream in;
-	in.open(fileUtility->getFullResPath("weapons").c_str());
+	in.open(fileUtility->getFullPath(FileUtility::common,"weapons").c_str());
 	if (!in) {
 		fprintf(stderr, "Couldn't load weapons list.\n");
 		exit(4);
@@ -1222,10 +1223,10 @@ void loadWeapons() {
 		in >> shotSound;
 		in >> reloadSound;
 		Weapon *weapon = new Weapon((Bullet::BulletType) weaponType,
-				fileUtility->getFullImagePath(droppedImagePath),
+			fileUtility->getFullPath(FileUtility::image, droppedImagePath),
 				sndManager->create(shotSound), sndManager->create(reloadSound));
 		if (weaponType > 1) {
-			weapon->setBulletImage(fileUtility->getFullImagePath(bulletPath));
+			weapon->setBulletImage(fileUtility->getFullPath(FileUtility::image, bulletPath));
 		}
 		in >> name;
 		weapon->Name = name;
@@ -1256,7 +1257,7 @@ void loadResources() {
 	playerHitSounds.push_back(sndManager->create("player_hit_2.ogg"));
 
 	playerArmsTex = new Texture(ImageUtility::loadImage(
-			fileUtility->getFullImagePath("player_top.png")), GL_TEXTURE_2D,
+			fileUtility->getFullPath(FileUtility::image, "player_top.png")), GL_TEXTURE_2D,
 			GL_LINEAR, true);
 
 	vector<SDL_Surface*> playerLegsAnimSurfaces;
@@ -1264,7 +1265,7 @@ void loadResources() {
 		char *buf;
 		sprintf(buf = new char[100], "player/legs-%i.png", i);
 		SDL_Surface *surface = ImageUtility::loadImage(
-				fileUtility->getFullAnimaPath(buf));
+				fileUtility->getFullPath(FileUtility::anima, buf));
 		playerLegsAnimSurfaces.push_back(surface);
 		delete[] buf;
 	}
@@ -1275,20 +1276,20 @@ void loadResources() {
 		char *buf;
 		sprintf(buf = new char[100], "bleed/bleed-%i.png", i);
 		SDL_Surface *surface = ImageUtility::loadImage(
-				fileUtility->getFullAnimaPath(buf));
+				fileUtility->getFullPath(FileUtility::anima, buf));
 		bleedAnimSurfaces.push_back(surface);
 		delete[] buf;
 	}
 	bleedSprite = new Sprite(bleedAnimSurfaces);
 
 	bloodTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullImagePath("blood_0.png")), GL_TEXTURE_2D,
+			fileUtility->getFullPath(FileUtility::image, "blood_0.png")), GL_TEXTURE_2D,
 			GL_LINEAR, true));
 	bloodTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullImagePath("blood_1.png")), GL_TEXTURE_2D,
+			fileUtility->getFullPath(FileUtility::image, "blood_1.png")), GL_TEXTURE_2D,
 			GL_LINEAR, true));
 	bloodTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullImagePath("blood_2.png")), GL_TEXTURE_2D,
+			fileUtility->getFullPath(FileUtility::image, "blood_2.png")), GL_TEXTURE_2D,
 			GL_LINEAR, true));
 
 	for (unsigned int j = 0; j < 2; j++) {
@@ -1297,7 +1298,7 @@ void loadResources() {
 			char *buf;
 			sprintf(buf = new char[100], "monsters/%i/move-%i.png", j, i);
 			SDL_Surface *surface = ImageUtility::loadImage(
-					fileUtility->getFullAnimaPath(buf));
+					fileUtility->getFullPath(FileUtility::anima, buf));
 			animSurfaces.push_back(surface);
 			delete[] buf;
 		}
@@ -1306,12 +1307,12 @@ void loadResources() {
 	}
 
 	medikitTex = new Texture(ImageUtility::loadImage(
-			fileUtility->getFullImagePath("medikit.png")), GL_TEXTURE_2D,
+			fileUtility->getFullPath(FileUtility::image, "medikit.png")), GL_TEXTURE_2D,
 			GL_LINEAR, true);
 
 	aim = new Aim(aimColorDark, aimColorLight);
 
-	text = new TextManager(fileUtility->getFullResPath("fonts/harabara.ttf"),
+	text = new TextManager(fileUtility->getFullPath(FileUtility::common, "fonts/harabara.ttf"),
 			46 * widthK);
 }
 

@@ -20,7 +20,7 @@ SoundManager::SoundManager(FileUtility* fileUtility, int mastVol) {
 }
 
 Sound* SoundManager::create(std::string name) {
-	Mix_Chunk* chunk = m_enabled ? Mix_LoadWAV(m_fileUtility->getFullSoundPath(
+	Mix_Chunk* chunk = m_enabled ? Mix_LoadWAV(m_fileUtility->getFullPath(FileUtility::sound,
 					name).c_str()) : NULL;
 	Sound* snd = new Sound(chunk, m_enabled);
 	return snd;

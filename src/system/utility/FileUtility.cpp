@@ -10,8 +10,13 @@ void FileUtility::truncateFullPathToDir(char *path) {
 		*lastSlash = '\0';
 }
 
-int FileUtility::getFilesCountFromDir(std::string dir) {
-	int files = 0;
+int FileUtility::getFilesCountFromDir(std::string dir)
+{
+	return getFilesFromDir(dir).size();
+}
+
+std::vector<std::string> FileUtility::getFilesFromDir(std::string dir) {
+	std::vector<std::string> files;
 	DIR *dp;
 	struct dirent *ep;
 
@@ -20,11 +25,12 @@ int FileUtility::getFilesCountFromDir(std::string dir) {
 		while ((ep = readdir(dp)))
 #ifdef _WIN32
 			if (!(ep->data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-			files++;
+				files.push_back(ep->d_name);
 #endif //_WIN32W
 #if defined linux || defined __FreeBSD__
+		//TODO: testing is needed, code may be broken!
 			if (ep->d_type == DT_REG)
-				files++;
+				files.push_back(ep->d_name);
 #endif //linux || __FreeBSD__
 		(void) closedir(dp);
 	}
@@ -96,32 +102,28 @@ void FileUtility::setFullResPath(std::string path) {
 	traceResPath();
 }
 
-std::string FileUtility::getFullResPath(std::string resource) {
+std::string FileUtility::getFullPath(PathType type, std::string resource)
+{
 	std::string path(m_resPath);
-	return path.append(resource);
-}
+	std::string usrPath(m_usrPath);
 
-std::string FileUtility::getFullImagePath(std::string resource) {
-	std::string imagesFolder = "images/";
-	return getFullResPath(imagesFolder.append(resource));
-}
-
-std::string FileUtility::getFullAnimaPath(std::string resource) {
-	std::string imagesFolder = "images/anima/";
-	return getFullResPath(imagesFolder.append(resource));
-}
-
-std::string FileUtility::getFullAimPath(std::string resource) {
-	std::string imagesFolder = "images/aim/";
-	return getFullResPath(imagesFolder.append(resource));
-}
-
-std::string FileUtility::getFullUserPath(std::string resource) {
-	std::string path(m_usrPath);
-	return path.append(resource);
-}
-
-std::string FileUtility::getFullSoundPath(std::string resource) {
-	std::string soundsFolder = "sounds/";
-	return getFullResPath(soundsFolder.append(resource));
+	switch(type)
+	{
+	case FileUtility::common:
+		return path.append(resource);
+	case FileUtility::image:
+		path.append("images/");
+		return path.append(resource);
+	case FileUtility::anima:
+		path.append("images/anima/");
+		return path.append(resource);
+	case FileUtility::sound:
+		path.append("sounds/");
+		return path.append(resource);
+	case FileUtility::music:
+		path.append("music/");
+		return path.append(resource);
+	case FileUtility::user:		
+		return usrPath.append(resource);
+	}
 }
