@@ -271,9 +271,12 @@ void printVersion() {
 }
 
 void renderSplash() {
+	char *buf;
+	sprintf(buf = new char[100], "splash_%i.png", (rand() % 199) / 100);
 	Texture* tex = new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "splash.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true);
+			fileUtility->getFullPath(FileUtility::image, buf)), GL_TEXTURE_2D,
+			GL_LINEAR, true);
+	delete[] buf;
 
 	StaticObject* splash = new StaticObject(0, 0, tex->getWidth(),
 			tex->getHeight(), tex, true);
@@ -292,6 +295,8 @@ void renderSplash() {
 }
 
 void initSystem() {
+	srand((unsigned) time(NULL));
+
 	printVersion();
 
 	atexit(TTF_Quit);
