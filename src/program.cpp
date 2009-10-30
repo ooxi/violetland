@@ -308,6 +308,9 @@ void initSystem() {
 		exit(1);
 	}
 
+	sndManager = new SoundManager(fileUtility, masterVolume);
+	musicManager = new MusicManager(fileUtility, sndManager);
+
 	printf("SDL_GL_SetAttribute SDL_GL_DOUBLEBUFFER...\n");
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -353,6 +356,7 @@ void initSystem() {
 	glViewport(0, 0, screenWidth, screenHeight);
 
 	renderSplash();
+	musicManager->process();
 
 	GLfloat lightColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -376,10 +380,6 @@ void initSystem() {
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
 	TTF_Init();
-
-	sndManager = new SoundManager(fileUtility, masterVolume);
-	musicManager = new MusicManager(fileUtility, sndManager);
-	musicManager->process();
 
 	input = new InputHandler();
 }
@@ -623,10 +623,10 @@ void handleEnemies() {
 			} else if (rangeToPlayer < 800 && !lose) {
 				enemies[i]->TargetX = player->X - cos(
 						(player->getMoveDirection() + 90) * M_PI / 180)
-						* rangeToPlayer / enemies[i]->Speed * player->Speed;
+						* rangeToPlayer / 2.0f / enemies[i]->Speed * player->Speed;
 				enemies[i]->TargetY = player->Y - sin(
 						(player->getMoveDirection() + 90) * M_PI / 180)
-						* rangeToPlayer / enemies[i]->Speed * player->Speed;
+						* rangeToPlayer / 2.0f / enemies[i]->Speed * player->Speed;
 			} else if (!enemies[i]->DoNotDisturb) {
 				enemies[i]->TargetX = (rand() % (GAME_AREA_SIZE * 2))
 						- GAME_AREA_SIZE;
