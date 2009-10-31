@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <cmath>
+#include <map>
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_opengl.h"
@@ -24,6 +25,7 @@
 #include "system/graphic/Aim.h"
 #include "system/graphic/Camera.h"
 #include "system/sound/SoundManager.h"
+#include "system/graphic/Window.h"
 #include "game/Enemy.h"
 #include "game/Player.h"
 #include "game/Powerup.h"
@@ -59,9 +61,8 @@ double gameHardness;
 bool game;
 int gameTime;
 bool lose;
+bool gameStarted;
 bool gamePaused;
-bool showChar;
-bool showHelp;
 
 float dayLight = 1.0;
 
@@ -91,6 +92,8 @@ vector<Powerup*> powerups;
 vector<Enemy*> enemies;
 vector<Bullet*> bullets;
 
+map<string, Window*> windows;
+
 vector<TextObject*> msgQueue;
 
 int currentTime = 0;
@@ -103,6 +106,16 @@ FileUtility* fileUtility;
 InputHandler* input;
 SoundManager* sndManager;
 MusicManager* musicManager;
+
+StaticObject* splash;
+
+void clearWindows() {
+	std::map<std::string, Window*>::const_iterator iter;
+	for (iter = windows.begin(); iter != windows.end(); ++iter) {
+		delete iter->second;
+	}
+	windows.clear();
+}
 
 void clearBloodStains() {
 	for (unsigned int i = 0; i < bloodStains.size(); i++) {
@@ -197,7 +210,7 @@ void spawnEnemy(float r, int lvl) {
 	}
 
 	Enemy *newEnemy =
-			new Enemy(r * cos(spawnAngle), r * sin(spawnAngle), param[1] * 1.6f
+			new Enemy(r * cos(spawnAngle), r * sin(spawnAngle), param[1] + 0.3f
 					> (param[0] + param[1] + param[2]) / 3.0f ? enemySprites[1]
 					: enemySprites[0], bleedSprite, enemyHitSounds[rand()
 					% enemyHitSounds.size()]);
@@ -219,7 +232,6 @@ void spawnEnemy(float r, int lvl) {
 }
 
 void startGame() {
-	printf("Starting new game...\n");
 	if (player)
 		delete player;
 	player = new Player(0, 0, playerLegsSprite, playerArmsTex, weapons[0]);
@@ -230,8 +242,7 @@ void startGame() {
 	gameHardness = 9994.0;
 	lose = false;
 	gamePaused = false;
-	showChar = false;
-	showHelp = false;
+	gameStarted = true;
 
 	clearBloodStains();
 	clearPowerups();
@@ -249,7 +260,6 @@ void startGame() {
 
 	createTerrain();
 
-	game = true;
 	SDL_ShowCursor(0);
 
 	for (unsigned int i = 0; i < spawnMonstersAtStart; i++) {
@@ -268,30 +278,6 @@ void printVersion() {
 	char *buf = getProjectTitle();
 	cout << buf << endl;
 	delete[] buf;
-}
-
-void renderSplash() {
-	char *buf;
-	sprintf(buf = new char[100], "splash_%i.png", (rand() % 199) / 100);
-	Texture* tex = new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, buf)), GL_TEXTURE_2D,
-			GL_LINEAR, true);
-	delete[] buf;
-
-	StaticObject* splash = new StaticObject(0, 0, tex->getWidth(),
-			tex->getHeight(), tex, true);
-
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	cam->X = cam->Y = 0.0f;
-
-	cam->apply();
-
-	splash->draw(false);
-
-	SDL_GL_SwapBuffers();
-
-	delete splash;
 }
 
 void initSystem() {
@@ -355,8 +341,26 @@ void initSystem() {
 	printf("glViewport...\n");
 	glViewport(0, 0, screenWidth, screenHeight);
 
-	renderSplash();
-	musicManager->process();
+	sprintf(buf = new char[100], "splash_%i.png", (rand() % 199) / 100);
+	Texture* tex = new Texture(ImageUtility::loadImage(
+			fileUtility->getFullPath(FileUtility::image, buf)), GL_TEXTURE_2D,
+			GL_LINEAR, true);
+	delete[] buf;
+
+	splash = new StaticObject(0, 0, tex->getWidth(), tex->getHeight(), tex,
+			true);
+
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	cam->X = cam->Y = 0.0f;
+
+	cam->apply();
+
+	splash->draw(false);
+
+	SDL_GL_SwapBuffers();
+
+	musicManager->play();
 
 	GLfloat lightColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -442,9 +446,9 @@ void writeHighScores() {
 void loseGame() {
 	lose = true;
 	if (playerHitSounds[playerHitSndPlaying]->isPlaying())
-		playerHitSounds[playerHitSndPlaying]->stop();
+		playerHitSounds[playerHitSndPlaying]->stop(0);
 
-	playerKilledSound->play();
+	playerKilledSound->play(0);
 
 	msgQueue.push_back(text->getObject("Player is dead.", 0, 0,
 			TextManager::LEFT, TextManager::BOTTOM));
@@ -462,30 +466,216 @@ void switchGamePause() {
 		SDL_ShowCursor(0);
 }
 
-void handleCommonControls() {
-	if (input->getPressInput(InputHandler::Restart) && gameTime > 1000)
-		startGame();
+void fillCharStatsWindow() {
+	const int l = screenWidth * 0.1f;
+	const int r = screenWidth * 0.6f;
 
-	if (input->getPressInput(InputHandler::Escape))
-		game = false;
+	Window* charStats = windows.find("charstats")->second;
 
-	if (input->getPressInput(InputHandler::Pause) && !showChar && !showHelp) {
+	char *buf;
+	sprintf(buf = new char[100], "Current player level: %i",
+			(int) ((player->Level)));
+	charStats->addElement("level", text->getObject(buf, l, text->getHeight()
+			* 4.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+
+	sprintf(buf = new char[100], "Available improvement points: %i",
+			(int) ((player->LevelPoints)));
+	charStats->addElement("availpoints", text->getObject(buf, l,
+			text->getHeight() * 5.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+
+	sprintf(buf = new char[100], "Strength: %i",
+			(int) ((player->Strength * 100)));
+	charStats->addElement("strength", text->getObject(buf, l, text->getHeight()
+			* 7.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+	sprintf(buf = new char[100], "Agility: %i", (int) ((player->Agility * 100)));
+	charStats->addElement("agility", text->getObject(buf, l, text->getHeight()
+			* 8.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+	sprintf(buf = new char[100], "Vitality: %i",
+			(int) ((player->Vitality * 100)));
+	charStats->addElement("vitality", text->getObject(buf, l, text->getHeight()
+			* 9.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+
+	sprintf(buf = new char[100], "HP: %i / Max HP: %i",
+			(int) ((player->getHealth() * 100)), (int) ((player->MaxHealth()
+					* 100)));
+	charStats->addElement("hp", text->getObject(buf, l, text->getHeight()
+			* 11.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+	sprintf(buf = new char[100], "Melee damage: %i", (int) ((player->Damage()
+			* 100)));
+	charStats->addElement("melee", text->getObject(buf, l, text->getHeight()
+			* 12.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+	sprintf(buf = new char[100], "Chance of block: %i%%",
+			(int) ((player->ChanceToEvade() * 100)));
+	charStats->addElement("chanceblock", text->getObject(buf, l,
+			text->getHeight() * 13.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+	sprintf(buf = new char[100], "Reloading speed modifier: %i%%",
+			(int) ((player->ReloadSpeedMod() * 100)));
+	charStats->addElement("reloadingspeed", text->getObject(buf, l,
+			text->getHeight() * 14.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+	sprintf(buf = new char[100], "Accuracy deviation modifier: %i%%",
+			(int) ((player->WeaponRetForceMod() * 100)));
+	charStats->addElement("accuracy", text->getObject(buf, l, text->getHeight()
+			* 15.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+	sprintf(buf = new char[100], "Health regeneration: %.2f/min",
+			(player->HealthRegen() * 6000000));
+	charStats->addElement("healthregen", text->getObject(buf, l,
+			text->getHeight() * 16.0f, TextManager::LEFT, TextManager::MIDDLE));
+	delete[] buf;
+
+	if (player->Unstoppable)
+		charStats->addElement("+unstoppable", text->getObject("+", r,
+				text->getHeight() * 6.0f, TextManager::CENTER,
+				TextManager::MIDDLE));
+
+	if (player->PoisonBullets)
+		charStats->addElement("+poisonbullets", text->getObject("+", r,
+				text->getHeight() * 7.0f, TextManager::CENTER,
+				TextManager::MIDDLE));
+
+	if (player->BigCalibre)
+		charStats->addElement("+bigcalibre", text->getObject("+", r,
+				text->getHeight() * 8.0f, TextManager::CENTER,
+				TextManager::MIDDLE));
+}
+
+void addCharStatWindow() {
+	Window *charStats = new Window(0.0f, 0.0f, screenWidth, screenHeight, 0.0f,
+			0.0f, 0.0f, 0.5f);
+
+	const int r = screenWidth * 0.6f;
+
+	charStats->addElement("perks", text->getObject("Perks:", r,
+			text->getHeight() * 4.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	charStats->addElement("unstoppable", text->getObject("Unstoppable", r
+			+ text->getHeight() * 2.0f, text->getHeight() * 6.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
+	charStats->addElement("poisonbullets", text->getObject("Poison bullets", r
+			+ text->getHeight() * 2.0f, text->getHeight() * 7.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
+	charStats->addElement("bigcalibre", text->getObject("Big calibre", r
+			+ text->getHeight() * 2.0f, text->getHeight() * 8.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
+	windows.insert(map<string, Window*>::value_type("charstats", charStats));
+}
+
+void addMainMenuWindow() {
+	Window *mainMenu = new Window(0.0f, 0.0f, screenWidth, screenHeight, 0.0f,
+			0.0f, 0.0f, 0.5f);
+
+	const int l = screenWidth * 0.1f;
+
+	mainMenu->addElement("survival", text->getObject("New survival", l,
+			text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	mainMenu->addElement("options", text->getObject("Options", l,
+			text->getHeight() * 9.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	mainMenu->addElement("highscores", text->getObject("High scores", l,
+			text->getHeight() * 10.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	mainMenu->addElement("exit", text->getObject("Exit", l, text->getHeight()
+			* 11.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	windows.insert(map<string, Window*>::value_type("mainmenu", mainMenu));
+}
+
+void addHelpWindow() {
+	Window *help = new Window(0.0f, 0.0f, screenWidth, screenHeight, 0.0f,
+			0.0f, 0.0f, 0.5f);
+
+	const int l = screenWidth * 0.1f;
+
+	help->addElement("label1", text->getObject("Game controls:", l,
+			text->getHeight() * 4, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label2", text->getObject("Game controls:", l,
+			text->getHeight() * 4, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label3", text->getObject("Move up: W", l,
+			text->getHeight() * 6, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label4", text->getObject("Move left: A", l,
+			text->getHeight() * 7, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label5", text->getObject("Move down: S", l,
+			text->getHeight() * 8, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label6", text->getObject("Move right: D", l,
+			text->getHeight() * 9, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label7", text->getObject("Fire: Left mouse button", l,
+			text->getHeight() * 10, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label8", text->getObject("Reload: Right mouse button", l,
+			text->getHeight() * 11, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label9", text->getObject("Toggle flashlight: F", l,
+			text->getHeight() * 12, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label10", text->getObject("Toggle laser aim: G", l,
+			text->getHeight() * 13, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label11", text->getObject("Restart game: Enter", l,
+			text->getHeight() * 14, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label12", text->getObject("Quit game: Esc", l,
+			text->getHeight() * 15, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label13", text->getObject("Open player char stats: C", l,
+			text->getHeight() * 16, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label14", text->getObject("Pause game: P", l,
+			text->getHeight() * 17, TextManager::LEFT, TextManager::MIDDLE));
+
+	windows.insert(map<string, Window*>::value_type("helpscreen", help));
+}
+
+void handleGameCommonControls() {
+	if (input->getPressInput(InputHandler::Pause) && windows.empty()) {
 		switchGamePause();
 	}
 
 	if (input->getPressInput(InputHandler::ShowChar)) {
-		showChar = !showChar;
-		if (showChar)
-			showHelp = false;
-		if (gamePaused != showChar)
+		if (windows.count("charstats") == 0) {
+			clearWindows();
+
+			addCharStatWindow();
+			fillCharStatsWindow();
+
+		} else {
+			windows.erase("charstats");
+		}
+
+		if (gamePaused == windows.empty())
 			switchGamePause();
 	}
 
 	if (input->getPressInput(InputHandler::Help)) {
-		showHelp = !showHelp;
-		if (showHelp)
-			showChar = false;
-		if (gamePaused != showHelp)
+		if (windows.count("helpscreen") == 0) {
+			clearWindows();
+
+			addHelpWindow();
+
+		} else {
+			windows.erase("helpscreen");
+		}
+
+		if (gamePaused == windows.empty())
+			switchGamePause();
+	}
+
+	if (input->getPressInput(InputHandler::Escape)) {
+		if (windows.count("mainmenu") == 0) {
+			clearWindows();
+
+			addMainMenuWindow();
+
+		} else {
+			windows.erase("mainmenu");
+		}
+
+		if (gamePaused == windows.empty())
 			switchGamePause();
 	}
 }
@@ -659,7 +849,7 @@ void handleEnemies() {
 									: player->getHealth() - 0.01f)
 									/ player->MaxHealth()
 									* playerHitSounds.size();
-							playerHitSounds[playerHitSndPlaying]->play();
+							playerHitSounds[playerHitSndPlaying]->play(0);
 						}
 					}
 
@@ -734,93 +924,9 @@ void handleBullets() {
 	}
 }
 
-void drawCharStats() {
+void handleCharStatsActions() {
 	const int l = screenWidth * 0.1f;
 	const int r = screenWidth * 0.6f;
-	char *buf;
-
-	sprintf(buf = new char[100], "Current player level: %i",
-			(int) (player->Level));
-	text->draw(buf, l, text->getHeight() * 4.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	sprintf(buf = new char[100], "Available improvement points: %i",
-			(int) (player->LevelPoints));
-	text->draw(buf, l, text->getHeight() * 5.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	sprintf(buf = new char[100], "Strength: %i", (int) (player->Strength * 100));
-	text->draw(buf, l, text->getHeight() * 7.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	sprintf(buf = new char[100], "Agility: %i", (int) (player->Agility * 100));
-	text->draw(buf, l, text->getHeight() * 8.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	sprintf(buf = new char[100], "Vitality: %i", (int) (player->Vitality * 100));
-	text->draw(buf, l, text->getHeight() * 9.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	sprintf(buf = new char[100], "HP: %i / Max HP: %i",
-			(int) (player->getHealth() * 100),
-			(int) (player->MaxHealth() * 100));
-	text->draw(buf, l, text->getHeight() * 11.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	sprintf(buf = new char[100], "Melee damage: %i", (int) (player->Damage()
-			* 100));
-	text->draw(buf, l, text->getHeight() * 12.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	sprintf(buf = new char[100], "Chance of block: %i%%",
-			(int) (player->ChanceToEvade() * 100));
-	text->draw(buf, l, text->getHeight() * 13.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	sprintf(buf = new char[100], "Reloading speed modifier: %i%%",
-			(int) (player->ReloadSpeedMod() * 100));
-	text->draw(buf, l, text->getHeight() * 14.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	sprintf(buf = new char[100], "Accuracy deviation modifier: %i%%",
-			(int) (player->WeaponRetForceMod() * 100));
-	text->draw(buf, l, text->getHeight() * 15.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	sprintf(buf = new char[100], "Health regeneration: %.2f/min",
-			(player->HealthRegen() * 6000000));
-	text->draw(buf, l, text->getHeight() * 16.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	delete[] buf;
-
-	text->draw("Perks:", r, text->getHeight() * 4.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-
-	if (player->Unstoppable)
-		text->draw("+", r, text->getHeight() * 6.0f, TextManager::CENTER,
-				TextManager::MIDDLE);
-	text->draw("Unstoppable", r + text->getHeight() * 2.0f, text->getHeight()
-			* 6.0f, TextManager::LEFT, TextManager::MIDDLE);
-	if (player->PoisonBullets)
-		text->draw("+", r, text->getHeight() * 7.0f, TextManager::CENTER,
-				TextManager::MIDDLE);
-	text->draw("Poison bullets", r + text->getHeight() * 2.0f,
-			text->getHeight() * 7.0f, TextManager::LEFT, TextManager::MIDDLE);
-	if (player->BigCalibre)
-		text->draw("+", r, text->getHeight() * 8.0f, TextManager::CENTER,
-				TextManager::MIDDLE);
-	text->draw("Big calibre", r + text->getHeight() * 2.0f, text->getHeight()
-			* 8.0f, TextManager::LEFT, TextManager::MIDDLE);
 
 	if (input->getPressInput(InputHandler::Fire)) {
 		float gmx = input->mouseX;
@@ -830,11 +936,13 @@ void drawCharStats() {
 				&& gmy < text->getHeight() * 7.5f && player->LevelPoints > 0) {
 			player->Strength += 0.1;
 			player->LevelPoints--;
+			fillCharStatsWindow();
 		}
 		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 7.5f
 				&& gmy < text->getHeight() * 8.5f && player->LevelPoints > 0) {
 			player->Agility += 0.1;
 			player->LevelPoints--;
+			fillCharStatsWindow();
 		}
 		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 8.5f
 				&& gmy < text->getHeight() * 9.5f && player->LevelPoints > 0) {
@@ -842,57 +950,49 @@ void drawCharStats() {
 			player->Vitality += 0.1;
 			player->LevelPoints--;
 			player->setHealth(player->MaxHealth() * ch);
+			fillCharStatsWindow();
 		}
 		if (gmx > r && gmx < screenWidth && gmy > text->getHeight() * 5.5f
 				&& gmy < text->getHeight() * 6.5f && !player->Unstoppable
 				&& player->LevelPoints > 0) {
 			player->Unstoppable = true;
 			player->LevelPoints--;
+			fillCharStatsWindow();
 		}
 		if (gmx > r && gmx < screenWidth && gmy > text->getHeight() * 6.5f
 				&& gmy < text->getHeight() * 7.5f && !player->PoisonBullets
 				&& player->LevelPoints > 0) {
 			player->PoisonBullets = true;
 			player->LevelPoints--;
+			fillCharStatsWindow();
 		}
 		if (gmx > r && gmx < screenWidth && gmy > text->getHeight() * 7.5f
 				&& gmy < text->getHeight() * 8.5f && !player->BigCalibre
 				&& player->LevelPoints > 0) {
 			player->BigCalibre = true;
 			player->LevelPoints--;
+			fillCharStatsWindow();
 		}
 	}
 }
 
-void drawHelp() {
+void handleMainMenuActions() {
 	const int l = screenWidth * 0.1f;
 
-	text->draw("Game controls:", l, text->getHeight() * 4, TextManager::LEFT,
-			TextManager::MIDDLE);
-	text->draw("Move up: W", l, text->getHeight() * 6, TextManager::LEFT,
-			TextManager::MIDDLE);
-	text->draw("Move left: A", l, text->getHeight() * 7, TextManager::LEFT,
-			TextManager::MIDDLE);
-	text->draw("Move down: S", l, text->getHeight() * 8, TextManager::LEFT,
-			TextManager::MIDDLE);
-	text->draw("Move right: D", l, text->getHeight() * 9, TextManager::LEFT,
-			TextManager::MIDDLE);
-	text->draw("Fire: Left mouse button", l, text->getHeight() * 10,
-			TextManager::LEFT, TextManager::MIDDLE);
-	text->draw("Reload: Right mouse button", l, text->getHeight() * 11,
-			TextManager::LEFT, TextManager::MIDDLE);
-	text->draw("Toggle flashlight: F", l, text->getHeight() * 12,
-			TextManager::LEFT, TextManager::MIDDLE);
-	text->draw("Toggle laser aim: G", l, text->getHeight() * 13,
-			TextManager::LEFT, TextManager::MIDDLE);
-	text->draw("Restart game: Enter", l, text->getHeight() * 14,
-			TextManager::LEFT, TextManager::MIDDLE);
-	text->draw("Quit game: Esc", l, text->getHeight() * 15, TextManager::LEFT,
-			TextManager::MIDDLE);
-	text->draw("Open player char stats: C", l, text->getHeight() * 16,
-			TextManager::LEFT, TextManager::MIDDLE);
-	text->draw("Pause game: P", l, text->getHeight() * 17, TextManager::LEFT,
-			TextManager::MIDDLE);
+	if (input->getPressInput(InputHandler::Fire)) {
+		float gmx = input->mouseX;
+		float gmy = input->mouseY;
+
+		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 7.5f
+				&& gmy < text->getHeight() * 8.5f) {
+			windows.erase("mainmenu");
+			startGame();
+		}
+		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 10.5f
+				&& gmy < text->getHeight() * 11.5f) {
+			game = false;
+		}
+	}
 }
 
 void drawMessagesQueue() {
@@ -969,12 +1069,12 @@ void drawHud() {
 
 	drawMessagesQueue();
 
-	if (showChar) {
-		drawCharStats();
+	if (windows.count("charstats") > 0) {
+		handleCharStatsActions();
 	}
 
-	if (showHelp) {
-		drawHelp();
+	if (windows.count("mainmenu") > 0) {
+		handleMainMenuActions();
 	}
 }
 
@@ -1168,10 +1268,12 @@ void drawGame() {
 	}
 }
 
-void runGameLoop() {
+void runMainLoop() {
 	currentTime = SDL_GetTicks();
 	fpsCountingStart = currentTime;
 	framesCount = 0;
+	gameStarted = false;
+	game = true;
 	while (game) {
 		framesCount++;
 		const int now = SDL_GetTicks();
@@ -1188,16 +1290,47 @@ void runGameLoop() {
 			SDL_Delay(fpsLimit - deltaTime);
 
 		input->process();
-		musicManager->process(player, &enemies, gameTime);
 
-		handleCommonControls();
+		if (gameStarted) {
+			musicManager->process(player, &enemies, gamePaused);
 
-		if (!gamePaused)
-			processGame();
+			handleGameCommonControls();
 
-		drawGame();
+			if (!gamePaused)
+				processGame();
 
-		drawHud();
+			drawGame();
+
+			drawHud();
+		} else {
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			cam->X = cam->Y = 0.0f;
+
+			cam->apply();
+
+			splash->draw(false);
+
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+
+			glOrtho(0.0, screenWidth, screenHeight, 0.0, -10.0, 10.0);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			handleMainMenuActions();
+		}
+
+		if (!windows.empty()) {
+			std::map<std::string, Window*>::const_iterator win;
+			for (win = windows.begin(); win != windows.end(); ++win) {
+				Window* w = win->second;
+				w->draw();
+			}
+		}
+
+		//		startGame();
 
 		SDL_GL_SwapBuffers();
 	}
@@ -1339,6 +1472,7 @@ void loadResources() {
 }
 
 void unloadResources() {
+	delete splash;
 	delete playerKilledSound;
 	delete text;
 	delete aim;
@@ -1366,6 +1500,7 @@ void unloadResources() {
 	clearEnemies();
 	clearBullets();
 	clearMessages();
+	clearWindows();
 
 	for (unsigned int i = 0; i < enemyHitSounds.size(); i++) {
 		delete enemyHitSounds[i];
@@ -1465,9 +1600,9 @@ int main(int argc, char *argv[]) {
 
 	loadResources();
 
-	startGame();
+	addMainMenuWindow();
 
-	runGameLoop();
+	runMainLoop();
 
 	unloadResources();
 

@@ -41,6 +41,7 @@ set(srcFileList
 	${srcGraphicDir}/DynamicObject.cpp
 	${srcGraphicDir}/Aim.cpp
 	${srcGraphicDir}/Camera.cpp
+	${srcGraphicDir}/Window.cpp
 	${srcTextDir}/TextManager.cpp 
 	${srcTextDir}/TextObject.cpp 
 	${srcSystemDir}/Object.cpp
@@ -218,5 +219,7 @@ install (FILES
 	images/anima/player/legs-24.png
 DESTINATION ${relResPath}/images/anima/player)
 install (FILES
-	music/Dzaibatsu2.ogg
+	music/dzaibatsu.ogg
+	music/morning.ogg
+	music/space-crusader.ogg
 DESTINATION ${relResPath}/music)

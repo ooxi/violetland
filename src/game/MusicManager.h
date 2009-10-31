@@ -13,10 +13,12 @@ private:
 	FileUtility* m_fileUtility;
 	SoundManager* m_soundManager;
 	std::map<std::string, Sound*> m_music;
+	std::string m_currentPlaying;
 public:
 	MusicManager(FileUtility* fileUtility, SoundManager* soundManager);
-	void process(Player* player, std::vector<Enemy*>* enemies, int gameTime);
-	void process();
+	void process(Player* player, std::vector<Enemy*>* enemies, bool paused);
+	void play();
+	void play(std::string name, bool now);
 	~MusicManager();
 };
 

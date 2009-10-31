@@ -11,10 +11,10 @@ private:
 public:
 	Sound(Mix_Chunk* sndRef, bool enabled);
 	bool isPlaying();
-	void play();
+	void play(int fade);
 	void playInf();
 	void setPos(Sint16 angle, Uint8 distance);
-	void stop();
+	void stop(int fade);
 	~Sound();
 };
 
