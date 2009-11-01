@@ -17,7 +17,7 @@ void LaserBullet::process(int deltaTime) {
 	if (Alpha < 0)
 		Alpha = 0;
 
-	m_active = !m_hit;
+	m_active = !m_hit && Alpha > 0.15f;
 
 	m_readyToRemove = !m_active && Alpha == 0;
 }

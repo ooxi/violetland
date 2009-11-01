@@ -190,12 +190,10 @@ void createTerrain() {
 	tiles.clear();
 }
 
-void spawnEnemy(float r, int lvl) {
+void spawnEnemy(float r, int lvl, float* param) {
 	float spawnAngle = (rand() % 6300) / 1000.0;
 
 	float scale = pow((float) lvl / player->Level, 0.2f);
-
-	float param[3] = { 0.8f, 0.5f, 0.8f };
 
 	if (lvl > 1)
 		for (int i = 0; i < lvl; i++) {
@@ -264,7 +262,8 @@ void startGame() {
 	SDL_ShowCursor(0);
 
 	for (unsigned int i = 0; i < spawnMonstersAtStart; i++) {
-		spawnEnemy(cam->getW(), 1);
+		float param[3] = { 0.8f, 0.5f, 1.0f };
+		spawnEnemy(cam->getW(), 1, param);
 	}
 
 	windows["mainmenu"]->CloseFlag = true;
@@ -573,7 +572,9 @@ void increaseAgility() {
 
 void increaseVitality() {
 	if (player->LevelPoints > 0) {
+		float h = player->getHealth() / player->MaxHealth();
 		player->Vitality += 0.1;
+		player->setHealth(h * player->MaxHealth());
 		player->LevelPoints--;
 		fillCharStatsWindow();
 	}
@@ -854,7 +855,8 @@ void handleEnemies() {
 						% 100) / 125.0f, 2);
 				if (lvl < 1)
 					lvl = 1;
-				spawnEnemy(GAME_AREA_SIZE * 1.5, lvl);
+				float param[3] = { 0.8f, 0.5f, 1.0f };
+				spawnEnemy(GAME_AREA_SIZE * 1.5, lvl, param);
 			}
 		}
 
@@ -1111,7 +1113,8 @@ void handlePowerups() {
 }
 
 void levelUp() {
-	spawnEnemy(GAME_AREA_SIZE * 1.5f, player->Level * 2 + 10);
+	float param[3] = { 1.2f, 0.3f, 3.0f };
+	spawnEnemy(GAME_AREA_SIZE * 1.5f, player->Level * 1.5f + 10, param);
 
 	player->NextLevelXp *= 2;
 
