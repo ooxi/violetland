@@ -60,18 +60,22 @@ void Window::draw() {
 }
 
 void Window::process(InputHandler* input) {
-	if (input->getPressInput(InputHandler::Fire)) {
-		float gmx = input->mouseX;
-		float gmy = input->mouseY;
 
-		std::map<std::string, void(*)()>::const_iterator iter;
-		for (iter = m_handlers.begin(); iter != m_handlers.end(); ++iter) {
-			if (m_elements.count(iter->first) > 0) {
-				TextObject* o = m_elements.find(iter->first)->second;
-				if (gmx > o->getLeft() && gmx < o->getRight() && gmy
-						> o->getTop() && gmy < o->getBottom()) {
+	float gmx = input->mouseX;
+	float gmy = input->mouseY;
+
+	std::map<std::string, void(*)()>::const_iterator iter;
+	for (iter = m_handlers.begin(); iter != m_handlers.end(); ++iter) {
+		if (m_elements.count(iter->first) > 0) {
+			TextObject* o = m_elements.find(iter->first)->second;
+			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
+					&& gmy < o->getBottom()) {
+				o->GMask = 0.7f;
+				if (input->getPressInput(InputHandler::Fire)) {
 					iter->second();
 				}
+			} else {
+				o->GMask = 1.0f;
 			}
 		}
 	}
