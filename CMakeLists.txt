@@ -32,6 +32,7 @@ set(srcFileList
 	${srcGameDir}/LaserBullet.cpp
 	${srcGameDir}/Terrain.cpp
 	${srcGameDir}/MusicManager.cpp
+	${srcGameDir}/LiveObject.cpp
 	${srcSystemDir}/InputHandler.cpp
 	${srcUtilityDir}/FileUtility.cpp
 	${srcUtilityDir}/ImageUtility.cpp
@@ -45,7 +46,6 @@ set(srcFileList
 	${srcTextDir}/TextManager.cpp 
 	${srcTextDir}/TextObject.cpp 
 	${srcSystemDir}/Object.cpp
-	${srcSystemDir}/LiveObject.cpp
 	${srcSoundDir}/Sound.cpp
 	${srcSoundDir}/SoundManager.cpp
 )

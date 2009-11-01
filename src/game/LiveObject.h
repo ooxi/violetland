@@ -1,11 +1,10 @@
-#include "Object.h"
+#include "../system/Object.h"
 #include "SDL.h"
 
 #ifndef LIVEOBJECT_H_
 #define LIVEOBJECT_H_
 
-class LiveObject : public Object
-{
+class LiveObject: public Object {
 private:
 	int m_lastAttackTime;
 	float m_health;

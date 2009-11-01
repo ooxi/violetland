@@ -1,5 +1,5 @@
 #include "../system/graphic/DynamicObject.h"
-#include "./../system/LiveObject.h"
+#include "LiveObject.h"
 #include <cmath>
 #include <vector>
 #include "SDL_mixer.h"

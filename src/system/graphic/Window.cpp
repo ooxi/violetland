@@ -10,6 +10,7 @@ Window::Window(float x, float y, int w, int h, float r, float g, float b,
 	m_g = g;
 	m_b = b;
 	m_a = a;
+	CloseFlag = false;
 }
 
 void Window::addElement(std::string name, TextObject* element) {
@@ -17,8 +18,14 @@ void Window::addElement(std::string name, TextObject* element) {
 		delete m_elements.find(name)->second;
 		m_elements.erase(name);
 	}
-	m_elements.insert(std::map<std::string, TextObject*>::value_type(name,
-			element));
+	m_elements[name] = element;
+}
+
+void Window::addHandler(std::string elementName, void(*func)()) {
+	if (m_handlers.count(elementName) > 0) {
+		m_handlers.erase(elementName);
+	}
+	m_handlers[elementName] = func;
 }
 
 void Window::draw() {
@@ -52,10 +59,29 @@ void Window::draw() {
 	}
 }
 
+void Window::process(InputHandler* input) {
+	if (input->getPressInput(InputHandler::Fire)) {
+		float gmx = input->mouseX;
+		float gmy = input->mouseY;
+
+		std::map<std::string, void(*)()>::const_iterator iter;
+		for (iter = m_handlers.begin(); iter != m_handlers.end(); ++iter) {
+			if (m_elements.count(iter->first) > 0) {
+				TextObject* o = m_elements.find(iter->first)->second;
+				if (gmx > o->getLeft() && gmx < o->getRight() && gmy
+						> o->getTop() && gmy < o->getBottom()) {
+					iter->second();
+				}
+			}
+		}
+	}
+}
+
 Window::~Window() {
 	std::map<std::string, TextObject*>::const_iterator iter;
 	for (iter = m_elements.begin(); iter != m_elements.end(); ++iter) {
 		delete iter->second;
 	}
 	m_elements.clear();
+	m_handlers.clear();
 }

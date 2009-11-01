@@ -1,6 +1,6 @@
 #include "../system/graphic/DynamicObject.h"
 #include "./../system/graphic/StaticObject.h"
-#include "./../system/LiveObject.h"
+#include "LiveObject.h"
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_opengl.h"

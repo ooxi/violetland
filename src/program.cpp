@@ -193,7 +193,7 @@ void createTerrain() {
 void spawnEnemy(float r, int lvl) {
 	float spawnAngle = (rand() % 6300) / 1000.0;
 
-	float scale = pow((float) lvl / player->Level, 0.25f);
+	float scale = pow((float) lvl / player->Level, 0.2f);
 
 	float param[3] = { 0.8f, 0.5f, 0.8f };
 
@@ -239,7 +239,7 @@ void startGame() {
 	player->Acceleration = 0.0004;
 
 	gameTime = 0;
-	gameHardness = 9994.0;
+	gameHardness = 9995.0;
 	lose = false;
 	gamePaused = false;
 	gameStarted = true;
@@ -249,6 +249,7 @@ void startGame() {
 	clearEnemies();
 	clearBullets();
 	clearMessages();
+
 	msgQueue.push_back(text->getObject("Try to survive as long as you can.", 0,
 			0, TextManager::LEFT, TextManager::MIDDLE));
 	msgQueue.push_back(text->getObject(
@@ -265,6 +266,12 @@ void startGame() {
 	for (unsigned int i = 0; i < spawnMonstersAtStart; i++) {
 		spawnEnemy(cam->getW(), 1);
 	}
+
+	windows["mainmenu"]->CloseFlag = true;
+}
+
+void endGame() {
+	game = false;
 }
 
 char *getProjectTitle() {
@@ -548,6 +555,54 @@ void fillCharStatsWindow() {
 				TextManager::MIDDLE));
 }
 
+void increaseStrength() {
+	if (player->LevelPoints > 0) {
+		player->Strength += 0.1;
+		player->LevelPoints--;
+		fillCharStatsWindow();
+	}
+}
+
+void increaseAgility() {
+	if (player->LevelPoints > 0) {
+		player->Agility += 0.1;
+		player->LevelPoints--;
+		fillCharStatsWindow();
+	}
+}
+
+void increaseVitality() {
+	if (player->LevelPoints > 0) {
+		player->Vitality += 0.1;
+		player->LevelPoints--;
+		fillCharStatsWindow();
+	}
+}
+
+void takePoisonBullets() {
+	if (!player->PoisonBullets && player->LevelPoints > 0) {
+		player->PoisonBullets = true;
+		player->LevelPoints--;
+		fillCharStatsWindow();
+	}
+}
+
+void takeUnstoppable() {
+	if (!player->Unstoppable && player->LevelPoints > 0) {
+		player->Unstoppable = true;
+		player->LevelPoints--;
+		fillCharStatsWindow();
+	}
+}
+
+void takeBigCalibre() {
+	if (!player->BigCalibre && player->LevelPoints > 0) {
+		player->BigCalibre = true;
+		player->LevelPoints--;
+		fillCharStatsWindow();
+	}
+}
+
 void addCharStatWindow() {
 	Window *charStats = new Window(0.0f, 0.0f, screenWidth, screenHeight, 0.0f,
 			0.0f, 0.0f, 0.5f);
@@ -561,6 +616,14 @@ void addCharStatWindow() {
 			+ text->getHeight() * 2.0f, text->getHeight() * 6.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
+	charStats->addHandler("strength", increaseStrength);
+	charStats->addHandler("agility", increaseAgility);
+	charStats->addHandler("vitality", increaseVitality);
+
+	charStats->addHandler("unstoppable", takeUnstoppable);
+	charStats->addHandler("poisonbullets", takePoisonBullets);
+	charStats->addHandler("bigcalibre", takeBigCalibre);
+
 	charStats->addElement("poisonbullets", text->getObject("Poison bullets", r
 			+ text->getHeight() * 2.0f, text->getHeight() * 7.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
@@ -569,7 +632,7 @@ void addCharStatWindow() {
 			+ text->getHeight() * 2.0f, text->getHeight() * 8.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
-	windows.insert(map<string, Window*>::value_type("charstats", charStats));
+	windows["charstats"] = charStats;
 }
 
 void addMainMenuWindow() {
@@ -581,6 +644,8 @@ void addMainMenuWindow() {
 	mainMenu->addElement("survival", text->getObject("New survival", l,
 			text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE));
 
+	mainMenu->addHandler("survival", startGame);
+
 	mainMenu->addElement("options", text->getObject("Options", l,
 			text->getHeight() * 9.0f, TextManager::LEFT, TextManager::MIDDLE));
 
@@ -590,7 +655,10 @@ void addMainMenuWindow() {
 	mainMenu->addElement("exit", text->getObject("Exit", l, text->getHeight()
 			* 11.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	windows.insert(map<string, Window*>::value_type("mainmenu", mainMenu));
+	mainMenu->addHandler("exit", endGame);
+
+	windows["mainmenu"] = mainMenu;
+	//	windows.insert(map<string, Window*>::value_type("mainmenu", mainMenu));
 }
 
 void addHelpWindow() {
@@ -628,7 +696,7 @@ void addHelpWindow() {
 	help->addElement("label14", text->getObject("Pause game: P", l,
 			text->getHeight() * 17, TextManager::LEFT, TextManager::MIDDLE));
 
-	windows.insert(map<string, Window*>::value_type("helpscreen", help));
+	windows["helpscreen"] = help;
 }
 
 void handleGameCommonControls() {
@@ -924,77 +992,6 @@ void handleBullets() {
 	}
 }
 
-void handleCharStatsActions() {
-	const int l = screenWidth * 0.1f;
-	const int r = screenWidth * 0.6f;
-
-	if (input->getPressInput(InputHandler::Fire)) {
-		float gmx = input->mouseX;
-		float gmy = input->mouseY;
-
-		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 6.5f
-				&& gmy < text->getHeight() * 7.5f && player->LevelPoints > 0) {
-			player->Strength += 0.1;
-			player->LevelPoints--;
-			fillCharStatsWindow();
-		}
-		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 7.5f
-				&& gmy < text->getHeight() * 8.5f && player->LevelPoints > 0) {
-			player->Agility += 0.1;
-			player->LevelPoints--;
-			fillCharStatsWindow();
-		}
-		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 8.5f
-				&& gmy < text->getHeight() * 9.5f && player->LevelPoints > 0) {
-			float ch = player->getHealth() / player->MaxHealth();
-			player->Vitality += 0.1;
-			player->LevelPoints--;
-			player->setHealth(player->MaxHealth() * ch);
-			fillCharStatsWindow();
-		}
-		if (gmx > r && gmx < screenWidth && gmy > text->getHeight() * 5.5f
-				&& gmy < text->getHeight() * 6.5f && !player->Unstoppable
-				&& player->LevelPoints > 0) {
-			player->Unstoppable = true;
-			player->LevelPoints--;
-			fillCharStatsWindow();
-		}
-		if (gmx > r && gmx < screenWidth && gmy > text->getHeight() * 6.5f
-				&& gmy < text->getHeight() * 7.5f && !player->PoisonBullets
-				&& player->LevelPoints > 0) {
-			player->PoisonBullets = true;
-			player->LevelPoints--;
-			fillCharStatsWindow();
-		}
-		if (gmx > r && gmx < screenWidth && gmy > text->getHeight() * 7.5f
-				&& gmy < text->getHeight() * 8.5f && !player->BigCalibre
-				&& player->LevelPoints > 0) {
-			player->BigCalibre = true;
-			player->LevelPoints--;
-			fillCharStatsWindow();
-		}
-	}
-}
-
-void handleMainMenuActions() {
-	const int l = screenWidth * 0.1f;
-
-	if (input->getPressInput(InputHandler::Fire)) {
-		float gmx = input->mouseX;
-		float gmy = input->mouseY;
-
-		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 7.5f
-				&& gmy < text->getHeight() * 8.5f) {
-			windows.erase("mainmenu");
-			startGame();
-		}
-		if (gmx > l && gmx < screenWidth / 2 && gmy > text->getHeight() * 10.5f
-				&& gmy < text->getHeight() * 11.5f) {
-			game = false;
-		}
-	}
-}
-
 void drawMessagesQueue() {
 	if (!msgQueue.empty()) {
 		int s = msgQueue.size();
@@ -1068,14 +1065,6 @@ void drawHud() {
 				TextManager::CENTER, TextManager::MIDDLE);
 
 	drawMessagesQueue();
-
-	if (windows.count("charstats") > 0) {
-		handleCharStatsActions();
-	}
-
-	if (windows.count("mainmenu") > 0) {
-		handleMainMenuActions();
-	}
 }
 
 void handlePowerups() {
@@ -1122,7 +1111,7 @@ void handlePowerups() {
 }
 
 void levelUp() {
-	spawnEnemy(GAME_AREA_SIZE * 1.5f, player->Level * 2 + 8);
+	spawnEnemy(GAME_AREA_SIZE * 1.5f, player->Level * 2 + 10);
 
 	player->NextLevelXp *= 2;
 
@@ -1318,8 +1307,6 @@ void runMainLoop() {
 
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
-
-			handleMainMenuActions();
 		}
 
 		if (!windows.empty()) {
@@ -1327,10 +1314,14 @@ void runMainLoop() {
 			for (win = windows.begin(); win != windows.end(); ++win) {
 				Window* w = win->second;
 				w->draw();
+				w->process(input);
+			}
+			for (win = windows.begin(); win != windows.end(); ++win) {
+				Window* w = win->second;
+				if (w->CloseFlag)
+					windows.erase(win->first);
 			}
 		}
-
-		//		startGame();
 
 		SDL_GL_SwapBuffers();
 	}

@@ -37,7 +37,7 @@ const int LiveObject::AttackDelay() {
 }
 
 const float LiveObject::MaxSpeed() {
-	return Agility / 5.0f;
+	return Agility / 6.0f;
 }
 
 const float LiveObject::HealthRegen() {
