@@ -1229,10 +1229,6 @@ void drawGame() {
 
 	glDisable(GL_LIGHTING);
 
-	/*for (unsigned int i = 0; i < bulletLoops.size(); i++) {
-	 bulletLoops[i]->draw(false);
-	 }*/
-
 	glBindTexture(GL_TEXTURE_2D, NULL);
 
 	for (unsigned int i = 0; i < bullets.size(); i++) {
