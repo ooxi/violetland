@@ -8,6 +8,7 @@
 #define _USE_MATH_DEFINES
 #include <windows.h>
 #include <winbase.h>
+#include <time.h>
 #endif //_WIN32W
 #include <stdlib.h>
 #include <vector>
@@ -233,8 +234,8 @@ void startGame() {
 	if (player)
 		delete player;
 	player = new Player(0, 0, playerLegsSprite, playerArmsTex, weapons[0]);
-	player->HitR = 0.3;
-	player->Acceleration = 0.0004;
+	player->HitR = 0.28f;
+	player->Acceleration = 0.0004f;
 
 	gameTime = 0;
 	gameHardness = 9995.0;
@@ -300,9 +301,6 @@ void initSystem() {
 		exit(1);
 	}
 
-	sndManager = new SoundManager(fileUtility, masterVolume);
-	musicManager = new MusicManager(fileUtility, sndManager);
-
 	printf("SDL_GL_SetAttribute SDL_GL_DOUBLEBUFFER...\n");
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -365,6 +363,9 @@ void initSystem() {
 	splash->draw(false);
 
 	SDL_GL_SwapBuffers();
+
+	sndManager = new SoundManager(fileUtility, masterVolume);
+	musicManager = new MusicManager(fileUtility, sndManager);
 
 	musicManager->play();
 

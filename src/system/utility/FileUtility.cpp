@@ -28,7 +28,6 @@ std::vector<std::string> FileUtility::getFilesFromDir(std::string dir) {
 				files.push_back(ep->d_name);
 #endif //_WIN32W
 #if defined linux || defined __FreeBSD__
-		//TODO: testing is needed, code may be broken!
 			if (ep->d_type == DT_REG)
 				files.push_back(ep->d_name);
 #endif //linux || __FreeBSD__
