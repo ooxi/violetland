@@ -18,6 +18,7 @@ public:
 	void draw();
 	void draw(float x, float y, float angle, float scale, float rMask,
 			float gMask, float bMask, float aMask);
+	void drawQuad();
 	void process(int deltaTime);
 	virtual ~DynamicObject();
 	int Frame;

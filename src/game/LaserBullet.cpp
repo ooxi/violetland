@@ -13,13 +13,13 @@ void LaserBullet::process(int deltaTime) {
 	X = startX - cos((Angle + 90) * M_PI / 180) * MaxRange;
 	Y = startY - sin((Angle + 90) * M_PI / 180) * MaxRange;
 
-	Alpha -= 0.002f * deltaTime;
-	if (Alpha < 0)
-		Alpha = 0;
-
 	m_active = !m_hit && Alpha > 0.15f;
 
 	m_readyToRemove = !m_active && Alpha == 0;
+
+	Alpha -= 0.002f * deltaTime;
+	if (Alpha < 0)
+		Alpha = 0;
 }
 
 void LaserBullet::draw() {
