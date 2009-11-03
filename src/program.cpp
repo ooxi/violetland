@@ -403,13 +403,14 @@ void writeHighScores() {
 			"highscores~");
 
 	vector<int> scores;
+
 	ifstream in;
 	in.open(hsFile.c_str());
 	if (in) {
 		while (in) {
-			int score;
-			in >> score;
-			scores.push_back(score);
+			int buf;
+			in >> buf;
+			scores.push_back(buf);
 		}
 		in.close();
 	} else {
@@ -702,10 +703,6 @@ void addHelpWindow() {
 }
 
 void handleGameCommonControls() {
-	if (input->getPressInput(InputHandler::Pause) && windows.empty()) {
-		switchGamePause();
-	}
-
 	if (input->getPressInput(InputHandler::ShowChar)) {
 		if (windows.count("charstats") == 0) {
 			clearWindows();
@@ -713,12 +710,13 @@ void handleGameCommonControls() {
 			addCharStatWindow();
 			fillCharStatsWindow();
 
+			if (!gamePaused)
+				switchGamePause();
 		} else {
-			windows.erase("charstats");
-		}
-
-		if (gamePaused == windows.empty())
+			Window* w = windows.find("charstats")->second;
+			w->CloseFlag = true;
 			switchGamePause();
+		}
 	}
 
 	if (input->getPressInput(InputHandler::Help)) {
@@ -727,12 +725,13 @@ void handleGameCommonControls() {
 
 			addHelpWindow();
 
+			if (!gamePaused)
+				switchGamePause();
 		} else {
-			windows.erase("helpscreen");
-		}
-
-		if (gamePaused == windows.empty())
+			Window* w = windows.find("helpscreen")->second;
+			w->CloseFlag = true;
 			switchGamePause();
+		}
 	}
 
 	if (input->getPressInput(InputHandler::Escape)) {
@@ -741,12 +740,13 @@ void handleGameCommonControls() {
 
 			addMainMenuWindow();
 
+			if (!gamePaused)
+				switchGamePause();
 		} else {
-			windows.erase("mainmenu");
-		}
-
-		if (gamePaused == windows.empty())
+			Window* w = windows.find("mainmenu")->second;
+			w->CloseFlag = true;
 			switchGamePause();
+		}
 	}
 }
 

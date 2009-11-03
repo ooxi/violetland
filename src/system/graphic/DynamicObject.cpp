@@ -44,24 +44,6 @@ void DynamicObject::draw(float x, float y, float angle, float scale,
 	glTranslatef(x, y, 0.0f);
 	glRotatef(angle, 0.0f, 0.0f, 1.0f);
 	glScalef(scale, scale, scale);
-	glNormal3f(0.0f, 0.0f, 1.0f);
-
-	glColor4f(0.0f, 0.0f, 0.0f, aMask / 4.0f);
-
-	/*const float rad = (angle - 90) * M_PI / 180;
-	 const float sinr = sin(rad);
-	 const float cosr = cos(rad);*/
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0);
-	glVertex3f(m_left, m_top, 0.0f);
-	glTexCoord2f(1, 0);
-	glVertex3f(m_right, m_top, 0.0f);
-	glTexCoord2f(1, 1);
-	glVertex3f(m_right + m_width, m_bottom + m_height, 0.0f);
-	glTexCoord2f(0, 1);
-	glVertex3f(m_left, m_bottom, 0.0f);
-	glEnd();
 
 	glColor4f(rMask, gMask, bMask, aMask);
 

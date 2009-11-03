@@ -41,7 +41,8 @@ GLuint StaticObject::createComplexFace(int facesCount) {
 	return dListId;
 }
 
-void StaticObject::draw(bool reflection, float x, float y, float angle, float scale) {
+void StaticObject::draw(bool reflection, float x, float y, float angle,
+		float scale) {
 	GLfloat right = 1;
 	GLfloat bottom = 1;
 
