@@ -33,7 +33,8 @@ void DynamicObject::process(int deltaTime) {
 	Object::move(deltaTime);
 }
 
-void DynamicObject::draw(float x, float y, float angle, float scale, float rMask, float gMask, float bMask, float aMask) {
+void DynamicObject::draw(float x, float y, float angle, float scale,
+		float rMask, float gMask, float bMask, float aMask) {
 	Texture* frameTex = m_sprite->getFrame(Frame);
 
 	glBindTexture(frameTex->getType(), frameTex->getTextureId());
@@ -48,8 +49,8 @@ void DynamicObject::draw(float x, float y, float angle, float scale, float rMask
 	glColor4f(0.0f, 0.0f, 0.0f, aMask / 4.0f);
 
 	/*const float rad = (angle - 90) * M_PI / 180;
-	const float sinr = sin(rad);
-	const float cosr = cos(rad);*/
+	 const float sinr = sin(rad);
+	 const float cosr = cos(rad);*/
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);

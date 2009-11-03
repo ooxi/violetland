@@ -70,7 +70,7 @@ void Window::process(InputHandler* input) {
 			TextObject* o = m_elements.find(iter->first)->second;
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
-				o->GMask = 0.7f;
+				o->GMask = 0.3f;
 				if (input->getPressInput(InputHandler::Fire)) {
 					iter->second();
 				}
