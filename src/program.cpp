@@ -276,6 +276,7 @@ void printVersion() {
 }
 
 void initSystem() {
+	config->read();
 	srand((unsigned) time(NULL));
 
 	printVersion();
@@ -283,7 +284,7 @@ void initSystem() {
 	atexit(TTF_Quit);
 	atexit(SDL_Quit);
 
-	printf("\nSDL_Init...\n");
+	printf("SDL_Init...\n");
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		exit(1);
@@ -1518,6 +1519,7 @@ void unloadResources() {
 
 void parsePreferences(int argc, char *argv[]) {
 	fileUtility = new FileUtility(argv[0]);
+	config = new Configuration(fileUtility);
 
 	for (int i = 0; i < argc; i++) {
 		string arg = argv[i];
@@ -1555,8 +1557,6 @@ void parsePreferences(int argc, char *argv[]) {
 		if (arg.compare("-r") == 0 && i + 1 < argc) {
 			fileUtility->setFullResPath(argv[i + 1]);
 		}
-
-		config = new Configuration(fileUtility);
 
 		if (arg.compare("-f") == 0)
 			config->FullScreen = true;

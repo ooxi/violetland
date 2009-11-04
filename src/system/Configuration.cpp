@@ -14,8 +14,6 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	MonstersAtStart = 8;
 	AimColorA = 0x000000;
 	AimColorB = 0xFFFFFF;
-
-	read();
 }
 
 void Configuration::read() {
@@ -41,16 +39,16 @@ void Configuration::read() {
 void Configuration::write() {
 	ConfigFile cFile;
 
-	cFile.add("screenWidth", ScreenWidth);
-	cFile.add("screenHeight", ScreenHeight);
-	cFile.add("screenColor", ScreenColor);
-	cFile.add("fullScreen", FullScreen);
-	cFile.add("frameDelay", FrameDelay);
-	cFile.add("showFps", ShowFps);
-	cFile.add("autoReload", AutoReload);
-	cFile.add("masterVolume", MasterVolume);
-	cFile.add("aimColorA", AimColorA);
 	cFile.add("aimColorB", AimColorB);
+	cFile.add("aimColorA", AimColorA);
+	cFile.add("masterVolume", MasterVolume);
+	cFile.add("autoReload", AutoReload);
+	cFile.add("showFps", ShowFps);
+	cFile.add("frameDelay", FrameDelay);
+	cFile.add("fullScreen", FullScreen);
+	cFile.add("screenColor", ScreenColor);
+	cFile.add("screenHeight", ScreenHeight);
+	cFile.add("screenWidth", ScreenWidth);
 
 	std::ofstream ofile(
 			m_fileUtility->getFullPath(FileUtility::user, "config").c_str());
