@@ -19,6 +19,7 @@ private:
 	Weapon *m_weapon;
 	bool m_light, m_laser;
 public:
+	Player();
 	Player(float x, float y, Sprite *legsSprite, Texture *armsTex,
 			Weapon *weapon);
 	~Player();
@@ -49,10 +50,13 @@ public:
 	int Xp;
 	int NextLevelXp;
 	int Kills;
+	int Time;
 
 	bool Unstoppable;
 	bool PoisonBullets;
 	bool BigCalibre;
+
+	bool Empty;
 };
 
 #endif /* PLAYER_H_ */

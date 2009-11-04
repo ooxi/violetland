@@ -3,15 +3,28 @@
 #endif //_WIN32W
 #include "Player.h"
 
-Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex,
-		Weapon *weapon) :
-	LiveObject(x, y, 128, 128) {
-
+Player::Player() :
+	LiveObject(0, 0, 128, 128) {
+	Empty = true;
 	Xp = 0;
 	NextLevelXp = 100;
 	Kills = 0;
 	Level = 1;
 	LevelPoints = 0;
+	AccuracyDeviation = 0.0f;
+	Time = 0;
+
+	m_light = m_laser = false;
+
+	Unstoppable = false;
+	PoisonBullets = false;
+	BigCalibre = false;
+}
+
+Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex,
+		Weapon *weapon) :
+	LiveObject(x, y, 128, 128) {
+	*this = Player();
 
 	X = x;
 	Y = y;
@@ -19,20 +32,13 @@ Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex,
 	TargetY = y;
 
 	m_legs = new DynamicObject(x, y, legsSprite);
-	m_arms = new StaticObject(x, y, 128, 128, armsTex, false);
-
 	m_legs->Frame = 8;
 
-	AccuracyDeviation = 0.0;
-	Speed = 0.0;
-
-	m_light = m_laser = false;
+	m_arms = new StaticObject(x, y, 128, 128, armsTex, false);
 
 	m_weapon = new Weapon(*weapon);
 
-	Unstoppable = false;
-	PoisonBullets = false;
-	BigCalibre = false;
+	Empty = false;
 }
 
 void Player::move(char movementX, char movementY, int deltaTime) {
@@ -75,7 +81,8 @@ void Player::move(char movementX, char movementY, int deltaTime) {
 
 std::vector<Bullet*> *Player::fire() {
 	const float rad = (getArmsDirection() - 90) * M_PI / 180;
-	std::vector<Bullet*> *newBullets = m_weapon->fire(m_arms->X, m_arms->Y, m_arms->X + 50 * cos(rad), m_arms->Y + 50 * sin(rad));
+	std::vector<Bullet*> *newBullets = m_weapon->fire(m_arms->X, m_arms->Y,
+			m_arms->X + 50 * cos(rad), m_arms->Y + 50 * sin(rad));
 
 	if (!newBullets->empty()) {
 		std::vector<Bullet*>::iterator it;
@@ -87,8 +94,10 @@ std::vector<Bullet*> *Player::fire() {
 
 		for (it = newBullets->begin(); it != (newBullets->end()); it++) {
 			Bullet* bullet = *(it);
-			bullet->Poisoned = m_weapon->Type == Bullet::standard && PoisonBullets;
-			bullet->BigCalibre = m_weapon->Type == Bullet::standard && BigCalibre;
+			bullet->Poisoned = m_weapon->Type == Bullet::standard
+					&& PoisonBullets;
+			bullet->BigCalibre = m_weapon->Type == Bullet::standard
+					&& BigCalibre;
 			bullet->Angle = AccuracyDeviation < 1 ? m_arms->Angle
 					: m_arms->Angle + (rand() % (int) (AccuracyDeviation * 2))
 							- AccuracyDeviation;
@@ -178,7 +187,9 @@ void Player::setWeapon(Weapon *value) {
 }
 
 Player::~Player() {
-	delete m_legs;
-	delete m_arms;
-	delete m_weapon;
+	if (!Empty) {
+		delete m_legs;
+		delete m_arms;
+		delete m_weapon;
+	}
 }

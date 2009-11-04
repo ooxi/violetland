@@ -33,6 +33,7 @@ set(srcFileList
 	${srcGameDir}/Terrain.cpp
 	${srcGameDir}/MusicManager.cpp
 	${srcGameDir}/LiveObject.cpp
+	${srcGameDir}/Highscores.cpp
 	${srcSystemDir}/InputHandler.cpp
 	${srcUtilityDir}/FileUtility.cpp
 	${srcUtilityDir}/ImageUtility.cpp

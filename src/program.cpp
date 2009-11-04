@@ -32,6 +32,7 @@
 #include "game/Powerup.h"
 #include "game/Terrain.h"
 #include "game/MusicManager.h"
+#include "game/Highscores.h"
 
 const string PROJECT = "violetland";
 const string VERSION = "0.2.2";
@@ -60,7 +61,6 @@ bool fullScreen = false;
 
 double gameHardness;
 bool game;
-int gameTime;
 bool lose;
 bool gameStarted;
 bool gamePaused;
@@ -237,7 +237,6 @@ void startGame() {
 	player->HitR = 0.28f;
 	player->Acceleration = 0.0004f;
 
-	gameTime = 0;
 	gameHardness = 9995.0;
 	lose = false;
 	gamePaused = false;
@@ -308,11 +307,8 @@ void initSystem() {
 	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 
-	char *buf;
-	sprintf(buf = new char[50], "SDL_SetVideoMode %ix%i (%c)...\n",
-			screenWidth, screenHeight, fullScreen ? 'f' : 'w');
-	printf(buf);
-	delete[] buf;
+	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", screenWidth,
+			screenHeight, fullScreen ? 'f' : 'w');
 
 	SDL_Surface *screen =
 			SDL_SetVideoMode(screenWidth, screenHeight, SCREEN_COLOR,
@@ -329,6 +325,7 @@ void initSystem() {
 		exit(2);
 	}
 
+	char* buf;
 	buf = getProjectTitle();
 	SDL_WM_SetCaption(buf, NULL);
 	delete[] buf;
@@ -395,62 +392,6 @@ void initSystem() {
 	input = new InputHandler();
 }
 
-void writeHighScores() {
-	printf("Updating scores...\n");
-
-	string hsFile = fileUtility->getFullPath(FileUtility::user, "highscores");
-	string hsTempFile = fileUtility->getFullPath(FileUtility::user,
-			"highscores~");
-
-	vector<int> scores;
-
-	ifstream in;
-	in.open(hsFile.c_str());
-	if (in) {
-		while (in) {
-			int buf;
-			in >> buf;
-			scores.push_back(buf);
-		}
-		in.close();
-	} else {
-		printf("Previous file with scores is not found.\n");
-	}
-
-	bool placed = false;
-	for (unsigned int i = 0; i < scores.size(); i++) {
-		if (player->Xp > scores[i]) {
-			scores.insert(scores.begin() + i, player->Xp);
-			placed = true;
-			break;
-		}
-	}
-
-	if (!placed)
-		scores.push_back(player->Xp);
-
-	ofstream out;
-	out.open(hsTempFile.c_str());
-	if (out) {
-		for (unsigned int i = 0; i < (scores.size() < 10 ? scores.size() : 10); i++) {
-			out << scores[i] << endl;
-		}
-		out.close();
-
-		remove(hsFile.c_str());
-
-		FileUtility::copyFile(hsTempFile.c_str(), hsFile.c_str());
-
-		remove(hsTempFile.c_str());
-
-		printf("Scores was updated.\n");
-	} else {
-		printf("Can't write scores to file.\n");
-	}
-
-	scores.clear();
-}
-
 void loseGame() {
 	lose = true;
 	if (playerHitSounds[playerHitSndPlaying]->isPlaying())
@@ -461,7 +402,8 @@ void loseGame() {
 	msgQueue.push_back(text->getObject("Player is dead.", 0, 0,
 			TextManager::LEFT, TextManager::BOTTOM));
 
-	writeHighScores();
+	Highscores s(fileUtility);
+	s.add(player);
 
 	SDL_ShowCursor(1);
 }
@@ -638,6 +580,75 @@ void addCharStatWindow() {
 	windows["charstats"] = charStats;
 }
 
+void backFromHighScores();
+
+void addHighscoresWindow() {
+	Window *scoresWin = new Window(0.0f, 0.0f, screenWidth, screenHeight, 0.0f,
+			0.0f, 0.0f, 0.5f);
+
+	const int l = screenWidth * 0.1f;
+	const int r2 = l * 2.0f;
+	const int r3 = l * 4.0f;
+
+	scoresWin->addElement("highscores", text->getObject("Highscores", l,
+			text->getHeight() * 2.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	scoresWin->addElement("headerXp", text->getObject("XP", l,
+			text->getHeight() * 4.0f, TextManager::LEFT, TextManager::MIDDLE));
+	scoresWin->addElement("headerParams", text->getObject("Str/Agil/Vital", r2,
+			text->getHeight() * 4.0f, TextManager::LEFT, TextManager::MIDDLE));
+	scoresWin->addElement("headerTime", text->getObject("Time", r3,
+			text->getHeight() * 4.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	Highscores s(fileUtility);
+	vector<Player*> highscores = s.getData();
+
+	for (unsigned int i = 0; i < highscores.size(); i++) {
+		char* label;
+		char* line;
+		sprintf(label = new char[30], "xp%i", i);
+		sprintf(line = new char[200], "%i", highscores[i]->Xp);
+		scoresWin->addElement(label, text->getObject(line, l, text->getHeight()
+				* (5.0f + i), TextManager::LEFT, TextManager::MIDDLE));
+		delete[] label;
+		delete[] line;
+
+		sprintf(label = new char[30], "params%i", i);
+		sprintf(line = new char[200], "%i/%i/%i",
+				(int) (highscores[i]->Strength * 100),
+				(int) (highscores[i]->Agility * 100),
+				(int) (highscores[i]->Vitality * 100));
+		scoresWin->addElement(label, text->getObject(line, r2,
+				text->getHeight() * (5.0f + i), TextManager::LEFT,
+				TextManager::MIDDLE));
+		delete[] label;
+		delete[] line;
+
+		const int minutes = highscores[i]->Time / 60000;
+		const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
+
+		sprintf(label = new char[30], "time%i", i);
+		sprintf(line = new char[200], "%im %is", minutes, seconds);
+		scoresWin->addElement(label, text->getObject(line, r3,
+				text->getHeight() * (5.0f + i), TextManager::LEFT,
+				TextManager::MIDDLE));
+		delete[] label;
+		delete[] line;
+	}
+
+	scoresWin->addElement("back", text->getObject("Back to main menu", l,
+			text->getHeight() * 17.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	scoresWin->addHandler("back", backFromHighScores);
+
+	windows["highscores"] = scoresWin;
+}
+
+void showHighScores() {
+	windows["mainmenu"]->CloseFlag = true;
+	addHighscoresWindow();
+}
+
 void addMainMenuWindow() {
 	Window *mainMenu = new Window(0.0f, 0.0f, screenWidth, screenHeight, 0.0f,
 			0.0f, 0.0f, 0.5f);
@@ -655,13 +666,19 @@ void addMainMenuWindow() {
 	mainMenu->addElement("highscores", text->getObject("High scores", l,
 			text->getHeight() * 10.0f, TextManager::LEFT, TextManager::MIDDLE));
 
+	mainMenu->addHandler("highscores", showHighScores);
+
 	mainMenu->addElement("exit", text->getObject("Exit", l, text->getHeight()
 			* 11.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	mainMenu->addHandler("exit", endGame);
 
 	windows["mainmenu"] = mainMenu;
-	//	windows.insert(map<string, Window*>::value_type("mainmenu", mainMenu));
+}
+
+void backFromHighScores() {
+	windows["highscores"]->CloseFlag = true;
+	addMainMenuWindow();
 }
 
 void addHelpWindow() {
@@ -1021,8 +1038,8 @@ void drawHud() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	const int minutes = gameTime / 60000;
-	const int seconds = (gameTime - minutes * 60000) / 1000;
+	const int minutes = player->Time / 60000;
+	const int seconds = (player->Time - minutes * 60000) / 1000;
 
 	char *buf;
 
@@ -1131,7 +1148,7 @@ void levelUp() {
 void processGame() {
 	if (!lose) {
 		gameHardness -= deltaTime * 0.00012;
-		gameTime += deltaTime;
+		player->Time += deltaTime;
 
 		handlePlayer();
 	}
@@ -1174,7 +1191,7 @@ void drawGame() {
 
 	glEnable(GL_LIGHTING);
 
-	dayLight = abs(cos(gameTime / 180000.0));
+	dayLight = abs(cos(player->Time / 180000.0));
 
 	float globalAmbientColor = dayLight / 5.0;
 	float directColor = dayLight / 2.0;
