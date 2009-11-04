@@ -19,22 +19,27 @@ Configuration::Configuration(FileUtility* fileUtility) {
 }
 
 void Configuration::read() {
-	ConfigFile cFile(m_fileUtility->getFullPath(FileUtility::user, "config"));
+	try {
+		ConfigFile cFile(
+				m_fileUtility->getFullPath(FileUtility::user, "config"));
 
-	cFile.readInto(ScreenWidth, "screenWidth");
-	cFile.readInto(ScreenHeight, "screenHeight");
-	cFile.readInto(ScreenColor, "screenColor");
-	cFile.readInto(FullScreen, "fullScreen");
-	cFile.readInto(FrameDelay, "frameDelay");
-	cFile.readInto(ShowFps, "showFps");
-	cFile.readInto(AutoReload, "autoReload");
-	cFile.readInto(MasterVolume, "masterVolume");
-	cFile.readInto(AimColorA, "aimColorA");
-	cFile.readInto(AimColorB, "aimColorB");
+		cFile.readInto(ScreenWidth, "screenWidth");
+		cFile.readInto(ScreenHeight, "screenHeight");
+		cFile.readInto(ScreenColor, "screenColor");
+		cFile.readInto(FullScreen, "fullScreen");
+		cFile.readInto(FrameDelay, "frameDelay");
+		cFile.readInto(ShowFps, "showFps");
+		cFile.readInto(AutoReload, "autoReload");
+		cFile.readInto(MasterVolume, "masterVolume");
+		cFile.readInto(AimColorA, "aimColorA");
+		cFile.readInto(AimColorB, "aimColorB");
+	} catch (...) {
+		printf("Can't open config file.\n");
+	}
 }
 
 void Configuration::write() {
-	ConfigFile cFile(m_fileUtility->getFullPath(FileUtility::user, "config"));
+	ConfigFile cFile;
 
 	cFile.add("screenWidth", ScreenWidth);
 	cFile.add("screenHeight", ScreenHeight);

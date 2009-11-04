@@ -1017,7 +1017,7 @@ void drawMessagesQueue() {
 	}
 }
 
-void drawHud() {
+void setGuiCameraMode() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -1025,7 +1025,9 @@ void drawHud() {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+}
 
+void drawHud() {
 	const int minutes = player->Time / 60000;
 	const int seconds = (player->Time - minutes * 60000) / 1000;
 
@@ -1264,6 +1266,22 @@ void drawGame() {
 	}
 }
 
+void drawWindows() {
+	if (!windows.empty()) {
+		std::map<std::string, Window*>::const_iterator win;
+		for (win = windows.begin(); win != windows.end(); ++win) {
+			Window* w = win->second;
+			w->draw();
+			w->process(input);
+		}
+		for (win = windows.begin(); win != windows.end(); ++win) {
+			Window* w = win->second;
+			if (w->CloseFlag)
+				windows.erase(win->first);
+		}
+	}
+}
+
 void runMainLoop() {
 	currentTime = SDL_GetTicks();
 	fpsCountingStart = currentTime;
@@ -1297,8 +1315,12 @@ void runMainLoop() {
 
 			drawGame();
 
+			setGuiCameraMode();
+
 			drawHud();
 		} else {
+			musicManager->play();
+
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			cam->X = cam->Y = 0.0f;
@@ -1307,29 +1329,10 @@ void runMainLoop() {
 
 			splash->draw(false);
 
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-
-			glOrtho(0.0, config->ScreenWidth, config->ScreenHeight, 0.0, -10.0,
-					10.0);
-
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
+			setGuiCameraMode();
 		}
 
-		if (!windows.empty()) {
-			std::map<std::string, Window*>::const_iterator win;
-			for (win = windows.begin(); win != windows.end(); ++win) {
-				Window* w = win->second;
-				w->draw();
-				w->process(input);
-			}
-			for (win = windows.begin(); win != windows.end(); ++win) {
-				Window* w = win->second;
-				if (w->CloseFlag)
-					windows.erase(win->first);
-			}
-		}
+		drawWindows();
 
 		SDL_GL_SwapBuffers();
 	}
