@@ -1,10 +1,10 @@
 #include "SoundManager.h"
 
-SoundManager::SoundManager(FileUtility* fileUtility, int mastVol) {
+SoundManager::SoundManager(FileUtility* fileUtility, Configuration* config) {
 	printf("SoundManager...\n");
 
 	m_fileUtility = fileUtility;
-	m_mastVol = mastVol;
+	m_config = config;
 
 	fprintf(stdout, "Mix_OpenAudio (freq %i)...\n", MIX_DEFAULT_FREQUENCY);
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) != 0) {
@@ -13,8 +13,8 @@ SoundManager::SoundManager(FileUtility* fileUtility, int mastVol) {
 	} else {
 		m_enabled = true;
 		printf("\tsound is enabled\n");
-		fprintf(stdout, "Mix_Volume (master) %i...\n", m_mastVol);
-		Mix_Volume(-1, m_mastVol);
+		fprintf(stdout, "Mix_Volume (master) %i...\n", m_config->MasterVolume);
+		Mix_Volume(-1, m_config->MasterVolume);
 	}
 }
 

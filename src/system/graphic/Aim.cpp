@@ -23,16 +23,16 @@ void Aim::drawFilledCircle(float r) {
 	glEnd();
 }
 
-Aim::Aim(int colorDark, int colorLight) {
+Aim::Aim(Configuration* config) {
 	printf("Constructing aim...\n");
 
-	float cDarkR = ImageUtility::getColorChR(colorDark);
-	float cDarkG = ImageUtility::getColorChG(colorDark);
-	float cDarkB = ImageUtility::getColorChB(colorDark);
+	float cDarkR = ImageUtility::getColorChR(config->AimColorA);
+	float cDarkG = ImageUtility::getColorChG(config->AimColorA);
+	float cDarkB = ImageUtility::getColorChB(config->AimColorA);
 
-	float cLightR = ImageUtility::getColorChR(colorLight);
-	float cLightG = ImageUtility::getColorChG(colorLight);
-	float cLightB = ImageUtility::getColorChB(colorLight);
+	float cLightR = ImageUtility::getColorChR(config->AimColorB);
+	float cLightG = ImageUtility::getColorChG(config->AimColorB);
+	float cLightB = ImageUtility::getColorChB(config->AimColorB);
 
 	m_aimDListId = glGenLists(1);
 

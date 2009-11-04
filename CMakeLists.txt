@@ -34,7 +34,10 @@ set(srcFileList
 	${srcGameDir}/MusicManager.cpp
 	${srcGameDir}/LiveObject.cpp
 	${srcGameDir}/Highscores.cpp
+	${srcSystemDir}/Object.cpp
 	${srcSystemDir}/InputHandler.cpp
+	${srcSystemDir}/ConfigFile.cpp
+	${srcSystemDir}/Configuration.cpp
 	${srcUtilityDir}/FileUtility.cpp
 	${srcUtilityDir}/ImageUtility.cpp
 	${srcGraphicDir}/Texture.cpp
@@ -46,7 +49,6 @@ set(srcFileList
 	${srcGraphicDir}/Window.cpp
 	${srcTextDir}/TextManager.cpp 
 	${srcTextDir}/TextObject.cpp 
-	${srcSystemDir}/Object.cpp
 	${srcSoundDir}/Sound.cpp
 	${srcSoundDir}/SoundManager.cpp
 )

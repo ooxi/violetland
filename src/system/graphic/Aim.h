@@ -1,6 +1,7 @@
 #include <iostream>
 #include "StaticObject.h"
 #include "../utility/FileUtility.h"
+#include "../Configuration.h"
 
 #ifndef AIM_H_
 #define AIM_H_
@@ -12,7 +13,7 @@ private:
 	void drawCircle(float r);
 	void drawFilledCircle(float r);
 public:
-	Aim(int colorDark, int colorLight);
+	Aim(Configuration* config);
 	void draw(float x, float y, float scale, float pointScale);
 	virtual ~Aim();
 };

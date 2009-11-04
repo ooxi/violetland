@@ -27,6 +27,7 @@
 #include "system/graphic/Camera.h"
 #include "system/sound/SoundManager.h"
 #include "system/graphic/Window.h"
+#include "system/Configuration.h"
 #include "game/Enemy.h"
 #include "game/Player.h"
 #include "game/Powerup.h"
@@ -37,27 +38,17 @@
 const string PROJECT = "violetland";
 const string VERSION = "0.2.2";
 const int GAME_AREA_SIZE = 2048;
-const int SCREEN_COLOR = 16;
 
+Configuration* config;
 Camera* cam;
 
-int screenWidth = 800;
-int screenHeight = 600;
 float widthK = 1;
 float heightK = 1;
 float aspect = 1 / 3;
 
 int framesCount;
 int fpsCountingStart;
-int fpsLimit = 10;
 int fps = 0;
-bool showFps = false;
-
-bool autoReload = true;
-int masterVolume = 30;
-unsigned int spawnMonstersAtStart = 5;
-
-bool fullScreen = false;
 
 double gameHardness;
 bool game;
@@ -80,8 +71,6 @@ vector<Sound*> enemyHitSounds;
 vector<Sprite*> enemySprites;
 Sprite* bleedSprite;
 
-int aimColorDark = 0x000000;
-int aimColorLight = 0xFFFFFF;
 Aim* aim;
 
 Player *player;
@@ -261,7 +250,7 @@ void startGame() {
 
 	SDL_ShowCursor(0);
 
-	for (unsigned int i = 0; i < spawnMonstersAtStart; i++) {
+	for (unsigned int i = 0; i < config->MonstersAtStart; i++) {
 		float param[3] = { 0.8f, 0.5f, 1.0f };
 		spawnEnemy(cam->getW(), 1, param);
 	}
@@ -307,18 +296,18 @@ void initSystem() {
 	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 
-	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", screenWidth,
-			screenHeight, fullScreen ? 'f' : 'w');
+	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", config->ScreenWidth,
+			config->ScreenHeight, config->FullScreen ? 'f' : 'w');
 
-	SDL_Surface *screen =
-			SDL_SetVideoMode(screenWidth, screenHeight, SCREEN_COLOR,
-					fullScreen ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
+	SDL_Surface *screen = SDL_SetVideoMode(config->ScreenWidth,
+			config->ScreenHeight, config->ScreenColor,
+			config->FullScreen ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
 
 	cam = new Camera();
-	aspect = (float) screenWidth / screenHeight;
+	aspect = (float) config->ScreenWidth / config->ScreenHeight;
 	cam->setH(cam->getW() / aspect);
-	widthK = (float) screenWidth / cam->getW();
-	heightK = (float) screenHeight / cam->getH();
+	widthK = (float) config->ScreenWidth / cam->getW();
+	heightK = (float) config->ScreenHeight / cam->getH();
 
 	if (screen == NULL) {
 		fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
@@ -340,7 +329,7 @@ void initSystem() {
 	glDisable(GL_DEPTH_TEST);
 
 	printf("glViewport...\n");
-	glViewport(0, 0, screenWidth, screenHeight);
+	glViewport(0, 0, config->ScreenWidth, config->ScreenHeight);
 
 	sprintf(buf = new char[100], "splash_%i.png", (rand() % 199) / 100);
 	Texture* tex = new Texture(ImageUtility::loadImage(
@@ -361,7 +350,7 @@ void initSystem() {
 
 	SDL_GL_SwapBuffers();
 
-	sndManager = new SoundManager(fileUtility, masterVolume);
+	sndManager = new SoundManager(fileUtility, config);
 	musicManager = new MusicManager(fileUtility, sndManager);
 
 	musicManager->play();
@@ -417,8 +406,8 @@ void switchGamePause() {
 }
 
 void fillCharStatsWindow() {
-	const int l = screenWidth * 0.1f;
-	const int r = screenWidth * 0.6f;
+	const int l = config->ScreenWidth * 0.1f;
+	const int r = config->ScreenWidth * 0.6f;
 
 	Window* charStats = windows.find("charstats")->second;
 
@@ -549,10 +538,10 @@ void takeBigCalibre() {
 }
 
 void addCharStatWindow() {
-	Window *charStats = new Window(0.0f, 0.0f, screenWidth, screenHeight, 0.0f,
-			0.0f, 0.0f, 0.5f);
+	Window *charStats = new Window(0.0f, 0.0f, config->ScreenWidth,
+			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int r = screenWidth * 0.6f;
+	const int r = config->ScreenWidth * 0.6f;
 
 	charStats->addElement("perks", text->getObject("Perks:", r,
 			text->getHeight() * 4.0f, TextManager::LEFT, TextManager::MIDDLE));
@@ -583,22 +572,22 @@ void addCharStatWindow() {
 void backFromHighScores();
 
 void addHighscoresWindow() {
-	Window *scoresWin = new Window(0.0f, 0.0f, screenWidth, screenHeight, 0.0f,
-			0.0f, 0.0f, 0.5f);
+	Window *scoresWin = new Window(0.0f, 0.0f, config->ScreenWidth,
+			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = screenWidth * 0.1f;
+	const int l = config->ScreenWidth * 0.1f;
 	const int r2 = l * 2.0f;
 	const int r3 = l * 4.0f;
 
 	scoresWin->addElement("highscores", text->getObject("Highscores", l,
-			text->getHeight() * 2.0f, TextManager::LEFT, TextManager::MIDDLE));
+			text->getHeight() * 3.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addElement("headerXp", text->getObject("XP", l,
-			text->getHeight() * 4.0f, TextManager::LEFT, TextManager::MIDDLE));
+			text->getHeight() * 5.0f, TextManager::LEFT, TextManager::MIDDLE));
 	scoresWin->addElement("headerParams", text->getObject("Str/Agil/Vital", r2,
-			text->getHeight() * 4.0f, TextManager::LEFT, TextManager::MIDDLE));
+			text->getHeight() * 5.0f, TextManager::LEFT, TextManager::MIDDLE));
 	scoresWin->addElement("headerTime", text->getObject("Time", r3,
-			text->getHeight() * 4.0f, TextManager::LEFT, TextManager::MIDDLE));
+			text->getHeight() * 5.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	Highscores s(fileUtility);
 	vector<Player*> highscores = s.getData();
@@ -607,19 +596,18 @@ void addHighscoresWindow() {
 		char* label;
 		char* line;
 		sprintf(label = new char[30], "xp%i", i);
-		sprintf(line = new char[200], "%i", highscores[i]->Xp);
+		sprintf(line = new char[30], "%i", highscores[i]->Xp);
 		scoresWin->addElement(label, text->getObject(line, l, text->getHeight()
-				* (5.0f + i), TextManager::LEFT, TextManager::MIDDLE));
+				* (6.0f + i), TextManager::LEFT, TextManager::MIDDLE));
 		delete[] label;
 		delete[] line;
 
 		sprintf(label = new char[30], "params%i", i);
-		sprintf(line = new char[200], "%i/%i/%i",
-				(int) (highscores[i]->Strength * 100),
-				(int) (highscores[i]->Agility * 100),
+		sprintf(line = new char[30], "%i/%i/%i", (int) (highscores[i]->Strength
+				* 100), (int) (highscores[i]->Agility * 100),
 				(int) (highscores[i]->Vitality * 100));
 		scoresWin->addElement(label, text->getObject(line, r2,
-				text->getHeight() * (5.0f + i), TextManager::LEFT,
+				text->getHeight() * (6.0f + i), TextManager::LEFT,
 				TextManager::MIDDLE));
 		delete[] label;
 		delete[] line;
@@ -628,16 +616,16 @@ void addHighscoresWindow() {
 		const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
 
 		sprintf(label = new char[30], "time%i", i);
-		sprintf(line = new char[200], "%im %is", minutes, seconds);
+		sprintf(line = new char[30], "%im %is", minutes, seconds);
 		scoresWin->addElement(label, text->getObject(line, r3,
-				text->getHeight() * (5.0f + i), TextManager::LEFT,
+				text->getHeight() * (6.0f + i), TextManager::LEFT,
 				TextManager::MIDDLE));
 		delete[] label;
 		delete[] line;
 	}
 
 	scoresWin->addElement("back", text->getObject("Back to main menu", l,
-			text->getHeight() * 17.0f, TextManager::LEFT, TextManager::MIDDLE));
+			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addHandler("back", backFromHighScores);
 
@@ -650,10 +638,10 @@ void showHighScores() {
 }
 
 void addMainMenuWindow() {
-	Window *mainMenu = new Window(0.0f, 0.0f, screenWidth, screenHeight, 0.0f,
-			0.0f, 0.0f, 0.5f);
+	Window *mainMenu = new Window(0.0f, 0.0f, config->ScreenWidth,
+			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = screenWidth * 0.1f;
+	const int l = config->ScreenWidth * 0.1f;
 
 	mainMenu->addElement("survival", text->getObject("New survival", l,
 			text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE));
@@ -682,10 +670,10 @@ void backFromHighScores() {
 }
 
 void addHelpWindow() {
-	Window *help = new Window(0.0f, 0.0f, screenWidth, screenHeight, 0.0f,
-			0.0f, 0.0f, 0.5f);
+	Window *help = new Window(0.0f, 0.0f, config->ScreenWidth,
+			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = screenWidth * 0.1f;
+	const int l = config->ScreenWidth * 0.1f;
 
 	help->addElement("label1", text->getObject("Game controls:", l,
 			text->getHeight() * 4, TextManager::LEFT, TextManager::MIDDLE));
@@ -806,7 +794,7 @@ void handlePlayer() {
 					newBullets->end());
 			delete newBullets;
 		}
-		if (player->getAmmo() == 0 && autoReload)
+		if (player->getAmmo() == 0 && config->AutoReload)
 			player->reload();
 	}
 
@@ -1017,7 +1005,7 @@ void drawMessagesQueue() {
 		int s = msgQueue.size();
 		for (int i = s - 1; i >= 0; i--) {
 			msgQueue[i]->draw(true, msgQueue[i]->X + text->getIndent(),
-					screenHeight - s * text->getHeight() + i
+					config->ScreenHeight - s * text->getHeight() + i
 							* text->getHeight());
 			msgQueue[i]->AMask -= 0.0001f * deltaTime;
 
@@ -1033,7 +1021,7 @@ void drawHud() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glOrtho(0.0, screenWidth, screenHeight, 0.0, -10.0, 10.0);
+	glOrtho(0.0, config->ScreenWidth, config->ScreenHeight, 0.0, -10.0, 10.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -1060,28 +1048,30 @@ void drawHud() {
 	delete[] buf;
 
 	sprintf(buf = new char[30], "Time: %dm %ds", minutes, seconds);
-	text->draw(buf, screenWidth - text->getIndent(), text->getIndent(),
+	text->draw(buf, config->ScreenWidth - text->getIndent(), text->getIndent(),
 			TextManager::RIGHT, TextManager::TOP);
 	delete[] buf;
 
 	sprintf(buf = new char[30], "Xp: %d (%d)", player->Xp, player->NextLevelXp);
-	text->draw(buf, screenWidth - text->getIndent(), text->getIndent()
+	text->draw(buf, config->ScreenWidth - text->getIndent(), text->getIndent()
 			+ text->getHeight(), TextManager::RIGHT, TextManager::TOP);
 	delete[] buf;
 
-	if (showFps) {
+	if (config->ShowFps) {
 		sprintf(buf = new char[30], "FPS: %i", fps);
-		text->draw(buf, screenWidth - text->getIndent(), screenHeight
-				- text->getIndent(), TextManager::RIGHT, TextManager::BOTTOM);
+		text->draw(buf, config->ScreenWidth - text->getIndent(),
+				config->ScreenHeight - text->getIndent(), TextManager::RIGHT,
+				TextManager::BOTTOM);
 		delete[] buf;
 	}
 
 	if (lose && !gamePaused)
-		text->draw("They have overcome...", screenWidth / 2, screenHeight / 2,
-				TextManager::CENTER, TextManager::MIDDLE);
+		text->draw("They have overcome...", config->ScreenWidth / 2,
+				config->ScreenHeight / 2, TextManager::CENTER,
+				TextManager::MIDDLE);
 
 	if (gamePaused)
-		text->draw("PAUSE", screenWidth / 2, screenHeight / 2,
+		text->draw("PAUSE", config->ScreenWidth / 2, config->ScreenHeight / 2,
 				TextManager::CENTER, TextManager::MIDDLE);
 
 	drawMessagesQueue();
@@ -1292,8 +1282,8 @@ void runMainLoop() {
 			framesCount = 0;
 		}
 
-		if (fpsLimit > 0 && deltaTime < fpsLimit)
-			SDL_Delay(fpsLimit - deltaTime);
+		if (config->FrameDelay > 0 && deltaTime < config->FrameDelay)
+			SDL_Delay(config->FrameDelay - deltaTime);
 
 		input->process();
 
@@ -1320,7 +1310,8 @@ void runMainLoop() {
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 
-			glOrtho(0.0, screenWidth, screenHeight, 0.0, -10.0, 10.0);
+			glOrtho(0.0, config->ScreenWidth, config->ScreenHeight, 0.0, -10.0,
+					10.0);
 
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
@@ -1473,7 +1464,7 @@ void loadResources() {
 					FileUtility::image, "medikit.png")), GL_TEXTURE_2D,
 					GL_LINEAR, true);
 
-	aim = new Aim(aimColorDark, aimColorLight);
+	aim = new Aim(config);
 
 	text = new TextManager(fileUtility->getFullPath(FileUtility::common,
 			"fonts/harabara.ttf"), 46 * widthK);
@@ -1518,6 +1509,8 @@ void unloadResources() {
 		delete playerHitSounds[i];
 	}
 	playerHitSounds.clear();
+	config->write();
+	delete config;
 }
 
 void parsePreferences(int argc, char *argv[]) {
@@ -1556,45 +1549,47 @@ void parsePreferences(int argc, char *argv[]) {
 			exit(0);
 		}
 
-		if (arg.compare("-f") == 0)
-			fullScreen = true;
-
-		if (arg.compare("-v") == 0 && i + 1 < argc)
-			masterVolume = strtol(argv[i + 1], NULL, 10);
-
 		if (arg.compare("-r") == 0 && i + 1 < argc) {
 			fileUtility->setFullResPath(argv[i + 1]);
 		}
 
+		config = new Configuration(fileUtility);
+
+		if (arg.compare("-f") == 0)
+			config->FullScreen = true;
+
+		if (arg.compare("-v") == 0 && i + 1 < argc)
+			config->MasterVolume = strtol(argv[i + 1], NULL, 10);
+
 		if (arg.compare("-w") == 0 && i + 1 < argc)
-			screenWidth = strtol(argv[i + 1], NULL, 10);
+			config->ScreenWidth = strtol(argv[i + 1], NULL, 10);
 
 		if (arg.compare("-h") == 0 && i + 1 < argc)
-			screenHeight = strtol(argv[i + 1], NULL, 10);
+			config->ScreenHeight = strtol(argv[i + 1], NULL, 10);
 
 		if (arg.compare("--aimca") == 0 && i + 1 < argc) {
-			aimColorDark = strtol(argv[i + 1], NULL, 16);
+			config->AimColorA = strtol(argv[i + 1], NULL, 16);
 		}
 
 		if (arg.compare("--aimcb") == 0 && i + 1 < argc) {
-			aimColorLight = strtol(argv[i + 1], NULL, 16);
+			config->AimColorB = strtol(argv[i + 1], NULL, 16);
 		}
 
 		if (arg.compare("--fps") == 0 && i + 1 < argc) {
 			int lim = strtol(argv[i + 1], NULL, 10);
-			fpsLimit = lim > 0 ? 1000 / lim : 0;
+			config->FrameDelay = lim > 0 ? 1000 / lim : 0;
 		}
 
 		if (arg.compare("--noreload") == 0)
-			autoReload = false;
+			config->AutoReload = false;
 
 		if (arg.compare("--showfps") == 0)
-			showFps = true;
+			config->ShowFps = true;
 
 		if (arg.compare("--monsters") == 0 && i + 1 < argc) {
 			int n = strtol(argv[i + 1], NULL, 10);
 			if (n >= 0)
-				spawnMonstersAtStart = n;
+				config->MonstersAtStart = n;
 			else
 				printf("Number of monsters must be positive.\n");
 		}
