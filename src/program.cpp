@@ -219,7 +219,7 @@ void spawnEnemy(float r, int lvl, float* param) {
 	enemies.push_back(newEnemy);
 }
 
-void startGame() {
+void startSurvival() {
 	if (player)
 		delete player;
 	player = new Player(0, 0, playerLegsSprite, playerArmsTex, weapons[0]);
@@ -406,7 +406,7 @@ void switchGamePause() {
 		SDL_ShowCursor(0);
 }
 
-void fillCharStatsWindow() {
+void refreshCharStatsWindow() {
 	const int l = config->ScreenWidth * 0.1f;
 	const int r = config->ScreenWidth * 0.6f;
 
@@ -492,7 +492,7 @@ void increaseStrength() {
 	if (player->LevelPoints > 0) {
 		player->Strength += 0.1;
 		player->LevelPoints--;
-		fillCharStatsWindow();
+		refreshCharStatsWindow();
 	}
 }
 
@@ -500,7 +500,7 @@ void increaseAgility() {
 	if (player->LevelPoints > 0) {
 		player->Agility += 0.1;
 		player->LevelPoints--;
-		fillCharStatsWindow();
+		refreshCharStatsWindow();
 	}
 }
 
@@ -510,7 +510,7 @@ void increaseVitality() {
 		player->Vitality += 0.1;
 		player->setHealth(h * player->MaxHealth());
 		player->LevelPoints--;
-		fillCharStatsWindow();
+		refreshCharStatsWindow();
 	}
 }
 
@@ -518,7 +518,7 @@ void takePoisonBullets() {
 	if (!player->PoisonBullets && player->LevelPoints > 0) {
 		player->PoisonBullets = true;
 		player->LevelPoints--;
-		fillCharStatsWindow();
+		refreshCharStatsWindow();
 	}
 }
 
@@ -526,7 +526,7 @@ void takeUnstoppable() {
 	if (!player->Unstoppable && player->LevelPoints > 0) {
 		player->Unstoppable = true;
 		player->LevelPoints--;
-		fillCharStatsWindow();
+		refreshCharStatsWindow();
 	}
 }
 
@@ -534,11 +534,11 @@ void takeBigCalibre() {
 	if (!player->BigCalibre && player->LevelPoints > 0) {
 		player->BigCalibre = true;
 		player->LevelPoints--;
-		fillCharStatsWindow();
+		refreshCharStatsWindow();
 	}
 }
 
-void addCharStatWindow() {
+void createCharStatWindow() {
 	Window *charStats = new Window(0.0f, 0.0f, config->ScreenWidth,
 			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -571,8 +571,9 @@ void addCharStatWindow() {
 }
 
 void backFromHighScores();
+void backFromOptions();
 
-void addHighscoresWindow() {
+void createHighscoresWindow() {
 	Window *scoresWin = new Window(0.0f, 0.0f, config->ScreenWidth,
 			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -633,12 +634,37 @@ void addHighscoresWindow() {
 	windows["highscores"] = scoresWin;
 }
 
-void showHighScores() {
-	windows["mainmenu"]->CloseFlag = true;
-	addHighscoresWindow();
+void createOptionsWindow() {
+	Window *w = new Window(0.0f, 0.0f, config->ScreenWidth,
+			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
+
+	const int l = config->ScreenWidth * 0.1f;
+
+	w->addElement("options", text->getObject("Options", l, text->getHeight()
+			* 3.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	w->addElement("resolution", text->getObject("Resolution", l,
+			text->getHeight() * 5.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	w->addElement("back", text->getObject("Back to main menu", l,
+			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	w->addHandler("back", backFromOptions);
+
+	windows["options"] = w;
 }
 
-void addMainMenuWindow() {
+void showHighScores() {
+	windows["mainmenu"]->CloseFlag = true;
+	createHighscoresWindow();
+}
+
+void showOptions() {
+	windows["mainmenu"]->CloseFlag = true;
+	createOptionsWindow();
+}
+
+void createMainMenuWindow() {
 	Window *mainMenu = new Window(0.0f, 0.0f, config->ScreenWidth,
 			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -647,10 +673,12 @@ void addMainMenuWindow() {
 	mainMenu->addElement("survival", text->getObject("New survival", l,
 			text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	mainMenu->addHandler("survival", startGame);
+	mainMenu->addHandler("survival", startSurvival);
 
 	mainMenu->addElement("options", text->getObject("Options", l,
 			text->getHeight() * 9.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	mainMenu->addHandler("options", showOptions);
 
 	mainMenu->addElement("highscores", text->getObject("High scores", l,
 			text->getHeight() * 10.0f, TextManager::LEFT, TextManager::MIDDLE));
@@ -665,12 +693,17 @@ void addMainMenuWindow() {
 	windows["mainmenu"] = mainMenu;
 }
 
-void backFromHighScores() {
-	windows["highscores"]->CloseFlag = true;
-	addMainMenuWindow();
+void backFromOptions() {
+	windows["options"]->CloseFlag = true;
+	createMainMenuWindow();
 }
 
-void addHelpWindow() {
+void backFromHighScores() {
+	windows["highscores"]->CloseFlag = true;
+	createMainMenuWindow();
+}
+
+void createHelpWindow() {
 	Window *help = new Window(0.0f, 0.0f, config->ScreenWidth,
 			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -713,8 +746,8 @@ void handleGameCommonControls() {
 		if (windows.count("charstats") == 0) {
 			clearWindows();
 
-			addCharStatWindow();
-			fillCharStatsWindow();
+			createCharStatWindow();
+			refreshCharStatsWindow();
 
 			if (!gamePaused)
 				switchGamePause();
@@ -729,7 +762,7 @@ void handleGameCommonControls() {
 		if (windows.count("helpscreen") == 0) {
 			clearWindows();
 
-			addHelpWindow();
+			createHelpWindow();
 
 			if (!gamePaused)
 				switchGamePause();
@@ -744,7 +777,7 @@ void handleGameCommonControls() {
 		if (windows.count("mainmenu") == 0) {
 			clearWindows();
 
-			addMainMenuWindow();
+			createMainMenuWindow();
 
 			if (!gamePaused)
 				switchGamePause();
@@ -1606,7 +1639,7 @@ int main(int argc, char *argv[]) {
 
 	loadResources();
 
-	addMainMenuWindow();
+	createMainMenuWindow();
 
 	runMainLoop();
 
