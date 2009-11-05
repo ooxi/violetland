@@ -18,6 +18,7 @@ InputHandler::InputHandler() {
 	m_eventMap[Pause] = SDLK_p;
 	m_eventMap[ShowChar] = SDLK_c;
 	m_eventMap[Help] = SDLK_F1;
+	m_eventMap[Pickup] = SDLK_e;
 
 	m_eventMap[Fire] = SDL_BUTTON_LEFT;
 	m_eventMap[Reload] = SDL_BUTTON_RIGHT;

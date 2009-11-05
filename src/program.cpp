@@ -851,6 +851,7 @@ void killEnemy(int index) {
 				weapons[weaponIndex]->getDroppedTex());
 		newPowerup->Type = Powerup::weapon;
 		newPowerup->Object = weapons[weaponIndex];
+		newPowerup->HitR = 0.5f;
 		powerups.push_back(newPowerup);
 		powerupDropped = true;
 	}
@@ -1133,19 +1134,22 @@ void handlePowerups() {
 						TextManager::LEFT, TextManager::MIDDLE));
 				player->setHealth(player->getHealth()
 						+ *(float*) powerups[i]->Object);
+				deletePowerup = true;
 				break;
 			case Powerup::weapon:
-				player->setWeapon((Weapon*) powerups[i]->Object);
-				char *buf;
-				sprintf(buf = new char[200], "Player has taken the %s.",
-						player->getWeaponName().c_str());
-				msgQueue.push_back(text->getObject(buf, 0, 0,
-						TextManager::LEFT, TextManager::MIDDLE));
-				delete[] buf;
-				break;
+				if (input->getDownInput(InputHandler::Pickup)
+						|| config->AutoWeaponPickup) {
+					player->setWeapon((Weapon*) powerups[i]->Object);
+					char *buf;
+					sprintf(buf = new char[200], "Player has taken the %s.",
+							player->getWeaponName().c_str());
+					msgQueue.push_back(text->getObject(buf, 0, 0,
+							TextManager::LEFT, TextManager::MIDDLE));
+					delete[] buf;
+					deletePowerup = true;
+					break;
+				}
 			}
-
-			deletePowerup = true;
 		}
 
 		if (deletePowerup) {
@@ -1250,12 +1254,12 @@ void drawGame() {
 
 	terrain->draw(cam);
 
-	if (!lose)
-		player->draw();
-
 	for (unsigned int i = 0; i < powerups.size(); i++) {
 		powerups[i]->draw(false);
 	}
+
+	if (!lose)
+		player->draw();
 
 	for (unsigned int i = 0; i < enemies.size(); i++) {
 		if (enemies[i]->getLeft() < cam->X + cam->getHalfW()
@@ -1569,7 +1573,6 @@ void parsePreferences(int argc, char *argv[]) {
 			printf(
 					"\t-v <volume>\t\t\tSet the master sound volume to <volume>\n");
 			printf("\t\t\t\t\t(from 0 to 128; 30 by default)\n");
-			printf("\t--noreload\t\t\tDisable automatic reloading\n");
 			printf("\t--fps <fps_count>\t\tLimit game fps by <fps_count>\n");
 			printf("\t\t\t\t\tDefault value of <fps_count> is 0\n");
 			printf("\t\t\t\t\tSeting <fps_count> to 0 will disable\n");
@@ -1577,13 +1580,6 @@ void parsePreferences(int argc, char *argv[]) {
 			printf("\t--showfps\t\t\tShow fps in game\n");
 			printf("\t--monsters <count>\t\tImmediately spawn\n");
 			printf("\t\t\t\t\t<count> monsters at start\n");
-			printf("\t--aimca <color>\t\t\tSet first color of aim cursor\n");
-			printf("\t--aimcb <color>\t\t\tSet second color of aim cursor\n");
-			printf("\t\t\t\t\t<color> must be hex number of\n");
-			printf("\t\t\t\t\tRGB sort like 0x000000 for black\n");
-			printf("\t\t\t\t\tand 0xFFFFFF for white (this is\n");
-			printf("\t\t\t\t\tdefault values for a and b\n");
-			printf("\t\t\t\t\tcolors respectively)\n");
 			exit(0);
 		}
 
@@ -1603,21 +1599,10 @@ void parsePreferences(int argc, char *argv[]) {
 		if (arg.compare("-h") == 0 && i + 1 < argc)
 			config->ScreenHeight = strtol(argv[i + 1], NULL, 10);
 
-		if (arg.compare("--aimca") == 0 && i + 1 < argc) {
-			config->AimColorA = strtol(argv[i + 1], NULL, 16);
-		}
-
-		if (arg.compare("--aimcb") == 0 && i + 1 < argc) {
-			config->AimColorB = strtol(argv[i + 1], NULL, 16);
-		}
-
 		if (arg.compare("--fps") == 0 && i + 1 < argc) {
 			int lim = strtol(argv[i + 1], NULL, 10);
 			config->FrameDelay = lim > 0 ? 1000 / lim : 0;
 		}
-
-		if (arg.compare("--noreload") == 0)
-			config->AutoReload = false;
 
 		if (arg.compare("--showfps") == 0)
 			config->ShowFps = true;

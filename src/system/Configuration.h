@@ -21,6 +21,7 @@ public:
 	int MasterVolume;
 	unsigned int MonstersAtStart;
 	int AimColorA, AimColorB;
+	bool AutoWeaponPickup;
 };
 
 #endif /* CONFIGURATION_H_ */
