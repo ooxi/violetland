@@ -6,13 +6,12 @@ Powerup::Powerup(float x, float y, Texture *tex) :
 	resetTaking();
 }
 
-void Powerup::take(int deltaTime)
-{
+void Powerup::take(int deltaTime) {
 	TakeDelay -= deltaTime;
-	if (TakeDelay < 0) TakeDelay = 0;
+	if (TakeDelay < 0)
+		TakeDelay = 0;
 }
 
-void Powerup::resetTaking()
-{
-	TakeDelay = 2500;
+void Powerup::resetTaking() {
+	TakeDelay = 2000;
 }
