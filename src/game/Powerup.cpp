@@ -13,5 +13,5 @@ void Powerup::take(int deltaTime) {
 }
 
 void Powerup::resetTaking() {
-	TakeDelay = 2000;
+	TakeDelay = 1800;
 }
