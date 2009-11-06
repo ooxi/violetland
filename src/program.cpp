@@ -485,6 +485,11 @@ void refreshCharStatsWindow() {
 		charStats->addElement("+bigcalibre", text->getObject("+", r,
 				text->getHeight() * 8.0f, TextManager::CENTER,
 				TextManager::MIDDLE));
+
+	if (player->Telekinesis)
+		charStats->addElement("+telekinesis", text->getObject("+", r,
+				text->getHeight() * 9.0f, TextManager::CENTER,
+				TextManager::MIDDLE));
 }
 
 void increaseStrength() {
@@ -537,6 +542,14 @@ void takeBigCalibre() {
 	}
 }
 
+void takeTelekinesis() {
+	if (!player->Telekinesis && player->LevelPoints > 0) {
+		player->Telekinesis = true;
+		player->LevelPoints--;
+		refreshCharStatsWindow();
+	}
+}
+
 void createCharStatWindow() {
 	Window *charStats = new Window(0.0f, 0.0f, config->ScreenWidth,
 			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
@@ -550,14 +563,6 @@ void createCharStatWindow() {
 			+ text->getHeight() * 2.0f, text->getHeight() * 6.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
-	charStats->addHandler("strength", increaseStrength);
-	charStats->addHandler("agility", increaseAgility);
-	charStats->addHandler("vitality", increaseVitality);
-
-	charStats->addHandler("unstoppable", takeUnstoppable);
-	charStats->addHandler("poisonbullets", takePoisonBullets);
-	charStats->addHandler("bigcalibre", takeBigCalibre);
-
 	charStats->addElement("poisonbullets", text->getObject("Poison bullets", r
 			+ text->getHeight() * 2.0f, text->getHeight() * 7.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
@@ -565,6 +570,19 @@ void createCharStatWindow() {
 	charStats->addElement("bigcalibre", text->getObject("Big calibre", r
 			+ text->getHeight() * 2.0f, text->getHeight() * 8.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
+
+	charStats->addElement("telekinesis", text->getObject("Telekinesis", r
+			+ text->getHeight() * 2.0f, text->getHeight() * 9.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
+	charStats->addHandler("strength", increaseStrength);
+	charStats->addHandler("agility", increaseAgility);
+	charStats->addHandler("vitality", increaseVitality);
+
+	charStats->addHandler("unstoppable", takeUnstoppable);
+	charStats->addHandler("poisonbullets", takePoisonBullets);
+	charStats->addHandler("bigcalibre", takeBigCalibre);
+	charStats->addHandler("telekinesis", takeTelekinesis);
 
 	windows["charstats"] = charStats;
 }
@@ -1167,7 +1185,15 @@ void handlePowerups() {
 		if (powerups[i]->Time < 0)
 			deletePowerup = true;
 
-		if (!lose && powerups[i]->detectCollide(player)) {
+		if (player->Telekinesis)
+		{
+			if (powerups[i]->detectCollide(player->TargetX, player->TargetY))
+				powerups[i]->take(deltaTime);
+			else
+				powerups[i]->resetTaking();
+		}
+
+		if (!lose && (powerups[i]->detectCollide(player) || powerups[i]->TakeDelay == 0)) {
 			switch (powerups[i]->Type) {
 			case Powerup::medikit:
 				msgQueue.push_back(text->getObject(

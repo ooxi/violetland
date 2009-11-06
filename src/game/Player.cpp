@@ -16,9 +16,7 @@ Player::Player() :
 
 	m_light = m_laser = false;
 
-	Unstoppable = false;
-	PoisonBullets = false;
-	BigCalibre = false;
+	Unstoppable =PoisonBullets = BigCalibre = Telekinesis = false;
 }
 
 Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex,

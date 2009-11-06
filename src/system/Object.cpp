@@ -112,6 +112,11 @@ const bool Object::detectCollide(Object *refObj) {
 			* m_width + refObj->HitR * refObj->Scale * refObj->getWidth();
 }
 
+const bool Object::detectCollide(float x, float y) {
+	return calculateDistance(X, Y, x, y) < HitR * Scale
+		* m_width;
+}
+
 const bool Object::detectCollide(float x1, float y1, float x2, float y2) {
 	float tx, ty;
 	return detectCollide(x1, y1, x2, y2, &tx, &ty);

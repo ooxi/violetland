@@ -55,6 +55,7 @@ public:
 	bool Unstoppable;
 	bool PoisonBullets;
 	bool BigCalibre;
+	bool Telekinesis;
 
 	bool Empty;
 };

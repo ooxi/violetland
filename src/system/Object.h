@@ -24,6 +24,7 @@ public:
 	const float getTop();
 	const float getBottom();
 	const bool detectCollide(Object *refObj);
+	const bool detectCollide(float x, float y);
 	const bool detectCollide(float x1, float y1, float x2, float y2);
 	const bool detectCollide(float x1, float y1, float x2, float y2, float* ix,
 			float* iy);
