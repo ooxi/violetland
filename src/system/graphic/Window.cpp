@@ -14,18 +14,28 @@ Window::Window(float x, float y, int w, int h, float r, float g, float b,
 }
 
 void Window::addElement(std::string name, TextObject* element) {
+	removeElement(name, true);
+	m_elements[name] = element;
+}
+
+void Window::removeElement(std::string name, bool remainHandler) {
 	if (m_elements.count(name) > 0) {
 		delete m_elements.find(name)->second;
 		m_elements.erase(name);
 	}
-	m_elements[name] = element;
+	if (!remainHandler)
+		removeHandler(name);
 }
 
 void Window::addHandler(std::string elementName, void(*func)()) {
+	removeHandler(elementName);
+	m_handlers[elementName] = func;
+}
+
+void Window::removeHandler(std::string elementName) {
 	if (m_handlers.count(elementName) > 0) {
 		m_handlers.erase(elementName);
 	}
-	m_handlers[elementName] = func;
 }
 
 void Window::draw() {

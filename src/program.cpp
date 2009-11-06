@@ -276,7 +276,6 @@ void printVersion() {
 }
 
 void initSystem() {
-	config->read();
 	srand((unsigned) time(NULL));
 
 	printVersion();
@@ -571,7 +570,7 @@ void createCharStatWindow() {
 }
 
 void backFromHighScores();
-void backFromOptions();
+void backFromOptionsAndSave();
 
 void createHighscoresWindow() {
 	Window *scoresWin = new Window(0.0f, 0.0f, config->ScreenWidth,
@@ -634,24 +633,65 @@ void createHighscoresWindow() {
 	windows["highscores"] = scoresWin;
 }
 
+void refreshOptionsWindow()
+{
+	const int l = config->ScreenWidth * 0.1f;
+
+	Window* w = windows.find("options")->second;
+
+	if (config->AutoReload)
+		w->addElement("+autoreload", text->getObject("+", l,
+		text->getHeight() * 7.0f, TextManager::LEFT, TextManager::MIDDLE));
+	else
+		w->removeElement("+autoreload", false);
+
+	if (config->AutoWeaponPickup)
+		w->addElement("+autopickup", text->getObject("+", l,
+		text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE));
+	else
+		w->removeElement("+autopickup", false);
+}
+
+void switchAutoReload()
+{
+	config->AutoReload = !config->AutoReload;
+	refreshOptionsWindow();
+}
+
+void switchAutoPickup()
+{
+	config->AutoWeaponPickup = !config->AutoWeaponPickup;
+	refreshOptionsWindow();
+}
+
 void createOptionsWindow() {
 	Window *w = new Window(0.0f, 0.0f, config->ScreenWidth,
 			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
 	const int l = config->ScreenWidth * 0.1f;
+	const int r = config->ScreenWidth * 0.4f;
 
 	w->addElement("options", text->getObject("Options", l, text->getHeight()
 			* 3.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	w->addElement("resolution", text->getObject("Resolution", l,
+	w->addElement("sectiongame", text->getObject("Gameplay", l,
 			text->getHeight() * 5.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	w->addElement("back", text->getObject("Back to main menu", l,
-			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("autoreload", text->getObject("Weapon autoreloading", l + text->getHeight() * 2.0f,
+			text->getHeight() * 7.0f, TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("autopickup", text->getObject("Weapon autotaking", l + text->getHeight() * 2.0f,
+			text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	w->addHandler("back", backFromOptions);
+	w->addHandler("autoreload", switchAutoReload);
+	w->addHandler("autopickup", switchAutoPickup);
+
+	w->addElement("savereturn", text->getObject("Save and return", l,
+			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
+	w->addHandler("savereturn", backFromOptionsAndSave);
 
 	windows["options"] = w;
+
+	refreshOptionsWindow();
 }
 
 void showHighScores() {
@@ -693,7 +733,8 @@ void createMainMenuWindow() {
 	windows["mainmenu"] = mainMenu;
 }
 
-void backFromOptions() {
+void backFromOptionsAndSave() {
+	config->write();
 	windows["options"]->CloseFlag = true;
 	createMainMenuWindow();
 }
@@ -1550,13 +1591,13 @@ void unloadResources() {
 		delete playerHitSounds[i];
 	}
 	playerHitSounds.clear();
-	config->write();
 	delete config;
 }
 
 void parsePreferences(int argc, char *argv[]) {
 	fileUtility = new FileUtility(argv[0]);
 	config = new Configuration(fileUtility);
+	config->read();
 
 	for (int i = 0; i < argc; i++) {
 		string arg = argv[i];

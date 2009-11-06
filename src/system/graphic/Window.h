@@ -14,7 +14,9 @@ private:
 public:
 	Window(float x, float y, int w, int h, float r, float g, float b, float a);
 	void addElement(std::string name, TextObject* element);
+	void removeElement(std::string name, bool remainHandler);
 	void addHandler(std::string elementName, void(*func)());
+	void removeHandler(std::string elementName);
 	void process(InputHandler* input);
 	void draw();
 	bool CloseFlag;
