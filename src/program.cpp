@@ -36,7 +36,7 @@
 #include "game/Highscores.h"
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.2";
+const string VERSION = "0.2.3";
 const int GAME_AREA_SIZE = 2048;
 
 Configuration* config;
@@ -1371,16 +1371,20 @@ void drawGame() {
 
 void drawWindows() {
 	if (!windows.empty()) {
-		std::map<std::string, Window*>::const_iterator win;
+		std::map<std::string, Window*>::iterator win, victim;
 		for (win = windows.begin(); win != windows.end(); ++win) {
 			Window* w = win->second;
 			w->draw();
 			w->process(input);
 		}
-		for (win = windows.begin(); win != windows.end(); ++win) {
-			Window* w = win->second;
-			if (w->CloseFlag)
-				windows.erase(win->first);
+		win = windows.begin();
+		while (win != windows.end()) {
+			if (win->second->CloseFlag) {
+				victim = win++;
+				windows.erase(victim);
+			} else {
+				win++;
+			}
 		}
 	}
 }
