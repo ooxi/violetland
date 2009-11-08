@@ -13,8 +13,8 @@ SoundManager::SoundManager(FileUtility* fileUtility, Configuration* config) {
 	} else {
 		m_enabled = true;
 		printf("\tsound is enabled\n");
-		fprintf(stdout, "Mix_Volume (master) %i...\n", m_config->MasterVolume);
-		Mix_Volume(-1, m_config->MasterVolume);
+		fprintf(stdout, "Mix_Volume (master) %i...\n", m_config->SoundVolume);
+		Mix_Volume(-1, m_config->SoundVolume);
 	}
 }
 

@@ -60,6 +60,6 @@ void LiveObject::setHealth(float value) {
 		m_health = 0;
 }
 
-float LiveObject::getHealth() {
+const float LiveObject::getHealth() {
 	return m_health;
 }

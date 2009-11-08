@@ -10,7 +10,8 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	FrameDelay = 10;
 	ShowFps = false;
 	AutoReload = true;
-	MasterVolume = 40;
+	SoundVolume = 40;
+	MusicVolume = 30;
 	MonstersAtStart = 8;
 	AimColorA = 0x000000;
 	AimColorB = 0xFFFFFF;
@@ -29,7 +30,8 @@ void Configuration::read() {
 		cFile.readInto(FrameDelay, "frameDelay");
 		cFile.readInto(ShowFps, "showFps");
 		cFile.readInto(AutoReload, "autoReload");
-		cFile.readInto(MasterVolume, "masterVolume");
+		cFile.readInto(SoundVolume, "soundVolume");
+		cFile.readInto(MusicVolume, "musicVolume");
 		cFile.readInto(AimColorA, "aimColorA");
 		cFile.readInto(AimColorB, "aimColorB");
 		cFile.readInto(AutoWeaponPickup, "autoWeaponPickup");
@@ -43,7 +45,8 @@ void Configuration::write() {
 
 	cFile.add("aimColorB", AimColorB);
 	cFile.add("aimColorA", AimColorA);
-	cFile.add("masterVolume", MasterVolume);
+	cFile.add("soundVolume", SoundVolume);
+	cFile.add("musicVolume", MusicVolume);
 	cFile.add("autoReload", AutoReload);
 	cFile.add("showFps", ShowFps);
 	cFile.add("frameDelay", FrameDelay);

@@ -351,7 +351,7 @@ void initSystem() {
 	SDL_GL_SwapBuffers();
 
 	sndManager = new SoundManager(fileUtility, config);
-	musicManager = new MusicManager(fileUtility, sndManager);
+	musicManager = new MusicManager(fileUtility, sndManager, config);
 
 	musicManager->play();
 
@@ -611,37 +611,40 @@ void createHighscoresWindow() {
 	Highscores s(fileUtility);
 	vector<Player*> highscores = s.getData();
 
-	for (unsigned int i = 0; i < highscores.size(); i++) {
-		char* label;
-		char* line;
-		sprintf(label = new char[30], "xp%i", i);
-		sprintf(line = new char[30], "%i", highscores[i]->Xp);
-		scoresWin->addElement(label, text->getObject(line, l, text->getHeight()
-				* (6.0f + i), TextManager::LEFT, TextManager::MIDDLE));
-		delete[] label;
-		delete[] line;
+	if (!highscores.empty())
+		for (unsigned int i = 0; i < highscores.size(); i++) {
+			char* label;
+			char* line;
+			sprintf(label = new char[30], "xp%i", i);
+			sprintf(line = new char[30], "%i", highscores[i]->Xp);
+			scoresWin->addElement(label, text->getObject(line, l,
+					text->getHeight() * (6.0f + i), TextManager::LEFT,
+					TextManager::MIDDLE));
+			delete[] label;
+			delete[] line;
 
-		sprintf(label = new char[30], "params%i", i);
-		sprintf(line = new char[30], "%i/%i/%i", (int) (highscores[i]->Strength
-				* 100), (int) (highscores[i]->Agility * 100),
-				(int) (highscores[i]->Vitality * 100));
-		scoresWin->addElement(label, text->getObject(line, r2,
-				text->getHeight() * (6.0f + i), TextManager::LEFT,
-				TextManager::MIDDLE));
-		delete[] label;
-		delete[] line;
+			sprintf(label = new char[30], "params%i", i);
+			sprintf(line = new char[30], "%i/%i/%i",
+					(int) (highscores[i]->Strength * 100),
+					(int) (highscores[i]->Agility * 100),
+					(int) (highscores[i]->Vitality * 100));
+			scoresWin->addElement(label, text->getObject(line, r2,
+					text->getHeight() * (6.0f + i), TextManager::LEFT,
+					TextManager::MIDDLE));
+			delete[] label;
+			delete[] line;
 
-		const int minutes = highscores[i]->Time / 60000;
-		const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
+			const int minutes = highscores[i]->Time / 60000;
+			const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
 
-		sprintf(label = new char[30], "time%i", i);
-		sprintf(line = new char[30], "%im %is", minutes, seconds);
-		scoresWin->addElement(label, text->getObject(line, r3,
-				text->getHeight() * (6.0f + i), TextManager::LEFT,
-				TextManager::MIDDLE));
-		delete[] label;
-		delete[] line;
-	}
+			sprintf(label = new char[30], "time%i", i);
+			sprintf(line = new char[30], "%im %is", minutes, seconds);
+			scoresWin->addElement(label, text->getObject(line, r3,
+					text->getHeight() * (6.0f + i), TextManager::LEFT,
+					TextManager::MIDDLE));
+			delete[] label;
+			delete[] line;
+		}
 
 	scoresWin->addElement("back", text->getObject("Back to main menu", l,
 			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
@@ -1413,7 +1416,7 @@ void runMainLoop() {
 		input->process();
 
 		if (gameStarted) {
-			musicManager->process(player, &enemies, gamePaused);
+			musicManager->process(player, enemies, gamePaused);
 
 			handleGameCommonControls();
 
@@ -1639,9 +1642,7 @@ void parsePreferences(int argc, char *argv[]) {
 			printf(
 					"\t-h <screen_height>\t\tSet screen height to <screen_height>\n");
 			printf("\t-f\t\t\t\tGo to fullscreen at start\n");
-			printf(
-					"\t-v <volume>\t\t\tSet the master sound volume to <volume>\n");
-			printf("\t\t\t\t\t(from 0 to 128; 30 by default)\n");
+			printf("\t-m \t\t\t\tMute sound and music\n");
 			printf("\t--fps <fps_count>\t\tLimit game fps by <fps_count>\n");
 			printf("\t\t\t\t\tDefault value of <fps_count> is 0\n");
 			printf("\t\t\t\t\tSeting <fps_count> to 0 will disable\n");
@@ -1659,8 +1660,8 @@ void parsePreferences(int argc, char *argv[]) {
 		if (arg.compare("-f") == 0)
 			config->FullScreen = true;
 
-		if (arg.compare("-v") == 0 && i + 1 < argc)
-			config->MasterVolume = strtol(argv[i + 1], NULL, 10);
+		//		if (arg.compare("-m") == 0 && i + 1 < argc)
+		//			config->SoundVolume = strtol(argv[i + 1], NULL, 10);
 
 		if (arg.compare("-w") == 0 && i + 1 < argc)
 			config->ScreenWidth = strtol(argv[i + 1], NULL, 10);

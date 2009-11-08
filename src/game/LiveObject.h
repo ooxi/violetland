@@ -14,7 +14,7 @@ public:
 	float Agility;
 	float Vitality;
 	void setHealth(float value);
-	float getHealth();
+	const float getHealth();
 	const float MaxHealth();
 	const float MaxSpeed();
 	const float ChanceToEvade();

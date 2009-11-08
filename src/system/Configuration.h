@@ -18,7 +18,8 @@ public:
 	int FrameDelay;
 	bool ShowFps;
 	bool AutoReload;
-	int MasterVolume;
+	int SoundVolume;
+	int MusicVolume;
 	unsigned int MonstersAtStart;
 	int AimColorA, AimColorB;
 	bool AutoWeaponPickup;

@@ -14,6 +14,7 @@ public:
 	void play(int fade);
 	void playInf();
 	void setPos(Sint16 angle, Uint8 distance);
+	void setVol(int value);
 	void stop(int fade);
 	~Sound();
 };

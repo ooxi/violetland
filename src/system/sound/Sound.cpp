@@ -41,6 +41,11 @@ void Sound::stop(int fade) {
 	}
 }
 
+void Sound::setVol(int value) {
+	if (m_chan != -1)
+		Mix_Volume(m_chan, value);
+}
+
 Sound::~Sound() {
 	if (m_sndRef)
 		Mix_FreeChunk(m_sndRef);

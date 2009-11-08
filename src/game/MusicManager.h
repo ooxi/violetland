@@ -12,11 +12,13 @@ class MusicManager {
 private:
 	FileUtility* m_fileUtility;
 	SoundManager* m_soundManager;
+	Configuration* m_config;
 	std::map<std::string, Sound*> m_music;
 	std::string m_currentPlaying;
 public:
-	MusicManager(FileUtility* fileUtility, SoundManager* soundManager);
-	void process(Player* player, std::vector<Enemy*>* enemies, bool paused);
+	MusicManager(FileUtility* fileUtility, SoundManager* soundManager,
+			Configuration* config);
+	void process(Player* player, std::vector<Enemy*> enemies, bool paused);
 	void play();
 	void play(std::string name, bool now);
 	~MusicManager();
