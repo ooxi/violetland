@@ -225,4 +225,5 @@ install (FILES
 	music/dzaibatsu.ogg
 	music/morning.ogg
 	music/space-crusader.ogg
+	music/mitol-test.ogg
 DESTINATION ${relResPath}/music)
