@@ -771,8 +771,6 @@ void createHelpWindow() {
 
 	help->addElement("label1", text->getObject("Game controls:", l,
 			text->getHeight() * 4, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label2", text->getObject("Game controls:", l,
-			text->getHeight() * 4, TextManager::LEFT, TextManager::MIDDLE));
 	help->addElement("label3", text->getObject("Move up: W", l,
 			text->getHeight() * 6, TextManager::LEFT, TextManager::MIDDLE));
 	help->addElement("label4", text->getObject("Move left: A", l,
@@ -785,18 +783,16 @@ void createHelpWindow() {
 			text->getHeight() * 10, TextManager::LEFT, TextManager::MIDDLE));
 	help->addElement("label8", text->getObject("Reload: Right mouse button", l,
 			text->getHeight() * 11, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label9", text->getObject("Toggle flashlight: F", l,
+	help->addElement("label2", text->getObject("Pick up weapon: E", l,
 			text->getHeight() * 12, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label10", text->getObject("Toggle laser aim: G", l,
+	help->addElement("label9", text->getObject("Toggle flashlight: F", l,
 			text->getHeight() * 13, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label11", text->getObject("Restart game: Enter", l,
+	help->addElement("label10", text->getObject("Toggle laser aim: G", l,
 			text->getHeight() * 14, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label12", text->getObject("Quit game: Esc", l,
-			text->getHeight() * 15, TextManager::LEFT, TextManager::MIDDLE));
 	help->addElement("label13", text->getObject("Open player char stats: C", l,
+			text->getHeight() * 15, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label12", text->getObject("Main menu: Esc", l,
 			text->getHeight() * 16, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label14", text->getObject("Pause game: P", l,
-			text->getHeight() * 17, TextManager::LEFT, TextManager::MIDDLE));
 
 	windows["helpscreen"] = help;
 }
@@ -1642,7 +1638,7 @@ void parsePreferences(int argc, char *argv[]) {
 			printf(
 					"\t-h <screen_height>\t\tSet screen height to <screen_height>\n");
 			printf("\t-f\t\t\t\tGo to fullscreen at start\n");
-			printf("\t-m \t\t\t\tMute sound and music\n");
+			printf("\t-i\t\t\t\tForce windowed mode\n");
 			printf("\t--fps <fps_count>\t\tLimit game fps by <fps_count>\n");
 			printf("\t\t\t\t\tDefault value of <fps_count> is 0\n");
 			printf("\t\t\t\t\tSeting <fps_count> to 0 will disable\n");
@@ -1660,8 +1656,8 @@ void parsePreferences(int argc, char *argv[]) {
 		if (arg.compare("-f") == 0)
 			config->FullScreen = true;
 
-		//		if (arg.compare("-m") == 0 && i + 1 < argc)
-		//			config->SoundVolume = strtol(argv[i + 1], NULL, 10);
+		if (arg.compare("-i") == 0)
+			config->FullScreen = false;
 
 		if (arg.compare("-w") == 0 && i + 1 < argc)
 			config->ScreenWidth = strtol(argv[i + 1], NULL, 10);

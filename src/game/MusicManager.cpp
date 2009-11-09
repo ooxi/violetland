@@ -48,17 +48,21 @@ void MusicManager::play() {
 }
 
 void MusicManager::play(std::string name, bool now) {
-	if (m_currentPlaying != "null") {
-		if (m_music[m_currentPlaying]->isPlaying()) {
-			if (now)
-				m_music[m_currentPlaying]->stop(3000);
-			else
-				return;
+	if (m_music.size() > 0) {
+		if (m_currentPlaying != "null") {
+			if (m_music[m_currentPlaying]->isPlaying()) {
+				if (now)
+					m_music[m_currentPlaying]->stop(3000);
+				else
+					return;
+			}
+		}
+		if (m_music.count(name) > 0) {
+			m_music[name]->play(0);
+			m_music[name]->setVol(m_config->MusicVolume);
+			m_currentPlaying = name;
 		}
 	}
-	m_music[name]->play(0);
-	m_music[name]->setVol(m_config->MusicVolume);
-	m_currentPlaying = name;
 }
 
 MusicManager::~MusicManager() {
