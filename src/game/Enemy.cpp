@@ -62,7 +62,7 @@ void Enemy::process(int deltaTime) {
 	setHealth(getHealth() + HealthRegen() * deltaTime);
 
 	if (Poisoned)
-		setHealth(getHealth() - 0.0001 * deltaTime);
+		setHealth(getHealth() - 0.0002 * deltaTime);
 
 	if (!m_bleeds.empty()) {
 		m_bleeding += deltaTime;

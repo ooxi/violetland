@@ -1069,10 +1069,14 @@ void handleBullets() {
 							}
 						}
 
-						player->Xp += (int) ((1.5 - dayLight * -0.5)
-								* bullets[i]->Damage * 10);
 						float damageLoss = enemies[j]->getHealth();
 						enemies[j]->hit(bullets[i], player->X, player->Y);
+
+						player->Xp
+								+= (int) ((1.5 - dayLight * -0.5) * damageLoss
+										> bullets[i]->Damage ? bullets[i]->Damage
+										* 20
+										: damageLoss * 20);
 
 						if (bullets[i]->BigCalibre) {
 							bullets[i]->Damage -= damageLoss;
