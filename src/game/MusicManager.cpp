@@ -19,7 +19,7 @@ MusicManager::MusicManager(FileUtility* fileUtility,
 				musicFiles[i], snd));
 	}
 
-	fprintf(stdout, "\tfound %i tracks\n", (int) musicFiles.size());
+	fprintf(stdout, "\tloaded %i tracks\n", (int) musicFiles.size());
 
 	m_currentPlaying = "null";
 }

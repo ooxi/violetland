@@ -10,8 +10,7 @@ void FileUtility::truncateFullPathToDir(char *path) {
 		*lastSlash = '\0';
 }
 
-int FileUtility::getFilesCountFromDir(std::string dir)
-{
+int FileUtility::getFilesCountFromDir(std::string dir) {
 	return getFilesFromDir(dir).size();
 }
 
@@ -22,15 +21,21 @@ std::vector<std::string> FileUtility::getFilesFromDir(std::string dir) {
 
 	dp = opendir(dir.c_str());
 	if (dp != NULL) {
-		while ((ep = readdir(dp)))
+		while ((ep = readdir(dp))) {
 #ifdef _WIN32
 			if (!(ep->data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			{
 				files.push_back(ep->d_name);
+				fprintf(stdout, "\t%s\n", ep->d_name);
+			}
 #endif //_WIN32W
 #if defined linux || defined __FreeBSD__
-			if (ep->d_type == DT_REG)
+			if (ep->d_type == DT_REG) {
 				files.push_back(ep->d_name);
+				fprintf(stdout, "\t%s\n", ep->d_name);
+			}
 #endif //linux || __FreeBSD__
+		}
 		(void) closedir(dp);
 	}
 
@@ -101,15 +106,11 @@ void FileUtility::setFullResPath(std::string path) {
 	traceResPath();
 }
 
-std::string FileUtility::getFullPath(PathType type, std::string resource)
-{
+std::string FileUtility::getFullPath(PathType type, std::string resource) {
 	std::string path(m_resPath);
 	std::string usrPath(m_usrPath);
 
-	switch(type)
-	{
-	case FileUtility::common:
-		return path.append(resource);
+	switch (type) {
 	case FileUtility::image:
 		path.append("images/");
 		return path.append(resource);
@@ -122,7 +123,9 @@ std::string FileUtility::getFullPath(PathType type, std::string resource)
 	case FileUtility::music:
 		path.append("music/");
 		return path.append(resource);
-	case FileUtility::user:		
+	case FileUtility::user:
 		return usrPath.append(resource);
+	default:
+		return path.append(resource);
 	}
 }

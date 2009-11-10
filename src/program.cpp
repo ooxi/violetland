@@ -280,6 +280,15 @@ void initSystem() {
 
 	printVersion();
 
+#ifdef _WIN32
+	printf("Assuming WINDOWS environment...\n");
+#endif //_WIN32W
+#ifdef linux
+	printf("Assuming LINUX environment...\n");
+#endif //linux
+#ifdef __FreeBSD__
+	printf("Assuming BSD environment...\n");
+#endif //__FreeBSD__
 	atexit(TTF_Quit);
 	atexit(SDL_Quit);
 
