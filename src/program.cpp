@@ -146,6 +146,8 @@ void createTerrain() {
 	if (terrain)
 		delete terrain;
 
+	printf("Forming terrain...\n");
+
 	int baseTexCount = fileUtility->getFilesCountFromDir(
 			fileUtility->getFullPath(FileUtility::image, "terrain"));
 	int baseTex = (rand() % (baseTexCount * 100 - 1) / 100);

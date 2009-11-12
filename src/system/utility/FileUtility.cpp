@@ -36,7 +36,7 @@ std::vector<std::string> FileUtility::getFilesFromDir(std::string dir) {
 			}
 #endif //linux || __FreeBSD__
 		}
-		(void) closedir(dp);
+		closedir(dp);
 	}
 
 	return files;
