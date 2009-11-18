@@ -47,6 +47,7 @@ set(srcFileList
 	${srcGraphicDir}/Aim.cpp
 	${srcGraphicDir}/Camera.cpp
 	${srcGraphicDir}/Window.cpp
+	${srcGraphicDir}/Particle.cpp
 	${srcTextDir}/TextManager.cpp 
 	${srcTextDir}/TextObject.cpp 
 	${srcSoundDir}/Sound.cpp
@@ -101,6 +102,8 @@ install(FILES
 	images/remington.png
 	images/splash_0.png
 	images/splash_1.png 
+	images/expl_0.png
+	images/expl_1.png
 DESTINATION ${relResPath}/images)
 install (FILES
 	images/terrain/base_0.png

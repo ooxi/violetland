@@ -25,6 +25,7 @@
 #include "system/graphic/Texture.h"
 #include "system/graphic/Aim.h"
 #include "system/graphic/Camera.h"
+#include "system/graphic/Particle.h"
 #include "system/sound/SoundManager.h"
 #include "system/graphic/Window.h"
 #include "system/Configuration.h"
@@ -79,7 +80,7 @@ Player *player;
 
 vector<StaticObject*> bloodStains;
 
-vector<StaticObject*> explParticles;
+vector<Particle*> explParticles;
 
 vector<Weapon*> weapons;
 
@@ -861,53 +862,57 @@ void handleGameCommonControls() {
 	}
 }
 
-void handleExplosions()
-{
+void handleExplosions() {
 	if (!explParticles.empty()) {
 		for (int i = explParticles.size() - 1; i >= 0; i--) {
-			explParticles[i]->Angle += 0.06 * deltaTime;
-			explParticles[i]->AMask -= 0.0003 * deltaTime;
-			if (explParticles[i]->AMask < 0)
-			{
+			explParticles[i]->process(deltaTime);
+			if (explParticles[i]->checkFinish()) {
 				delete explParticles[i];
 				explParticles.erase(explParticles.begin() + i);
-				continue;
-			}
-			explParticles[i]->Scale -= 0.0002 * deltaTime;
-			if (explParticles[i]->Scale < 0)
-			{
-				delete explParticles[i];
-				explParticles.erase(explParticles.begin() + i);
-				continue;
 			}
 		}
 	}
 }
 
-void startExplosion()
-{
-	for (int i = 0;i < 20;i ++)
-	{
-		StaticObject* spark = new StaticObject(player->TargetX + (rand() % 100) - 50, player->TargetY + (rand() % 100) - 50, 128, 128, explTex[1], false);
-		spark->RMask = 1.0f;
-		spark->GMask = spark->BMask = (float)(rand() % 30) / 100;
-		spark->AMask = (float)(rand() % 70) / 100;
-		spark->Scale = (float)(rand() % 100) / 100;
-		explParticles.push_back(spark);
+void startExplosion() {
+	for (int i = 0; i < 20; i++) {
+		Particle* gruel = new Particle(player->TargetX + (rand() % 100) - 50,
+				player->TargetY + (rand() % 100) - 50, 128, 128, explTex[1]);
+		gruel->RMask = (float) (rand() % 50) / 100 + 0.5f;
+		gruel->GMask = (float) (rand() % 50) / 100;
+		gruel->BMask = (float) (rand() % 20) / 100;
+		gruel->AMask = (float) (rand() % 40) / 100 + 0.2f;
+		gruel->Scale = (float) (rand() % 80) / 100 + 0.2f;
+		gruel->XSpeed = (float) ((rand() % 100) - 100) / 1000;
+		gruel->YSpeed = (float) ((rand() % 100) - 100) / 1000;
+		gruel->TSpeed = (float) (rand() % 10 - 10) / 100;
+		gruel->RMod = -0.0001;
+		gruel->GMod = -0.0001;
+		gruel->BMod = -0.0001;
+		gruel->AMod = -0.0003;
+		gruel->ScaleMod = 0.0001;
+		explParticles.push_back(gruel);
 	}
-	for (int i = 0;i < 15;i ++)
-	{
-		StaticObject* spark = new StaticObject(player->TargetX + (rand() % 100) - 50, player->TargetY + (rand() % 100) - 50, 128, 128, explTex[0], false);
+	for (int i = 0; i < 15; i++) {
+		Particle* spark = new Particle(player->TargetX + (rand() % 60) - 30,
+				player->TargetY + (rand() % 60) - 30, 128, 128, explTex[0]);
 		spark->RMask = spark->GMask = 1.0f;
-		spark->BMask = 0.3f;
-		spark->AMask = (float)(rand() % 100) / 100;
-		spark->Scale = (float)(rand() % 50) / 100;
+		spark->BMask = 0.6f;
+		spark->AMask = (float) (rand() % 50) / 100 + 0.5f;
+		spark->Scale = (float) (rand() % 40) / 100;
+		spark->XSpeed = (float) ((rand() % 130) - 130) / 1000;
+		spark->YSpeed = (float) ((rand() % 130) - 130) / 1000;
+		spark->AMod = -0.0006;
+		spark->ScaleMod = -0.0001;
 		explParticles.push_back(spark);
 	}
-	StaticObject* baseSpark = new StaticObject(player->TargetX, player->TargetY, 128, 128, explTex[0], false);
+	Particle* baseSpark = new Particle(player->TargetX, player->TargetY, 128,
+			128, explTex[0]);
 	baseSpark->RMask = baseSpark->GMask = 1.0f;
-	baseSpark->BMask = 0.3f;
-	baseSpark->AMask = 0.5f;
+	baseSpark->BMask = 0.6f;
+	baseSpark->AMask = 0.3f;
+	baseSpark->AMod = -0.0004;
+	baseSpark->ScaleMod = -0.0001;
 	explParticles.push_back(baseSpark);
 }
 
