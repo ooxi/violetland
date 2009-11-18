@@ -65,7 +65,9 @@ int playerHitSndPlaying = 0;
 Texture *medikitTex;
 Texture *playerArmsTex;
 Sprite *playerLegsSprite;
+
 vector<Texture*> bloodTex;
+vector<Texture*> explTex;
 
 vector<Sound*> enemyHitSounds;
 vector<Sprite*> enemySprites;
@@ -74,7 +76,10 @@ Sprite* bleedSprite;
 Aim* aim;
 
 Player *player;
+
 vector<StaticObject*> bloodStains;
+
+vector<StaticObject*> explParticles;
 
 vector<Weapon*> weapons;
 
@@ -856,6 +861,56 @@ void handleGameCommonControls() {
 	}
 }
 
+void handleExplosions()
+{
+	if (!explParticles.empty()) {
+		for (int i = explParticles.size() - 1; i >= 0; i--) {
+			explParticles[i]->Angle += 0.06 * deltaTime;
+			explParticles[i]->AMask -= 0.0003 * deltaTime;
+			if (explParticles[i]->AMask < 0)
+			{
+				delete explParticles[i];
+				explParticles.erase(explParticles.begin() + i);
+				continue;
+			}
+			explParticles[i]->Scale -= 0.0002 * deltaTime;
+			if (explParticles[i]->Scale < 0)
+			{
+				delete explParticles[i];
+				explParticles.erase(explParticles.begin() + i);
+				continue;
+			}
+		}
+	}
+}
+
+void startExplosion()
+{
+	for (int i = 0;i < 20;i ++)
+	{
+		StaticObject* spark = new StaticObject(player->TargetX + (rand() % 100) - 50, player->TargetY + (rand() % 100) - 50, 128, 128, explTex[1], false);
+		spark->RMask = 1.0f;
+		spark->GMask = spark->BMask = (float)(rand() % 30) / 100;
+		spark->AMask = (float)(rand() % 70) / 100;
+		spark->Scale = (float)(rand() % 100) / 100;
+		explParticles.push_back(spark);
+	}
+	for (int i = 0;i < 15;i ++)
+	{
+		StaticObject* spark = new StaticObject(player->TargetX + (rand() % 100) - 50, player->TargetY + (rand() % 100) - 50, 128, 128, explTex[0], false);
+		spark->RMask = spark->GMask = 1.0f;
+		spark->BMask = 0.3f;
+		spark->AMask = (float)(rand() % 100) / 100;
+		spark->Scale = (float)(rand() % 50) / 100;
+		explParticles.push_back(spark);
+	}
+	StaticObject* baseSpark = new StaticObject(player->TargetX, player->TargetY, 128, 128, explTex[0], false);
+	baseSpark->RMask = baseSpark->GMask = 1.0f;
+	baseSpark->BMask = 0.3f;
+	baseSpark->AMask = 0.5f;
+	explParticles.push_back(baseSpark);
+}
+
 void handlePlayer() {
 	if (player->getHealth() == 0)
 		loseGame();
@@ -907,6 +962,9 @@ void handlePlayer() {
 
 	if (input->getDownInput(InputHandler::Reload))
 		player->reload();
+
+	if (input->getPressInput(InputHandler::Reload))
+		startExplosion();
 }
 
 void killEnemy(int index) {
@@ -1281,6 +1339,7 @@ void processGame() {
 	handlePowerups();
 	handleEnemies();
 	handleBullets();
+	handleExplosions();
 }
 
 void drawGame() {
@@ -1356,6 +1415,10 @@ void drawGame() {
 	glDisable(GL_LIGHTING);
 
 	glBindTexture(GL_TEXTURE_2D, NULL);
+
+	for (unsigned int i = 0; i < explParticles.size(); i++) {
+		explParticles[i]->draw(false);
+	}
 
 	for (unsigned int i = 0; i < bullets.size(); i++) {
 		bullets[i]->draw();
@@ -1558,6 +1621,13 @@ void loadResources() {
 		delete[] buf;
 	}
 	bleedSprite = new Sprite(bleedAnimSurfaces);
+
+	explTex.push_back(new Texture(ImageUtility::loadImage(
+			fileUtility->getFullPath(FileUtility::image, "expl_0.png")),
+			GL_TEXTURE_2D, GL_LINEAR, true));
+	explTex.push_back(new Texture(ImageUtility::loadImage(
+			fileUtility->getFullPath(FileUtility::image, "expl_1.png")),
+			GL_TEXTURE_2D, GL_LINEAR, true));
 
 	bloodTex.push_back(new Texture(ImageUtility::loadImage(
 			fileUtility->getFullPath(FileUtility::image, "blood_0.png")),
