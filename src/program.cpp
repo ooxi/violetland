@@ -1414,11 +1414,7 @@ void drawGame() {
 
 	glDisable(GL_LIGHTING);
 
-	glBindTexture(GL_TEXTURE_2D, NULL);
-
-	for (unsigned int i = 0; i < explParticles.size(); i++) {
-		explParticles[i]->draw(false);
-	}
+	glDisable(GL_TEXTURE_2D);
 
 	for (unsigned int i = 0; i < bullets.size(); i++) {
 		bullets[i]->draw();
@@ -1436,6 +1432,14 @@ void drawGame() {
 		glEnd();
 	}
 
+	glEnable(GL_TEXTURE_2D);
+
+	for (unsigned int i = 0; i < explParticles.size(); i++) {
+		explParticles[i]->draw(false);
+	}
+
+	glDisable(GL_TEXTURE_2D);
+
 	if (!lose && !gamePaused) {
 		aim->draw(player->TargetX, player->TargetY, 1.0f + tan(
 				player->AccuracyDeviation * M_PI / 180)
@@ -1444,6 +1448,8 @@ void drawGame() {
 				player->getReloadState() > 0 ? 1.2f - player->getReloadState()
 						: 0.2f);
 	}
+
+	glEnable(GL_TEXTURE_2D);
 }
 
 void drawWindows() {
