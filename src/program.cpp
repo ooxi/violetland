@@ -35,6 +35,7 @@
 #include "game/Terrain.h"
 #include "game/MusicManager.h"
 #include "game/Highscores.h"
+#include "game/Explosion.h"
 
 const string PROJECT = "violetland";
 const string VERSION = "0.2.3";
@@ -80,7 +81,7 @@ Player *player;
 
 vector<StaticObject*> bloodStains;
 
-vector<Particle*> explParticles;
+vector<Explosion*> explosions;
 
 vector<Weapon*> weapons;
 
@@ -863,58 +864,27 @@ void handleGameCommonControls() {
 }
 
 void handleExplosions() {
-	if (!explParticles.empty()) {
-		for (int i = explParticles.size() - 1; i >= 0; i--) {
-			explParticles[i]->process(deltaTime);
-			if (explParticles[i]->checkFinish()) {
-				delete explParticles[i];
-				explParticles.erase(explParticles.begin() + i);
+	if (!explosions.empty()) {
+		for (int i = explosions.size() - 1; i >= 0; i--) {
+			explosions[i]->process(deltaTime);
+
+			if (explosions[i]->Active && !enemies.empty()) {
+				for (int j = enemies.size() - 1; j >= 0; j--) {
+					float d = explosions[i]->calcDamage(enemies[j]);
+					if (d > 0) {
+						enemies[j]->setHealth(enemies[j]->getHealth() - d);
+					}
+				}
+			}
+
+			explosions[i]->Active = false;
+
+			if (explosions[i]->isEmpty()) {
+				delete explosions[i];
+				explosions.erase(explosions.begin() + i);
 			}
 		}
 	}
-}
-
-void startExplosion() {
-	for (int j = 0; j < 3; j++)
-	{
-		for (int i = 0; i < 15; i++) {
-			Particle* gruel = new Particle(player->TargetX + (rand() % 100) - 50,
-					player->TargetY + (rand() % 100) - 50, 128, 128, explTex[1]);
-			gruel->RMask = (float) (rand() % 30) / 100 + 0.3f;
-			gruel->GMask = (float) (rand() % 30) / 100;
-			gruel->BMask = 0.0f;
-			gruel->AMask = (float) (rand() % 50) / 100 + 0.2f;
-			gruel->Scale = (float) (rand() % 80) / 100 + 0.2f;
-			gruel->XSpeed = (float) ((rand() % 100) - 50) / 1000;
-			gruel->YSpeed = (float) ((rand() % 100) - 50) / 1000;
-			gruel->TSpeed = (float) ((rand() % 20) - 10) / 100;
-			gruel->RMod = -0.0001;
-			gruel->GMod = -0.0001;
-			gruel->AMod = -0.0003;
-			gruel->ScaleMod = 0.0001;
-			explParticles.push_back(gruel);
-		}
-		for (int i = 0; i < 10; i++) {
-			Particle* spark = new Particle(player->TargetX + (rand() % 60) - 30,
-					player->TargetY + (rand() % 60) - 30, 128, 128, explTex[0]);
-			spark->RMask = spark->GMask = 1.0f;
-			spark->BMask = 0.6f;
-			spark->AMask = (float) (rand() % 40) / 100 + 0.6f;
-			spark->Scale = (float) (rand() % 40) / 100;
-			spark->XSpeed = (float) ((rand() % 250) - 125) / 1000;
-			spark->YSpeed = (float) ((rand() % 250) - 125) / 1000;
-			spark->AMod = -0.001;
-			spark->ScaleMod = -0.0002;
-			explParticles.push_back(spark);
-		}
-	}
-	Particle* baseSpark = new Particle(player->TargetX, player->TargetY, 128,
-			128, explTex[0]);
-	baseSpark->RMask = baseSpark->GMask = 1.0f;
-	baseSpark->BMask = 0.8f;
-	baseSpark->AMask = 0.5f;
-	baseSpark->AMod = -0.0003;
-	explParticles.push_back(baseSpark);
 }
 
 void handlePlayer() {
@@ -969,8 +939,11 @@ void handlePlayer() {
 	if (input->getDownInput(InputHandler::Reload))
 		player->reload();
 
-	if (input->getPressInput(InputHandler::Reload))
-		startExplosion();
+	if (input->getPressInput(InputHandler::Reload)) {
+		Explosion* expl = new Explosion(player->TargetX, player->TargetY,
+				explTex[0], explTex[1]);
+		explosions.push_back(expl);
+	}
 }
 
 void killEnemy(int index) {
@@ -1440,8 +1413,8 @@ void drawGame() {
 
 	glEnable(GL_TEXTURE_2D);
 
-	for (unsigned int i = 0; i < explParticles.size(); i++) {
-		explParticles[i]->draw(false);
+	for (unsigned int i = 0; i < explosions.size(); i++) {
+		explosions[i]->draw();
 	}
 
 	glDisable(GL_TEXTURE_2D);

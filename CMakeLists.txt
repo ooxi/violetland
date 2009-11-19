@@ -34,6 +34,7 @@ set(srcFileList
 	${srcGameDir}/MusicManager.cpp
 	${srcGameDir}/LiveObject.cpp
 	${srcGameDir}/Highscores.cpp
+	${srcGameDir}/Explosion.cpp
 	${srcSystemDir}/Object.cpp
 	${srcSystemDir}/InputHandler.cpp
 	${srcSystemDir}/ConfigFile.cpp
