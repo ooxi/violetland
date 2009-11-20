@@ -38,7 +38,7 @@
 #include "game/Explosion.h"
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.3";
+const string VERSION = "0.2.4";
 const int GAME_AREA_SIZE = 2048;
 
 Configuration* config;
@@ -946,30 +946,52 @@ void handlePlayer() {
 	}
 }
 
-void killEnemy(int index) {
+void dropPowerup(float x, float y)
+{
 	bool powerupDropped = false;
+	Powerup *newPowerup;
+
+	if (!powerupDropped && rand() % 1000 >= 950) {
+		newPowerup = new Powerup(x, y, medikitTex);
+		newPowerup->Scale = 0.3f;
+		newPowerup->Type = Powerup::medikit;
+		newPowerup->Object = new float(0.1f);
+		newPowerup->RMask = newPowerup->BMask = 0.3f;
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 975) {
+		newPowerup = new Powerup(x, y, medikitTex);
+		newPowerup->Scale = 0.45f;
+		newPowerup->Type = Powerup::medikit;
+		newPowerup->Object = new float(0.25f);
+		newPowerup->RMask = newPowerup->GMask = 0.3f;
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 990) {
+		newPowerup = new Powerup(x, y, medikitTex);
+		newPowerup->Scale = 0.6f;
+		newPowerup->Type = Powerup::medikit;
+		newPowerup->Object = new float(1.0f);
+		newPowerup->BMask = newPowerup->GMask = 0.3f;
+		powerupDropped = true;
+	}
 
 	if (rand() % 1000 >= 970 || player->Kills == 0) {
 		int weaponIndex = (rand() % (weapons.size() - 1)) + 1;
-		Powerup *newPowerup = new Powerup(enemies[index]->X, enemies[index]->Y,
-				weapons[weaponIndex]->getDroppedTex());
+		newPowerup = new Powerup(x, y, weapons[weaponIndex]->getDroppedTex());
 		newPowerup->Type = Powerup::weapon;
 		newPowerup->Object = weapons[weaponIndex];
 		newPowerup->HitR = 0.5f;
-		powerups.push_back(newPowerup);
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 950) {
-		Powerup *newPowerup = new Powerup(enemies[index]->X, enemies[index]->Y,
-				medikitTex);
-		newPowerup->Scale = 0.5;
-		newPowerup->Type = Powerup::medikit;
-		newPowerup->Object = new float(0.1);
+	if (powerupDropped)
 		powerups.push_back(newPowerup);
-		powerupDropped = true;
-	}
+}
 
+void killEnemy(int index) {
 	player->Kills++;
 	delete enemies[index];
 	enemies.erase(enemies.begin() + index);
@@ -1008,6 +1030,7 @@ void handleEnemies() {
 	if (!enemies.empty()) {
 		for (int i = enemies.size() - 1; i >= 0; i--) {
 			if (enemies[i]->getHealth() <= 0) {
+				dropPowerup(enemies[i]->X, enemies[i]->Y);
 				killEnemy(i);
 				continue;
 			}
@@ -1238,8 +1261,8 @@ void handlePowerups() {
 			if (powerups[i]->detectCollide(player->TargetX, player->TargetY))
 			{
 				float a = Object::calculateAngle(powerups[i]->X ,powerups[i]->Y, player->X, player->Y);
-				powerups[i]->X -= cos((a + 90) * M_PI / 180) * deltaTime * player->MaxSpeed() / 2;
-				powerups[i]->Y -= sin((a + 90) * M_PI / 180) * deltaTime * player->MaxSpeed() / 2;
+				powerups[i]->X -= cos((a + 90) * M_PI / 180) * deltaTime * player->MaxSpeed();
+				powerups[i]->Y -= sin((a + 90) * M_PI / 180) * deltaTime * player->MaxSpeed();
 				//powerups[i]->take(deltaTime);
 			//else
 				//powerups[i]->resetTaking();
