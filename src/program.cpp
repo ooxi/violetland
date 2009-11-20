@@ -1236,9 +1236,14 @@ void handlePowerups() {
 
 		if (player->Telekinesis) {
 			if (powerups[i]->detectCollide(player->TargetX, player->TargetY))
-				powerups[i]->take(deltaTime);
-			else
-				powerups[i]->resetTaking();
+			{
+				float a = Object::calculateAngle(powerups[i]->X ,powerups[i]->Y, player->X, player->Y);
+				powerups[i]->X -= cos((a + 90) * M_PI / 180) * deltaTime * player->MaxSpeed() / 2;
+				powerups[i]->Y -= sin((a + 90) * M_PI / 180) * deltaTime * player->MaxSpeed() / 2;
+				//powerups[i]->take(deltaTime);
+			//else
+				//powerups[i]->resetTaking();
+			}
 		}
 
 		if (!lose && (powerups[i]->detectCollide(player)
