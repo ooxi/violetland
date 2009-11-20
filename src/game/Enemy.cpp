@@ -28,7 +28,7 @@ void Enemy::hit(Bullet* bullet, float pX, float pY) {
 	newBleed->Angle = Object::fixAngle(M_PI - bullet->Angle - 90);
 	m_bleeds.push_back(newBleed);
 	if (!m_hitSound->isPlaying()) {
-		m_hitSound->play(0);
+		m_hitSound->play(0, 0);
 		m_hitSound->setPos(Object::calculateAngle(pX, pY, X, Y),
 				Object::calculateDistance(pX, pY, X, Y));
 	}

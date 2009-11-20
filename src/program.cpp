@@ -404,7 +404,7 @@ void loseGame() {
 	if (playerHitSounds[playerHitSndPlaying]->isPlaying())
 		playerHitSounds[playerHitSndPlaying]->stop(0);
 
-	playerKilledSound->play(0);
+	playerKilledSound->play(0, 0);
 
 	msgQueue.push_back(text->getObject("Player is dead.", 0, 0,
 			TextManager::LEFT, TextManager::BOTTOM));
@@ -946,8 +946,7 @@ void handlePlayer() {
 	}
 }
 
-void dropPowerup(float x, float y)
-{
+void dropPowerup(float x, float y) {
 	bool powerupDropped = false;
 	Powerup *newPowerup;
 
@@ -993,6 +992,8 @@ void dropPowerup(float x, float y)
 
 void killEnemy(int index) {
 	player->Kills++;
+	player->Xp += (int) ((1.5 - dayLight * -0.5) * enemies[index]->MaxHealth()
+			* 10);
 	delete enemies[index];
 	enemies.erase(enemies.begin() + index);
 }
@@ -1087,7 +1088,7 @@ void handleEnemies() {
 									: player->getHealth() - 0.01f)
 									/ player->MaxHealth()
 									* playerHitSounds.size();
-							playerHitSounds[playerHitSndPlaying]->play(0);
+							playerHitSounds[playerHitSndPlaying]->play(0, 0);
 						}
 					}
 
@@ -1142,12 +1143,6 @@ void handleBullets() {
 
 						float damageLoss = enemies[j]->getHealth();
 						enemies[j]->hit(bullets[i], player->X, player->Y);
-
-						player->Xp
-								+= (int) ((1.5 - dayLight * -0.5) * damageLoss
-										> bullets[i]->Damage ? bullets[i]->Damage
-										* 20
-										: damageLoss * 20);
 
 						if (bullets[i]->BigCalibre) {
 							bullets[i]->Damage -= damageLoss;
@@ -1258,13 +1253,15 @@ void handlePowerups() {
 			deletePowerup = true;
 
 		if (player->Telekinesis) {
-			if (powerups[i]->detectCollide(player->TargetX, player->TargetY))
-			{
-				float a = Object::calculateAngle(powerups[i]->X ,powerups[i]->Y, player->X, player->Y);
-				powerups[i]->X -= cos((a + 90) * M_PI / 180) * deltaTime * player->MaxSpeed();
-				powerups[i]->Y -= sin((a + 90) * M_PI / 180) * deltaTime * player->MaxSpeed();
+			if (powerups[i]->detectCollide(player->TargetX, player->TargetY)) {
+				float a = Object::calculateAngle(powerups[i]->X,
+						powerups[i]->Y, player->X, player->Y);
+				powerups[i]->X -= cos((a + 90) * M_PI / 180) * deltaTime
+						* player->MaxSpeed();
+				powerups[i]->Y -= sin((a + 90) * M_PI / 180) * deltaTime
+						* player->MaxSpeed();
 				//powerups[i]->take(deltaTime);
-			//else
+				//else
 				//powerups[i]->resetTaking();
 			}
 		}

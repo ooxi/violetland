@@ -10,15 +10,15 @@ bool Sound::isPlaying() {
 	return !(m_chan == -1 || Mix_Playing(m_chan) == 0) && m_enabled;
 }
 
-void Sound::play(int fade) {
+void Sound::play(int fade, int loops) {
 	if (m_enabled) {
 		if (isPlaying())
 			stop(0);
 
 		if (fade == 0)
-			m_chan = Mix_PlayChannel(-1, m_sndRef, 0);
+			m_chan = Mix_PlayChannel(-1, m_sndRef, loops);
 		else
-			m_chan = Mix_FadeInChannel(-1, m_sndRef, 0, fade);
+			m_chan = Mix_FadeInChannel(-1, m_sndRef, loops, fade);
 	}
 }
 

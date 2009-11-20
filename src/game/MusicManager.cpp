@@ -1,6 +1,6 @@
 #include "MusicManager.h"
 
-const std::string DEFAULT = "dzaibatsu.ogg";
+const std::string DEFAULT = "04.ogg";
 
 MusicManager::MusicManager(FileUtility* fileUtility,
 		SoundManager* soundManager, Configuration* config) {
@@ -32,14 +32,13 @@ void MusicManager::process(Player* player, std::vector<Enemy*> enemies,
 	}
 	bool afterPause = m_currentPlaying == DEFAULT;
 	if (player->getHealth() / player->MaxHealth() < 0.4f) {
-		play("mitol-test.ogg", afterPause);
-	}
-	if (player->Kills == 0) {
-		play("morning.ogg", afterPause);
-		return;
+		play("03.ogg", afterPause);
+	} else if (player->Kills == 0) {
+		play("05.ogg", afterPause);
+	} else if (player->getWeaponName() == "Laser") {
+		play("02.ogg", afterPause);
 	} else {
-		play("space-crusader.ogg", afterPause);
-		return;
+		play("01.ogg", afterPause);
 	}
 }
 
@@ -49,16 +48,16 @@ void MusicManager::play() {
 
 void MusicManager::play(std::string name, bool now) {
 	if (m_music.size() > 0) {
-		if (m_currentPlaying != "null") {
+		if (m_currentPlaying != "null" && m_currentPlaying != name) {
 			if (m_music[m_currentPlaying]->isPlaying()) {
-				if (now)
-					m_music[m_currentPlaying]->stop(3000);
-				else
-					return;
+				//				if (now)
+				m_music[m_currentPlaying]->stop(3000);
+				//				else
+				//					return;
 			}
 		}
-		if (m_music.count(name) > 0) {
-			m_music[name]->play(0);
+		if (m_currentPlaying != name && m_music.count(name) > 0) {
+			m_music[name]->play(3000, -1);
 			m_music[name]->setVol(m_config->MusicVolume);
 			m_currentPlaying = name;
 		}

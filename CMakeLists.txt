@@ -226,8 +226,9 @@ install (FILES
 	images/anima/player/legs-24.png
 DESTINATION ${relResPath}/images/anima/player)
 install (FILES
-	music/dzaibatsu.ogg
-	music/morning.ogg
-	music/space-crusader.ogg
-	music/mitol-test.ogg
+	music/01.ogg
+	music/02.ogg
+	music/03.ogg
+	music/04.ogg
+	music/05.ogg
 DESTINATION ${relResPath}/music)
