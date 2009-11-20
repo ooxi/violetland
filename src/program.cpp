@@ -955,7 +955,7 @@ void dropPowerup(float x, float y) {
 		newPowerup->Scale = 0.3f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(0.1f);
-		newPowerup->RMask = newPowerup->BMask = 0.3f;
+		newPowerup->RMask = newPowerup->BMask = 0.0f;
 		powerupDropped = true;
 	}
 
@@ -964,7 +964,7 @@ void dropPowerup(float x, float y) {
 		newPowerup->Scale = 0.45f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(0.25f);
-		newPowerup->RMask = newPowerup->GMask = 0.3f;
+		newPowerup->RMask = newPowerup->GMask = 0.0f;
 		powerupDropped = true;
 	}
 
@@ -973,7 +973,7 @@ void dropPowerup(float x, float y) {
 		newPowerup->Scale = 0.6f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(1.0f);
-		newPowerup->BMask = newPowerup->GMask = 0.3f;
+		newPowerup->BMask = newPowerup->GMask = 0.0f;
 		powerupDropped = true;
 	}
 
