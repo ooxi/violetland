@@ -46,6 +46,7 @@ void FileUtility::traceResPath() {
 	printf("Path to resources is set to:\n\t");
 	printf(m_resPath.c_str());
 	printf("\n");
+	printf("To change the path use -r <path> key\n");
 }
 
 FileUtility::FileUtility(char *argPath) {
@@ -60,20 +61,25 @@ FileUtility::FileUtility(char *argPath) {
 	delete[] exePath;
 #endif //_WIN32
 #if defined linux || defined __FreeBSD__
+#ifndef INSTALL_PREFIX
+#define INSTALL_PREFIX "/usr/local";
+#endif //INSTALL_PREFIX
+	m_appPath = INSTALL_PREFIX;
+	m_appPath.append("/bin");
+#ifndef DATA_INSTALL_DIR
 	char result[PATH_MAX];
 	if (readlink("/proc/self/exe", result, PATH_MAX) != -1) {
 		FileUtility::truncateFullPathToDir(result);
 		m_appPath = result;
 		m_resPath = m_appPath;
-		m_resPath.append("/../share/violetland/");
+		m_resPath.append("/../share");
 	} else {
-#ifndef INSTALL_PREFIX
-#define INSTALL_PREFIX "/usr/local";
-#endif //INSTALL_PREFIX
-		m_appPath = m_resPath = INSTALL_PREFIX;
-		m_appPath.append("/bin");
-		m_resPath.append("/share/violetland/");
+		m_resPath = "/usr/local/share";
 	}
+#else //DATA_INSTALL_DIR
+	m_resPath = DATA_INSTALL_DIR;
+#endif //DATA_INSTALL_DIR
+	m_resPath.append("/violetland/");
 	m_usrPath = getenv("HOME");
 	m_usrPath.append("/.config");
 	mkdir(m_usrPath.c_str(), S_IRWXU | S_IRGRP | S_IROTH);

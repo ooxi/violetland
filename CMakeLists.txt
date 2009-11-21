@@ -61,7 +61,12 @@ add_executable(violetland ${srcFileList})
 
 target_link_libraries(violetland ${libList})
 
-set(relResPath share/violetland)
+if(DEFINED DATA_INSTALL_DIR)
+	set(relResPath ${DATA_INSTALL_DIR}/violetland/)
+	add_definitions(-DDATA_INSTALL_DIR="${DATA_INSTALL_DIR}")
+else(DEFINED DATA_INSTALL_DIR)
+	set(relResPath share/violetland)
+endif(DEFINED DATA_INSTALL_DIR)
 
 install(TARGETS violetland DESTINATION bin)
 install(FILES

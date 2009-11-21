@@ -955,24 +955,24 @@ void dropPowerup(float x, float y) {
 		newPowerup->Scale = 0.3f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(0.1f);
-		newPowerup->RMask = newPowerup->BMask = 0.0f;
+		newPowerup->RMask = newPowerup->BMask = 0.2f;
 		powerupDropped = true;
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 975) {
 		newPowerup = new Powerup(x, y, medikitTex);
-		newPowerup->Scale = 0.45f;
+		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::medikit;
-		newPowerup->Object = new float(0.25f);
-		newPowerup->RMask = newPowerup->GMask = 0.0f;
+		newPowerup->Object = new float(0.2f);
+		newPowerup->RMask = newPowerup->GMask = 0.4f;
 		powerupDropped = true;
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 990) {
 		newPowerup = new Powerup(x, y, medikitTex);
-		newPowerup->Scale = 0.6f;
+		newPowerup->Scale = 0.5f;
 		newPowerup->Type = Powerup::medikit;
-		newPowerup->Object = new float(1.0f);
+		newPowerup->Object = new float(0.6f);
 		newPowerup->BMask = newPowerup->GMask = 0.0f;
 		powerupDropped = true;
 	}

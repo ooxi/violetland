@@ -51,3 +51,10 @@ $ cmake -DCMAKE_INSTALL_PREFIX=../dist ..
 $ make install
 $ cd ../dist/bin/
 $ ./violetland
+
+In addition you can install an executable and game data to the separate directory trees:
+
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DDATA_INSTALL_DIR=/usr/share/games ..
+$ sudo make install
