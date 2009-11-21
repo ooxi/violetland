@@ -13,10 +13,11 @@ Player::Player() :
 	LevelPoints = 0;
 	AccuracyDeviation = 0.0f;
 	Time = 0;
+	Grenades = 2;
 
 	m_light = m_laser = false;
 
-	Unstoppable =PoisonBullets = BigCalibre = Telekinesis = false;
+	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = false;
 }
 
 Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex,
@@ -106,6 +107,18 @@ std::vector<Bullet*> *Player::fire() {
 	}
 
 	return newBullets;
+}
+
+Bullet* Player::throwGrenade() {
+	Bullet* newBullet = new GrenadeBullet(X, Y, TargetX, TargetY);
+
+	newBullet->Damage = 5.0f;
+	newBullet->Speed = MaxSpeed() * 5.0f;
+	newBullet->MaxRange = 1500;
+
+	Grenades--;
+
+	return newBullet;
 }
 
 void Player::reload() {

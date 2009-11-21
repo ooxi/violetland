@@ -57,6 +57,8 @@ std::vector<Bullet*> *Weapon::fire(float x, float y, float dX, float dY) {
 		case Bullet::laser:
 			newBullet = new LaserBullet(x, y, dX, dY);
 			break;
+		case Bullet::grenade:
+			return newBullets;
 		}
 		newBullet->Damage = Damage;
 		newBullet->Speed = BulletSpeed;

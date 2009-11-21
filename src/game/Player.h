@@ -1,13 +1,14 @@
-#include "../system/graphic/DynamicObject.h"
-#include "./../system/graphic/StaticObject.h"
-#include "LiveObject.h"
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_opengl.h"
-#include "Weapon.h"
 #include <cmath>
 #include <stdlib.h>
 #include <vector>
+#include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_opengl.h"
+#include "../system/graphic/DynamicObject.h"
+#include "./../system/graphic/StaticObject.h"
+#include "LiveObject.h"
+#include "Weapon.h"
+#include "GrenadeBullet.h"
 
 #ifndef PLAYER_H_
 #define PLAYER_H_
@@ -43,6 +44,7 @@ public:
 	const bool getLaser();
 	void setWeapon(Weapon *value);
 	std::vector<Bullet*> *fire();
+	Bullet* throwGrenade();
 	float AccuracyDeviation;
 	float TargetX, TargetY;
 	int Level;
@@ -51,6 +53,7 @@ public:
 	int NextLevelXp;
 	int Kills;
 	int Time;
+	int Grenades;
 
 	bool Unstoppable;
 	bool PoisonBullets;

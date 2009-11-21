@@ -18,6 +18,7 @@ public:
 		MoveDown,
 		Help,
 		Pickup,
+		ThrowGrenade,
 		Fire,
 		Reload,
 		GameInputEventsCount

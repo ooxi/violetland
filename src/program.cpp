@@ -803,14 +803,16 @@ void createHelpWindow() {
 			text->getHeight() * 11, TextManager::LEFT, TextManager::MIDDLE));
 	help->addElement("label2", text->getObject("Pick up weapon: E", l,
 			text->getHeight() * 12, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label9", text->getObject("Toggle flashlight: F", l,
+	help->addElement("label2", text->getObject("Throw grenade: SPACE", l,
 			text->getHeight() * 13, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label10", text->getObject("Toggle laser aim: G", l,
+	help->addElement("label9", text->getObject("Toggle flashlight: F", l,
 			text->getHeight() * 14, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label13", text->getObject("Open player char stats: C", l,
+	help->addElement("label10", text->getObject("Toggle laser aim: G", l,
 			text->getHeight() * 15, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label12", text->getObject("Main menu: Esc", l,
+	help->addElement("label13", text->getObject("Open player char stats: C", l,
 			text->getHeight() * 16, TextManager::LEFT, TextManager::MIDDLE));
+	help->addElement("label12", text->getObject("Main menu: Esc", l,
+			text->getHeight() * 17, TextManager::LEFT, TextManager::MIDDLE));
 
 	windows["helpscreen"] = help;
 }
@@ -939,10 +941,9 @@ void handlePlayer() {
 	if (input->getDownInput(InputHandler::Reload))
 		player->reload();
 
-	if (input->getPressInput(InputHandler::Reload)) {
-		Explosion* expl = new Explosion(player->TargetX, player->TargetY,
-				explTex[0], explTex[1]);
-		explosions.push_back(expl);
+	if (input->getPressInput(InputHandler::ThrowGrenade) && player->Grenades
+			> 0) {
+		bullets.push_back(player->throwGrenade());
 	}
 }
 
@@ -973,7 +974,16 @@ void dropPowerup(float x, float y) {
 		newPowerup->Scale = 0.5f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(0.6f);
-		newPowerup->BMask = newPowerup->GMask = 0.0f;
+		newPowerup->BMask = newPowerup->GMask = 0.2f;
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 975) {
+		newPowerup = new Powerup(x, y, medikitTex);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::grenades;
+		newPowerup->Object = new int(1);
+		newPowerup->BMask = 0.5f;
 		powerupDropped = true;
 	}
 
@@ -1154,6 +1164,13 @@ void handleBullets() {
 			}
 
 			if (bullets[i]->isReadyToRemove()) {
+				if (bullets[i]->Type == Bullet::grenade) {
+					Explosion* expl = new Explosion(bullets[i]->X,
+							bullets[i]->Y, explTex[0], explTex[1]);
+					expl->Damage = bullets[i]->Damage;
+					explosions.push_back(expl);
+				}
+
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
 			}
@@ -1208,6 +1225,11 @@ void drawHud() {
 			player->getAmmo(), player->getMaxAmmo());
 	text->draw(buf, text->getIndent(), text->getIndent() + text->getHeight(),
 			TextManager::LEFT, TextManager::TOP);
+	delete[] buf;
+
+	sprintf(buf = new char[30], "Grenades: %i", player->Grenades);
+	text->draw(buf, text->getIndent(), text->getIndent() + text->getHeight()
+			* 2.0f, TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
 
 	sprintf(buf = new char[30], "Time: %dm %ds", minutes, seconds);
@@ -1275,6 +1297,13 @@ void handlePowerups() {
 						TextManager::LEFT, TextManager::MIDDLE));
 				player->setHealth(player->getHealth()
 						+ *(float*) powerups[i]->Object);
+				deletePowerup = true;
+				break;
+			case Powerup::grenades:
+				msgQueue.push_back(text->getObject(
+						"Player has taken a grenade.", 0, 0, TextManager::LEFT,
+						TextManager::MIDDLE));
+				player->Grenades += *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			case Powerup::weapon:

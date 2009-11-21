@@ -11,7 +11,7 @@ protected:
 	float m_range;
 public:
 	enum BulletType {
-		standard = 0, laser
+		standard = 0, laser, grenade
 	};
 	Bullet(float x, float y, float dX, float dY, BulletType type);
 	virtual void process(int deltaTime);

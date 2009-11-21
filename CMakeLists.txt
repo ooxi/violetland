@@ -30,6 +30,7 @@ set(srcFileList
 	${srcGameDir}/Bullet.cpp
 	${srcGameDir}/StandardBullet.cpp
 	${srcGameDir}/LaserBullet.cpp
+	${srcGameDir}/GrenadeBullet.cpp
 	${srcGameDir}/Terrain.cpp
 	${srcGameDir}/MusicManager.cpp
 	${srcGameDir}/LiveObject.cpp
