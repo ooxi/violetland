@@ -142,6 +142,13 @@ void clearMessages() {
 	msgQueue.clear();
 }
 
+void clearExplosions() {
+	for (unsigned int i = 0; i < explosions.size(); i++) {
+		delete explosions[i];
+	}
+	explosions.clear();
+}
+
 void clearPowerups() {
 	for (unsigned int i = 0; i < powerups.size(); i++) {
 		delete powerups[i];
@@ -239,6 +246,7 @@ void startSurvival() {
 	clearLifeForms();
 	clearBullets();
 	clearMessages();
+	clearExplosions();
 
 	player = new Player(0, 0, playerLegsSprite, playerArmsTex, weapons[0]);
 	player->HitR = 0.28f;
@@ -1733,6 +1741,7 @@ void unloadResources() {
 	clearBullets();
 	clearMessages();
 	clearWindows();
+	clearExplosions();
 
 	for (unsigned int i = 0; i < enemyHitSounds.size(); i++) {
 		delete enemyHitSounds[i];
