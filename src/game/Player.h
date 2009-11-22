@@ -27,7 +27,7 @@ public:
 	void process(int deltaTime);
 	void move(char movementX, char movementY, int deltaTime);
 	void reload();
-	void draw();
+	virtual void draw();
 	void toggleLight();
 	void toggleLaser();
 	const float getX();

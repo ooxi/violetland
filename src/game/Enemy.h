@@ -24,7 +24,7 @@ public:
 			Sound* hitSound);
 	void hit(Bullet* bullet, float pX, float pY);
 	void process(int deltaTime);
-	void draw();
+	virtual void draw();
 	void setAppearance(float scale, float rMask, float gMask, float bMask,
 			float aMask);
 	void rollFrame(bool forward);

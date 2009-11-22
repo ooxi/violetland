@@ -9,6 +9,10 @@ LiveObject::LiveObject(float x, float y, int w, int h) :
 	m_lastAttackTime = SDL_GetTicks();
 }
 
+void LiveObject::draw() {
+	// nothing
+}
+
 const float LiveObject::MaxHealth() {
 	return Vitality > 0.8f ? 1.0f + (Vitality - 1.0f) * 2.0f : 0.4f;
 }

@@ -16,6 +16,7 @@ Enemy::Enemy(float x, float y, Sprite *sprite, Sprite *bleedSprite,
 	DoNotDisturb = false;
 	Angry = false;
 	Poisoned = false;
+	Type = LiveObject::zombie;
 }
 
 void Enemy::rollFrame(bool forward) {

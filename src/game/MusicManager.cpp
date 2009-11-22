@@ -24,7 +24,7 @@ MusicManager::MusicManager(FileUtility* fileUtility,
 	m_currentPlaying = "null";
 }
 
-void MusicManager::process(Player* player, std::vector<Enemy*> enemies,
+void MusicManager::process(Player* player, std::vector<LiveObject*> enemies,
 		bool paused) {
 	if (paused) {
 		play();

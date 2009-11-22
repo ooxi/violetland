@@ -14,6 +14,7 @@ Player::Player() :
 	AccuracyDeviation = 0.0f;
 	Time = 0;
 	Grenades = 2;
+	Type = LiveObject::player;
 
 	m_light = m_laser = false;
 

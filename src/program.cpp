@@ -77,7 +77,8 @@ Sprite* bleedSprite;
 
 Aim* aim;
 
-Player *player;
+vector<LiveObject*> lifeForms;
+Player* player;
 
 vector<StaticObject*> bloodStains;
 
@@ -86,7 +87,6 @@ vector<Explosion*> explosions;
 vector<Weapon*> weapons;
 
 vector<Powerup*> powerups;
-vector<Enemy*> enemies;
 vector<Bullet*> bullets;
 
 map<string, Window*> windows;
@@ -121,11 +121,11 @@ void clearBloodStains() {
 	bloodStains.clear();
 }
 
-void clearEnemies() {
-	for (unsigned int i = 0; i < enemies.size(); i++) {
-		delete enemies[i];
+void clearLifeForms() {
+	for (unsigned int i = 0; i < lifeForms.size(); i++) {
+		delete lifeForms[i];
 	}
-	enemies.clear();
+	lifeForms.clear();
 }
 
 void clearBullets() {
@@ -225,16 +225,10 @@ void spawnEnemy(float r, int lvl, float* param) {
 
 	newEnemy->setHealth(newEnemy->MaxHealth());
 	newEnemy->Speed = newEnemy->MaxSpeed();
-	enemies.push_back(newEnemy);
+	lifeForms.push_back(newEnemy);
 }
 
 void startSurvival() {
-	if (player)
-		delete player;
-	player = new Player(0, 0, playerLegsSprite, playerArmsTex, weapons[0]);
-	player->HitR = 0.28f;
-	player->Acceleration = 0.0004f;
-
 	gameHardness = 9995.0;
 	lose = false;
 	gamePaused = false;
@@ -242,9 +236,14 @@ void startSurvival() {
 
 	clearBloodStains();
 	clearPowerups();
-	clearEnemies();
+	clearLifeForms();
 	clearBullets();
 	clearMessages();
+
+	player = new Player(0, 0, playerLegsSprite, playerArmsTex, weapons[0]);
+	player->HitR = 0.28f;
+	player->Acceleration = 0.0004f;
+	lifeForms.push_back(player);
 
 	msgQueue.push_back(text->getObject("Try to survive as long as you can.", 0,
 			0, TextManager::LEFT, TextManager::MIDDLE));
@@ -808,7 +807,7 @@ void createHelpWindow() {
 			text->getHeight() * 11, TextManager::LEFT, TextManager::MIDDLE));
 	help->addElement("label2", text->getObject("Pick up weapon: E", l,
 			text->getHeight() * 12, TextManager::LEFT, TextManager::MIDDLE));
-	help->addElement("label2", text->getObject("Throw grenade: SPACE", l,
+	help->addElement("label14", text->getObject("Throw grenade: SPACE", l,
 			text->getHeight() * 13, TextManager::LEFT, TextManager::MIDDLE));
 	help->addElement("label9", text->getObject("Toggle flashlight: F", l,
 			text->getHeight() * 14, TextManager::LEFT, TextManager::MIDDLE));
@@ -875,11 +874,11 @@ void handleExplosions() {
 		for (int i = explosions.size() - 1; i >= 0; i--) {
 			explosions[i]->process(deltaTime);
 
-			if (explosions[i]->Active && !enemies.empty()) {
-				for (int j = enemies.size() - 1; j >= 0; j--) {
-					float d = explosions[i]->calcDamage(enemies[j]);
+			if (explosions[i]->Active && !lifeForms.empty()) {
+				for (int j = lifeForms.size() - 1; j >= 0; j--) {
+					float d = explosions[i]->calcDamage(lifeForms[j]);
 					if (d > 0) {
-						enemies[j]->setHealth(enemies[j]->getHealth() - d);
+						lifeForms[j]->setHealth(lifeForms[j]->getHealth() - d);
 					}
 				}
 			}
@@ -1007,10 +1006,10 @@ void dropPowerup(float x, float y) {
 
 void killEnemy(int index) {
 	player->Kills++;
-	player->Xp += (int) ((1.5 - dayLight * -0.5) * enemies[index]->MaxHealth()
-			* 10);
-	delete enemies[index];
-	enemies.erase(enemies.begin() + index);
+	player->Xp += (int) ((1.5 - dayLight * -0.5)
+			* lifeForms[index]->MaxHealth() * 10);
+	delete lifeForms[index];
+	lifeForms.erase(lifeForms.begin() + index);
 }
 
 void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
@@ -1043,60 +1042,60 @@ void handleEnemies() {
 			}
 		}
 
-	if (!enemies.empty()) {
-		for (int i = enemies.size() - 1; i >= 0; i--) {
-			if (enemies[i]->getHealth() <= 0) {
-				dropPowerup(enemies[i]->X, enemies[i]->Y);
+	if (!lifeForms.empty()) {
+		for (int i = lifeForms.size() - 1; i >= 0; i--) {
+			if (lifeForms[i]->Type == LiveObject::player)
+				continue;
+
+			Enemy* enemy = (Enemy*) lifeForms[i];
+
+			if (enemy->getHealth() <= 0) {
+				dropPowerup(enemy->X, enemy->Y);
 				killEnemy(i);
 				continue;
 			}
 
-			float rangeToPlayer = sqrt(pow(-enemies[i]->X + player->X, 2)
-					+ pow(enemies[i]->Y - player->Y, 2));
+			float rangeToPlayer = sqrt(pow(-enemy->X + player->X, 2) + pow(
+					enemy->Y - player->Y, 2));
 
-			if (enemies[i]->DoNotDisturb) {
+			if (enemy->DoNotDisturb) {
 				bool reach = true;
-				if (enemies[i]->X < enemies[i]->TargetX - enemies[i]->Speed
-						* 60 || enemies[i]->X > enemies[i]->TargetX
-						+ enemies[i]->Speed * 60 || enemies[i]->Y
-						< enemies[i]->TargetY - enemies[i]->Speed * 60
-						|| enemies[i]->Y > enemies[i]->TargetY
-								+ enemies[i]->Speed * 60)
+				if (enemy->X < enemy->TargetX - enemy->Speed * 60 || enemy->X
+						> enemy->TargetX + enemy->Speed * 60 || enemy->Y
+						< enemy->TargetY - enemy->Speed * 60 || enemy->Y
+						> enemy->TargetY + enemy->Speed * 60)
 					reach = false;
 				if (reach)
-					enemies[i]->DoNotDisturb = false;
+					enemy->DoNotDisturb = false;
 			}
 
-			if ((rangeToPlayer < 400 || enemies[i]->Angry) && !lose) {
-				enemies[i]->TargetX = player->X;
-				enemies[i]->TargetY = player->Y;
+			if ((rangeToPlayer < 400 || enemy->Angry) && !lose) {
+				enemy->TargetX = player->X;
+				enemy->TargetY = player->Y;
 			} else if (rangeToPlayer < 800 && !lose) {
-				enemies[i]->TargetX = player->X - cos(
-						(player->getMoveDirection() + 90) * M_PI / 180)
-						* rangeToPlayer / 2.0f / enemies[i]->Speed
-						* player->Speed;
-				enemies[i]->TargetY = player->Y - sin(
-						(player->getMoveDirection() + 90) * M_PI / 180)
-						* rangeToPlayer / 2.0f / enemies[i]->Speed
-						* player->Speed;
-			} else if (!enemies[i]->DoNotDisturb) {
-				enemies[i]->TargetX = (rand() % (GAME_AREA_SIZE * 2))
+				enemy->TargetX = player->X - cos((player->getMoveDirection()
+						+ 90) * M_PI / 180) * rangeToPlayer / 2.0f
+						/ enemy->Speed * player->Speed;
+				enemy->TargetY = player->Y - sin((player->getMoveDirection()
+						+ 90) * M_PI / 180) * rangeToPlayer / 2.0f
+						/ enemy->Speed * player->Speed;
+			} else if (!enemy->DoNotDisturb) {
+				enemy->TargetX = (rand() % (GAME_AREA_SIZE * 2))
 						- GAME_AREA_SIZE;
-				enemies[i]->TargetY = (rand() % (GAME_AREA_SIZE * 2))
+				enemy->TargetY = (rand() % (GAME_AREA_SIZE * 2))
 						- GAME_AREA_SIZE;
-				enemies[i]->DoNotDisturb = true;
+				enemy->DoNotDisturb = true;
 			}
 
-			float x = enemies[i]->X;
-			float y = enemies[i]->Y;
+			float x = enemy->X;
+			float y = enemy->Y;
 
-			enemies[i]->process(deltaTime);
+			enemy->process(deltaTime);
 
-			if (!lose && player->detectCollide(enemies[i])) {
-				if (enemies[i]->Attack()) {
+			if (!lose && player->detectCollide(enemy)) {
+				if (enemy->Attack()) {
 					if (rand() % 100 > player->ChanceToEvade() * 100) {
-						player->setHealth(player->getHealth()
-								- enemies[i]->Damage());
+						player->setHealth(player->getHealth() - enemy->Damage());
 						if (!playerHitSounds[playerHitSndPlaying]->isPlaying()) {
 							playerHitSndPlaying = (player->getHealth()
 									< player->MaxHealth() ? player->getHealth()
@@ -1111,20 +1110,19 @@ void handleEnemies() {
 						player->Speed = 0.0f;
 				}
 
-				if (player->Attack() && rand() % 100
-						> enemies[i]->ChanceToEvade() * 100)
-					enemies[i]->setHealth(player->getHealth()
-							- player->Damage());
+				if (player->Attack() && rand() % 100 > enemy->ChanceToEvade()
+						* 100)
+					enemy->setHealth(player->getHealth() - player->Damage());
 
-				enemies[i]->X = x;
-				enemies[i]->Y = y;
+				enemy->X = x;
+				enemy->Y = y;
 			} else {
-				enemies[i]->rollFrame(true);
+				enemy->rollFrame(true);
 			}
 
-			if (enemies[i]->isBleeding() && bloodStains.size() < 9) {
-				addBloodStain(enemies[i]->X, enemies[i]->Y, enemies[i]->Angle,
-						(rand() % 10) / 50.0f + 0.1f, enemies[i]->Poisoned);
+			if (enemy->isBleeding() && bloodStains.size() < 9) {
+				addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
+						/ 50.0f + 0.1f, enemy->Poisoned);
 			}
 		}
 	}
@@ -1135,29 +1133,33 @@ void handleBullets() {
 		for (int i = bullets.size() - 1; i >= 0; i--) {
 			bullets[i]->process(deltaTime);
 
-			if (bullets[i]->isActive() && !enemies.empty()) {
-				for (int j = enemies.size() - 1; j >= 0; j--) {
-					if (bullets[i]->checkHit(enemies[j])) {
+			if (bullets[i]->isActive() && !lifeForms.empty()) {
+				for (int j = lifeForms.size() - 1; j >= 0; j--) {
+					if (lifeForms[j]->Type == LiveObject::player)
+						continue;
+
+					Enemy* enemy = (Enemy*) lifeForms[j];
+
+					if (bullets[i]->checkHit(enemy)) {
 
 						if (bloodStains.size() < 9) {
 							for (int k = 0; k < 3; k++) {
 								int angleDev = (rand() % 90) - 45;
 								float distance = (rand() % 100);
-								float bX = enemies[j]->X - cos(
-										(bullets[i]->Angle + 90 + angleDev)
-												* M_PI / 180.0f) * distance;
-								float bY = enemies[j]->Y - sin(
-										(bullets[i]->Angle + 90 + angleDev)
-												* M_PI / 180.0f) * distance;
+								float bX = enemy->X - cos((bullets[i]->Angle
+										+ 90 + angleDev) * M_PI / 180.0f)
+										* distance;
+								float bY = enemy->Y - sin((bullets[i]->Angle
+										+ 90 + angleDev) * M_PI / 180.0f)
+										* distance;
 
-								addBloodStain(bX, bY, enemies[j]->Angle,
-										enemies[j]->Scale * 0.5f,
-										enemies[j]->Poisoned);
+								addBloodStain(bX, bY, enemy->Angle,
+										enemy->Scale * 0.5f, enemy->Poisoned);
 							}
 						}
 
-						float damageLoss = enemies[j]->getHealth();
-						enemies[j]->hit(bullets[i], player->X, player->Y);
+						float damageLoss = enemy->getHealth();
+						enemy->hit(bullets[i], player->X, player->Y);
 
 						if (bullets[i]->BigCalibre) {
 							bullets[i]->Damage -= damageLoss;
@@ -1431,15 +1433,12 @@ void drawGame() {
 		powerups[i]->draw(false);
 	}
 
-	if (!lose)
-		player->draw();
-
-	for (unsigned int i = 0; i < enemies.size(); i++) {
-		if (enemies[i]->getLeft() < cam->X + cam->getHalfW()
-				&& enemies[i]->getRight() > cam->X - cam->getHalfW()
-				&& enemies[i]->getTop() < cam->Y + cam->getHalfH()
-				&& enemies[i]->getBottom() > cam->Y - cam->getHalfH())
-			enemies[i]->draw();
+	for (unsigned int i = 0; i < lifeForms.size(); i++) {
+		if (lifeForms[i]->getLeft() < cam->X + cam->getHalfW()
+				&& lifeForms[i]->getRight() > cam->X - cam->getHalfW()
+				&& lifeForms[i]->getTop() < cam->Y + cam->getHalfH()
+				&& lifeForms[i]->getBottom() > cam->Y - cam->getHalfH())
+			lifeForms[i]->draw();
 	}
 
 	if (!lose && player->getLight()) {
@@ -1531,7 +1530,7 @@ void runMainLoop() {
 		input->process();
 
 		if (gameStarted) {
-			musicManager->process(player, enemies, gamePaused);
+			musicManager->process(player, lifeForms, gamePaused);
 
 			handleGameCommonControls();
 
@@ -1712,7 +1711,6 @@ void unloadResources() {
 	delete aim;
 	delete playerArmsTex;
 	delete playerLegsSprite;
-	delete player;
 	delete terrain;
 	delete bleedSprite;
 	delete medikitTex;
@@ -1731,7 +1729,7 @@ void unloadResources() {
 	weapons.clear();
 	clearBloodStains();
 	clearPowerups();
-	clearEnemies();
+	clearLifeForms();
 	clearBullets();
 	clearMessages();
 	clearWindows();

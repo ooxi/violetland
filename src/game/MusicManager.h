@@ -18,7 +18,7 @@ private:
 public:
 	MusicManager(FileUtility* fileUtility, SoundManager* soundManager,
 			Configuration* config);
-	void process(Player* player, std::vector<Enemy*> enemies, bool paused);
+	void process(Player* player, std::vector<LiveObject*> enemies, bool paused);
 	void play();
 	void play(std::string name, bool now);
 	~MusicManager();
