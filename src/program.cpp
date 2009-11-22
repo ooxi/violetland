@@ -337,6 +337,11 @@ void initSystem() {
 	SDL_WM_SetCaption(buf, NULL);
 	delete[] buf;
 
+	SDL_Surface* icon = ImageUtility::loadImage(fileUtility->getFullPath(
+			FileUtility::common, "icon-light.png"), 1.0f);
+	SDL_WM_SetIcon(icon, NULL);
+	SDL_FreeSurface(icon);
+
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_BLEND);
@@ -983,7 +988,7 @@ void dropPowerup(float x, float y) {
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::grenades;
 		newPowerup->Object = new int(1);
-		newPowerup->BMask = 0.5f;
+		newPowerup->BMask = 0.0f;
 		powerupDropped = true;
 	}
 
@@ -1267,7 +1272,8 @@ void handlePowerups() {
 		bool deletePowerup = false;
 		powerups[i]->Time -= deltaTime;
 		powerups[i]->AMask = powerups[i]->Time / 15000.0;
-		if (powerups[i]->Type == Powerup::medikit)
+		if (powerups[i]->Type == Powerup::medikit || powerups[i]->Type
+				== Powerup::grenades)
 			powerups[i]->Angle = StaticObject::fixAngle(powerups[i]->Angle
 					+ deltaTime * 0.1);
 
@@ -1282,18 +1288,14 @@ void handlePowerups() {
 						* player->MaxSpeed();
 				powerups[i]->Y -= sin((a + 90) * M_PI / 180) * deltaTime
 						* player->MaxSpeed();
-				//powerups[i]->take(deltaTime);
-				//else
-				//powerups[i]->resetTaking();
 			}
 		}
 
-		if (!lose && (powerups[i]->detectCollide(player)
-				|| powerups[i]->TakeDelay == 0)) {
+		if (!lose && (powerups[i]->detectCollide(player))) {
 			switch (powerups[i]->Type) {
 			case Powerup::medikit:
 				msgQueue.push_back(text->getObject(
-						"Player has taken a medical kit.", 0, 0,
+						"The player has taken a medical kit.", 0, 0,
 						TextManager::LEFT, TextManager::MIDDLE));
 				player->setHealth(player->getHealth()
 						+ *(float*) powerups[i]->Object);
@@ -1301,8 +1303,8 @@ void handlePowerups() {
 				break;
 			case Powerup::grenades:
 				msgQueue.push_back(text->getObject(
-						"Player has taken a grenade.", 0, 0, TextManager::LEFT,
-						TextManager::MIDDLE));
+						"The player has taken a grenade.", 0, 0,
+						TextManager::LEFT, TextManager::MIDDLE));
 				player->Grenades += *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;

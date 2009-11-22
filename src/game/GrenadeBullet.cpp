@@ -10,7 +10,7 @@ GrenadeBullet::GrenadeBullet(float x, float y, float targetX, float targetY) :
 void GrenadeBullet::process(int deltaTime) {
 	float d = Object::calculateDistance(X, Y, m_targetX, m_targetY);
 	float dp = d / m_distance;
-	float k = 1.0f - fabs(0.5f - dp);
+	float k = 0.75f - fabs(0.5f - dp);
 
 	float a = Object::calculateAngle(X, Y, m_targetX, m_targetY);
 

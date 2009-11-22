@@ -10,11 +10,8 @@ public:
 	};
 	Powerup(float x, float y, Texture *tex);
 	void *Object;
-	void resetTaking();
-	void take(int deltaTime);
 	Powerup::PowerupType Type;
 	int Time;
-	int TakeDelay;
 };
 
 #endif /* POWERUP_H_ */
