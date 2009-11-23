@@ -1,5 +1,8 @@
-#include <stdlib.h>
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#endif //_WIN32W
 #include <cmath>
+#include <stdlib.h>
 #include "SDL_opengl.h"
 #include "Bullet.h"
 
