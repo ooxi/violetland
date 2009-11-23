@@ -1,6 +1,7 @@
 #include "StandardBullet.h"
 
-StandardBullet::StandardBullet(float x, float y, float dX, float dY) :
+StandardBullet::StandardBullet(float x, float y, float dX, float dY,
+		bool explosive) :
 	Bullet(x, y, dX, dY, Bullet::standard) {
 	Speed = 3;
 	Damage = 1;
@@ -8,6 +9,11 @@ StandardBullet::StandardBullet(float x, float y, float dX, float dY) :
 	Alpha = 1.0f;
 	prevX = x;
 	prevY = y;
+	m_explosive = explosive;
+}
+
+bool StandardBullet::isExplosive() {
+	return m_explosive;
 }
 
 void StandardBullet::process(int deltaTime) {

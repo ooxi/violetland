@@ -107,6 +107,7 @@ install(FILES
 	images/ak.png
 	images/uzi.png
 	images/remington.png
+	images/m32.png
 	images/splash_0.png
 	images/splash_1.png 
 	images/expl_0.png

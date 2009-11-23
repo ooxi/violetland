@@ -8,6 +8,7 @@
 #include "../system/sound/Sound.h"
 #include "StandardBullet.h"
 #include "LaserBullet.h"
+#include "GrenadeBullet.h"
 
 #ifndef WEAPON_H_
 #define WEAPON_H_

@@ -13,6 +13,7 @@ class GrenadeBullet: public Bullet {
 private:
 	float m_targetX, m_targetY;
 	float m_distance;
+	bool m_hand;
 public:
 	GrenadeBullet(float x, float y, float targetX, float targetY);
 	virtual void process(int deltaTime);

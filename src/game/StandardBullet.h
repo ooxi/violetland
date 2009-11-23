@@ -8,8 +8,10 @@ class StandardBullet: public Bullet {
 private:
 	float Alpha;
 	float prevX, prevY;
+	bool m_explosive;
 public:
-	StandardBullet(float x, float y, float dX, float dY);
+	StandardBullet(float x, float y, float dX, float dY, bool explosive);
+	bool isExplosive();
 	virtual void process(int deltaTime);
 	virtual void draw();
 	virtual bool checkHit(Object* objRef);

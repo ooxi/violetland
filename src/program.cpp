@@ -1139,6 +1139,7 @@ void handleEnemies() {
 void handleBullets() {
 	if (!bullets.empty()) {
 		for (int i = bullets.size() - 1; i >= 0; i--) {
+			bool explodeNow = false;
 			bullets[i]->process(deltaTime);
 
 			if (bullets[i]->isActive() && !lifeForms.empty()) {
@@ -1166,26 +1167,39 @@ void handleBullets() {
 							}
 						}
 
-						float damageLoss = enemy->getHealth();
-						enemy->hit(bullets[i], player->X, player->Y);
-
-						if (bullets[i]->BigCalibre) {
-							bullets[i]->Damage -= damageLoss;
-							if (bullets[i]->Damage <= 0)
+						if (bullets[i]->Type == Bullet::standard) {
+							if (((StandardBullet*) bullets[i])->isExplosive()) {
 								bullets[i]->deactivate();
+								explodeNow = true;
+							}
+						}
+
+						if (!bullets[i]->isActive()) {
+							float damageLoss = enemy->getHealth();
+							enemy->hit(bullets[i], player->X, player->Y);
+
+							if (bullets[i]->BigCalibre) {
+								bullets[i]->Damage -= damageLoss;
+								if (bullets[i]->Damage <= 0)
+									bullets[i]->deactivate();
+							}
 						}
 					}
 				}
 			}
 
-			if (bullets[i]->isReadyToRemove()) {
-				if (bullets[i]->Type == Bullet::grenade) {
-					Explosion* expl = new Explosion(bullets[i]->X,
-							bullets[i]->Y, explTex[0], explTex[1]);
-					expl->Damage = bullets[i]->Damage;
-					explosions.push_back(expl);
-				}
+			if (bullets[i]->isReadyToRemove() && bullets[i]->Type
+					== Bullet::grenade)
+				explodeNow = true;
 
+			if (explodeNow) {
+				Explosion* expl = new Explosion(bullets[i]->X, bullets[i]->Y,
+						explTex[0], explTex[1]);
+				expl->Damage = bullets[i]->Damage;
+				explosions.push_back(expl);
+			}
+
+			if (bullets[i]->isReadyToRemove()) {
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
 			}
@@ -1606,7 +1620,7 @@ void loadWeapons() {
 						shotSound)), sndManager->create(
 						fileUtility->getFullPath(FileUtility::sound,
 								reloadSound)));
-		if (weaponType > 1) {
+		if (weaponType > 2) {
 			weapon->setBulletImage(fileUtility->getFullPath(FileUtility::image,
 					bulletPath));
 		}

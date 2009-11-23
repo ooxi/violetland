@@ -52,13 +52,14 @@ std::vector<Bullet*> *Weapon::fire(float x, float y, float dX, float dY) {
 		Bullet* newBullet;
 		switch (Type) {
 		case Bullet::standard:
-			newBullet = new StandardBullet(x, y, dX, dY);
+			newBullet = new StandardBullet(x, y, dX, dY, false);
 			break;
 		case Bullet::laser:
 			newBullet = new LaserBullet(x, y, dX, dY);
 			break;
 		case Bullet::grenade:
-			return newBullets;
+			newBullet = new StandardBullet(x, y, dX, dY, true);
+			break;
 		}
 		newBullet->Damage = Damage;
 		newBullet->Speed = BulletSpeed;
