@@ -1,10 +1,12 @@
 #include "GrenadeBullet.h"
 
-GrenadeBullet::GrenadeBullet(float x, float y, float targetX, float targetY) :
+GrenadeBullet::GrenadeBullet(float x, float y, float targetX, float targetY,
+		Sprite* sprite) :
 	Bullet(x, y, x, y, Bullet::grenade) {
 	m_targetX = targetX;
 	m_targetY = targetY;
 	m_distance = Object::calculateDistance(X, Y, m_targetX, m_targetY);
+	m_image = new DynamicObject(x, y, sprite);
 }
 
 void GrenadeBullet::process(int deltaTime) {
@@ -17,21 +19,18 @@ void GrenadeBullet::process(int deltaTime) {
 	X -= cos((a + 90) * M_PI / 180) * deltaTime * Speed * k;
 	Y -= sin((a + 90) * M_PI / 180) * deltaTime * Speed * k;
 	m_range += Speed * deltaTime * k;
+	m_scale = k / 2.0f;
+
+	m_image->rollFrame(true);
 
 	m_active = !(m_range >= m_distance);
 	m_readyToRemove = !m_active;
 }
 
 void GrenadeBullet::draw() {
-	glLineWidth(1.0f);
-	glBegin(GL_LINES);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glVertex3f(X - 5.0f, Y - 5.0f, 0);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glVertex3f(X + 5.0f, Y + 5.0f, 0);
-	glEnd();
+	m_image->draw(X, Y, 0.0f, m_scale, 1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 GrenadeBullet::~GrenadeBullet() {
-	// nothing
+	delete m_image;
 }

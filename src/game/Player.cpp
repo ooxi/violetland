@@ -110,8 +110,9 @@ std::vector<Bullet*> *Player::fire() {
 	return newBullets;
 }
 
-Bullet* Player::throwGrenade() {
-	Bullet* newBullet = new GrenadeBullet(X, Y, TargetX, TargetY);
+Bullet* Player::throwGrenade(Sprite* grenadeSprite) {
+	Bullet* newBullet =
+			new GrenadeBullet(X, Y, TargetX, TargetY, grenadeSprite);
 
 	newBullet->Damage = 5.0f;
 	newBullet->Speed = MaxSpeed() * 5.0f;

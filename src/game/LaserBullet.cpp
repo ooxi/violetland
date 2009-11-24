@@ -23,6 +23,8 @@ void LaserBullet::process(int deltaTime) {
 }
 
 void LaserBullet::draw() {
+	glDisable(GL_TEXTURE_2D);
+
 	glLineWidth(1.0f);
 	glBegin(GL_LINES);
 	glColor4f(0.3f, 1.0f, 0.3f, Alpha / 3.0f);
@@ -30,6 +32,8 @@ void LaserBullet::draw() {
 	glColor4f(0.3f, 1.0f, 0.3f, Alpha);
 	glVertex3f(dStartX, dStartY, 0);
 	glEnd();
+
+	glEnable(GL_TEXTURE_2D);
 }
 
 bool LaserBullet::checkHit(Object* objRef) {

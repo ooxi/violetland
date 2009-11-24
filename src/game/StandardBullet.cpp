@@ -31,6 +31,8 @@ void StandardBullet::process(int deltaTime) {
 }
 
 void StandardBullet::draw() {
+	glDisable(GL_TEXTURE_2D);
+
 	glLineWidth(1.0f);
 	glBegin(GL_LINES);
 	glColor4f(1.0f, 1.0f, 1.0f, Alpha);
@@ -38,6 +40,8 @@ void StandardBullet::draw() {
 	glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
 	glVertex3f(dStartX, dStartY, 0);
 	glEnd();
+
+	glEnable(GL_TEXTURE_2D);
 }
 
 bool StandardBullet::checkHit(Object* objRef) {

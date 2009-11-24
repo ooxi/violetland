@@ -44,7 +44,7 @@ public:
 	const bool getLaser();
 	void setWeapon(Weapon *value);
 	std::vector<Bullet*> *fire();
-	Bullet* throwGrenade();
+	Bullet* throwGrenade(Sprite* grenadeSprite);
 	float AccuracyDeviation;
 	float TargetX, TargetY;
 	int Level;

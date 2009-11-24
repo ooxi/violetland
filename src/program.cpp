@@ -64,9 +64,11 @@ Sound* playerKilledSound;
 vector<Sound*> playerHitSounds;
 int playerHitSndPlaying = 0;
 
-Texture *medikitTex;
-Texture *playerArmsTex;
-Sprite *playerLegsSprite;
+Texture* medikitTex;
+Texture* playerArmsTex;
+Sprite* playerLegsSprite;
+
+Sprite* grenadeSprite;
 
 vector<Texture*> bloodTex;
 vector<Texture*> explTex;
@@ -955,7 +957,7 @@ void handlePlayer() {
 
 	if (input->getPressInput(InputHandler::ThrowGrenade) && player->Grenades
 			> 0) {
-		bullets.push_back(player->throwGrenade());
+		bullets.push_back(player->throwGrenade(grenadeSprite));
 	}
 }
 
@@ -1167,14 +1169,16 @@ void handleBullets() {
 							}
 						}
 
+						bool bypassDirectDamage = false;
 						if (bullets[i]->Type == Bullet::standard) {
 							if (((StandardBullet*) bullets[i])->isExplosive()) {
 								bullets[i]->deactivate();
 								explodeNow = true;
+								bypassDirectDamage = true;
 							}
 						}
 
-						if (!bullets[i]->isActive()) {
+						if (!bypassDirectDamage) {
 							float damageLoss = enemy->getHealth();
 							enemy->hit(bullets[i], player->X, player->Y);
 
@@ -1470,11 +1474,11 @@ void drawGame() {
 
 	glDisable(GL_LIGHTING);
 
-	glDisable(GL_TEXTURE_2D);
-
 	for (unsigned int i = 0; i < bullets.size(); i++) {
 		bullets[i]->draw();
 	}
+
+	glDisable(GL_TEXTURE_2D);
 
 	if (!lose && player->getLaser()) {
 		glLineWidth(0.5f);
@@ -1673,6 +1677,17 @@ void loadResources() {
 	}
 	playerLegsSprite = new Sprite(playerLegsAnimSurfaces);
 
+	vector<SDL_Surface*> grenadeAnimSurfaces;
+	for (unsigned i = 0; i < 12; i++) {
+		char *buf;
+		sprintf(buf = new char[100], "grenade/%i.png", i);
+		SDL_Surface *surface = ImageUtility::loadImage(
+				fileUtility->getFullPath(FileUtility::anima, buf));
+		grenadeAnimSurfaces.push_back(surface);
+		delete[] buf;
+	}
+	grenadeSprite = new Sprite(grenadeAnimSurfaces);
+
 	vector<SDL_Surface*> bleedAnimSurfaces;
 	for (unsigned i = 0; i < 13; i++) {
 		char *buf;
@@ -1733,6 +1748,7 @@ void unloadResources() {
 	delete aim;
 	delete playerArmsTex;
 	delete playerLegsSprite;
+	delete grenadeSprite;
 	delete terrain;
 	delete bleedSprite;
 	delete medikitTex;

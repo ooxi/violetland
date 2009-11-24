@@ -152,6 +152,20 @@ install (FILES
 	images/anima/bleed/bleed-12.png
 DESTINATION ${relResPath}/images/anima/bleed)
 install (FILES
+	images/anima/grenade/0.png
+	images/anima/grenade/1.png
+	images/anima/grenade/2.png
+	images/anima/grenade/3.png
+	images/anima/grenade/4.png
+	images/anima/grenade/5.png
+	images/anima/grenade/6.png
+	images/anima/grenade/7.png
+	images/anima/grenade/8.png
+	images/anima/grenade/9.png
+	images/anima/grenade/10.png
+	images/anima/grenade/11.png
+DESTINATION ${relResPath}/images/anima/grenade)
+install (FILES
 	images/anima/monsters/0/move-0.png
 	images/anima/monsters/0/move-1.png
 	images/anima/monsters/0/move-2.png
