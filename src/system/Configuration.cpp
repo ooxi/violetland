@@ -16,6 +16,7 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	AimColorA = 0x000000;
 	AimColorB = 0xFFFFFF;
 	AutoWeaponPickup = true;
+	FriendlyFire = false;
 }
 
 void Configuration::read() {
@@ -35,6 +36,7 @@ void Configuration::read() {
 		cFile.readInto(AimColorA, "aimColorA");
 		cFile.readInto(AimColorB, "aimColorB");
 		cFile.readInto(AutoWeaponPickup, "autoWeaponPickup");
+		cFile.readInto(FriendlyFire, "friendlyFire");
 	} catch (...) {
 		printf("Can't open config file.\n");
 	}
@@ -55,6 +57,7 @@ void Configuration::write() {
 	cFile.add("screenHeight", ScreenHeight);
 	cFile.add("screenWidth", ScreenWidth);
 	cFile.add("autoWeaponPickup", AutoWeaponPickup);
+	cFile.add("friendlyFire", FriendlyFire);
 
 	std::ofstream ofile(
 			m_fileUtility->getFullPath(FileUtility::user, "config").c_str());

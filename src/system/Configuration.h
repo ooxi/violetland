@@ -23,6 +23,7 @@ public:
 	unsigned int MonstersAtStart;
 	int AimColorA, AimColorB;
 	bool AutoWeaponPickup;
+	bool FriendlyFire;
 };
 
 #endif /* CONFIGURATION_H_ */

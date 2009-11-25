@@ -704,10 +704,22 @@ void refreshOptionsWindow() {
 				* 8.0f, TextManager::LEFT, TextManager::MIDDLE));
 	else
 		w->removeElement("+autopickup", false);
+
+	if (config->FriendlyFire)
+		w->addElement("+friendlyfire", text->getObject("+", l,
+				text->getHeight() * 9.0f, TextManager::LEFT,
+				TextManager::MIDDLE));
+	else
+		w->removeElement("+friendlyfire", false);
 }
 
 void switchAutoReload() {
 	config->AutoReload = !config->AutoReload;
+	refreshOptionsWindow();
+}
+
+void switchFriendlyFire() {
+	config->FriendlyFire = !config->FriendlyFire;
 	refreshOptionsWindow();
 }
 
@@ -734,9 +746,13 @@ void createOptionsWindow() {
 	w->addElement("autopickup", text->getObject("Weapon autotaking", l
 			+ text->getHeight() * 2.0f, text->getHeight() * 8.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("friendlyfire", text->getObject("Friendly fire", l
+			+ text->getHeight() * 2.0f, text->getHeight() * 9.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addHandler("autoreload", switchAutoReload);
 	w->addHandler("autopickup", switchAutoPickup);
+	w->addHandler("friendlyfire", switchFriendlyFire);
 
 	w->addElement("savereturn", text->getObject("Save and return", l,
 			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
@@ -888,6 +904,10 @@ void handleExplosions() {
 
 			if (explosions[i]->Active && !lifeForms.empty()) {
 				for (int j = lifeForms.size() - 1; j >= 0; j--) {
+					if (lifeForms[j]->Type == LiveObject::player
+							&& !config->FriendlyFire)
+						continue;
+
 					float d = explosions[i]->calcDamage(lifeForms[j]);
 					if (d > 0) {
 						lifeForms[j]->setHealth(lifeForms[j]->getHealth() - d);
