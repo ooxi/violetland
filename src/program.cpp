@@ -86,6 +86,8 @@ vector<StaticObject*> bloodStains;
 
 vector<Explosion*> explosions;
 
+vector<Sound*> explosionSounds;
+
 vector<Weapon*> weapons;
 
 vector<Powerup*> powerups;
@@ -1141,7 +1143,6 @@ void handleEnemies() {
 void handleBullets() {
 	if (!bullets.empty()) {
 		for (int i = bullets.size() - 1; i >= 0; i--) {
-			bool explodeNow = false;
 			bullets[i]->process(deltaTime);
 
 			if (bullets[i]->isActive() && !lifeForms.empty()) {
@@ -1173,7 +1174,11 @@ void handleBullets() {
 						if (bullets[i]->Type == Bullet::standard) {
 							if (((StandardBullet*) bullets[i])->isExplosive()) {
 								bullets[i]->deactivate();
-								explodeNow = true;
+								Explosion* expl = new Explosion(bullets[i]->X,
+										bullets[i]->Y, 100.0f, explTex[0],
+										explTex[1], explosionSounds[1]);
+								expl->Damage = bullets[i]->Damage;
+								explosions.push_back(expl);
 								bypassDirectDamage = true;
 							}
 						}
@@ -1193,12 +1198,9 @@ void handleBullets() {
 			}
 
 			if (bullets[i]->isReadyToRemove() && bullets[i]->Type
-					== Bullet::grenade)
-				explodeNow = true;
-
-			if (explodeNow) {
+					== Bullet::grenade) {
 				Explosion* expl = new Explosion(bullets[i]->X, bullets[i]->Y,
-						explTex[0], explTex[1]);
+						150.0f, explTex[0], explTex[1], explosionSounds[0]);
 				expl->Damage = bullets[i]->Damage;
 				explosions.push_back(expl);
 			}
@@ -1652,6 +1654,11 @@ void loadResources() {
 			FileUtility::sound, "zombie_hit_1.ogg")));
 	enemyHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
 			FileUtility::sound, "zombie_hit_2.ogg")));
+
+	explosionSounds.push_back(sndManager->create(fileUtility->getFullPath(
+			FileUtility::sound, "explode-0.ogg")));
+	explosionSounds.push_back(sndManager->create(fileUtility->getFullPath(
+			FileUtility::sound, "explode-1.ogg")));
 
 	playerKilledSound = sndManager->create(fileUtility->getFullPath(
 			FileUtility::sound, "player_killed.ogg"));

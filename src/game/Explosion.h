@@ -1,6 +1,7 @@
 #include <vector>
 #include "../system/graphic/Particle.h"
 #include "../system/graphic/Texture.h"
+#include "../system/sound/Sound.h"
 
 #ifndef EXPLOSION_H_
 #define EXPLOSION_H_
@@ -8,8 +9,10 @@
 class Explosion {
 private:
 	vector<Particle*> m_particles;
+	Sound* m_sound;
 public:
-	Explosion(float x, float y, Texture* sparkTex, Texture* gruelTex);
+	Explosion(float x, float y, int range, Texture* sparkTex,
+			Texture* gruelTex, Sound* sound);
 	void process(int deltaTime);
 	void draw();
 	float calcDamage(Object* objRef);

@@ -95,6 +95,9 @@ install(FILES
 	sounds/laser_shot.ogg
 	sounds/zombie_hit_1.ogg
 	sounds/zombie_hit_2.ogg
+	sounds/m32_shot.ogg
+	sounds/explode-0.ogg
+	sounds/explode-1.ogg
 DESTINATION ${relResPath}/sounds)
 install(FILES
 	images/blood_0.png
