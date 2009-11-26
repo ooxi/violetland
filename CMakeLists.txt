@@ -105,6 +105,7 @@ install(FILES
 	images/blood_2.png
 	images/player_top.png 
 	images/medikit.png
+	images/grenade.png
 	images/pm.png
 	images/laser.png
 	images/ak.png

@@ -65,6 +65,8 @@ vector<Sound*> playerHitSounds;
 int playerHitSndPlaying = 0;
 
 Texture* medikitTex;
+Texture* grenadeTex;
+
 Texture* playerArmsTex;
 Sprite* playerLegsSprite;
 
@@ -1014,16 +1016,15 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 975) {
-		newPowerup = new Powerup(x, y, medikitTex);
+	if (!powerupDropped && rand() % 1000 >= 970) {
+		newPowerup = new Powerup(x, y, grenadeTex);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::grenades;
 		newPowerup->Object = new int(1);
-		newPowerup->BMask = 0.0f;
 		powerupDropped = true;
 	}
 
-	if (rand() % 1000 >= 970 || player->Kills == 0) {
+	if (rand() % 1000 >= 975 || player->Kills == 0) {
 		int weaponIndex = (rand() % (weapons.size() - 1)) + 1;
 		newPowerup = new Powerup(x, y, weapons[weaponIndex]->getDroppedTex());
 		newPowerup->Type = Powerup::weapon;
@@ -1323,9 +1324,16 @@ void handlePowerups() {
 		powerups[i]->Time -= deltaTime;
 		powerups[i]->AMask = powerups[i]->Time / 15000.0;
 		if (powerups[i]->Type == Powerup::medikit || powerups[i]->Type
-				== Powerup::grenades)
-			powerups[i]->Angle = StaticObject::fixAngle(powerups[i]->Angle
-					+ deltaTime * 0.1);
+				== Powerup::grenades) {
+
+			powerups[i]->Angle += deltaTime * 0.05f * powerups[i]->Dir;
+
+			if (powerups[i]->Angle > 45 && powerups[i]->Dir > 0)
+				powerups[i]->Dir = -1;
+
+			if (powerups[i]->Angle < -45 && powerups[i]->Dir < 0)
+				powerups[i]->Dir = 1;
+		}
 
 		if (powerups[i]->Time < 0)
 			deletePowerup = true;
@@ -1486,7 +1494,11 @@ void drawGame() {
 				&& lifeForms[i]->getRight() > cam->X - cam->getHalfW()
 				&& lifeForms[i]->getTop() < cam->Y + cam->getHalfH()
 				&& lifeForms[i]->getBottom() > cam->Y - cam->getHalfH())
-			lifeForms[i]->draw();
+
+			if (lose && lifeForms[i]->Type == LiveObject::player)
+				continue;
+
+		lifeForms[i]->draw();
 	}
 
 	if (!lose && player->getLight()) {
@@ -1760,6 +1772,11 @@ void loadResources() {
 	medikitTex
 			= new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
 					FileUtility::image, "medikit.png")), GL_TEXTURE_2D,
+					GL_LINEAR, true);
+
+	grenadeTex
+			= new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
+					FileUtility::image, "grenade.png")), GL_TEXTURE_2D,
 					GL_LINEAR, true);
 
 	aim = new Aim(config);

@@ -12,6 +12,7 @@ public:
 	void *Object;
 	Powerup::PowerupType Type;
 	int Time;
+	int Dir;
 };
 
 #endif /* POWERUP_H_ */
