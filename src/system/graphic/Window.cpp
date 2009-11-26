@@ -70,9 +70,8 @@ void Window::draw() {
 }
 
 void Window::process(InputHandler* input) {
-
-	float gmx = input->mouseX;
-	float gmy = input->mouseY;
+	int gmx = input->mouseX;
+	int gmy = input->mouseY;
 
 	std::map<std::string, void(*)()>::const_iterator iter;
 	for (iter = m_handlers.begin(); iter != m_handlers.end(); ++iter) {

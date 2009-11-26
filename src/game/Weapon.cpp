@@ -78,7 +78,7 @@ std::vector<Bullet*> *Weapon::fire(float x, float y, float dX, float dY) {
 bool Weapon::reload(float timeMod) {
 	if (m_reload <= 0) {
 		m_reloadSound->play(0, 0);
-		m_reload = ReloadTime * timeMod;
+		m_reload = (int)(ReloadTime * timeMod);
 		return true;
 	} else
 		return false;

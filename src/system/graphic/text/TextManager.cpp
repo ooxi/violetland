@@ -7,7 +7,7 @@ TextManager::TextManager(string fontPath, int fontSize) {
 		exit(5);
 	}
 	m_height = TTF_FontHeight(m_font);
-	m_ident = m_height * 0.5;
+	m_ident = (int)(m_height * 0.5);
 }
 
 void TextManager::draw(const char *textBuf, float x, float y,
