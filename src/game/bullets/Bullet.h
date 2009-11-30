@@ -1,4 +1,4 @@
-#include "./../system/Object.h"
+#include "../../system/Object.h"
 
 #ifndef BULLET_H_
 #define BULLET_H_

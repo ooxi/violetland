@@ -1,17 +1,17 @@
 #include "../system/graphic/DynamicObject.h"
-#include "LiveObject.h"
+#include "LifeForm.h"
 #include <cmath>
 #include <vector>
 #include "SDL_mixer.h"
 #include "SDL_image.h"
 #include "../system/graphic/Texture.h"
 #include "../system/sound/Sound.h"
-#include "Bullet.h"
+#include "bullets/Bullet.h"
 
 #ifndef ENEMY_H_
 #define ENEMY_H_
 
-class Enemy: public LiveObject {
+class Enemy: public LifeForm {
 private:
 	DynamicObject* m_body;
 	Sprite *m_bleedSprite;
@@ -22,9 +22,10 @@ private:
 public:
 	Enemy(float x, float y, Sprite *sprite, Sprite *bleedSprite,
 			Sound* hitSound);
-	void hit(Bullet* bullet, float pX, float pY);
-	void process(int deltaTime);
+	virtual void process(int deltaTime);
 	virtual void draw();
+
+	void hit(Bullet* bullet, float pX, float pY);
 	void setAppearance(float scale, float rMask, float gMask, float bMask,
 			float aMask);
 	void rollFrame(bool forward);
@@ -34,8 +35,6 @@ public:
 	bool DoNotDisturb;
 	bool Angry;
 	int blowDelay;
-	float TargetX, TargetY;
-	bool Poisoned;
 };
 
 #endif /* ENEMY_H_ */

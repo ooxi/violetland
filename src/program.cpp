@@ -38,7 +38,7 @@
 #include "game/Explosion.h"
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.4";
+const string VERSION = "0.2.5";
 const int GAME_AREA_SIZE = 2048;
 
 Configuration* config;
@@ -81,7 +81,7 @@ Sprite* bleedSprite;
 
 Aim* aim;
 
-vector<LiveObject*> lifeForms;
+vector<LifeForm*> lifeForms;
 Player* player;
 
 vector<StaticObject*> bloodStains;
@@ -254,7 +254,8 @@ void startSurvival() {
 	clearMessages();
 	clearExplosions();
 
-	player = new Player(0, 0, playerLegsSprite, playerArmsTex, weapons[0]);
+	player = new Player(0, 0, playerLegsSprite, playerArmsTex);
+	player->setWeapon(weapons[0]);
 	player->HitR = 0.28f;
 	player->Acceleration = 0.0004f;
 	lifeForms.push_back(player);
@@ -906,7 +907,7 @@ void handleExplosions() {
 
 			if (explosions[i]->Active && !lifeForms.empty()) {
 				for (int j = lifeForms.size() - 1; j >= 0; j--) {
-					if (lifeForms[j]->Type == LiveObject::player
+					if (lifeForms[j]->Type == LifeForm::player
 							&& !config->FriendlyFire)
 						continue;
 
@@ -957,8 +958,6 @@ void handlePlayer() {
 	player->TargetX = input->mouseX / widthK - cam->getHalfW() + cam->X;
 	player->TargetY = input->mouseY / heightK - cam->getHalfH() + cam->Y;
 
-	player->process(deltaTime);
-
 	if (input->getDownInput(InputHandler::Fire)) {
 		std::vector<Bullet*> *newBullets = player->fire();
 		if (!newBullets->empty()) {
@@ -966,7 +965,7 @@ void handlePlayer() {
 					newBullets->end());
 			delete newBullets;
 		}
-		if (player->getAmmo() == 0 && config->AutoReload)
+		if (player->getWeapon()->Ammo == 0 && config->AutoReload)
 			player->reload();
 	}
 
@@ -1077,7 +1076,12 @@ void handleEnemies() {
 
 	if (!lifeForms.empty()) {
 		for (int i = lifeForms.size() - 1; i >= 0; i--) {
-			if (lifeForms[i]->Type == LiveObject::player)
+			float x = lifeForms[i]->X;
+			float y = lifeForms[i]->Y;
+
+			lifeForms[i]->process(deltaTime);
+
+			if (lifeForms[i]->Type == LifeForm::player)
 				continue;
 
 			Enemy* enemy = (Enemy*) lifeForms[i];
@@ -1106,12 +1110,12 @@ void handleEnemies() {
 				enemy->TargetX = player->X;
 				enemy->TargetY = player->Y;
 			} else if (rangeToPlayer < 800 && !lose) {
-				enemy->TargetX = player->X - cos((player->getMoveDirection()
-						+ 90) * M_PI / 180) * rangeToPlayer / 2.0f
-						/ enemy->Speed * player->Speed;
-				enemy->TargetY = player->Y - sin((player->getMoveDirection()
-						+ 90) * M_PI / 180) * rangeToPlayer / 2.0f
-						/ enemy->Speed * player->Speed;
+				enemy->TargetX = player->X - cos((player->getLegsAngle() + 90)
+						* M_PI / 180) * rangeToPlayer / 2.0f / enemy->Speed
+						* player->Speed;
+				enemy->TargetY = player->Y - sin((player->getLegsAngle() + 90)
+						* M_PI / 180) * rangeToPlayer / 2.0f / enemy->Speed
+						* player->Speed;
 			} else if (!enemy->DoNotDisturb) {
 				enemy->TargetX = (rand() % (GAME_AREA_SIZE * 2))
 						- GAME_AREA_SIZE;
@@ -1119,11 +1123,6 @@ void handleEnemies() {
 						- GAME_AREA_SIZE;
 				enemy->DoNotDisturb = true;
 			}
-
-			float x = enemy->X;
-			float y = enemy->Y;
-
-			enemy->process(deltaTime);
 
 			if (!lose && player->detectCollide(enemy)) {
 				if (enemy->Attack()) {
@@ -1168,7 +1167,7 @@ void handleBullets() {
 
 			if (bullets[i]->isActive() && !lifeForms.empty()) {
 				for (int j = lifeForms.size() - 1; j >= 0; j--) {
-					if (lifeForms[j]->Type == LiveObject::player)
+					if (lifeForms[j]->Type == LifeForm::player)
 						continue;
 
 					Enemy* enemy = (Enemy*) lifeForms[j];
@@ -1277,8 +1276,8 @@ void drawHud() {
 	healthMsg->draw(true, healthMsg->X, healthMsg->Y);
 	delete healthMsg;
 
-	sprintf(buf = new char[30], "%s: %d/%d", player->getWeaponName().c_str(),
-			player->getAmmo(), player->getMaxAmmo());
+	sprintf(buf = new char[30], "%s: %d/%d", player->getWeapon()->Name.c_str(),
+			player->getWeapon()->Ammo, player->getWeapon()->AmmoClipSize);
 	text->draw(buf, text->getIndent(), text->getIndent() + text->getHeight(),
 			TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
@@ -1372,7 +1371,7 @@ void handlePowerups() {
 					player->setWeapon((Weapon*) powerups[i]->Object);
 					char *buf;
 					sprintf(buf = new char[200], "Player has taken the %s.",
-							player->getWeaponName().c_str());
+							player->getWeapon()->Name.c_str());
 					msgQueue.push_back(text->getObject(buf, 0, 0,
 							TextManager::LEFT, TextManager::MIDDLE));
 					delete[] buf;
@@ -1495,7 +1494,7 @@ void drawGame() {
 				&& lifeForms[i]->getTop() < cam->Y + cam->getHalfH()
 				&& lifeForms[i]->getBottom() > cam->Y - cam->getHalfH())
 
-			if (lose && lifeForms[i]->Type == LiveObject::player)
+			if (lose && lifeForms[i]->Type == LifeForm::player)
 				continue;
 
 		lifeForms[i]->draw();
@@ -1518,7 +1517,7 @@ void drawGame() {
 		glLineWidth(0.5f);
 		glBegin(GL_LINES);
 		glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
-		const float rad = (player->getArmsDirection() - 90) * M_PI / 180;
+		const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
 		glVertex3f(player->X + 50 * cos(rad), player->Y + 50 * sin(rad), 0);
 		glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
 		glVertex3f(player->X + cam->getH() * 0.75f * cos(rad), player->Y
@@ -1539,8 +1538,8 @@ void drawGame() {
 				player->AccuracyDeviation * M_PI / 180)
 				* Object::calculateDistance(player->X, player->Y,
 						player->TargetX, player->TargetY) / 25.0f,
-				player->getReloadState() > 0 ? 1.2f - player->getReloadState()
-						: 0.2f);
+				player->getWeapon()->getReloadState() > 0 ? 1.2f
+						- player->getWeapon()->getReloadState() : 0.2f);
 	}
 
 	glEnable(GL_TEXTURE_2D);

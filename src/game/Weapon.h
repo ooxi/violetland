@@ -6,9 +6,9 @@
 #include "../system/graphic/Texture.h"
 #include "../system/utility/ImageUtility.h"
 #include "../system/sound/Sound.h"
-#include "StandardBullet.h"
-#include "LaserBullet.h"
-#include "GrenadeBullet.h"
+#include "bullets/StandardBullet.h"
+#include "bullets/LaserBullet.h"
+#include "bullets/GrenadeBullet.h"
 
 #ifndef WEAPON_H_
 #define WEAPON_H_

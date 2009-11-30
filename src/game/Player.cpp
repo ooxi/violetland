@@ -4,7 +4,7 @@
 #include "Player.h"
 
 Player::Player() :
-	LiveObject(0, 0, 128, 128) {
+	LifeForm(0, 0, 128, 128) {
 	Empty = true;
 	Xp = 0;
 	NextLevelXp = 100;
@@ -14,16 +14,17 @@ Player::Player() :
 	AccuracyDeviation = 0.0f;
 	Time = 0;
 	Grenades = 2;
-	Type = LiveObject::player;
+	Type = LifeForm::player;
+
+	m_weapon = NULL;
 
 	m_light = m_laser = false;
 
 	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = false;
 }
 
-Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex,
-		Weapon *weapon) :
-	LiveObject(x, y, 128, 128) {
+Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex) :
+	LifeForm(x, y, 128, 128) {
 	*this = Player();
 
 	X = x;
@@ -35,8 +36,6 @@ Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex,
 	m_legs->Frame = 8;
 
 	m_arms = new StaticObject(x, y, 128, 128, armsTex, false);
-
-	m_weapon = new Weapon(*weapon);
 
 	Empty = false;
 }
@@ -80,7 +79,7 @@ void Player::move(char movementX, char movementY, int deltaTime) {
 }
 
 std::vector<Bullet*> *Player::fire() {
-	const float rad = (getArmsDirection() - 90) * M_PI / 180;
+	const float rad = (getArmsAngle() - 90) * M_PI / 180;
 	std::vector<Bullet*> *newBullets = m_weapon->fire(m_arms->X, m_arms->Y,
 			m_arms->X + 50 * cos(rad), m_arms->Y + 50 * sin(rad));
 
@@ -128,10 +127,6 @@ void Player::reload() {
 		AccuracyDeviation = 0;
 }
 
-const float Player::getReloadState() {
-	return m_weapon->getReloadState();
-}
-
 void Player::toggleLight() {
 	m_light = !m_light;
 }
@@ -149,11 +144,11 @@ const bool Player::getLaser() {
 }
 
 void Player::process(int deltaTime) {
+	LifeForm::process(deltaTime);
+
 	m_arms->Angle = Object::calculateAngle(X, Y, TargetX, TargetY);
 
 	m_weapon->process(deltaTime);
-
-	setHealth(getHealth() + HealthRegen() * deltaTime);
 
 	AccuracyDeviation -= deltaTime * 0.01;
 	if (AccuracyDeviation < 0)
@@ -165,11 +160,11 @@ void Player::draw() {
 	m_arms->draw(false);
 }
 
-const float Player::getMoveDirection() {
+const float Player::getLegsAngle() {
 	return m_legs->Angle;
 }
 
-const float Player::getArmsDirection() {
+const float Player::getArmsAngle() {
 	return m_arms->Angle;
 }
 
@@ -181,20 +176,13 @@ void Player::setY(float value) {
 	Y = m_arms->Y = m_legs->Y = value;
 }
 
-const int Player::getAmmo() {
-	return m_weapon->Ammo;
-}
-
-const int Player::getMaxAmmo() {
-	return m_weapon->AmmoClipSize;
-}
-
-std::string Player::getWeaponName() {
-	return m_weapon->Name;
+Weapon* Player::getWeapon() {
+	return m_weapon;
 }
 
 void Player::setWeapon(Weapon *value) {
-	delete m_weapon;
+	if (m_weapon)
+		delete m_weapon;
 	m_weapon = new Weapon(*value);
 	AccuracyDeviation = 0;
 }

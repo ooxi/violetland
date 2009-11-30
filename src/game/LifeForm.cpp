@@ -1,27 +1,36 @@
-#include "LiveObject.h"
+#include "LifeForm.h"
 
-LiveObject::LiveObject(float x, float y, int w, int h) :
+LifeForm::LifeForm(float x, float y, int w, int h) :
 	Object(x, y, w, h) {
 	Strength = 1.0f;
 	Agility = 1.0f;
 	Vitality = 1.0f;
 	m_health = MaxHealth();
 	m_lastAttackTime = SDL_GetTicks();
+	TargetX = TargetY = 0.0f;
+	Poisoned = false;
 }
 
-void LiveObject::draw() {
+void LifeForm::draw() {
 	// nothing
 }
 
-const float LiveObject::MaxHealth() {
+void LifeForm::process(int deltaTime) {
+	setHealth(getHealth() + HealthRegen() * deltaTime);
+
+	if (Poisoned)
+		setHealth(getHealth() - 0.0002 * deltaTime);
+}
+
+const float LifeForm::MaxHealth() {
 	return Vitality > 0.8f ? 1.0f + (Vitality - 1.0f) * 2.0f : 0.4f;
 }
 
-const float LiveObject::ChanceToEvade() {
+const float LifeForm::ChanceToEvade() {
 	return Agility > 1.0f ? (Agility - 1.0f) / 2.0f : 0.0f;
 }
 
-const bool LiveObject::Attack() {
+const bool LifeForm::Attack() {
 	int now = SDL_GetTicks();
 
 	if (now - m_lastAttackTime > AttackDelay()) {
@@ -32,31 +41,31 @@ const bool LiveObject::Attack() {
 	}
 }
 
-const float LiveObject::Damage() {
+const float LifeForm::Damage() {
 	return Strength / 10.0f;
 }
 
-const int LiveObject::AttackDelay() {
+const int LifeForm::AttackDelay() {
 	return (1.0f - (Agility - 1.0f) / 2.0f) * 1000;
 }
 
-const float LiveObject::MaxSpeed() {
+const float LifeForm::MaxSpeed() {
 	return Agility / 5.0f;
 }
 
-const float LiveObject::HealthRegen() {
+const float LifeForm::HealthRegen() {
 	return Vitality > 1.0f ? (Vitality - 1.0f) * 0.000003f : 0.0f;
 }
 
-const float LiveObject::ReloadSpeedMod() {
+const float LifeForm::ReloadSpeedMod() {
 	return 1.0f / Agility;
 }
 
-const float LiveObject::WeaponRetForceMod() {
+const float LifeForm::WeaponRetForceMod() {
 	return Strength > 1.0f ? 1.0f - (Strength - 1.0f) : 1.0f;
 }
 
-void LiveObject::setHealth(float value) {
+void LifeForm::setHealth(float value) {
 	m_health = value;
 	if (m_health > MaxHealth())
 		m_health = MaxHealth();
@@ -64,6 +73,6 @@ void LiveObject::setHealth(float value) {
 		m_health = 0;
 }
 
-const float LiveObject::getHealth() {
+const float LifeForm::getHealth() {
 	return m_health;
 }

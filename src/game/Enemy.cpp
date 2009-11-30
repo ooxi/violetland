@@ -5,18 +5,15 @@
 
 Enemy::Enemy(float x, float y, Sprite *sprite, Sprite *bleedSprite,
 		Sound* hitSound) :
-	LiveObject(x, y, 128, 128) {
+	LifeForm(x, y, 128, 128) {
 	m_body = new DynamicObject(x, y, sprite);
-	TargetX = 0.0f;
-	TargetY = 0.0f;
 	m_bleedSprite = bleedSprite;
 	m_hitSound = hitSound;
 	m_hitSoundChannel = 0;
 	m_bleeding = 0;
 	DoNotDisturb = false;
 	Angry = false;
-	Poisoned = false;
-	Type = LiveObject::zombie;
+	Type = LifeForm::monster;
 }
 
 void Enemy::rollFrame(bool forward) {
@@ -49,6 +46,8 @@ bool Enemy::isBleeding() {
 }
 
 void Enemy::process(int deltaTime) {
+	LifeForm::process(deltaTime);
+
 	float newAngle = Object::calculateAngle(X, Y, TargetX, TargetY);
 	float prevAngle = Angle;
 	Object::turn(newAngle, MaxSpeed(), deltaTime);
@@ -59,11 +58,6 @@ void Enemy::process(int deltaTime) {
 	}
 
 	move(deltaTime);
-
-	setHealth(getHealth() + HealthRegen() * deltaTime);
-
-	if (Poisoned)
-		setHealth(getHealth() - 0.0002 * deltaTime);
 
 	if (!m_bleeds.empty()) {
 		m_bleeding += deltaTime;

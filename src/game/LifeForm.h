@@ -4,19 +4,22 @@
 #ifndef LIVEOBJECT_H_
 #define LIVEOBJECT_H_
 
-class LiveObject: public Object {
+class LifeForm: public Object {
 private:
 	int m_lastAttackTime;
 	float m_health;
 public:
 	enum LifeFormType {
-		player = 0, zombie
+		player = 0, monster
 	};
-	LiveObject(float x, float y, int w, int h);
+	LifeForm(float x, float y, int w, int h);
+	virtual void process(int deltaTime);
+	virtual void draw();
+
 	float Strength;
 	float Agility;
 	float Vitality;
-	virtual void draw();
+	float TargetX, TargetY;
 	void setHealth(float value);
 	const float getHealth();
 	const float MaxHealth();
@@ -28,7 +31,8 @@ public:
 	const float ReloadSpeedMod();
 	const float WeaponRetForceMod();
 	const float HealthRegen();
-	LiveObject::LifeFormType Type;
+	LifeForm::LifeFormType Type;
+	bool Poisoned;
 };
 
 #endif /* LIVEOBJECT_H_ */

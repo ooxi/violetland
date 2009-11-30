@@ -24,7 +24,7 @@ MusicManager::MusicManager(FileUtility* fileUtility,
 	m_currentPlaying = "null";
 }
 
-void MusicManager::process(Player* player, std::vector<LiveObject*> enemies,
+void MusicManager::process(Player* player, std::vector<LifeForm*> enemies,
 		bool paused) {
 	if (paused) {
 		play();
@@ -35,7 +35,7 @@ void MusicManager::process(Player* player, std::vector<LiveObject*> enemies,
 		play("03.ogg", afterPause);
 	} else if (player->Time < 100000) {
 		play("05.ogg", afterPause);
-	} else if (player->getWeaponName() == "Laser") {
+	} else if (player->getWeapon()->Name == "Laser") {
 		play("02.ogg", afterPause);
 	} else {
 		play("01.ogg", afterPause);

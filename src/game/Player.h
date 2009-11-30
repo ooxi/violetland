@@ -6,14 +6,14 @@
 #include "SDL_opengl.h"
 #include "../system/graphic/DynamicObject.h"
 #include "./../system/graphic/StaticObject.h"
-#include "LiveObject.h"
+#include "LifeForm.h"
 #include "Weapon.h"
-#include "GrenadeBullet.h"
+#include "bullets/GrenadeBullet.h"
 
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
-class Player: public LiveObject {
+class Player: public LifeForm {
 private:
 	DynamicObject *m_legs;
 	StaticObject *m_arms;
@@ -21,32 +21,26 @@ private:
 	bool m_light, m_laser;
 public:
 	Player();
-	Player(float x, float y, Sprite *legsSprite, Texture *armsTex,
-			Weapon *weapon);
-	~Player();
-	void process(int deltaTime);
+	Player(float x, float y, Sprite *legsSprite, Texture *armsTex);
+	virtual void process(int deltaTime);
+	virtual void draw();
+
 	void move(char movementX, char movementY, int deltaTime);
 	void reload();
-	virtual void draw();
 	void toggleLight();
 	void toggleLaser();
-	const float getX();
-	const float getY();
-	const float getMoveDirection();
-	const float getArmsDirection();
+	const float getLegsAngle();
+	const float getArmsAngle();
 	void setX(float value);
 	void setY(float value);
-	std::string getWeaponName();
-	const int getAmmo();
-	const int getMaxAmmo();
-	const float getReloadState();
 	const bool getLight();
 	const bool getLaser();
+	Weapon* getWeapon();
 	void setWeapon(Weapon *value);
 	std::vector<Bullet*> *fire();
 	Bullet* throwGrenade(Sprite* grenadeSprite);
+	~Player();
 	float AccuracyDeviation;
-	float TargetX, TargetY;
 	int Level;
 	int LevelPoints;
 	int Xp;

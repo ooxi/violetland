@@ -4,7 +4,7 @@
 #include <cmath>
 #include <stdlib.h>
 #include "SDL_opengl.h"
-#include "../system/graphic/DynamicObject.h"
+#include "../../system/graphic/DynamicObject.h"
 #include "Bullet.h"
 
 #ifndef GRENADEBULLET_H_

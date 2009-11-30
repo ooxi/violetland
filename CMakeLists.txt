@@ -15,6 +15,7 @@ include_directories(${incDirList})
 
 set(srcDir src)
 set(srcGameDir ${srcDir}/game)
+set(srcBulletsDir ${srcGameDir}/bullets)
 set(srcSystemDir ${srcDir}/system)
 set(srcGraphicDir ${srcSystemDir}/graphic)
 set(srcTextDir ${srcGraphicDir}/text)
@@ -27,15 +28,15 @@ set(srcFileList
 	${srcGameDir}/Powerup.cpp 
 	${srcGameDir}/Player.cpp 
 	${srcGameDir}/Enemy.cpp 
-	${srcGameDir}/Bullet.cpp
-	${srcGameDir}/StandardBullet.cpp
-	${srcGameDir}/LaserBullet.cpp
-	${srcGameDir}/GrenadeBullet.cpp
 	${srcGameDir}/Terrain.cpp
 	${srcGameDir}/MusicManager.cpp
-	${srcGameDir}/LiveObject.cpp
+	${srcGameDir}/LifeForm.cpp
 	${srcGameDir}/Highscores.cpp
 	${srcGameDir}/Explosion.cpp
+	${srcBulletsDir}/Bullet.cpp
+	${srcBulletsDir}/StandardBullet.cpp
+	${srcBulletsDir}/LaserBullet.cpp
+	${srcBulletsDir}/GrenadeBullet.cpp
 	${srcSystemDir}/Object.cpp
 	${srcSystemDir}/InputHandler.cpp
 	${srcSystemDir}/ConfigFile.cpp
@@ -74,7 +75,6 @@ install(FILES
 	weapons
 	README_EN.TXT
 	README_RU.TXT
-	icon-dark.png
 	icon-light.png
 DESTINATION ${relResPath})
 install(FILES fonts/harabara.ttf DESTINATION ${relResPath}/fonts)
