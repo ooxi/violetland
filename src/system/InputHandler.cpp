@@ -12,7 +12,8 @@ InputHandler::InputHandler() {
 	m_eventMap[MoveRight] = SDLK_d;
 	m_eventMap[MoveDown] = SDLK_s;
 	m_eventMap[Restart] = SDLK_RETURN;
-	m_eventMap[Escape] = SDLK_ESCAPE;
+	m_eventMap[Menu] = SDLK_ESCAPE;
+	m_eventMap[Escape] = SDLK_F12;
 	m_eventMap[ToggleLight] = SDLK_f;
 	m_eventMap[ToggleLaser] = SDLK_g;
 	m_eventMap[Pause] = SDLK_p;

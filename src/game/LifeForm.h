@@ -8,6 +8,8 @@ class LifeForm: public Object {
 private:
 	int m_lastAttackTime;
 	float m_health;
+protected:
+	bool m_dead;
 public:
 	enum LifeFormType {
 		player = 0, monster
@@ -31,6 +33,7 @@ public:
 	const float ReloadSpeedMod();
 	const float WeaponRetForceMod();
 	const float HealthRegen();
+	const bool isDead();
 	LifeForm::LifeFormType Type;
 	bool Poisoned;
 };

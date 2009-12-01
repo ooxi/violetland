@@ -884,7 +884,7 @@ void handleGameCommonControls() {
 		}
 	}
 
-	if (input->getPressInput(InputHandler::Escape)) {
+	if (input->getPressInput(InputHandler::Menu)) {
 		if (windows.count("mainmenu") == 0) {
 			clearWindows();
 
@@ -897,6 +897,10 @@ void handleGameCommonControls() {
 			w->CloseFlag = true;
 			switchGamePause();
 		}
+	}
+
+	if (input->getPressInput(InputHandler::Escape)) {
+		game = false;
 	}
 }
 
@@ -929,7 +933,7 @@ void handleExplosions() {
 }
 
 void handlePlayer() {
-	if (player->getHealth() == 0)
+	if (player->isDead())
 		loseGame();
 
 	char movementX = 0;
@@ -1081,16 +1085,18 @@ void handleEnemies() {
 
 			lifeForms[i]->process(deltaTime);
 
+			if (lifeForms[i]->isDead()) {
+				if (lifeForms[i]->Type == LifeForm::monster) {
+					dropPowerup(lifeForms[i]->X, lifeForms[i]->Y);
+					killEnemy(i);
+					continue;
+				}
+			}
+
 			if (lifeForms[i]->Type == LifeForm::player)
 				continue;
 
 			Enemy* enemy = (Enemy*) lifeForms[i];
-
-			if (enemy->getHealth() <= 0) {
-				dropPowerup(enemy->X, enemy->Y);
-				killEnemy(i);
-				continue;
-			}
 
 			float rangeToPlayer = sqrt(pow(-enemy->X + player->X, 2) + pow(
 					enemy->Y - player->Y, 2));

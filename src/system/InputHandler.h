@@ -8,6 +8,7 @@ public:
 	enum GameInputEvents {
 		Restart = 0,
 		Escape,
+		Menu,
 		ToggleLight,
 		ToggleLaser,
 		ShowChar,
