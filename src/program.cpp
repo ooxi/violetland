@@ -854,7 +854,7 @@ void createHelpWindow() {
 
 void handleGameCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
-		if (windows.count("charstats") == 0) {
+		if (gameStarted && !lose && windows.count("charstats") == 0) {
 			clearWindows();
 
 			createCharStatWindow();
@@ -892,7 +892,7 @@ void handleGameCommonControls() {
 
 			if (!gamePaused)
 				switchGamePause();
-		} else {
+		} else if (gameStarted) {
 			Window* w = windows.find("mainmenu")->second;
 			w->CloseFlag = true;
 			switchGamePause();
@@ -1577,6 +1577,7 @@ void runMainLoop() {
 	framesCount = 0;
 	gameStarted = false;
 	game = true;
+	lose = false;
 	while (game) {
 		framesCount++;
 		const int now = SDL_GetTicks();
@@ -1594,10 +1595,10 @@ void runMainLoop() {
 
 		input->process();
 
+		handleGameCommonControls();
+
 		if (gameStarted) {
 			musicManager->process(player, lifeForms, gamePaused);
-
-			handleGameCommonControls();
 
 			if (!gamePaused)
 				processGame();

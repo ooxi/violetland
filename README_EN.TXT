@@ -30,13 +30,13 @@ Currently an easiest way to play violetland on linux is to build the program wit
 
 Besides, some additional steps are required.
 
-First download and unzip the distribution package or get files from the SVN.
+First download and unpack the distribution package or get files from the SVN.
 
-Next go to the root distribution directory and make the program using cmake:
+Next go to the root distribution directory and make the program using cmake (the default install prefix is /usr/local):
 
 $ mkdir build
 $ cd build
-$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..
+$ cmake ..
 $ sudo make install 
 
 Then run the program:
@@ -52,9 +52,9 @@ $ make install
 $ cd ../dist/bin/
 $ ./violetland
 
-In addition you can install an executable and game data to the separate directory trees:
+In addition you can install the executable and the game data to the separate directory trees:
 
 $ mkdir build
 $ cd build
-$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DDATA_INSTALL_DIR=/usr/share/games ..
+$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DDATA_INSTALL_DIR=/usr/share/games/violetland ..
 $ sudo make install

@@ -79,7 +79,6 @@ FileUtility::FileUtility(char *argPath) {
 #else //DATA_INSTALL_DIR
 	m_resPath = DATA_INSTALL_DIR;
 #endif //DATA_INSTALL_DIR
-	m_resPath.append("/violetland/");
 	m_usrPath = getenv("HOME");
 	m_usrPath.append("/.config");
 	mkdir(m_usrPath.c_str(), S_IRWXU | S_IRGRP | S_IROTH);
