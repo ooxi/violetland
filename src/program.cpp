@@ -54,8 +54,8 @@ int fps = 0;
 
 double gameHardness;
 bool game;
-bool lose;
-bool gameStarted;
+bool gameLost;
+bool gameBegun;
 bool gamePaused;
 
 float dayLight = 1.0;
@@ -243,9 +243,9 @@ void spawnEnemy(float r, int lvl, float* param) {
 
 void startSurvival() {
 	gameHardness = 9995.0;
-	lose = false;
+	gameLost = false;
 	gamePaused = false;
-	gameStarted = true;
+	gameBegun = true;
 
 	clearBloodStains();
 	clearPowerups();
@@ -419,7 +419,7 @@ void initSystem() {
 }
 
 void loseGame() {
-	lose = true;
+	gameLost = true;
 	if (playerHitSounds[playerHitSndPlaying]->isPlaying())
 		playerHitSounds[playerHitSndPlaying]->stop(0);
 
@@ -776,11 +776,25 @@ void showOptions() {
 	createOptionsWindow();
 }
 
+void resumeGame() {
+	Window* w = windows.find("mainmenu")->second;
+	w->CloseFlag = true;
+	switchGamePause();
+}
+
 void createMainMenuWindow() {
 	Window *mainMenu = new Window(0.0f, 0.0f, config->ScreenWidth,
 			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
 	const int l = config->ScreenWidth * 0.1f;
+
+	if (gameBegun && !gameLost) {
+		mainMenu->addElement("resume", text->getObject("Resume", l,
+				text->getHeight() * 7.0f, TextManager::LEFT,
+				TextManager::MIDDLE));
+
+		mainMenu->addHandler("resume", resumeGame);
+	}
 
 	mainMenu->addElement("survival", text->getObject("New survival", l,
 			text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE));
@@ -854,7 +868,7 @@ void createHelpWindow() {
 
 void handleGameCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
-		if (gameStarted && !lose && windows.count("charstats") == 0) {
+		if (gameBegun && !gameLost && windows.count("charstats") == 0) {
 			clearWindows();
 
 			createCharStatWindow();
@@ -892,7 +906,7 @@ void handleGameCommonControls() {
 
 			if (!gamePaused)
 				switchGamePause();
-		} else if (gameStarted) {
+		} else if (gameBegun) {
 			Window* w = windows.find("mainmenu")->second;
 			w->CloseFlag = true;
 			switchGamePause();
@@ -1066,7 +1080,7 @@ void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 }
 
 void handleEnemies() {
-	if (!lose)
+	if (!gameLost)
 		for (int i = 0; i < deltaTime; i++) {
 			if (rand() % 10000 > gameHardness) {
 				int lvl = player->Level * 0.5f + player->Level * pow((rand()
@@ -1112,10 +1126,10 @@ void handleEnemies() {
 					enemy->DoNotDisturb = false;
 			}
 
-			if ((rangeToPlayer < 400 || enemy->Angry) && !lose) {
+			if ((rangeToPlayer < 400 || enemy->Angry) && !gameLost) {
 				enemy->TargetX = player->X;
 				enemy->TargetY = player->Y;
-			} else if (rangeToPlayer < 800 && !lose) {
+			} else if (rangeToPlayer < 800 && !gameLost) {
 				enemy->TargetX = player->X - cos((player->getLegsAngle() + 90)
 						* M_PI / 180) * rangeToPlayer / 2.0f / enemy->Speed
 						* player->Speed;
@@ -1130,7 +1144,7 @@ void handleEnemies() {
 				enemy->DoNotDisturb = true;
 			}
 
-			if (!lose && player->detectCollide(enemy)) {
+			if (!gameLost && player->detectCollide(enemy)) {
 				if (enemy->Attack()) {
 					if (rand() % 100 > player->ChanceToEvade() * 100) {
 						player->setHealth(player->getHealth() - enemy->Damage());
@@ -1311,7 +1325,7 @@ void drawHud() {
 		delete[] buf;
 	}
 
-	if (lose && !gamePaused)
+	if (gameLost && !gamePaused)
 		text->draw("They have overcome...", config->ScreenWidth / 2,
 				config->ScreenHeight / 2, TextManager::CENTER,
 				TextManager::MIDDLE);
@@ -1354,7 +1368,7 @@ void handlePowerups() {
 			}
 		}
 
-		if (!lose && (powerups[i]->detectCollide(player))) {
+		if (!gameLost && (powerups[i]->detectCollide(player))) {
 			switch (powerups[i]->Type) {
 			case Powerup::medikit:
 				msgQueue.push_back(text->getObject(
@@ -1411,7 +1425,7 @@ void levelUp() {
 }
 
 void processGame() {
-	if (!lose) {
+	if (!gameLost) {
 		gameHardness -= deltaTime * 0.00012;
 		player->Time += deltaTime;
 
@@ -1471,7 +1485,7 @@ void drawGame() {
 	glLightfv(GL_LIGHT2, GL_DIFFUSE, day_light);
 	glLightfv(GL_LIGHT2, GL_SPECULAR, day_light);
 
-	if (!lose && player->getLight()) {
+	if (!gameLost && player->getLight()) {
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
 
@@ -1500,13 +1514,13 @@ void drawGame() {
 				&& lifeForms[i]->getTop() < cam->Y + cam->getHalfH()
 				&& lifeForms[i]->getBottom() > cam->Y - cam->getHalfH())
 
-			if (lose && lifeForms[i]->Type == LifeForm::player)
+			if (gameLost && lifeForms[i]->Type == LifeForm::player)
 				continue;
 
 		lifeForms[i]->draw();
 	}
 
-	if (!lose && player->getLight()) {
+	if (!gameLost && player->getLight()) {
 		glDisable(GL_LIGHT1);
 		glDisable(GL_LIGHT0);
 	}
@@ -1519,7 +1533,7 @@ void drawGame() {
 
 	glDisable(GL_TEXTURE_2D);
 
-	if (!lose && player->getLaser()) {
+	if (!gameLost && player->getLaser()) {
 		glLineWidth(0.5f);
 		glBegin(GL_LINES);
 		glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
@@ -1539,7 +1553,7 @@ void drawGame() {
 
 	glDisable(GL_TEXTURE_2D);
 
-	if (!lose && !gamePaused) {
+	if (!gameLost && !gamePaused) {
 		aim->draw(player->TargetX, player->TargetY, 1.0f + tan(
 				player->AccuracyDeviation * M_PI / 180)
 				* Object::calculateDistance(player->X, player->Y,
@@ -1575,9 +1589,9 @@ void runMainLoop() {
 	currentTime = SDL_GetTicks();
 	fpsCountingStart = currentTime;
 	framesCount = 0;
-	gameStarted = false;
+	gameBegun = false;
 	game = true;
-	lose = false;
+	gameLost = false;
 	while (game) {
 		framesCount++;
 		const int now = SDL_GetTicks();
@@ -1597,7 +1611,7 @@ void runMainLoop() {
 
 		handleGameCommonControls();
 
-		if (gameStarted) {
+		if (gameBegun) {
 			musicManager->process(player, lifeForms, gamePaused);
 
 			if (!gamePaused)
@@ -1847,9 +1861,9 @@ void parsePreferences(int argc, char *argv[]) {
 			printf("\nArguments:\n");
 			printf("\t--help\t\t\t\tPrint help (this message) and exit\n");
 			printf(
-				"\t-w <screen_width>\t\tSet screen width to <screen_width>\n");
+					"\t-w <screen_width>\t\tSet screen width to <screen_width>\n");
 			printf(
-				"\t-h <screen_height>\t\tSet screen height to <screen_height>\n");
+					"\t-h <screen_height>\t\tSet screen height to <screen_height>\n");
 			printf("\t-f\t\t\t\tGo to fullscreen at start\n");
 			printf("\t-i\t\t\t\tForce windowed mode\n");
 			printf("\t--fps <fps_count>\t\tLimit game fps by <fps_count>\n");
@@ -1859,7 +1873,8 @@ void parsePreferences(int argc, char *argv[]) {
 			printf("\t--showfps\t\t\tShow fps in game\n");
 			printf("\t--monsters <count>\t\tImmediately spawn\n");
 			printf("\t\t\t\t\t<count> monsters at start\n");
-			printf("\n\nThese and other parametres can be adjusted in a configuration file\n");
+			printf(
+					"\n\nThese and other parametres can be adjusted in a configuration file\n");
 			exit(0);
 		}
 

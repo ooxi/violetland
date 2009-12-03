@@ -72,9 +72,9 @@ FileUtility::FileUtility(char *argPath) {
 		FileUtility::truncateFullPathToDir(result);
 		m_appPath = result;
 		m_resPath = m_appPath;
-		m_resPath.append("/../share");
+		m_resPath.append("/../share/violetland");
 	} else {
-		m_resPath = "/usr/local/share";
+		m_resPath = "/usr/local/share/violetland";
 	}
 #else //DATA_INSTALL_DIR
 	m_resPath = DATA_INSTALL_DIR;
