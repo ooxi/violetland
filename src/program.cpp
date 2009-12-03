@@ -1847,18 +1847,19 @@ void parsePreferences(int argc, char *argv[]) {
 			printf("\nArguments:\n");
 			printf("\t--help\t\t\t\tPrint help (this message) and exit\n");
 			printf(
-					"\t-w <screen_width>\t\tSet screen width to <screen_width>\n");
+				"\t-w <screen_width>\t\tSet screen width to <screen_width>\n");
 			printf(
-					"\t-h <screen_height>\t\tSet screen height to <screen_height>\n");
+				"\t-h <screen_height>\t\tSet screen height to <screen_height>\n");
 			printf("\t-f\t\t\t\tGo to fullscreen at start\n");
 			printf("\t-i\t\t\t\tForce windowed mode\n");
 			printf("\t--fps <fps_count>\t\tLimit game fps by <fps_count>\n");
-			printf("\t\t\t\t\tDefault value of <fps_count> is 0\n");
+			printf("\t\t\t\t\tDefault value of <fps_count> is 100\n");
 			printf("\t\t\t\t\tSeting <fps_count> to 0 will disable\n");
 			printf("\t\t\t\t\trestriction\n");
 			printf("\t--showfps\t\t\tShow fps in game\n");
 			printf("\t--monsters <count>\t\tImmediately spawn\n");
 			printf("\t\t\t\t\t<count> monsters at start\n");
+			printf("\n\nThese and other parametres can be adjusted in a configuration file\n");
 			exit(0);
 		}
 
