@@ -13,7 +13,7 @@ InputHandler::InputHandler() {
 	m_eventMap[MoveDown] = SDLK_s;
 	m_eventMap[Restart] = SDLK_RETURN;
 	m_eventMap[Menu] = SDLK_ESCAPE;
-	m_eventMap[Escape] = SDLK_F12;
+	m_eventMap[Exit] = SDLK_F12;
 	m_eventMap[ToggleLight] = SDLK_f;
 	m_eventMap[ToggleLaser] = SDLK_g;
 	m_eventMap[Pause] = SDLK_p;
@@ -59,7 +59,7 @@ void InputHandler::process() {
 			}
 			break;
 		case SDL_QUIT:
-			m_event[Escape] = true;
+			m_event[Exit] = true;
 			break;
 		case SDL_MOUSEMOTION:
 			mouseX = event.motion.x;

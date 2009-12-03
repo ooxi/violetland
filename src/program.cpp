@@ -53,12 +53,11 @@ int fpsCountingStart;
 int fps = 0;
 
 double gameHardness;
-bool game;
+bool gameWorks;
 bool gameLost;
 bool gameBegun;
 bool gamePaused;
-
-float dayLight = 1.0;
+float gameTimeOfDay = 1.0;
 
 Sound* playerKilledSound;
 vector<Sound*> playerHitSounds;
@@ -282,7 +281,7 @@ void startSurvival() {
 }
 
 void endGame() {
-	game = false;
+	gameWorks = false;
 }
 
 char *getProjectTitle() {
@@ -866,7 +865,7 @@ void createHelpWindow() {
 	windows["helpscreen"] = help;
 }
 
-void handleGameCommonControls() {
+void handleCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
 		if (gameBegun && !gameLost && windows.count("charstats") == 0) {
 			clearWindows();
@@ -913,8 +912,8 @@ void handleGameCommonControls() {
 		}
 	}
 
-	if (input->getPressInput(InputHandler::Escape)) {
-		game = false;
+	if (input->getPressInput(InputHandler::Exit)) {
+		gameWorks = false;
 	}
 }
 
@@ -1056,7 +1055,7 @@ void dropPowerup(float x, float y) {
 
 void killEnemy(int index) {
 	player->Kills++;
-	player->Xp += (int) ((1.5 - dayLight * -0.5)
+	player->Xp += (int) ((1.5 - gameTimeOfDay * -0.5)
 			* lifeForms[index]->MaxHealth() * 10);
 	delete lifeForms[index];
 	lifeForms.erase(lifeForms.begin() + index);
@@ -1471,10 +1470,10 @@ void drawGame() {
 
 	glEnable(GL_LIGHTING);
 
-	dayLight = abs(cos(player->Time / 180000.0));
+	gameTimeOfDay = abs(cos(player->Time / 180000.0));
 
-	float globalAmbientColor = dayLight / 5.0;
-	float directColor = dayLight / 2.0;
+	float globalAmbientColor = gameTimeOfDay / 5.0;
+	float directColor = gameTimeOfDay / 2.0;
 
 	GLfloat global_ambient[] = { globalAmbientColor, globalAmbientColor,
 			globalAmbientColor, 1.0f };
@@ -1590,9 +1589,9 @@ void runMainLoop() {
 	fpsCountingStart = currentTime;
 	framesCount = 0;
 	gameBegun = false;
-	game = true;
+	gameWorks = true;
 	gameLost = false;
-	while (game) {
+	while (gameWorks) {
 		framesCount++;
 		const int now = SDL_GetTicks();
 		deltaTime = now - currentTime;
@@ -1609,7 +1608,7 @@ void runMainLoop() {
 
 		input->process();
 
-		handleGameCommonControls();
+		handleCommonControls();
 
 		if (gameBegun) {
 			musicManager->process(player, lifeForms, gamePaused);

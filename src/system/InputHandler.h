@@ -7,7 +7,7 @@ class InputHandler {
 public:
 	enum GameInputEvents {
 		Restart = 0,
-		Escape,
+		Exit,
 		Menu,
 		ToggleLight,
 		ToggleLaser,
