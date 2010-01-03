@@ -29,6 +29,7 @@
 #include "system/sound/SoundManager.h"
 #include "system/graphic/Window.h"
 #include "system/Configuration.h"
+#include "system/GameState.h"
 #include "game/Enemy.h"
 #include "game/Player.h"
 #include "game/Powerup.h"
@@ -41,6 +42,7 @@ const string PROJECT = "violetland";
 const string VERSION = "0.2.5";
 const int GAME_AREA_SIZE = 2048;
 
+GameState* gameState;
 Configuration* config;
 Camera* cam;
 
@@ -51,13 +53,6 @@ float aspect = 1 / 3;
 int framesCount;
 int fpsCountingStart;
 int fps = 0;
-
-double gameHardness;
-bool gameWorks;
-bool gameLost;
-bool gameBegun;
-bool gamePaused;
-float gameTimeOfDay = 1.0;
 
 Sound* playerKilledSound;
 vector<Sound*> playerHitSounds;
@@ -241,10 +236,7 @@ void spawnEnemy(float r, int lvl, float* param) {
 }
 
 void startSurvival() {
-	gameHardness = 9995.0;
-	gameLost = false;
-	gamePaused = false;
-	gameBegun = true;
+	gameState->startSurvival();
 
 	clearBloodStains();
 	clearPowerups();
@@ -278,10 +270,6 @@ void startSurvival() {
 	}
 
 	windows["mainmenu"]->CloseFlag = true;
-}
-
-void endGame() {
-	gameWorks = false;
 }
 
 char *getProjectTitle() {
@@ -418,7 +406,7 @@ void initSystem() {
 }
 
 void loseGame() {
-	gameLost = true;
+	gameState->Lost = true;
 	if (playerHitSounds[playerHitSndPlaying]->isPlaying())
 		playerHitSounds[playerHitSndPlaying]->stop(0);
 
@@ -434,8 +422,8 @@ void loseGame() {
 }
 
 void switchGamePause() {
-	gamePaused = !gamePaused;
-	if (gamePaused)
+	gameState->Paused = !gameState->Paused;
+	if (gameState->Paused)
 		SDL_ShowCursor(1);
 	else
 		SDL_ShowCursor(0);
@@ -810,13 +798,17 @@ void resumeGame() {
 	switchGamePause();
 }
 
+void endGame() {
+	gameState->Works = false;
+}
+
 void createMainMenuWindow() {
 	Window *mainMenu = new Window(0.0f, 0.0f, config->ScreenWidth,
 			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
 	const int l = config->ScreenWidth * 0.1f;
 
-	if (gameBegun && !gameLost) {
+	if (gameState->Begun && !gameState->Lost) {
 		mainMenu->addElement("resume", text->getObject("Resume", l,
 				text->getHeight() * 7.0f, TextManager::LEFT,
 				TextManager::MIDDLE));
@@ -896,13 +888,14 @@ void createHelpWindow() {
 
 void handleCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
-		if (gameBegun && !gameLost && windows.count("charstats") == 0) {
+		if (gameState->Begun && !gameState->Lost && windows.count("charstats")
+				== 0) {
 			clearWindows();
 
 			createCharStatWindow();
 			refreshCharStatsWindow();
 
-			if (!gamePaused)
+			if (!gameState->Paused)
 				switchGamePause();
 		} else {
 			Window* w = windows.find("charstats")->second;
@@ -917,7 +910,7 @@ void handleCommonControls() {
 
 			createHelpWindow();
 
-			if (!gamePaused)
+			if (!gameState->Paused)
 				switchGamePause();
 		} else {
 			Window* w = windows.find("helpscreen")->second;
@@ -932,9 +925,9 @@ void handleCommonControls() {
 
 			createMainMenuWindow();
 
-			if (!gamePaused)
+			if (!gameState->Paused)
 				switchGamePause();
-		} else if (gameBegun) {
+		} else if (gameState->Begun) {
 			Window* w = windows.find("mainmenu")->second;
 			w->CloseFlag = true;
 			switchGamePause();
@@ -942,7 +935,7 @@ void handleCommonControls() {
 	}
 
 	if (input->getPressInput(InputHandler::Exit)) {
-		gameWorks = false;
+		gameState->Works = false;
 	}
 }
 
@@ -1084,7 +1077,7 @@ void dropPowerup(float x, float y) {
 
 void killEnemy(int index) {
 	player->Kills++;
-	player->Xp += (int) ((1.5 - gameTimeOfDay * -0.5)
+	player->Xp += (int) ((1.5 - gameState->TimeOfDay * -0.5)
 			* lifeForms[index]->MaxHealth() * 10);
 	delete lifeForms[index];
 	lifeForms.erase(lifeForms.begin() + index);
@@ -1108,9 +1101,9 @@ void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 }
 
 void handleEnemies() {
-	if (!gameLost)
+	if (!gameState->Lost)
 		for (int i = 0; i < deltaTime; i++) {
-			if (rand() % 10000 > gameHardness) {
+			if (rand() % 10000 > gameState->Hardness) {
 				int lvl = player->Level * 0.5f + player->Level * pow((rand()
 						% 100) / 125.0f, 2);
 				if (lvl < 1)
@@ -1154,10 +1147,10 @@ void handleEnemies() {
 					enemy->DoNotDisturb = false;
 			}
 
-			if ((rangeToPlayer < 400 || enemy->Angry) && !gameLost) {
+			if ((rangeToPlayer < 400 || enemy->Angry) && !gameState->Lost) {
 				enemy->TargetX = player->X;
 				enemy->TargetY = player->Y;
-			} else if (rangeToPlayer < 800 && !gameLost) {
+			} else if (rangeToPlayer < 800 && !gameState->Lost) {
 				enemy->TargetX = player->X - cos((player->getLegsAngle() + 90)
 						* M_PI / 180) * rangeToPlayer / 2.0f / enemy->Speed
 						* player->Speed;
@@ -1172,7 +1165,7 @@ void handleEnemies() {
 				enemy->DoNotDisturb = true;
 			}
 
-			if (!gameLost && player->detectCollide(enemy)) {
+			if (!gameState->Lost && player->detectCollide(enemy)) {
 				if (enemy->Attack()) {
 					if (rand() % 100 > player->ChanceToEvade() * 100) {
 						player->setHealth(player->getHealth() - enemy->Damage());
@@ -1353,12 +1346,12 @@ void drawHud() {
 		delete[] buf;
 	}
 
-	if (gameLost && !gamePaused)
+	if (gameState->Lost && !gameState->Paused)
 		text->draw("They have overcome...", config->ScreenWidth / 2,
 				config->ScreenHeight / 2, TextManager::CENTER,
 				TextManager::MIDDLE);
 
-	if (gamePaused)
+	if (gameState->Paused)
 		text->draw("PAUSE", config->ScreenWidth / 2, config->ScreenHeight / 2,
 				TextManager::CENTER, TextManager::MIDDLE);
 
@@ -1396,7 +1389,7 @@ void handlePowerups() {
 			}
 		}
 
-		if (!gameLost && (powerups[i]->detectCollide(player))) {
+		if (!gameState->Lost && (powerups[i]->detectCollide(player))) {
 			switch (powerups[i]->Type) {
 			case Powerup::medikit:
 				msgQueue.push_back(text->getObject(
@@ -1453,8 +1446,8 @@ void levelUp() {
 }
 
 void processGame() {
-	if (!gameLost) {
-		gameHardness -= deltaTime * 0.00012;
+	if (!gameState->Lost) {
+		gameState->Hardness -= deltaTime * 0.00012;
 		player->Time += deltaTime;
 
 		handlePlayer();
@@ -1499,10 +1492,10 @@ void drawGame() {
 
 	glEnable(GL_LIGHTING);
 
-	gameTimeOfDay = abs(cos(player->Time / 180000.0));
+	gameState->TimeOfDay = abs(cos(player->Time / 180000.0));
 
-	float globalAmbientColor = gameTimeOfDay / 5.0;
-	float directColor = gameTimeOfDay / 2.0;
+	float globalAmbientColor = gameState->TimeOfDay / 5.0;
+	float directColor = gameState->TimeOfDay / 2.0;
 
 	GLfloat global_ambient[] = { globalAmbientColor, globalAmbientColor,
 			globalAmbientColor, 1.0f };
@@ -1513,7 +1506,7 @@ void drawGame() {
 	glLightfv(GL_LIGHT2, GL_DIFFUSE, day_light);
 	glLightfv(GL_LIGHT2, GL_SPECULAR, day_light);
 
-	if (!gameLost && player->getLight()) {
+	if (!gameState->Lost && player->getLight()) {
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
 
@@ -1542,13 +1535,13 @@ void drawGame() {
 				&& lifeForms[i]->getTop() < cam->Y + cam->getHalfH()
 				&& lifeForms[i]->getBottom() > cam->Y - cam->getHalfH())
 
-			if (gameLost && lifeForms[i]->Type == LifeForm::player)
+			if (gameState->Lost && lifeForms[i]->Type == LifeForm::player)
 				continue;
 
 		lifeForms[i]->draw();
 	}
 
-	if (!gameLost && player->getLight()) {
+	if (!gameState->Lost && player->getLight()) {
 		glDisable(GL_LIGHT1);
 		glDisable(GL_LIGHT0);
 	}
@@ -1561,7 +1554,7 @@ void drawGame() {
 
 	glDisable(GL_TEXTURE_2D);
 
-	if (!gameLost && player->getLaser()) {
+	if (!gameState->Lost && player->getLaser()) {
 		glLineWidth(0.5f);
 		glBegin(GL_LINES);
 		glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
@@ -1581,7 +1574,7 @@ void drawGame() {
 
 	glDisable(GL_TEXTURE_2D);
 
-	if (!gameLost && !gamePaused) {
+	if (!gameState->Lost && !gameState->Paused) {
 		aim->draw(player->TargetX, player->TargetY, 1.0f + tan(
 				player->AccuracyDeviation * M_PI / 180)
 				* Object::calculateDistance(player->X, player->Y,
@@ -1617,10 +1610,7 @@ void runMainLoop() {
 	currentTime = SDL_GetTicks();
 	fpsCountingStart = currentTime;
 	framesCount = 0;
-	gameBegun = false;
-	gameWorks = true;
-	gameLost = false;
-	while (gameWorks) {
+	while (gameState->Works) {
 		framesCount++;
 		const int now = SDL_GetTicks();
 		deltaTime = now - currentTime;
@@ -1639,10 +1629,10 @@ void runMainLoop() {
 
 		handleCommonControls();
 
-		if (gameBegun) {
-			musicManager->process(player, lifeForms, gamePaused);
+		if (gameState->Begun) {
+			musicManager->process(player, lifeForms, gameState->Paused);
 
-			if (!gamePaused)
+			if (!gameState->Paused)
 				processGame();
 
 			drawGame();
@@ -1834,7 +1824,6 @@ void loadResources() {
 }
 
 void unloadResources() {
-	delete splash;
 	delete playerKilledSound;
 	delete text;
 	delete aim;
@@ -1947,12 +1936,16 @@ int main(int argc, char *argv[]) {
 
 	loadResources();
 
+	gameState = new GameState();
+
 	createMainMenuWindow();
 
 	runMainLoop();
 
 	unloadResources();
 
+	delete splash;
+	delete gameState;
 	delete musicManager;
 	delete sndManager;
 	delete input;

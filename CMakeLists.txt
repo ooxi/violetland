@@ -41,6 +41,7 @@ set(srcFileList
 	${srcSystemDir}/InputHandler.cpp
 	${srcSystemDir}/ConfigFile.cpp
 	${srcSystemDir}/Configuration.cpp
+	${srcSystemDir}/GameState.cpp
 	${srcUtilityDir}/FileUtility.cpp
 	${srcUtilityDir}/ImageUtility.cpp
 	${srcGraphicDir}/Texture.cpp
