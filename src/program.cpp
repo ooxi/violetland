@@ -713,10 +713,31 @@ void refreshOptionsWindow() {
 				TextManager::MIDDLE));
 	else
 		w->removeElement("+friendlyfire", false);
+
+	char *buf;
+	float snd = config->SoundVolume * 10;
+	sprintf(buf = new char[30], "%.0f%%", snd);
+	TextObject* sndInd = text->getObject(buf, l, text->getHeight() * 13.0f,
+			TextManager::LEFT, TextManager::MIDDLE);
+	delete[] buf;
+	w->addElement("+soundvolume", sndInd);
 }
 
 void switchAutoReload() {
 	config->AutoReload = !config->AutoReload;
+	refreshOptionsWindow();
+}
+
+void switchSoundVolume() {
+	if (config->SoundVolume <= 9) {
+		config->SoundVolume += 1;
+		Mix_Volume(-1, config->SoundVolume * 12);
+		cout << config->SoundVolume << endl;
+	} else {
+		config->SoundVolume = 0;
+		Mix_Volume(-1, 0);
+		cout << config->SoundVolume << endl;
+	}
 	refreshOptionsWindow();
 }
 
@@ -752,9 +773,17 @@ void createOptionsWindow() {
 			+ text->getHeight() * 2.0f, text->getHeight() * 9.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
+	w->addElement("sectionsound", text->getObject("Sound", l, text->getHeight()
+			* 11.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	w->addElement("soundvolume", text->getObject("Master volume", l
+			+ text->getHeight() * 2.0f, text->getHeight() * 13.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
 	w->addHandler("autoreload", switchAutoReload);
 	w->addHandler("autopickup", switchAutoPickup);
 	w->addHandler("friendlyfire", switchFriendlyFire);
+	w->addHandler("soundvolume", switchSoundVolume);
 
 	w->addElement("savereturn", text->getObject("Save and return", l,
 			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
