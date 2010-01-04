@@ -7,8 +7,8 @@ Terrain::Terrain(SDL_Surface *surface, vector<SDL_Surface*> tiles,
 
 	m_gameAreaSize = gameAreaSize;
 
-	m_xTilesCount = (int)ceil(m_gameAreaSize * 2.0 / m_tileWidth);
-	m_yTilesCount = (int)ceil(m_gameAreaSize * 2.0 / m_tileHeight);
+	m_xTilesCount = (int) ceil(m_gameAreaSize * 2.0 / m_tileWidth);
+	m_yTilesCount = (int) ceil(m_gameAreaSize * 2.0 / m_tileHeight);
 
 	int tilesStartX = -m_gameAreaSize + m_tileWidth / 2;
 	int tilesStartY = -m_gameAreaSize + m_tileHeight / 2;
@@ -35,8 +35,10 @@ Terrain::Terrain(SDL_Surface *surface, vector<SDL_Surface*> tiles,
 				false);
 		StaticObject *piece = new StaticObject(0, 0, 128, 128, tileTex, true);
 		for (int i = 0; i < m_gameAreaSize / 4; i++) {
-			piece->X = (float)(rand() % (int) (m_gameAreaSize * 2)) - m_gameAreaSize;
-			piece->Y = (float)(rand() % (int) (m_gameAreaSize * 2)) - m_gameAreaSize;
+			piece->X = (float) (rand() % (int) (m_gameAreaSize * 2))
+					- m_gameAreaSize;
+			piece->Y = (float) (rand() % (int) (m_gameAreaSize * 2))
+					- m_gameAreaSize;
 			piece->AMask = 1.0 - (rand() % 50) / 100.0;
 			piece->Angle = (rand() % 360);
 
@@ -126,12 +128,12 @@ void Terrain::drawOnTile(int tileX, int tileY, StaticObject *piece) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	m_tiles[tileIndex]->draw(true);
+	m_tiles[tileIndex]->draw(false, true);
 
 	float pieceY = piece->Y;
 	float inTilePositionY = (piece->Y + m_gameAreaSize) - tileY * m_tileHeight;
 	piece->Y = (m_tiles[tileIndex]->Y + halfTileHeight - inTilePositionY);
-	piece->draw(true);
+	piece->draw(false, false);
 	piece->Y = pieceY;
 
 	glBindTexture(tex->getType(), tex->getTextureId());

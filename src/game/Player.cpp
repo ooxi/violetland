@@ -157,7 +157,7 @@ void Player::process(int deltaTime) {
 
 void Player::draw() {
 	m_legs->draw();
-	m_arms->draw(false);
+	m_arms->draw(false, false);
 }
 
 const float Player::getLegsAngle() {

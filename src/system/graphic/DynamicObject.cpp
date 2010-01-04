@@ -2,14 +2,14 @@
 
 DynamicObject::DynamicObject(float x, float y, Sprite *sprite) :
 	Object(x, y, 128, 128) {
-	m_sprite = sprite;
+	AnimSprite = sprite;
 	Speed = 0;
 	Frame = 0;
 	m_lastFrameRollTime = SDL_GetTicks();
 }
 
 void DynamicObject::rollFrame(bool forward) {
-	if (m_sprite->getFramesCount() == 1)
+	if (AnimSprite->getFramesCount() == 1)
 		return;
 
 	int now = SDL_GetTicks();
@@ -23,19 +23,23 @@ void DynamicObject::rollFrame(bool forward) {
 		m_lastFrameRollTime = now;
 	}
 
-	if (Frame == m_sprite->getFramesCount())
+	if (Frame == AnimSprite->getFramesCount())
 		Frame = 0;
 	if (Frame < 0)
-		Frame = m_sprite->getFramesCount();
+		Frame = AnimSprite->getFramesCount();
 }
 
 void DynamicObject::process(int deltaTime) {
 	Object::move(deltaTime);
 }
 
+Texture* DynamicObject::getFrame() {
+	return AnimSprite->getFrame(Frame);
+}
+
 void DynamicObject::draw(float x, float y, float angle, float scale,
 		float rMask, float gMask, float bMask, float aMask) {
-	Texture* frameTex = m_sprite->getFrame(Frame);
+	Texture* frameTex = AnimSprite->getFrame(Frame);
 
 	glBindTexture(frameTex->getType(), frameTex->getTextureId());
 

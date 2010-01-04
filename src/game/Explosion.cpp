@@ -71,7 +71,7 @@ void Explosion::process(int deltaTime) {
 
 void Explosion::draw() {
 	for (unsigned int i = 0; i < m_particles.size(); i++) {
-		m_particles[i]->draw(false);
+		m_particles[i]->draw(false, false);
 	}
 }
 

@@ -33,6 +33,7 @@ set(srcFileList
 	${srcGameDir}/LifeForm.cpp
 	${srcGameDir}/Highscores.cpp
 	${srcGameDir}/Explosion.cpp
+	${srcGameDir}/MonsterFactory.cpp
 	${srcBulletsDir}/Bullet.cpp
 	${srcBulletsDir}/StandardBullet.cpp
 	${srcBulletsDir}/LaserBullet.cpp
@@ -68,7 +69,7 @@ if(DEFINED DATA_INSTALL_DIR)
 	set(relResPath ${DATA_INSTALL_DIR})
 	add_definitions(-DDATA_INSTALL_DIR="${DATA_INSTALL_DIR}/")
 else(DEFINED DATA_INSTALL_DIR)
-	set(relResPath share/violetland)
+	set(relResPath share/violetland/)
 endif(DEFINED DATA_INSTALL_DIR)
 
 install(TARGETS violetland DESTINATION bin)
@@ -195,7 +196,30 @@ install (FILES
 	images/anima/monsters/0/move-21.png
 	images/anima/monsters/0/move-22.png
 	images/anima/monsters/0/move-23.png
-	images/anima/monsters/0/move-24.png
+	images/anima/monsters/0/death-0.png
+	images/anima/monsters/0/death-1.png
+	images/anima/monsters/0/death-2.png
+	images/anima/monsters/0/death-3.png
+	images/anima/monsters/0/death-4.png
+	images/anima/monsters/0/death-5.png
+	images/anima/monsters/0/death-6.png
+	images/anima/monsters/0/death-7.png
+	images/anima/monsters/0/death-8.png
+	images/anima/monsters/0/death-9.png
+	images/anima/monsters/0/death-10.png
+	images/anima/monsters/0/death-11.png
+	images/anima/monsters/0/death-12.png
+	images/anima/monsters/0/death-13.png
+	images/anima/monsters/0/death-14.png
+	images/anima/monsters/0/death-15.png
+	images/anima/monsters/0/death-16.png
+	images/anima/monsters/0/death-17.png
+	images/anima/monsters/0/death-18.png
+	images/anima/monsters/0/death-19.png
+	images/anima/monsters/0/death-20.png
+	images/anima/monsters/0/death-21.png
+	images/anima/monsters/0/death-22.png
+	images/anima/monsters/0/death-23.png
 DESTINATION ${relResPath}/images/anima/monsters/0)
 install (FILES
 	images/anima/monsters/1/move-0.png
@@ -222,7 +246,30 @@ install (FILES
 	images/anima/monsters/1/move-21.png
 	images/anima/monsters/1/move-22.png
 	images/anima/monsters/1/move-23.png
-	images/anima/monsters/1/move-24.png
+	images/anima/monsters/1/death-0.png
+	images/anima/monsters/1/death-1.png
+	images/anima/monsters/1/death-2.png
+	images/anima/monsters/1/death-3.png
+	images/anima/monsters/1/death-4.png
+	images/anima/monsters/1/death-5.png
+	images/anima/monsters/1/death-6.png
+	images/anima/monsters/1/death-7.png
+	images/anima/monsters/1/death-8.png
+	images/anima/monsters/1/death-9.png
+	images/anima/monsters/1/death-10.png
+	images/anima/monsters/1/death-11.png
+	images/anima/monsters/1/death-12.png
+	images/anima/monsters/1/death-13.png
+	images/anima/monsters/1/death-14.png
+	images/anima/monsters/1/death-15.png
+	images/anima/monsters/1/death-16.png
+	images/anima/monsters/1/death-17.png
+	images/anima/monsters/1/death-18.png
+	images/anima/monsters/1/death-19.png
+	images/anima/monsters/1/death-20.png
+	images/anima/monsters/1/death-21.png
+	images/anima/monsters/1/death-22.png
+	images/anima/monsters/1/death-23.png
 DESTINATION ${relResPath}/images/anima/monsters/1)
 install (FILES
 	images/anima/player/legs-0.png

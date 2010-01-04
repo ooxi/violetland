@@ -30,6 +30,7 @@
 #include "system/graphic/Window.h"
 #include "system/Configuration.h"
 #include "system/GameState.h"
+#include "game/MonsterFactory.h"
 #include "game/Enemy.h"
 #include "game/Player.h"
 #include "game/Powerup.h"
@@ -54,6 +55,8 @@ int framesCount;
 int fpsCountingStart;
 int fps = 0;
 
+MonsterFactory* monsterFactory;
+
 Sound* playerKilledSound;
 vector<Sound*> playerHitSounds;
 int playerHitSndPlaying = 0;
@@ -70,7 +73,6 @@ vector<Texture*> bloodTex;
 vector<Texture*> explTex;
 
 vector<Sound*> enemyHitSounds;
-vector<Sprite*> enemySprites;
 Sprite* bleedSprite;
 
 Aim* aim;
@@ -213,11 +215,17 @@ void spawnEnemy(float r, int lvl, float* param) {
 			hi = param[i];
 	}
 
-	Enemy *newEnemy =
-			new Enemy(r * cos(spawnAngle), r * sin(spawnAngle), param[1] + 0.3f
-					> (param[0] + param[1] + param[2]) / 3.0f ? enemySprites[1]
-					: enemySprites[0], bleedSprite, enemyHitSounds[rand()
-					% enemyHitSounds.size()]);
+	Enemy
+			*newEnemy =
+					new Enemy(r * cos(spawnAngle), r * sin(spawnAngle),
+							param[1] + 0.3f > (param[0] + param[1] + param[2])
+									/ 3.0f ? monsterFactory->MoveSprites[1]
+									: monsterFactory->MoveSprites[0], param[1]
+									+ 0.3f > (param[0] + param[1] + param[2])
+									/ 3.0f ? monsterFactory->DeathSprites[1]
+									: monsterFactory->DeathSprites[0],
+							bleedSprite, enemyHitSounds[rand()
+									% enemyHitSounds.size()]);
 
 	newEnemy->Strength = param[0];
 	newEnemy->Agility = param[1];
@@ -370,7 +378,7 @@ void initSystem() {
 
 	cam->apply();
 
-	splash->draw(false);
+	splash->draw(false, false);
 
 	SDL_GL_SwapBuffers();
 
@@ -1075,14 +1083,6 @@ void dropPowerup(float x, float y) {
 		powerups.push_back(newPowerup);
 }
 
-void killEnemy(int index) {
-	player->Kills++;
-	player->Xp += (int) ((1.5 - gameState->TimeOfDay * -0.5)
-			* lifeForms[index]->MaxHealth() * 10);
-	delete lifeForms[index];
-	lifeForms.erase(lifeForms.begin() + index);
-}
-
 void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 	StaticObject *newBloodStain = new StaticObject(x, y, 128, 128,
 			bloodTex[(rand() % 299) / 100], false);
@@ -1120,18 +1120,18 @@ void handleEnemies() {
 
 			lifeForms[i]->process(deltaTime);
 
-			if (lifeForms[i]->isDead()) {
-				if (lifeForms[i]->Type == LifeForm::monster) {
-					dropPowerup(lifeForms[i]->X, lifeForms[i]->Y);
-					killEnemy(i);
-					continue;
-				}
-			}
-
 			if (lifeForms[i]->Type == LifeForm::player)
 				continue;
 
 			Enemy* enemy = (Enemy*) lifeForms[i];
+
+			if (enemy->isBleeding() && bloodStains.size() < 12) {
+				addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
+						/ 50.0f + 0.1f, enemy->Poisoned);
+			}
+
+			if (enemy->isDead())
+				continue;
 
 			float rangeToPlayer = sqrt(pow(-enemy->X + player->X, 2) + pow(
 					enemy->Y - player->Y, 2));
@@ -1191,11 +1191,6 @@ void handleEnemies() {
 				enemy->Y = y;
 			} else {
 				enemy->rollFrame(true);
-			}
-
-			if (enemy->isBleeding() && bloodStains.size() < 9) {
-				addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
-						/ 50.0f + 0.1f, enemy->Poisoned);
 			}
 		}
 	}
@@ -1457,17 +1452,30 @@ void processGame() {
 		levelUp();
 	}
 
-	if (bloodStains.size() > 0) {
-		terrain->beginDrawOn();
-		{
-			for (unsigned int i = 0; i < bloodStains.size(); i++) {
-				terrain->drawOn(bloodStains[i]);
-			}
-
-			clearBloodStains();
+	terrain->beginDrawOn();
+	{
+		for (unsigned int i = 0; i < bloodStains.size(); i++) {
+			terrain->drawOn(bloodStains[i]);
 		}
-		terrain->endDrawOn();
+
+		clearBloodStains();
+
+		for (int i = lifeForms.size() - 1; i >= 0; i--) {
+			if (lifeForms[i]->Type == LifeForm::monster) {
+				Enemy* enemy = (Enemy*) lifeForms[i];
+				if (enemy->isReasyToDisappear()) {
+					terrain ->drawOn(enemy->getCorpse());
+					dropPowerup(lifeForms[i]->X, lifeForms[i]->Y);
+					player->Kills++;
+					player->Xp += (int) ((1.5 - gameState->TimeOfDay * -0.5)
+							* lifeForms[i]->MaxHealth() * 10);
+					delete lifeForms[i];
+					lifeForms.erase(lifeForms.begin() + i);
+				}
+			}
+		}
 	}
+	terrain->endDrawOn();
 
 	handlePowerups();
 	handleEnemies();
@@ -1649,7 +1657,7 @@ void runMainLoop() {
 
 			cam->apply();
 
-			splash->draw(false);
+			splash->draw(false, false);
 
 			setGuiCameraMode();
 		}
@@ -1793,20 +1801,6 @@ void loadResources() {
 			fileUtility->getFullPath(FileUtility::image, "blood_2.png")),
 			GL_TEXTURE_2D, GL_LINEAR, true));
 
-	for (unsigned int j = 0; j < 2; j++) {
-		vector<SDL_Surface*> animSurfaces;
-		for (unsigned i = 0; i < 25; i++) {
-			char *buf;
-			sprintf(buf = new char[100], "monsters/%i/move-%i.png", j, i);
-			SDL_Surface *surface = ImageUtility::loadImage(
-					fileUtility->getFullPath(FileUtility::anima, buf));
-			animSurfaces.push_back(surface);
-			delete[] buf;
-		}
-		Sprite *monsterSprite = new Sprite(animSurfaces);
-		enemySprites.push_back(monsterSprite);
-	}
-
 	medikitTex
 			= new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
 					FileUtility::image, "medikit.png")), GL_TEXTURE_2D,
@@ -1821,9 +1815,12 @@ void loadResources() {
 
 	text = new TextManager(fileUtility->getFullPath(FileUtility::common,
 			"fonts/harabara.ttf"), 46 * widthK);
+
+	monsterFactory = new MonsterFactory(fileUtility);
 }
 
 void unloadResources() {
+	delete monsterFactory;
 	delete playerKilledSound;
 	delete text;
 	delete aim;
@@ -1837,10 +1834,6 @@ void unloadResources() {
 		delete bloodTex[i];
 	}
 	bloodTex.clear();
-	for (unsigned int i = 0; i < enemySprites.size(); i++) {
-		delete enemySprites[i];
-	}
-	enemySprites.clear();
 	for (unsigned int i = 0; i < weapons.size(); i++) {
 		weapons[i]->deleteResources();
 		delete weapons[i];

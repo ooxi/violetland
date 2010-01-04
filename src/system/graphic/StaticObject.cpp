@@ -41,8 +41,8 @@ GLuint StaticObject::createComplexFace(int facesCount) {
 	return dListId;
 }
 
-void StaticObject::draw(bool reflection, float x, float y, float angle,
-		float scale) {
+void StaticObject::draw(bool hreflect, bool vreflect, float x, float y,
+		float angle, float scale) {
 	GLfloat right = 1;
 	GLfloat bottom = 1;
 
@@ -66,13 +66,13 @@ void StaticObject::draw(bool reflection, float x, float y, float angle,
 
 	glColor4f(RMask, GMask, BMask, AMask);
 
-	glTexCoord2f(0, reflection ? bottom : 0);
+	glTexCoord2f(hreflect ? right : 0, vreflect ? bottom : 0);
 	glVertex3f(m_left, m_top, 0);
-	glTexCoord2f(right, reflection ? bottom : 0);
+	glTexCoord2f(hreflect ? 0 : right, vreflect ? bottom : 0);
 	glVertex3f(m_right, m_top, 0);
-	glTexCoord2f(right, reflection ? 0 : bottom);
+	glTexCoord2f(hreflect ? 0 : right, vreflect ? 0 : bottom);
 	glVertex3f(m_right, m_bottom, 0);
-	glTexCoord2f(0, reflection ? 0 : bottom);
+	glTexCoord2f(hreflect ? right : 0, vreflect ? 0 : bottom);
 	glVertex3f(m_left, m_bottom, 0);
 	glEnd();
 
@@ -82,8 +82,8 @@ void StaticObject::draw(bool reflection, float x, float y, float angle,
 		glDisable(0x84F5); //GL_TEXTURE_RECTANGLE_NV = GL_TEXTURE_RECTANGLE_ARB = 0x84F5
 }
 
-void StaticObject::draw(bool reflection) {
-	draw(reflection, X, Y, Angle, Scale);
+void StaticObject::draw(bool hreflect, bool vreflect) {
+	draw(hreflect, vreflect, X, Y, Angle, Scale);
 }
 
 void StaticObject::draw(GLuint dListId) {

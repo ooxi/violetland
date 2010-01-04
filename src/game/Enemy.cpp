@@ -3,11 +3,12 @@
 #endif //_WIN32W
 #include "Enemy.h"
 
-Enemy::Enemy(float x, float y, Sprite *sprite, Sprite *bleedSprite,
-		Sound* hitSound) :
+Enemy::Enemy(float x, float y, Sprite *sprite, Sprite* deathSprite,
+		Sprite *bleedSprite, Sound* hitSound) :
 	LifeForm(x, y, 128, 128) {
 	m_body = new DynamicObject(x, y, sprite);
 	m_bleedSprite = bleedSprite;
+	m_deathSprite = deathSprite;
 	m_hitSound = hitSound;
 	m_hitSoundChannel = 0;
 	m_bleeding = 0;
@@ -23,7 +24,7 @@ void Enemy::rollFrame(bool forward) {
 void Enemy::hit(Bullet* bullet, float pX, float pY) {
 	DynamicObject *newBleed = new DynamicObject(X, Y, m_bleedSprite);
 	newBleed->Scale = Scale;
-	newBleed->Angle = Object::fixAngle(M_PI - bullet->Angle - 90);
+	newBleed->Angle = bullet->Angle;
 	m_bleeds.push_back(newBleed);
 	if (!m_hitSound->isPlaying()) {
 		m_hitSound->play(0, 0);
@@ -33,7 +34,7 @@ void Enemy::hit(Bullet* bullet, float pX, float pY) {
 	setHealth(getHealth() - bullet->Damage);
 	Poisoned = bullet->Poisoned || Poisoned;
 	Angry = true;
-	Angle += ((rand() % 100) - 50) * bullet->Damage;
+	//	Angle += ((rand() % 80) - 40) * bullet->Damage;
 }
 
 bool Enemy::isBleeding() {
@@ -45,19 +46,37 @@ bool Enemy::isBleeding() {
 	}
 }
 
+bool Enemy::isDeathPhase() {
+	return m_body->AnimSprite == m_deathSprite;
+}
+
+bool Enemy::isReasyToDisappear() {
+	return isDeathPhase() && m_body->Frame
+			== m_body->AnimSprite->getFramesCount() - 1;
+}
+
 void Enemy::process(int deltaTime) {
 	LifeForm::process(deltaTime);
 
-	float newAngle = Object::calculateAngle(X, Y, TargetX, TargetY);
-	float prevAngle = Angle;
-	Object::turn(newAngle, MaxSpeed(), deltaTime);
-	float deltaAngle = Angle - prevAngle;
+	if (m_dead) {
+		if (!isDeathPhase()) {
+			m_body = new DynamicObject(X, Y, m_deathSprite);
+		} else {
+			if (!isReasyToDisappear())
+				m_body->rollFrame(true);
+		}
+	} else {
+		float newAngle = Object::calculateAngle(X, Y, TargetX, TargetY);
+		float prevAngle = Angle;
+		Object::turn(newAngle, MaxSpeed(), deltaTime);
+		float deltaAngle = Angle - prevAngle;
 
-	for (unsigned int i = 0; i < m_bleeds.size(); i++) {
-		m_bleeds[i]->Angle += deltaAngle;
+		for (unsigned int i = 0; i < m_bleeds.size(); i++) {
+			m_bleeds[i]->Angle += deltaAngle;
+		}
+
+		move(deltaTime);
 	}
-
-	move(deltaTime);
 
 	if (!m_bleeds.empty()) {
 		m_bleeding += deltaTime;
@@ -77,6 +96,18 @@ void Enemy::process(int deltaTime) {
 			m_bleeds[i]->rollFrame(true);
 		}
 	}
+}
+
+StaticObject* Enemy::getCorpse() {
+	StaticObject * corpse = new StaticObject(X, Y, m_width, m_height,
+			m_body->getFrame(), false);
+	corpse->Scale = Scale;
+	corpse->Angle = Object::fixAngle(180 - Angle);
+	corpse->RMask = RMask;
+	corpse->GMask = GMask;
+	corpse->BMask = BMask;
+	corpse->AMask = AMask;
+	return corpse;
 }
 
 void Enemy::draw() {
