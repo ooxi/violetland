@@ -1534,7 +1534,7 @@ void drawGame() {
 	terrain->draw(cam);
 
 	for (unsigned int i = 0; i < powerups.size(); i++) {
-		powerups[i]->draw(false);
+		powerups[i]->draw(false, false);
 	}
 
 	for (unsigned int i = 0; i < lifeForms.size(); i++) {

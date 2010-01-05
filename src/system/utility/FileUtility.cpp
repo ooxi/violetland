@@ -42,6 +42,38 @@ std::vector<std::string> FileUtility::getFilesFromDir(std::string dir) {
 	return files;
 }
 
+std::vector<std::string> FileUtility::getSubDirsFromDir(std::string dir) {
+	std::vector<std::string> subDirs;
+	DIR *dp;
+	struct dirent *ep;
+
+	dp = opendir(dir.c_str());
+	if (dp != NULL) {
+		while ((ep = readdir(dp))) {
+#ifdef _WIN32
+			if ((ep->data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			{
+				subDirs.push_back(ep->d_name);
+				fprintf(stdout, "\t%s\n", ep->d_name);
+			}
+#endif //_WIN32W
+#if defined linux || defined __FreeBSD__
+			if (ep->d_type == DT_DIR && ep->d_name[0] != '.') {
+				subDirs.push_back(ep->d_name);
+				fprintf(stdout, "\t%s\n", ep->d_name);
+			}
+#endif //linux || __FreeBSD__
+		}
+		closedir(dp);
+	}
+
+	return subDirs;
+}
+
+int FileUtility::getSubDirsCountFromDir(std::string dir) {
+	return getSubDirsFromDir(dir).size();
+}
+
 void FileUtility::traceResPath() {
 	printf("Path to resources is set to:\n\t");
 	printf(m_resPath.c_str());

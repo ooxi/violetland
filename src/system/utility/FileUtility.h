@@ -15,8 +15,7 @@ class FileUtility {
 private:
 	std::string m_appPath, m_resPath, m_usrPath;
 public:
-	enum PathType
-	{
+	enum PathType {
 		common = 0, image, anima, sound, music, user
 	};
 	FileUtility(char *argPath);
@@ -27,6 +26,8 @@ public:
 	std::string getFullPath(PathType type, std::string resource);
 	std::vector<std::string> getFilesFromDir(std::string dir);
 	int getFilesCountFromDir(std::string dir);
+	std::vector<std::string> getSubDirsFromDir(std::string dir);
+	int getSubDirsCountFromDir(std::string dir);
 };
 
 #endif /* FILEUTILITY_H_ */
