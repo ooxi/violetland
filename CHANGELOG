@@ -1,0 +1,23 @@
+Legend:
+[+] - a feature was added
+[*] - some changes in existing features were made
+[!] - a bug was fixed
+
+[0.2.4]
+
+[+] hand grenades were added in addition to main weapon
+[+] ability to select any directory for data at installation
+[+] this file is added to the package
+[+] new weapon M32 (sort of grenade launcher)
+[+] ability to adjusting whether explosions can damage player (friendly fire)
+[*] telekinesis is now more visible and funny
+[*] medical kit can be small, medium or large
+[*] music changer algorithm is changed, so music playback should be more smooth
+[*] game window has cool icon on title bar
+[*] bonuses animation
+
+[0.2.3 and earlier]
+
+History is available at these sites:
+http://code.google.com/p/violetland/updates/list
+http://nike.homeunix.com/violetland/
