@@ -133,7 +133,7 @@ void Terrain::drawOnTile(int tileX, int tileY, StaticObject *piece) {
 	float pieceY = piece->Y;
 	float inTilePositionY = (piece->Y + m_gameAreaSize) - tileY * m_tileHeight;
 	piece->Y = (m_tiles[tileIndex]->Y + halfTileHeight - inTilePositionY);
-	piece->draw(false, false);
+	piece->draw(true, false);
 	piece->Y = pieceY;
 
 	glBindTexture(tex->getType(), tex->getTextureId());

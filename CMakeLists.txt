@@ -106,6 +106,8 @@ install(FILES
 	images/player_top.png 
 	images/medikit.png
 	images/grenade.png
+	images/crystal.png
+	images/freeze.png
 	images/pm.png
 	images/laser.png
 	images/ak.png

@@ -63,6 +63,7 @@ int playerHitSndPlaying = 0;
 Texture* medikitTex;
 Texture* grenadeTex;
 Texture* freezeTex;
+StaticObject* crystal;
 
 Texture* playerArmsTex;
 Sprite* playerLegsSprite;
@@ -1037,7 +1038,7 @@ void dropPowerup(float x, float y) {
 		newPowerup = new Powerup(x, y, freezeTex);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::freeze;
-		newPowerup->Object = new int(8000);
+		newPowerup->Object = new int(7000);
 		powerupDropped = true;
 	}
 
@@ -1527,6 +1528,12 @@ void drawGame() {
 				continue;
 
 		lifeForms[i]->draw();
+
+		if (lifeForms[i]->Frozen > 0) {
+			crystal->AMask = lifeForms[i]->Frozen / 8000.0f;
+			crystal->draw(false, false, lifeForms[i]->X, lifeForms[i]->Y,
+					lifeForms[i]->Angle, lifeForms[i]->Scale);
+		}
 	}
 
 	if (!gameState->Lost && player->getLight()) {
@@ -1778,6 +1785,11 @@ void loadResources() {
 	freezeTex = new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
 			FileUtility::image, "freeze.png")), GL_TEXTURE_2D, GL_LINEAR, true);
 
+	crystal = new StaticObject(0, 0, 128, 128, new Texture(
+			ImageUtility::loadImage(fileUtility->getFullPath(
+					FileUtility::image, "crystal.png")), GL_TEXTURE_2D,
+			GL_LINEAR, true), true);
+
 	aim = new Aim(config);
 
 	text = new TextManager(fileUtility->getFullPath(FileUtility::common,
@@ -1787,6 +1799,7 @@ void loadResources() {
 }
 
 void unloadResources() {
+	delete crystal;
 	delete monsterFactory;
 	delete playerKilledSound;
 	delete text;
