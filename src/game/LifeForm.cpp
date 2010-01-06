@@ -10,6 +10,7 @@ LifeForm::LifeForm(float x, float y, int w, int h) :
 	m_lastAttackTime = SDL_GetTicks();
 	TargetX = TargetY = 0.0f;
 	Poisoned = false;
+	Frozen = 0;
 }
 
 void LifeForm::draw() {
@@ -17,9 +18,15 @@ void LifeForm::draw() {
 }
 
 void LifeForm::process(int deltaTime) {
+	if (Frozen > 0) {
+		Frozen -= deltaTime;
+		if (Frozen < 0)
+			Frozen = 0;
+	}
+
 	m_dead = m_dead || getHealth() == 0;
 
-	if (!m_dead) {
+	if (!m_dead && Frozen == 0) {
 		setHealth(getHealth() + HealthRegen() * deltaTime);
 
 		if (Poisoned)

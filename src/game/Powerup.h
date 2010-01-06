@@ -6,7 +6,7 @@
 class Powerup: public StaticObject {
 public:
 	enum PowerupType {
-		medikit = 0, weapon, grenades
+		medikit = 0, weapon, grenades, freeze
 	};
 	Powerup(float x, float y, Texture *tex);
 	void *Object;

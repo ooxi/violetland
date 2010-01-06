@@ -41,7 +41,6 @@
 
 const string PROJECT = "violetland";
 const string VERSION = "0.2.5";
-const int GAME_AREA_SIZE = 2048;
 
 GameState* gameState;
 Configuration* config;
@@ -63,6 +62,7 @@ int playerHitSndPlaying = 0;
 
 Texture* medikitTex;
 Texture* grenadeTex;
+Texture* freezeTex;
 
 Texture* playerArmsTex;
 Sprite* playerLegsSprite;
@@ -186,7 +186,7 @@ void createTerrain() {
 		delete[] buf;
 	}
 
-	terrain = new Terrain(terrainSurface, tiles, GAME_AREA_SIZE);
+	terrain = new Terrain(terrainSurface, tiles, config->GameAreaSize);
 
 	SDL_FreeSurface(terrainSurface);
 	for (int i = 0; i < tilesCount; i++) {
@@ -956,14 +956,14 @@ void handlePlayer() {
 
 	player->move(movementX, movementY, deltaTime);
 
-	if (player->X < -GAME_AREA_SIZE)
-		player->setX(-GAME_AREA_SIZE);
-	if (player->X > GAME_AREA_SIZE)
-		player->setX(GAME_AREA_SIZE);
-	if (player->Y < -GAME_AREA_SIZE)
-		player->setY(-GAME_AREA_SIZE);
-	if (player->Y > GAME_AREA_SIZE)
-		player->setY(GAME_AREA_SIZE);
+	if (player->X < -config->GameAreaSize)
+		player->setX(-config->GameAreaSize);
+	if (player->X > config->GameAreaSize)
+		player->setX(config->GameAreaSize);
+	if (player->Y < -config->GameAreaSize)
+		player->setY(-config->GameAreaSize);
+	if (player->Y > config->GameAreaSize)
+		player->setY(config->GameAreaSize);
 
 	player->TargetX = input->mouseX / widthK - cam->getHalfW() + cam->X;
 	player->TargetY = input->mouseY / heightK - cam->getHalfH() + cam->Y;
@@ -1033,6 +1033,14 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
+	if (!powerupDropped && rand() % 1000 >= 970) {
+		newPowerup = new Powerup(x, y, freezeTex);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::freeze;
+		newPowerup->Object = new int(8000);
+		powerupDropped = true;
+	}
+
 	if (rand() % 1000 >= 975 || player->Kills == 0) {
 		int weaponIndex = (rand() % (weapons.size() - 1)) + 1;
 		newPowerup = new Powerup(x, y, weapons[weaponIndex]->getDroppedTex());
@@ -1072,7 +1080,7 @@ void handleEnemies() {
 				if (lvl < 1)
 					lvl = 1;
 				float param[3] = { 0.8f, 0.5f, 1.0f };
-				spawnEnemy(GAME_AREA_SIZE * 1.5, lvl, param);
+				spawnEnemy(config->GameAreaSize * 1.5, lvl, param);
 			}
 		}
 
@@ -1083,7 +1091,8 @@ void handleEnemies() {
 
 			lifeForms[i]->process(deltaTime);
 
-			if (lifeForms[i]->Type == LifeForm::player)
+			if (lifeForms[i]->Type == LifeForm::player
+					|| lifeForms[i]->isDead() || lifeForms[i]->Frozen > 0)
 				continue;
 
 			Enemy* enemy = (Enemy*) lifeForms[i];
@@ -1092,9 +1101,6 @@ void handleEnemies() {
 				addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
 						/ 50.0f + 0.1f, enemy->Poisoned);
 			}
-
-			if (enemy->isDead())
-				continue;
 
 			float rangeToPlayer = sqrt(pow(-enemy->X + player->X, 2) + pow(
 					enemy->Y - player->Y, 2));
@@ -1121,10 +1127,10 @@ void handleEnemies() {
 						* M_PI / 180) * rangeToPlayer / 2.0f / enemy->Speed
 						* player->Speed;
 			} else if (!enemy->DoNotDisturb) {
-				enemy->TargetX = (rand() % (GAME_AREA_SIZE * 2))
-						- GAME_AREA_SIZE;
-				enemy->TargetY = (rand() % (GAME_AREA_SIZE * 2))
-						- GAME_AREA_SIZE;
+				enemy->TargetX = (rand() % (config->GameAreaSize * 2))
+						- config->GameAreaSize;
+				enemy->TargetY = (rand() % (config->GameAreaSize * 2))
+						- config->GameAreaSize;
 				enemy->DoNotDisturb = true;
 			}
 
@@ -1166,13 +1172,11 @@ void handleBullets() {
 
 			if (bullets[i]->isActive() && !lifeForms.empty()) {
 				for (int j = lifeForms.size() - 1; j >= 0; j--) {
-					if (lifeForms[j]->Type == LifeForm::player)
+					if (lifeForms[j]->Type == LifeForm::player
+							|| lifeForms[j]->isDead())
 						continue;
 
 					Enemy* enemy = (Enemy*) lifeForms[j];
-
-					if (enemy->isDead())
-						continue;
 
 					if (bullets[i]->checkHit(enemy)) {
 						if (bloodStains.size() < 9) {
@@ -1325,7 +1329,7 @@ void handlePowerups() {
 		powerups[i]->Time -= deltaTime;
 		powerups[i]->AMask = powerups[i]->Time / 15000.0;
 		if (powerups[i]->Type == Powerup::medikit || powerups[i]->Type
-				== Powerup::grenades) {
+				== Powerup::grenades || powerups[i]->Type == Powerup::freeze) {
 
 			powerups[i]->Angle += deltaTime * 0.05f * powerups[i]->Dir;
 
@@ -1336,7 +1340,7 @@ void handlePowerups() {
 				powerups[i]->Dir = 1;
 		}
 
-		if (powerups[i]->Time < 0)
+		if (powerups[i]->Time <= 0)
 			deletePowerup = true;
 
 		if (player->Telekinesis) {
@@ -1353,16 +1357,26 @@ void handlePowerups() {
 		if (!gameState->Lost && (powerups[i]->detectCollide(player))) {
 			switch (powerups[i]->Type) {
 			case Powerup::medikit:
-				msgQueue.push_back(text->getObject(
-						"The player has taken a medical kit.", 0, 0,
-						TextManager::LEFT, TextManager::MIDDLE));
+				msgQueue.push_back(text->getObject("You took a medical kit.",
+						0, 0, TextManager::LEFT, TextManager::MIDDLE));
 				player->setHealth(player->getHealth()
 						+ *(float*) powerups[i]->Object);
 				deletePowerup = true;
 				break;
-			case Powerup::grenades:
+			case Powerup::freeze:
 				msgQueue.push_back(text->getObject(
-						"The player has taken a grenade.", 0, 0,
+						"All has frozen around you.", 0, 0, TextManager::LEFT,
+						TextManager::MIDDLE));
+				for (int j = lifeForms.size() - 1; j >= 0; j--) {
+					if (lifeForms[j]->Type == LifeForm::player
+							|| lifeForms[j]->isDead())
+						continue;
+					lifeForms[j]->Frozen = *(int*) powerups[i]->Object;
+				}
+				deletePowerup = true;
+				break;
+			case Powerup::grenades:
+				msgQueue.push_back(text->getObject("You took a grenade.", 0, 0,
 						TextManager::LEFT, TextManager::MIDDLE));
 				player->Grenades += *(int*) powerups[i]->Object;
 				deletePowerup = true;
@@ -1372,7 +1386,7 @@ void handlePowerups() {
 						|| config->AutoWeaponPickup) {
 					player->setWeapon((Weapon*) powerups[i]->Object);
 					char *buf;
-					sprintf(buf = new char[200], "Player has taken the %s.",
+					sprintf(buf = new char[200], "You took the %s.",
 							player->getWeapon()->Name.c_str());
 					msgQueue.push_back(text->getObject(buf, 0, 0,
 							TextManager::LEFT, TextManager::MIDDLE));
@@ -1393,7 +1407,7 @@ void handlePowerups() {
 
 void levelUp() {
 	float param[3] = { 1.2f, 0.3f, 3.0f };
-	spawnEnemy(GAME_AREA_SIZE * 1.5f, player->Level * 1.5f + 10, param);
+	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 1.5f + 10, param);
 
 	player->NextLevelXp *= 2;
 
@@ -1453,14 +1467,14 @@ void drawGame() {
 	cam->X = player->X;
 	cam->Y = player->Y;
 
-	if (cam->X < -GAME_AREA_SIZE + cam->getHalfW())
-		cam->X = -GAME_AREA_SIZE + cam->getHalfW();
-	if (cam->X > GAME_AREA_SIZE - cam->getHalfW())
-		cam->X = GAME_AREA_SIZE - cam->getHalfW();
-	if (cam->Y < -GAME_AREA_SIZE + cam->getHalfH())
-		cam->Y = -GAME_AREA_SIZE + cam->getHalfH();
-	if (cam->Y > GAME_AREA_SIZE - cam->getHalfH())
-		cam->Y = GAME_AREA_SIZE - cam->getHalfH();
+	if (cam->X < -config->GameAreaSize + cam->getHalfW())
+		cam->X = -config->GameAreaSize + cam->getHalfW();
+	if (cam->X > config->GameAreaSize - cam->getHalfW())
+		cam->X = config->GameAreaSize - cam->getHalfW();
+	if (cam->Y < -config->GameAreaSize + cam->getHalfH())
+		cam->Y = -config->GameAreaSize + cam->getHalfH();
+	if (cam->Y > config->GameAreaSize - cam->getHalfH())
+		cam->Y = config->GameAreaSize - cam->getHalfH();
 
 	cam->apply();
 
@@ -1760,6 +1774,9 @@ void loadResources() {
 			= new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
 					FileUtility::image, "grenade.png")), GL_TEXTURE_2D,
 					GL_LINEAR, true);
+
+	freezeTex = new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
+			FileUtility::image, "freeze.png")), GL_TEXTURE_2D, GL_LINEAR, true);
 
 	aim = new Aim(config);
 

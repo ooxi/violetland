@@ -24,6 +24,7 @@ public:
 	int AimColorA, AimColorB;
 	bool AutoWeaponPickup;
 	bool FriendlyFire;
+	int GameAreaSize;
 };
 
 #endif /* CONFIGURATION_H_ */

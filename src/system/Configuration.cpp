@@ -17,6 +17,7 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	AimColorB = 0xFFFFFF;
 	AutoWeaponPickup = true;
 	FriendlyFire = false;
+	GameAreaSize = 2048;
 }
 
 void Configuration::read() {

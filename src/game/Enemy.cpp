@@ -66,34 +66,38 @@ void Enemy::process(int deltaTime) {
 				m_body->rollFrame(true);
 		}
 	} else {
-		float newAngle = Object::calculateAngle(X, Y, TargetX, TargetY);
-		float prevAngle = Angle;
-		Object::turn(newAngle, MaxSpeed(), deltaTime);
-		float deltaAngle = Angle - prevAngle;
+		if (Frozen == 0) {
+			float newAngle = Object::calculateAngle(X, Y, TargetX, TargetY);
+			float prevAngle = Angle;
+			Object::turn(newAngle, MaxSpeed(), deltaTime);
+			float deltaAngle = Angle - prevAngle;
 
-		for (unsigned int i = 0; i < m_bleeds.size(); i++) {
-			m_bleeds[i]->Angle += deltaAngle;
-		}
-
-		move(deltaTime);
-	}
-
-	if (!m_bleeds.empty()) {
-		m_bleeding += deltaTime;
-
-		for (int i = m_bleeds.size() - 1; i >= 0; i--) {
-			if (m_bleeds[i]->AMask <= 0) {
-				delete m_bleeds[i];
-				m_bleeds.erase(m_bleeds.begin() + i);
-				continue;
+			for (unsigned int i = 0; i < m_bleeds.size(); i++) {
+				m_bleeds[i]->Angle += deltaAngle;
 			}
 
-			m_bleeds[i]->AMask -= 0.001;
+			move(deltaTime);
+		}
+	}
 
-			m_bleeds[i]->X = X;
-			m_bleeds[i]->Y = Y;
+	if (Frozen == 0) {
+		if (!m_bleeds.empty()) {
+			m_bleeding += deltaTime;
 
-			m_bleeds[i]->rollFrame(true);
+			for (int i = m_bleeds.size() - 1; i >= 0; i--) {
+				if (m_bleeds[i]->AMask <= 0) {
+					delete m_bleeds[i];
+					m_bleeds.erase(m_bleeds.begin() + i);
+					continue;
+				}
+
+				m_bleeds[i]->AMask -= 0.001;
+
+				m_bleeds[i]->X = X;
+				m_bleeds[i]->Y = Y;
+
+				m_bleeds[i]->rollFrame(true);
+			}
 		}
 	}
 }

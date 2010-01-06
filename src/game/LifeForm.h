@@ -36,6 +36,7 @@ public:
 	const bool isDead();
 	LifeForm::LifeFormType Type;
 	bool Poisoned;
+	int Frozen;
 };
 
 #endif /* LIVEOBJECT_H_ */
