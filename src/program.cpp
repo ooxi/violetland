@@ -257,8 +257,8 @@ void printVersion() {
 }
 
 void initSystem() {
-	srand((unsigned) time(NULL));
 
+	srand((unsigned) time(NULL));
 	printVersion();
 
 #ifdef _WIN32
@@ -374,6 +374,8 @@ void initSystem() {
 	TTF_Init();
 
 	input = new InputHandler();
+
+	gameState = new GameState();
 }
 
 void loseGame() {
@@ -1169,8 +1171,10 @@ void handleBullets() {
 
 					Enemy* enemy = (Enemy*) lifeForms[j];
 
-					if (bullets[i]->checkHit(enemy)) {
+					if (enemy->isDead())
+						continue;
 
+					if (bullets[i]->checkHit(enemy)) {
 						if (bloodStains.size() < 9) {
 							for (int k = 0; k < 3; k++) {
 								int angleDev = (rand() % 90) - 45;
@@ -1206,8 +1210,9 @@ void handleBullets() {
 
 							if (bullets[i]->BigCalibre) {
 								bullets[i]->Damage -= damageLoss;
-								if (bullets[i]->Damage <= 0)
+								if (bullets[i]->Damage <= 0) {
 									bullets[i]->deactivate();
+								}
 							}
 						}
 					}
@@ -1862,6 +1867,15 @@ void parsePreferences(int argc, char *argv[]) {
 	}
 }
 
+void shutdownSystem() {
+	delete gameState;
+	delete splash;
+	delete musicManager;
+	delete sndManager;
+	delete input;
+	delete fileUtility;
+}
+
 int main(int argc, char *argv[]) {
 	parsePreferences(argc, argv);
 
@@ -1869,20 +1883,13 @@ int main(int argc, char *argv[]) {
 
 	loadResources();
 
-	gameState = new GameState();
-
 	createMainMenuWindow();
 
 	runMainLoop();
 
 	unloadResources();
 
-	delete splash;
-	delete gameState;
-	delete musicManager;
-	delete sndManager;
-	delete input;
-	delete fileUtility;
+	shutdownSystem();
 
 	exit(0);
 }
