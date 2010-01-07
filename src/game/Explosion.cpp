@@ -1,8 +1,11 @@
 #include "Explosion.h"
 
 Explosion::Explosion(float x, float y, int range, Texture* sparkTex,
-		Texture* gruelTex, Sound* sound) {
+		Texture* gruelTex, Sound* sound) :
+	ParticleSystem() {
 	m_sound = sound;
+	X = x;
+	Y = y;
 
 	if (range < 100)
 		range = 100;
@@ -25,7 +28,7 @@ Explosion::Explosion(float x, float y, int range, Texture* sparkTex,
 			gruel->GMod = -0.0001;
 			gruel->AMod = -0.0003;
 			gruel->ScaleMod = 0.0001;
-			m_particles.push_back(gruel);
+			Particles.push_back(gruel);
 		}
 		for (int i = 0; i < 10; i++) {
 			Particle* spark = new Particle(x + (rand() % (int) (range * 0.6f))
@@ -39,7 +42,7 @@ Explosion::Explosion(float x, float y, int range, Texture* sparkTex,
 			spark->YSpeed = (float) ((rand() % 250) - 125) / 1000;
 			spark->AMod = -0.001;
 			spark->ScaleMod = -0.0002;
-			m_particles.push_back(spark);
+			Particles.push_back(spark);
 		}
 	}
 	Particle* baseSpark = new Particle(x, y, 128, 128, sparkTex);
@@ -48,35 +51,13 @@ Explosion::Explosion(float x, float y, int range, Texture* sparkTex,
 	baseSpark->AMask = 0.5f;
 	baseSpark->Scale = range * 0.01f;
 	baseSpark->AMod = -0.0003;
-	m_particles.push_back(baseSpark);
+	Particles.push_back(baseSpark);
 
 	Active = true;
 	Damage = 5.0f;
 	Range = range;
-	X = x;
-	Y = y;
 
 	sound->play(0, 0);
-}
-
-void Explosion::process(int deltaTime) {
-	for (int i = m_particles.size() - 1; i >= 0; i--) {
-		m_particles[i]->process(deltaTime);
-		if (m_particles[i]->checkFinish()) {
-			delete m_particles[i];
-			m_particles.erase(m_particles.begin() + i);
-		}
-	}
-}
-
-void Explosion::draw() {
-	for (unsigned int i = 0; i < m_particles.size(); i++) {
-		m_particles[i]->draw(false, false);
-	}
-}
-
-bool Explosion::isEmpty() {
-	return m_particles.empty();
 }
 
 float Explosion::calcDamage(Object* refObj) {
@@ -87,11 +68,4 @@ float Explosion::calcDamage(Object* refObj) {
 	} else {
 		return 0.0f;
 	}
-}
-
-Explosion::~Explosion() {
-	for (unsigned int i = 0; i < m_particles.size(); i++) {
-		delete m_particles[i];
-	}
-	m_particles.clear();
 }

@@ -14,7 +14,6 @@ private:
 	vector<Sprite*> m_moveSprites;
 	vector<Sprite*> m_deathSprites;
 	vector<Sound*> m_hitSounds;
-	Sprite* m_bleedSprite;
 	Sprite* loadMonsterSprite(unsigned int index, string animType);
 	Sound* loadMonsterSound(unsigned int index);
 public:

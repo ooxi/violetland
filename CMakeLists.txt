@@ -53,6 +53,7 @@ set(srcFileList
 	${srcGraphicDir}/Camera.cpp
 	${srcGraphicDir}/Window.cpp
 	${srcGraphicDir}/Particle.cpp
+	${srcGraphicDir}/ParticleSystem.cpp
 	${srcTextDir}/TextManager.cpp 
 	${srcTextDir}/TextObject.cpp 
 	${srcSoundDir}/Sound.cpp
@@ -142,21 +143,6 @@ install (FILES
 	images/terrain/3/0.png
 	images/terrain/3/1.png
 DESTINATION ${relResPath}/images/terrain/3)
-install (FILES
-	images/anima/bleed/bleed-0.png
-	images/anima/bleed/bleed-1.png
-	images/anima/bleed/bleed-2.png
-	images/anima/bleed/bleed-3.png
-	images/anima/bleed/bleed-4.png
-	images/anima/bleed/bleed-5.png
-	images/anima/bleed/bleed-6.png
-	images/anima/bleed/bleed-7.png
-	images/anima/bleed/bleed-8.png
-	images/anima/bleed/bleed-9.png
-	images/anima/bleed/bleed-10.png
-	images/anima/bleed/bleed-11.png
-	images/anima/bleed/bleed-12.png
-DESTINATION ${relResPath}/images/anima/bleed)
 install (FILES
 	images/anima/grenade/0.png
 	images/anima/grenade/1.png

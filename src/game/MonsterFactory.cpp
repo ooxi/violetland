@@ -40,17 +40,6 @@ MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 	m_fileUtility = fileUtility;
 	m_sndManager = sndManager;
 
-	vector<SDL_Surface*> bleedAnimSurfaces;
-	for (unsigned i = 0; i < 13; i++) {
-		char *buf;
-		sprintf(buf = new char[100], "bleed/bleed-%i.png", i);
-		SDL_Surface *surface = ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::anima, buf));
-		bleedAnimSurfaces.push_back(surface);
-		delete[] buf;
-	}
-	m_bleedSprite = new Sprite(bleedAnimSurfaces);
-
 	unsigned int monstersCount = m_fileUtility->getSubDirsCountFromDir(
 			m_fileUtility->getFullPath(FileUtility::monsters, ""));
 
@@ -84,7 +73,7 @@ Enemy* MonsterFactory::create(int baseLvl, int lvl, float* param) {
 			/ 3.0f ? 1 : 0;
 
 	Enemy *newMonster = new Enemy(m_moveSprites[monsterIndex],
-			m_deathSprites[monsterIndex], m_bleedSprite, m_hitSounds[monsterIndex]);
+			m_deathSprites[monsterIndex], m_hitSounds[monsterIndex]);
 
 	newMonster->Strength = param[0];
 	newMonster->Agility = param[1];
@@ -104,7 +93,6 @@ Enemy* MonsterFactory::create(int baseLvl, int lvl, float* param) {
 }
 
 MonsterFactory::~MonsterFactory() {
-	delete m_bleedSprite;
 	for (unsigned int i = 0; i < m_moveSprites.size(); i++) {
 		delete m_moveSprites[i];
 	}

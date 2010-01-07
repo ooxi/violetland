@@ -82,6 +82,8 @@ vector<StaticObject*> bloodStains;
 
 vector<Explosion*> explosions;
 
+vector<ParticleSystem*> particleSystems;
+
 vector<Sound*> explosionSounds;
 
 vector<Weapon*> weapons;
@@ -147,6 +149,13 @@ void clearExplosions() {
 		delete explosions[i];
 	}
 	explosions.clear();
+}
+
+void clearParticleSystems() {
+	for (unsigned int i = 0; i < particleSystems.size(); i++) {
+		delete particleSystems[i];
+	}
+	particleSystems.clear();
 }
 
 void clearPowerups() {
@@ -939,6 +948,19 @@ void handleExplosions() {
 	}
 }
 
+void handleParticles() {
+	if (!particleSystems.empty()) {
+		for (int i = particleSystems.size() - 1; i >= 0; i--) {
+			particleSystems[i]->process(deltaTime);
+
+			if (particleSystems[i]->isEmpty()) {
+				delete particleSystems[i];
+				particleSystems.erase(particleSystems.begin() + i);
+			}
+		}
+	}
+}
+
 void handlePlayer() {
 	if (player->isDead())
 		loseGame();
@@ -1038,7 +1060,7 @@ void dropPowerup(float x, float y) {
 		newPowerup = new Powerup(x, y, freezeTex);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::freeze;
-		newPowerup->Object = new int(7000);
+		newPowerup->Object = new int(10000);
 		powerupDropped = true;
 	}
 
@@ -1182,18 +1204,58 @@ void handleBullets() {
 					if (bullets[i]->checkHit(enemy)) {
 						if (bloodStains.size() < 9) {
 							for (int k = 0; k < 3; k++) {
-								int angleDev = (rand() % 90) - 45;
+								int angleDev = 90 + (rand() % 60) - 30;
 								float distance = (rand() % 100);
 								float bX = enemy->X - cos((bullets[i]->Angle
-										+ 90 + angleDev) * M_PI / 180.0f)
-										* distance;
+										+ angleDev) * M_PI / 180.0f) * distance;
 								float bY = enemy->Y - sin((bullets[i]->Angle
-										+ 90 + angleDev) * M_PI / 180.0f)
-										* distance;
+										+ angleDev) * M_PI / 180.0f) * distance;
 
 								addBloodStain(bX, bY, enemy->Angle,
 										enemy->Scale * 0.5f, enemy->Poisoned);
 							}
+						}
+
+						if (enemy->Frozen > 0) {
+							ParticleSystem* partSys = new ParticleSystem();
+							for (int k = 0; k < 6; k++) {
+								Particle* p = new Particle(enemy->X + (rand()
+										% 50) - 25, enemy->Y + (rand() % 50)
+										- 25, 128, 128, crystal->getTexture());
+								p->RMask = p->GMask = p->BMask = 1.0f;
+								p->AMask = 1.0f;
+								p->Scale = (rand() % 50) / 100.0f
+										* enemy->Scale;
+								p->XSpeed = ((rand() % 400) - 200) / 1000.0f;
+								p->YSpeed = ((rand() % 400) - 200) / 1000.0f;
+								p->AMod = -0.002;
+								partSys->Particles.push_back(p);
+							}
+							particleSystems.push_back(partSys);
+						} else {
+							ParticleSystem* partSys = new ParticleSystem();
+							for (int k = 0; k < 25; k++) {
+								Particle* p = new Particle(enemy->X + (rand()
+										% 50) - 25, enemy->Y + (rand() % 50)
+										- 25, 128, 128, bloodTex[(rand() % 299)
+										/ 100]);
+								p->RMask = p->GMask = p->BMask = 0.0f;
+								if (enemy->Poisoned)
+									p->GMask = 1.0f - (rand() % 200) / 1000.0f;
+								else
+									p->RMask = 1.0f - (rand() % 200) / 1000.0f;
+								p->AMask = 1.0f;
+								p->Scale = (rand() % 15) / 100.0f
+										* enemy->Scale;
+								int angleDev = 90 + (rand() % 60) - 30;
+								p->XSpeed = -cos((bullets[i]->Angle + angleDev)
+										* M_PI / 180.0f) / 3.0f;
+								p->YSpeed = -sin((bullets[i]->Angle + angleDev)
+										* M_PI / 180.0f) / 3.0f;
+								p->AMod = -0.004;
+								partSys->Particles.push_back(p);
+							}
+							particleSystems.push_back(partSys);
 						}
 
 						bool bypassDirectDamage = false;
@@ -1462,6 +1524,7 @@ void processGame() {
 	handleEnemies();
 	handleBullets();
 	handleExplosions();
+	handleParticles();
 }
 
 void drawGame() {
@@ -1529,11 +1592,15 @@ void drawGame() {
 
 		lifeForms[i]->draw();
 
-		if (lifeForms[i]->Frozen > 0) {
-			crystal->AMask = lifeForms[i]->Frozen / 8000.0f;
+		if (lifeForms[i]->Frozen > 0 && !lifeForms[i]->isDead()) {
+			crystal->AMask = lifeForms[i]->Frozen / 10000.0f;
 			crystal->draw(false, false, lifeForms[i]->X, lifeForms[i]->Y,
 					lifeForms[i]->Angle, lifeForms[i]->Scale);
 		}
+	}
+
+	for (unsigned int i = 0; i < particleSystems.size(); i++) {
+		particleSystems[i]->draw();
 	}
 
 	if (!gameState->Lost && player->getLight()) {
@@ -1825,6 +1892,7 @@ void unloadResources() {
 	clearMessages();
 	clearWindows();
 	clearExplosions();
+	clearParticleSystems();
 
 	for (unsigned int i = 0; i < playerHitSounds.size(); i++) {
 		delete playerHitSounds[i];
