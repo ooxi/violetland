@@ -3,6 +3,17 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.2.5]
+
+[+] new freeze bonus
+[+] animation of monsters death
+[+] corpses of monsters don't disappear
+[+] master sound volume can be adjusted at options screen
+[+] the resume item to main menu
+[*] new separate directory tree for monsters
+[!] game window couldn't be closed with the window close button
+[!] issues of game installing in *nix systems
+
 [0.2.4]
 
 [+] hand grenades were added in addition to main weapon
