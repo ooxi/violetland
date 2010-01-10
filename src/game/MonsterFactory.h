@@ -14,8 +14,8 @@ private:
 	vector<Sprite*> m_moveSprites;
 	vector<Sprite*> m_deathSprites;
 	vector<Sound*> m_hitSounds;
-	Sprite* loadMonsterSprite(unsigned int index, string animType);
-	Sound* loadMonsterSound(unsigned int index);
+	Sprite* loadMonsterSprite(string name, string animType);
+	Sound* loadMonsterSound(string name);
 public:
 	MonsterFactory(FileUtility* fileUtility, SoundManager* sndManager);
 	Enemy* create(int baseLvl, int lvl, float* param);

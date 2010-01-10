@@ -100,7 +100,9 @@ FileUtility::FileUtility(char *argPath) {
 	m_appPath.append("/bin");
 #ifndef DATA_INSTALL_DIR
 	char result[PATH_MAX];
-	if (readlink("/proc/self/exe", result, PATH_MAX) != -1) {
+	int link_len = readlink("/proc/self/exe", result, PATH_MAX);
+	if (link_len != -1) {
+		result[link_len] = '\0';
 		FileUtility::truncateFullPathToDir(result);
 		m_appPath = result;
 		m_resPath = m_appPath;
