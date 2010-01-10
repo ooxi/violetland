@@ -3,11 +3,11 @@
 #endif //_WIN32W
 #include "Enemy.h"
 
-Enemy::Enemy(Sprite *sprite, Sprite* deathSprite, Sound* hitSound) :
+Enemy::Enemy(MonsterTemplate* temp) :
 	LifeForm(0, 0, 128, 128) {
-	m_body = new DynamicObject(0, 0, sprite);
-	m_deathSprite = deathSprite;
-	m_hitSound = hitSound;
+	m_body = new DynamicObject(0, 0, temp->WalkSprite);
+	m_deathSprite = temp->DeathSprite;
+	m_hitSound = temp->HitSound;
 	m_hitSoundChannel = 0;
 	m_bleeding = 0;
 	DoNotDisturb = false;

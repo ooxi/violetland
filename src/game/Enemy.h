@@ -7,6 +7,7 @@
 #include "../system/graphic/StaticObject.h"
 #include "../system/sound/Sound.h"
 #include "bullets/Bullet.h"
+#include "MonsterTemplate.h"
 
 #ifndef ENEMY_H_
 #define ENEMY_H_
@@ -19,7 +20,7 @@ private:
 	int m_hitSoundChannel;
 	int m_bleeding;
 public:
-	Enemy(Sprite *sprite, Sprite* deathSprite, Sound* hitSound);
+	Enemy(MonsterTemplate* temp);
 	virtual void process(int deltaTime);
 	virtual void draw();
 

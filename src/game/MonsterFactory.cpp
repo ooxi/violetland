@@ -52,9 +52,9 @@ MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 	}
 
 	for (unsigned int j = 0; j < monsters.size(); j++) {
-		m_moveSprites.push_back(loadMonsterSprite(monsters[j], "walk"));
-		m_deathSprites.push_back(loadMonsterSprite(monsters[j], "death"));
-		m_hitSounds.push_back(loadMonsterSound(monsters[j]));
+		m_monsters.push_back(new MonsterTemplate(loadMonsterSprite(monsters[j],
+				"walk"), loadMonsterSprite(monsters[j], "death"),
+				loadMonsterSound(monsters[j])));
 	}
 
 	fprintf(stdout, "Loading of monsters is completed.\n");
@@ -79,8 +79,7 @@ Enemy* MonsterFactory::create(int baseLvl, int lvl, float* param) {
 			/ 3.0f ? 2 : param[1] + 0.3f > (param[0] + param[1] + param[2])
 			/ 3.0f ? 1 : 0;
 
-	Enemy *newMonster = new Enemy(m_moveSprites[monsterIndex],
-			m_deathSprites[monsterIndex], m_hitSounds[monsterIndex]);
+	Enemy *newMonster = new Enemy(m_monsters[monsterIndex]);
 
 	newMonster->Strength = param[0];
 	newMonster->Agility = param[1];
@@ -100,17 +99,8 @@ Enemy* MonsterFactory::create(int baseLvl, int lvl, float* param) {
 }
 
 MonsterFactory::~MonsterFactory() {
-	for (unsigned int i = 0; i < m_moveSprites.size(); i++) {
-		delete m_moveSprites[i];
+	for (unsigned int i = 0; i < m_monsters.size(); i++) {
+		delete m_monsters[i];
 	}
-	m_moveSprites.clear();
-
-	for (unsigned int i = 0; i < m_deathSprites.size(); i++) {
-		delete m_deathSprites[i];
-	}
-	m_deathSprites.clear();
-	for (unsigned int i = 0; i < m_hitSounds.size(); i++) {
-		delete m_hitSounds[i];
-	}
-	m_hitSounds.clear();
+	m_monsters.clear();
 }

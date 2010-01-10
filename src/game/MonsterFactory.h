@@ -1,19 +1,16 @@
 #ifndef MONSTERFACTORY_H_
 #define MONSTERFACTORY_H_
 
-#include "../system/graphic/Sprite.h"
 #include "../system/sound/SoundManager.h"
-#include "../system/sound/Sound.h"
 #include "../system/utility/FileUtility.h"
 #include "Enemy.h"
+#include "MonsterTemplate.h"
 
 class MonsterFactory {
 private:
 	FileUtility* m_fileUtility;
 	SoundManager* m_sndManager;
-	vector<Sprite*> m_moveSprites;
-	vector<Sprite*> m_deathSprites;
-	vector<Sound*> m_hitSounds;
+	vector<MonsterTemplate*> m_monsters;
 	Sprite* loadMonsterSprite(string name, string animType);
 	Sound* loadMonsterSound(string name);
 public:
