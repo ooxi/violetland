@@ -40,7 +40,7 @@
 #include "game/Explosion.h"
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.5";
+const string VERSION = "0.2.6";
 
 GameState* gameState;
 Configuration* config;

@@ -51,7 +51,7 @@ std::vector<std::string> FileUtility::getSubDirsFromDir(std::string dir) {
 	if (dp != NULL) {
 		while ((ep = readdir(dp))) {
 #ifdef _WIN32
-			if ((ep->data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			if ((ep->data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && ep->d_name[0] != '.')
 			{
 				subDirs.push_back(ep->d_name);
 				fprintf(stdout, "\t%s\n", ep->d_name);
