@@ -34,6 +34,7 @@ set(srcFileList
 	${srcGameDir}/Highscores.cpp
 	${srcGameDir}/Explosion.cpp
 	${srcGameDir}/MonsterFactory.cpp
+	${srcGameDir}/MonsterTemplate.cpp
 	${srcBulletsDir}/Bullet.cpp
 	${srcBulletsDir}/StandardBullet.cpp
 	${srcBulletsDir}/LaserBullet.cpp

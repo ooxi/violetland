@@ -42,7 +42,7 @@ MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 	m_sndManager = sndManager;
 
 	vector<string> monsters = m_fileUtility->getSubDirsFromDir(
-			m_fileUtility->getFullPath(FileUtility::monsters, ""));
+			m_fileUtility->getFullPath(FileUtility::monsters, "."));
 
 	fprintf(stdout, "Total monsters found: %i\n", (int) monsters.size());
 

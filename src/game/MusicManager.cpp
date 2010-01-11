@@ -10,7 +10,7 @@ MusicManager::MusicManager(FileUtility* fileUtility,
 	m_config = config;
 
 	std::vector<std::string> musicFiles = m_fileUtility->getFilesFromDir(
-			m_fileUtility->getFullPath(FileUtility::music, ""));
+			m_fileUtility->getFullPath(FileUtility::music, "."));
 
 	for (unsigned int i = 0; i < musicFiles.size(); i++) {
 		Sound* snd = m_soundManager->create(m_fileUtility->getFullPath(
