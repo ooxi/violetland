@@ -18,26 +18,34 @@ void Sound::play(int fade, int loops) {
 		if (fade == 0) {
 			m_chan = Mix_PlayChannel(-1, m_sndRef, loops);
 		} else
-			m_chan = Mix_FadeInChannel(-1, m_sndRef, loops, fade);
+			m_chan = Mix_PlayChannel(-1, m_sndRef, loops);
+		//			m_chan = Mix_FadeInChannel(-1, m_sndRef, loops, fade);
 	}
 }
 
 void Sound::playInf() {
-	if (m_enabled)
+	if (m_enabled) {
+		if (isPlaying())
+			stop(0);
+
 		m_chan = Mix_PlayChannel(-1, m_sndRef, 0);
+	}
 }
 
 void Sound::setPos(Sint16 angle, Uint8 distance) {
-	if (m_enabled)
+	if (m_enabled && m_chan != -1)
 		Mix_SetPosition(m_chan, angle, distance);
 }
 
 void Sound::stop(int fade) {
-	if (m_enabled) {
+	if (m_enabled && m_chan != -1) {
 		if (fade == 0)
 			Mix_HaltChannel(m_chan);
 		else
-			Mix_FadeOutChannel(m_chan, fade);
+			Mix_HaltChannel(m_chan);
+		//			Mix_FadeOutChannel(m_chan, fade);
+
+		m_chan = -1;
 	}
 }
 
