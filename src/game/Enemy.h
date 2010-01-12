@@ -15,12 +15,10 @@
 class Enemy: public LifeForm {
 private:
 	DynamicObject* m_body;
-	Sprite *m_deathSprite;
-	Sound* m_hitSound;
 	int m_hitSoundChannel;
 	int m_bleeding;
 public:
-	Enemy(MonsterTemplate* temp);
+	Enemy(MonsterTemplate* base, int lvl);
 	virtual void process(int deltaTime);
 	virtual void draw();
 
@@ -36,6 +34,7 @@ public:
 	~Enemy();
 	bool DoNotDisturb;
 	bool Angry;
+	MonsterTemplate* Base;
 };
 
 #endif /* ENEMY_H_ */

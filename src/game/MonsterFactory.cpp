@@ -34,6 +34,24 @@ Sound* MonsterFactory::loadMonsterSound(string name) {
 	return snd;
 }
 
+void MonsterFactory::fillMonsterStats(MonsterTemplate* t, string name) {
+	ifstream in;
+	char *buf;
+	sprintf(buf = new char[100], "%s/stats", name.c_str());
+	in.open(m_fileUtility->getFullPath(FileUtility::monsters, buf).c_str());
+	delete[] buf;
+	if (!in) {
+		fprintf(stderr, "Couldn't load monster stats.\n");
+		exit(4);
+	}
+	while (in) {
+		in >> t->Strength;
+		in >> t->Agility;
+		in >> t->Vitality;
+	}
+	in.close();
+}
+
 MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 		SoundManager* sndManager) {
 	printf("Loading monsters...\n");
@@ -52,48 +70,22 @@ MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 	}
 
 	for (unsigned int j = 0; j < monsters.size(); j++) {
-		m_monsters.push_back(new MonsterTemplate(loadMonsterSprite(monsters[j],
-				"walk"), loadMonsterSprite(monsters[j], "death"),
-				loadMonsterSound(monsters[j])));
+		MonsterTemplate* mt = new MonsterTemplate(loadMonsterSprite(
+				monsters[j], "walk"), loadMonsterSprite(monsters[j], "death"),
+				loadMonsterSound(monsters[j]));
+		fillMonsterStats(mt, monsters[j]);
+		m_monsters.push_back(mt);
 	}
 
 	fprintf(stdout, "Loading of monsters is completed.\n");
 }
 
-Enemy* MonsterFactory::create(int baseLvl, int lvl, float* param) {
-	float scale = pow((float) lvl / baseLvl, 0.2f);
+Enemy* MonsterFactory::create(int baseLvl, int lvl) {
+	int monsterIndex = (rand() % m_monsters.size());
 
-	if (lvl > 1)
-		for (int i = 0; i < lvl; i++) {
-			int s = (rand() % 299) / 100;
-			param[s] += 0.1f;
-		}
+	Enemy *newMonster = new Enemy(m_monsters[monsterIndex], lvl);
 
-	float hi = 0.0f;
-	for (int i = 0; i < 3; i++) {
-		if (param[i] > hi)
-			hi = param[i];
-	}
-
-	int monsterIndex = param[1] + 0.2f > (param[0] + param[1] + param[2])
-			/ 3.0f ? 2 : param[1] + 0.3f > (param[0] + param[1] + param[2])
-			/ 3.0f ? 1 : 0;
-
-	Enemy *newMonster = new Enemy(m_monsters[monsterIndex]);
-
-	newMonster->Strength = param[0];
-	newMonster->Agility = param[1];
-	newMonster->Vitality = param[2];
-
-	newMonster->HitR = 0.3;
-
-	newMonster->RMask = newMonster->Vitality / hi;
-	newMonster->GMask = newMonster->Strength / hi;
-	newMonster->BMask = newMonster->Agility / hi * 0.7f;
-	newMonster->Scale = scale;
-
-	newMonster->setHealth(newMonster->MaxHealth());
-	newMonster->Speed = newMonster->MaxSpeed();
+	newMonster->Scale = pow((float) lvl / baseLvl, 0.2f);
 
 	return newMonster;
 }

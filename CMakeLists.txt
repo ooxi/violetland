@@ -212,6 +212,7 @@ install (FILES
 DESTINATION ${relResPath}/monsters/zombie/death)
 install (FILES
 	monsters/zombie/hit.ogg
+	monsters/zombie/stats
 DESTINATION ${relResPath}/monsters/zombie)
 install (FILES
 	monsters/runner/walk/0.png
@@ -267,6 +268,7 @@ install (FILES
 DESTINATION ${relResPath}/monsters/runner/death)
 install (FILES
 	monsters/runner/hit.ogg
+	monsters/runner/stats
 DESTINATION ${relResPath}/monsters/runner)
 install (FILES
 	monsters/spider/walk/0.png
@@ -323,6 +325,7 @@ install (FILES
 DESTINATION ${relResPath}/monsters/spider/death)
 install (FILES
 	monsters/spider/hit.ogg
+	monsters/spider/stats
 DESTINATION ${relResPath}/monsters/spider)
 install (FILES
 	images/anima/player/legs-0.png

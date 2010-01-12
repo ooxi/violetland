@@ -11,6 +11,9 @@ public:
 	Sound* HitSound;
 	Sprite* WalkSprite;
 	Sprite* DeathSprite;
+	float Strength;
+	float Agility;
+	float Vitality;
 };
 
 #endif /* MONSTERTEMPLATE_H_ */

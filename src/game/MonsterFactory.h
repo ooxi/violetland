@@ -13,9 +13,10 @@ private:
 	vector<MonsterTemplate*> m_monsters;
 	Sprite* loadMonsterSprite(string name, string animType);
 	Sound* loadMonsterSound(string name);
+	void fillMonsterStats(MonsterTemplate* t, string name);
 public:
 	MonsterFactory(FileUtility* fileUtility, SoundManager* sndManager);
-	Enemy* create(int baseLvl, int lvl, float* param);
+	Enemy* create(int baseLvl, int lvl);
 	~MonsterFactory();
 };
 

@@ -205,10 +205,10 @@ void createTerrain() {
 	tiles.clear();
 }
 
-void spawnEnemy(float r, int lvl, float* param) {
+void spawnEnemy(float r, int lvl) {
 	float spawnAngle = (rand() % 6300) / 1000.0;
 
-	Enemy* newMonster = monsterFactory->create(player->Level, lvl, param);
+	Enemy* newMonster = monsterFactory->create(player->Level, lvl);
 
 	newMonster->X = r * cos(spawnAngle);
 	newMonster->Y = r * sin(spawnAngle);
@@ -246,8 +246,7 @@ void startSurvival() {
 	SDL_ShowCursor(0);
 
 	for (unsigned int i = 0; i < config->MonstersAtStart; i++) {
-		float param[3] = { 0.8f, 0.5f, 1.0f };
-		spawnEnemy(cam->getW(), 1, param);
+		spawnEnemy(cam->getW(), 1);
 	}
 
 	windows["mainmenu"]->CloseFlag = true;
@@ -1102,8 +1101,7 @@ void handleEnemies() {
 						% 100) / 125.0f, 2);
 				if (lvl < 1)
 					lvl = 1;
-				float param[3] = { 0.8f, 0.5f, 1.0f };
-				spawnEnemy(config->GameAreaSize * 1.5, lvl, param);
+				spawnEnemy(config->GameAreaSize * 1.5, lvl);
 			}
 		}
 
@@ -1469,8 +1467,7 @@ void handlePowerups() {
 }
 
 void levelUp() {
-	float param[3] = { 1.2f, 0.3f, 3.0f };
-	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 1.5f + 10, param);
+	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 2.0f + 10);
 
 	player->NextLevelXp *= 2;
 

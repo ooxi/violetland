@@ -5,6 +5,9 @@ MonsterTemplate::MonsterTemplate(Sprite* walkSprite, Sprite* deathSprite,
 	WalkSprite = walkSprite;
 	DeathSprite = deathSprite;
 	HitSound = hitSound;
+	Strength = 1.0f;
+	Agility = 1.0f;
+	Vitality = 1.0f;
 }
 
 MonsterTemplate::~MonsterTemplate() {

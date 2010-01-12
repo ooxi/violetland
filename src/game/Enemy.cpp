@@ -3,11 +3,30 @@
 #endif //_WIN32W
 #include "Enemy.h"
 
-Enemy::Enemy(MonsterTemplate* temp) :
+Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	LifeForm(0, 0, 128, 128) {
-	m_body = new DynamicObject(0, 0, temp->WalkSprite);
-	m_deathSprite = temp->DeathSprite;
-	m_hitSound = temp->HitSound;
+	Base = base;
+
+	float t = Base->Strength + Base->Agility + Base->Vitality;
+	float sp = Base->Strength / t;
+	float ap = Base->Agility / t;
+	float vp = Base->Vitality / t;
+
+	Strength = Base->Strength + 0.1f * lvl * sp;
+	Agility = Base->Agility + 0.1f * lvl * ap;
+	Vitality = Base->Vitality + 0.1f * lvl * vp;
+
+	t = Strength + Agility + Vitality;
+
+	RMask = Vitality / t;
+	GMask = Strength / t;
+	BMask = Agility / t * 0.7f;
+
+	setHealth(MaxHealth());
+	Speed = MaxSpeed();
+
+	HitR = 0.3;
+	m_body = new DynamicObject(0, 0, Base->WalkSprite);
 	m_hitSoundChannel = 0;
 	m_bleeding = 0;
 	DoNotDisturb = false;
@@ -20,9 +39,9 @@ void Enemy::rollFrame(bool forward) {
 }
 
 void Enemy::hit(Bullet* bullet, float pX, float pY) {
-	if (!m_hitSound->isPlaying()) {
-		m_hitSound->play(0, 0);
-		m_hitSound->setPos(Object::calculateAngle(pX, pY, X, Y),
+	if (!Base->HitSound->isPlaying()) {
+		Base->HitSound->play(0, 0);
+		Base->HitSound->setPos(Object::calculateAngle(pX, pY, X, Y),
 				Object::calculateDistance(pX, pY, X, Y));
 	}
 	setHealth(getHealth() - bullet->Damage);
@@ -41,7 +60,7 @@ bool Enemy::isBleeding() {
 }
 
 bool Enemy::isDeathPhase() {
-	return m_body->AnimSprite == m_deathSprite;
+	return m_body->AnimSprite == Base->DeathSprite;
 }
 
 bool Enemy::isReasyToDisappear() {
@@ -54,7 +73,7 @@ void Enemy::process(int deltaTime) {
 
 	if (m_dead) {
 		if (!isDeathPhase()) {
-			m_body = new DynamicObject(X, Y, m_deathSprite);
+			m_body = new DynamicObject(X, Y, Base->DeathSprite);
 		} else {
 			if (!isReasyToDisappear())
 				m_body->rollFrame(true);
