@@ -16,7 +16,8 @@ class Enemy: public LifeForm {
 private:
 	DynamicObject* m_body;
 	int m_hitSoundChannel;
-	int m_bleeding;
+	int m_bleedDelay;
+	int m_bleedCount;
 public:
 	Enemy(MonsterTemplate* base, int lvl);
 	virtual void process(int deltaTime);

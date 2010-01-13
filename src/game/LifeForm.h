@@ -18,6 +18,7 @@ public:
 	virtual void process(int deltaTime);
 	virtual void draw();
 
+	int Level;
 	float Strength;
 	float Agility;
 	float Vitality;

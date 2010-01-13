@@ -11,6 +11,7 @@ LifeForm::LifeForm(float x, float y, int w, int h) :
 	TargetX = TargetY = 0.0f;
 	Poisoned = false;
 	Frozen = 0;
+	Level = 1;
 }
 
 void LifeForm::draw() {

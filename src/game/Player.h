@@ -41,7 +41,6 @@ public:
 	Bullet* throwGrenade(Sprite* grenadeSprite);
 	~Player();
 	float AccuracyDeviation;
-	int Level;
 	int LevelPoints;
 	int Xp;
 	int NextLevelXp;

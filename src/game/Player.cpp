@@ -9,7 +9,6 @@ Player::Player() :
 	Xp = 0;
 	NextLevelXp = 100;
 	Kills = 0;
-	Level = 1;
 	LevelPoints = 0;
 	AccuracyDeviation = 0.0f;
 	Time = 0;

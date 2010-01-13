@@ -6,15 +6,16 @@
 Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	LifeForm(0, 0, 128, 128) {
 	Base = base;
+	Level = lvl;
 
 	float t = Base->Strength + Base->Agility + Base->Vitality;
 	float sp = Base->Strength / t;
 	float ap = Base->Agility / t;
 	float vp = Base->Vitality / t;
 
-	Strength = Base->Strength + 0.1f * lvl * sp;
-	Agility = Base->Agility + 0.1f * lvl * ap;
-	Vitality = Base->Vitality + 0.1f * lvl * vp;
+	Strength = Base->Strength + 0.03f * Level * sp;
+	Agility = Base->Agility + 0.03f * Level * ap;
+	Vitality = Base->Vitality + 0.03f * Level * vp;
 
 	t = Strength + Agility + Vitality;
 
@@ -28,7 +29,8 @@ Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	HitR = 0.3;
 	m_body = new DynamicObject(0, 0, Base->WalkSprite);
 	m_hitSoundChannel = 0;
-	m_bleeding = 0;
+	m_bleedDelay = 0;
+	m_bleedCount = 0;
 	DoNotDisturb = false;
 	Angry = false;
 	Type = LifeForm::monster;
@@ -39,11 +41,10 @@ void Enemy::rollFrame(bool forward) {
 }
 
 void Enemy::hit(Bullet* bullet, float pX, float pY) {
-	if (!Base->HitSound->isPlaying()) {
-		Base->HitSound->play(0, 0);
-		Base->HitSound->setPos(Object::calculateAngle(pX, pY, X, Y),
-				Object::calculateDistance(pX, pY, X, Y));
-	}
+	Base->HitSound->play(0, 0);
+	Base->HitSound->setPos(Object::calculateAngle(pX, pY, X, Y),
+			Object::calculateDistance(pX, pY, X, Y));
+	m_bleedCount += bullet->Damage * 5;
 	setHealth(getHealth() - bullet->Damage);
 	Poisoned = bullet->Poisoned || Poisoned;
 	Angry = true;
@@ -51,8 +52,9 @@ void Enemy::hit(Bullet* bullet, float pX, float pY) {
 }
 
 bool Enemy::isBleeding() {
-	if (m_bleeding > 600) {
-		m_bleeding = 0;
+	if (m_bleedCount > 0 && m_bleedDelay > 600) {
+		m_bleedDelay = 0;
+		m_bleedCount--;
 		return true;
 	} else {
 		return false;
@@ -70,6 +72,9 @@ bool Enemy::isReasyToDisappear() {
 
 void Enemy::process(int deltaTime) {
 	LifeForm::process(deltaTime);
+
+	if (m_bleedCount > 0)
+		m_bleedDelay += deltaTime;
 
 	if (m_dead) {
 		if (!isDeathPhase()) {
