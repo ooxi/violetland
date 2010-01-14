@@ -1,3 +1,4 @@
+#include <string>
 #include "../system/Object.h"
 #include "SDL.h"
 
@@ -18,6 +19,7 @@ public:
 	virtual void process(int deltaTime);
 	virtual void draw();
 
+	std::string Name;
 	int Level;
 	float Strength;
 	float Agility;

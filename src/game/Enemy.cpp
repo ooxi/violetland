@@ -19,9 +19,34 @@ Enemy::Enemy(MonsterTemplate* base, int lvl) :
 
 	t = Strength + Agility + Vitality;
 
-	RMask = Vitality / t;
-	GMask = Strength / t;
-	BMask = Agility / t * 0.7f;
+	RMask = 0.8f;
+	GMask = 0.7f;
+	BMask = 0.4f;
+
+	Name = Base->Name;
+
+	if ((rand() % 100) > 92)
+	{
+		Strength *= 2.0f;
+		RMask = 0.3f;
+		GMask = 0.8f;
+		BMask = 0.3f;
+		Name = "strong " + Base->Name;
+	} else if ((rand() % 100) > 92)
+	{
+		Agility *= 2.0f;
+		RMask = 0.3f;
+		GMask = 0.4f;
+		BMask = 0.7f;
+		Name = "fast " + Base->Name;
+	} else if ((rand() % 100) > 92)
+	{
+		Vitality *= 2.0f;
+		RMask = 1.0f;
+		GMask = 0.2f;
+		BMask = 0.2f;
+		Name = "healthy " + Base->Name;
+	}
 
 	setHealth(MaxHealth());
 	Speed = MaxSpeed();

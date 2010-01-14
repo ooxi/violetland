@@ -11,6 +11,7 @@ public:
 	Sound* HitSound;
 	Sprite* WalkSprite;
 	Sprite* DeathSprite;
+	std::string Name;
 	float Strength;
 	float Agility;
 	float Vitality;

@@ -73,6 +73,7 @@ MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 		MonsterTemplate* mt = new MonsterTemplate(loadMonsterSprite(
 				monsters[j], "walk"), loadMonsterSprite(monsters[j], "death"),
 				loadMonsterSound(monsters[j]));
+		mt->Name = monsters[j];
 		fillMonsterStats(mt, monsters[j]);
 		m_monsters.push_back(mt);
 	}

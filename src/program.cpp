@@ -1105,6 +1105,8 @@ void handleEnemies() {
 			}
 		}
 
+	player->HudInfo = "";
+
 	if (!lifeForms.empty()) {
 		for (int i = lifeForms.size() - 1; i >= 0; i--) {
 			float x = lifeForms[i]->X;
@@ -1117,6 +1119,13 @@ void handleEnemies() {
 				continue;
 
 			Enemy* enemy = (Enemy*) lifeForms[i];
+
+			if (enemy->detectCollide(player->TargetX, player->TargetY)) {
+				char *buf;
+				sprintf(buf = new char[255], "%s lvl %i", enemy->Name.c_str(), enemy->Level);
+				player->HudInfo = buf;
+				delete[] buf;
+			}
 
 			if (enemy->isBleeding() && bloodStains.size() < 12) {
 				addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
@@ -1363,6 +1372,9 @@ void drawHud() {
 	text->draw(buf, config->ScreenWidth - text->getIndent(), text->getIndent()
 			+ text->getHeight(), TextManager::RIGHT, TextManager::TOP);
 	delete[] buf;
+
+	if (player->HudInfo != "")
+		text->draw(player->HudInfo.c_str(), config->ScreenWidth / 2, text->getIndent(), TextManager::CENTER, TextManager::TOP);
 
 	if (config->ShowFps) {
 		sprintf(buf = new char[30], "FPS: %i", fps);

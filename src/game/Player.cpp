@@ -14,6 +14,7 @@ Player::Player() :
 	Time = 0;
 	Grenades = 2;
 	Type = LifeForm::player;
+	HudInfo = "";
 
 	m_weapon = NULL;
 

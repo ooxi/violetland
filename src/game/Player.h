@@ -47,6 +47,7 @@ public:
 	int Kills;
 	int Time;
 	int Grenades;
+	std::string HudInfo;
 
 	bool Unstoppable;
 	bool PoisonBullets;

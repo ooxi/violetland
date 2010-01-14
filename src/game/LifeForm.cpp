@@ -12,6 +12,7 @@ LifeForm::LifeForm(float x, float y, int w, int h) :
 	Poisoned = false;
 	Frozen = 0;
 	Level = 1;
+	Name = "Unknown lifeform";
 }
 
 void LifeForm::draw() {
@@ -59,7 +60,7 @@ const bool LifeForm::Attack() {
 }
 
 const float LifeForm::Damage() {
-	return Strength / 10.0f;
+	return Strength / 8.0f;
 }
 
 const int LifeForm::AttackDelay() {
@@ -71,7 +72,7 @@ const float LifeForm::MaxSpeed() {
 }
 
 const float LifeForm::HealthRegen() {
-	return Vitality > 1.0f ? (Vitality - 1.0f) * 0.000003f : 0.0f;
+	return Vitality > 1.0f ? (Vitality - 1.0f) * 0.000004f : 0.0f;
 }
 
 const float LifeForm::ReloadSpeedMod() {
@@ -79,7 +80,7 @@ const float LifeForm::ReloadSpeedMod() {
 }
 
 const float LifeForm::WeaponRetForceMod() {
-	return Strength > 1.0f ? 1.0f - (Strength - 1.0f) : 1.0f;
+	return Strength > 1.0f ? 1.0f - (Strength - 1.0f) * 1.1f : 1.0f;
 }
 
 void LifeForm::setHealth(float value) {
