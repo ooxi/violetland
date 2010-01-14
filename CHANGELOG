@@ -3,6 +3,11 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.2.7]
+
+[*] improved animation of monsters
+[!] error on updating highscores
+
 [0.2.6]
 
 [+] new monster animation (spider)
