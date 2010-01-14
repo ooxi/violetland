@@ -3,6 +3,15 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.2.6]
+
+[+] new monster animation (spider)
+[+] in-game information line about monster which cursor points to
+[*] parameters of monsters are loaded from files
+[*] names of monsters directories are names of monsters
+[*] redesign of some game images
+[!] sound issues are fixed by temporary turning off music fading
+
 [0.2.5]
 
 [+] new freeze bonus
