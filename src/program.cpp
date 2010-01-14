@@ -1122,7 +1122,7 @@ void handleEnemies() {
 
 			if (enemy->detectCollide(player->TargetX, player->TargetY)) {
 				char *buf;
-				sprintf(buf = new char[255], "%s lvl %i", enemy->Name.c_str(), enemy->Level);
+				sprintf(buf = new char[255], "%s (%i)", enemy->Name.c_str(), enemy->Level);
 				player->HudInfo = buf;
 				delete[] buf;
 			}
