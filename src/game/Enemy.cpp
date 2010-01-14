@@ -28,9 +28,9 @@ Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	if ((rand() % 100) > 92)
 	{
 		Strength *= 2.0f;
-		RMask = 0.3f;
-		GMask = 0.8f;
-		BMask = 0.3f;
+		RMask = 0.2f;
+		GMask = 0.7f;
+		BMask = 0.2f;
 		Name = "strong " + Base->Name;
 	} else if ((rand() % 100) > 92)
 	{
