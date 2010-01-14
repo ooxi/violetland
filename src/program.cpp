@@ -40,7 +40,7 @@
 #include "game/Explosion.h"
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.6";
+const string VERSION = "0.2.7";
 
 GameState* gameState;
 Configuration* config;
@@ -398,7 +398,13 @@ void loseGame() {
 			TextManager::LEFT, TextManager::BOTTOM));
 
 	Highscores s(fileUtility);
-	s.add(player);
+	HighscoresEntry* h = new HighscoresEntry();
+	h->Agility = player->Agility;
+	h->Strength = player->Strength;
+	h->Vitality = player->Vitality;
+	h->Time = player->Time;
+	h->Xp = player->Xp;
+	s.add(h);
 
 	SDL_ShowCursor(1);
 }
@@ -615,7 +621,7 @@ void createHighscoresWindow() {
 			text->getHeight() * 5.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	Highscores s(fileUtility);
-	vector<Player*> highscores = s.getData();
+	vector<HighscoresEntry*> highscores = s.getData();
 
 	if (!highscores.empty())
 		for (unsigned int i = 0; i < highscores.size(); i++) {
@@ -1094,7 +1100,7 @@ void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 }
 
 void handleEnemies() {
-	if (!gameState->Lost)
+	if (!gameState->Lost) {
 		for (int i = 0; i < deltaTime; i++) {
 			if (rand() % 10000 > gameState->Hardness) {
 				int lvl = player->Level * 0.5f + player->Level * pow((rand()
@@ -1104,8 +1110,8 @@ void handleEnemies() {
 				spawnEnemy(config->GameAreaSize * 1.5, lvl);
 			}
 		}
-
-	player->HudInfo = "";
+		player->HudInfo = "";
+	}
 
 	if (!lifeForms.empty()) {
 		for (int i = lifeForms.size() - 1; i >= 0; i--) {
@@ -1120,9 +1126,11 @@ void handleEnemies() {
 
 			Enemy* enemy = (Enemy*) lifeForms[i];
 
-			if (enemy->detectCollide(player->TargetX, player->TargetY)) {
+			if (!gameState->Lost && enemy->detectCollide(player->TargetX,
+					player->TargetY)) {
 				char *buf;
-				sprintf(buf = new char[255], "%s (%i)", enemy->Name.c_str(), enemy->Level);
+				sprintf(buf = new char[255], "%s (%i)", enemy->Name.c_str(),
+						enemy->Level);
 				player->HudInfo = buf;
 				delete[] buf;
 			}
@@ -1373,8 +1381,10 @@ void drawHud() {
 			+ text->getHeight(), TextManager::RIGHT, TextManager::TOP);
 	delete[] buf;
 
-	if (player->HudInfo != "")
-		text->draw(player->HudInfo.c_str(), config->ScreenWidth / 2, text->getIndent(), TextManager::CENTER, TextManager::TOP);
+	if (!gameState->Lost)
+		if (player->HudInfo != "")
+			text->draw(player->HudInfo.c_str(), config->ScreenWidth / 2,
+					text->getIndent(), TextManager::CENTER, TextManager::TOP);
 
 	if (config->ShowFps) {
 		sprintf(buf = new char[30], "FPS: %i", fps);

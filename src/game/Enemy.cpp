@@ -17,22 +17,19 @@ Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	Agility = Base->Agility + 0.03f * Level * ap;
 	Vitality = Base->Vitality + 0.03f * Level * vp;
 
-	if ((rand() % 100) > 95)
-	{
+	if ((rand() % 100) > 95) {
 		Strength *= 2.0f;
 		RMask = 0.2f;
 		GMask = 0.7f;
 		BMask = 0.2f;
 		Name = "Strong " + Base->Name;
-	} else if ((rand() % 100) > 95)
-	{
+	} else if ((rand() % 100) > 95) {
 		Agility *= 1.8f;
 		RMask = 0.3f;
 		GMask = 0.4f;
 		BMask = 0.7f;
 		Name = "Fast " + Base->Name;
-	} else if ((rand() % 100) > 95)
-	{
+	} else if ((rand() % 100) > 95) {
 		Vitality *= 2.0f;
 		RMask = 1.0f;
 		GMask = 0.2f;

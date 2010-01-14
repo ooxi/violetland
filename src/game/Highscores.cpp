@@ -7,14 +7,14 @@ Highscores::Highscores(FileUtility* fileUtility) {
 }
 
 void Highscores::read() {
-	string hsFile = m_fileUtility->getFullPath(FileUtility::user, "highscores");
+	std::string hsFile = m_fileUtility->getFullPath(FileUtility::user,
+			"highscores");
 
 	std::ifstream ifile(hsFile.c_str(), std::ios::binary);
 	if (!ifile.fail()) {
 		while (!ifile.eof()) {
-			Player* p = new Player();
+			HighscoresEntry* p = new HighscoresEntry();
 			ifile.read(reinterpret_cast<char*> (p), sizeof(*p));
-			p->Empty = true;
 			m_data.push_back(p);
 		}
 		ifile.close();
@@ -23,27 +23,28 @@ void Highscores::read() {
 	}
 }
 
-void Highscores::add(Player* player) {
-	string hsFile = m_fileUtility->getFullPath(FileUtility::user, "highscores");
-	string hsTempFile = m_fileUtility->getFullPath(FileUtility::user,
+void Highscores::add(HighscoresEntry* entry) {
+	std::string hsFile = m_fileUtility->getFullPath(FileUtility::user,
+			"highscores");
+	std::string hsTempFile = m_fileUtility->getFullPath(FileUtility::user,
 			"highscores~");
 
 	bool placed = false;
 	for (unsigned int i = 0; i < m_data.size(); i++) {
-		if (player->Xp > m_data[i]->Xp) {
-			m_data.insert(m_data.begin() + i, player);
+		if (entry->Xp > m_data[i]->Xp) {
+			m_data.insert(m_data.begin() + i, entry);
 			placed = true;
 			break;
 		}
 	}
 
 	if (!placed)
-		m_data.push_back(player);
+		m_data.push_back(entry);
 
 	std::ofstream ofile(hsTempFile.c_str(), std::ios::binary);
 	if (!ofile.fail()) {
 		for (unsigned int i = 0; i < (m_data.size() < 10 ? m_data.size() : 10); i++) {
-			ofile.write(reinterpret_cast<char*> (m_data[i]), sizeof(*player));
+			ofile.write(reinterpret_cast<char*> (m_data[i]), sizeof(*entry));
 		}
 		ofile.close();
 
@@ -59,7 +60,7 @@ void Highscores::add(Player* player) {
 	}
 
 	for (unsigned int i = 0; i < m_data.size(); i++) {
-		if (m_data[i] != player)
+		if (m_data[i] != entry)
 			delete m_data[i];
 	}
 	m_data.clear();
@@ -67,7 +68,7 @@ void Highscores::add(Player* player) {
 	read();
 }
 
-std::vector<Player*> Highscores::getData() {
+std::vector<HighscoresEntry*> Highscores::getData() {
 	return m_data;
 }
 
