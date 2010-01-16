@@ -104,6 +104,11 @@ std::vector<Bullet*> *Player::fire() {
 
 		if (m_weapon->BulletsAtOnce > 1)
 			AccuracyDeviation = 0;
+
+		DynamicObject* shell = new DynamicObject(X, Y,
+				m_weapon->getShellSprite());
+		shell->Angle = m_arms->Angle;
+		m_shells.push_back(shell);
 	}
 
 	return newBullets;
@@ -158,6 +163,15 @@ void Player::process(int deltaTime) {
 void Player::draw() {
 	m_legs->draw();
 	m_arms->draw(false, false);
+	for (int i = m_shells.size() - 1; i >= 0; i--) {
+		m_shells[i]->draw();
+		if (m_shells[i]->Frame == m_shells[i]->AnimSprite->getFramesCount() - 1) {
+			delete m_shells[i];
+			m_shells .erase(m_shells.begin() + i);
+			continue;
+		}
+		m_shells[i]->rollFrame(true);
+	}
 }
 
 const float Player::getLegsAngle() {
@@ -193,4 +207,8 @@ Player::~Player() {
 		delete m_arms;
 		delete m_weapon;
 	}
+	for (unsigned int i = 0; i < m_shells.size(); i++) {
+		delete m_shells[i];
+	}
+	m_shells.clear();
 }

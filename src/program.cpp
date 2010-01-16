@@ -36,6 +36,7 @@
 #include "game/Powerup.h"
 #include "game/Terrain.h"
 #include "game/MusicManager.h"
+#include "game/WeaponManager.h"
 #include "game/Highscores.h"
 #include "game/Explosion.h"
 
@@ -86,7 +87,7 @@ vector<ParticleSystem*> particleSystems;
 
 vector<Sound*> explosionSounds;
 
-vector<Weapon*> weapons;
+WeaponManager* weaponManager;
 
 vector<Powerup*> powerups;
 vector<Bullet*> bullets;
@@ -227,7 +228,7 @@ void startSurvival() {
 	clearExplosions();
 
 	player = new Player(0, 0, playerLegsSprite, playerArmsTex);
-	player->setWeapon(weapons[0]);
+	player->setWeapon(weaponManager->Weapons[0]);
 	player->HitR = 0.28f;
 	player->Acceleration = 0.0004f;
 	lifeForms.push_back(player);
@@ -1070,10 +1071,11 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (rand() % 1000 >= 975 || player->Kills == 0) {
-		int weaponIndex = (rand() % (weapons.size() - 1)) + 1;
-		newPowerup = new Powerup(x, y, weapons[weaponIndex]->getDroppedTex());
+		int weaponIndex = (rand() % (weaponManager->Weapons.size() - 1)) + 1;
+		newPowerup = new Powerup(x, y,
+				weaponManager->Weapons[weaponIndex]->getDroppedTex());
 		newPowerup->Type = Powerup::weapon;
-		newPowerup->Object = weapons[weaponIndex];
+		newPowerup->Object = weaponManager->Weapons[weaponIndex];
 		newPowerup->HitR = 0.5f;
 		powerupDropped = true;
 	}
@@ -1099,7 +1101,7 @@ void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 	bloodStains.push_back(newBloodStain);
 }
 
-void handleEnemies() {
+void handleLifeForms() {
 	if (!gameState->Lost) {
 		for (int i = 0; i < deltaTime; i++) {
 			if (rand() % 10000 > gameState->Hardness) {
@@ -1540,7 +1542,7 @@ void processGame() {
 	terrain->endDrawOn();
 
 	handlePowerups();
-	handleEnemies();
+	handleLifeForms();
 	handleBullets();
 	handleExplosions();
 	handleParticles();
@@ -1741,66 +1743,7 @@ void runMainLoop() {
 	}
 }
 
-void loadWeapons() {
-	printf("Loading weapons...\n");
-
-	if (!weapons.empty()) {
-		for (unsigned int i = 0; i < weapons.size(); i++) {
-			delete weapons[i];
-		}
-		weapons.clear();
-	}
-
-	ifstream in;
-	in.open(fileUtility->getFullPath(FileUtility::common, "weapons").c_str());
-	if (!in) {
-		fprintf(stderr, "Couldn't load weapons list.\n");
-		exit(4);
-	}
-	while (in) {
-		int weaponType;
-		in >> weaponType;
-		char bulletPath[2000] = "";
-		char droppedImagePath[2000] = "";
-		char shotSound[2000] = "";
-		char reloadSound[2000] = "";
-		char name[30] = "";
-		in >> bulletPath;
-		if (strlen(bulletPath) < 1)
-			break;
-		in >> droppedImagePath;
-		in >> shotSound;
-		in >> reloadSound;
-		Weapon *weapon = new Weapon((Bullet::BulletType) weaponType,
-				fileUtility->getFullPath(FileUtility::image, droppedImagePath),
-				sndManager->create(fileUtility->getFullPath(FileUtility::sound,
-						shotSound)), sndManager->create(
-						fileUtility->getFullPath(FileUtility::sound,
-								reloadSound)));
-		if (weaponType > 2) {
-			weapon->setBulletImage(fileUtility->getFullPath(FileUtility::image,
-					bulletPath));
-		}
-		in >> name;
-		weapon->Name = name;
-		in >> weapon->AmmoClipSize;
-		weapon->Ammo = weapon->AmmoClipSize;
-		in >> weapon->Damage;
-		in >> weapon->FireDelayTime;
-		in >> weapon->ReloadTime;
-		in >> weapon->FireRange;
-		in >> weapon->BulletSpeed;
-		in >> weapon->ReturnForce;
-		in >> weapon->BulletsAtOnce;
-
-		weapons.push_back(weapon);
-	}
-	in.close();
-}
-
 void loadResources() {
-	loadWeapons();
-
 	explosionSounds.push_back(sndManager->create(fileUtility->getFullPath(
 			FileUtility::sound, "explode-0.ogg")));
 	explosionSounds.push_back(sndManager->create(fileUtility->getFullPath(
@@ -1882,10 +1825,12 @@ void loadResources() {
 			"fonts/harabara.ttf"), 46 * widthK);
 
 	monsterFactory = new MonsterFactory(fileUtility, sndManager);
+	weaponManager = new WeaponManager(fileUtility, sndManager);
 }
 
 void unloadResources() {
 	delete crystal;
+	delete weaponManager;
 	delete monsterFactory;
 	delete playerKilledSound;
 	delete text;
@@ -1899,11 +1844,6 @@ void unloadResources() {
 		delete bloodTex[i];
 	}
 	bloodTex.clear();
-	for (unsigned int i = 0; i < weapons.size(); i++) {
-		weapons[i]->deleteResources();
-		delete weapons[i];
-	}
-	weapons.clear();
 	clearBloodStains();
 	clearPowerups();
 	clearLifeForms();
