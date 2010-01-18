@@ -396,7 +396,7 @@ void loseGame() {
 	if (playerHitSounds[playerHitSndPlaying]->isPlaying())
 		playerHitSounds[playerHitSndPlaying]->stop(0);
 
-	playerKilledSound->play(0, 0);
+	playerKilledSound->play(5, 0, 0);
 
 	msgQueue.push_back(text->getObject("Player is dead.", 0, 0,
 			TextManager::LEFT, TextManager::BOTTOM));
@@ -701,6 +701,13 @@ void refreshOptionsWindow() {
 			TextManager::LEFT, TextManager::MIDDLE);
 	delete[] buf;
 	w->addElement("+soundvolume", sndInd);
+
+	float mus = config->MusicVolume * 10;
+	sprintf(buf = new char[30], "%.0f%%", mus);
+	TextObject * musInd = text->getObject(buf, l, text->getHeight() * 14.0f,
+			TextManager::LEFT, TextManager::MIDDLE);
+	delete[] buf;
+	w->addElement("+musicvolume", musInd);
 }
 
 void switchAutoReload() {
@@ -711,10 +718,25 @@ void switchAutoReload() {
 void switchSoundVolume() {
 	if (config->SoundVolume <= 9) {
 		config->SoundVolume += 1;
-		Mix_Volume(-1, config->SoundVolume * 12);
+		for (unsigned int a = 1; a <= 8; a++) {
+			Mix_Volume(a, config->SoundVolume * 12);
+		}
 	} else {
 		config->SoundVolume = 0;
-		Mix_Volume(-1, 0);
+		for (unsigned int a = 1; a <= 8; a++) {
+			Mix_Volume(a, 0);
+		}
+	}
+	refreshOptionsWindow();
+}
+
+void switchMusicVolume() {
+	if (config->MusicVolume <= 9) {
+		config->MusicVolume += 1;
+		Mix_Volume(0, config->MusicVolume * 12);
+	} else {
+		config->MusicVolume = 0;
+		Mix_Volume(0, 0);
 	}
 	refreshOptionsWindow();
 }
@@ -754,14 +776,18 @@ void createOptionsWindow() {
 	w->addElement("sectionsound", text->getObject("Sound", l, text->getHeight()
 			* 11.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	w->addElement("soundvolume", text->getObject("Master volume", l
+	w->addElement("soundvolume", text->getObject("Sound volume", l
 			+ text->getHeight() * 2.0f, text->getHeight() * 13.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("musicvolume", text->getObject("Music volume", l
+			+ text->getHeight() * 2.0f, text->getHeight() * 14.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addHandler("autoreload", switchAutoReload);
 	w->addHandler("autopickup", switchAutoPickup);
 	w->addHandler("friendlyfire", switchFriendlyFire);
 	w->addHandler("soundvolume", switchSoundVolume);
+	w->addHandler("musicvolume", switchMusicVolume);
 
 	w->addElement("savereturn", text->getObject("Save and return", l,
 			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
@@ -1187,7 +1213,7 @@ void handleLifeForms() {
 									: player->getHealth() - 0.01f)
 									/ player->MaxHealth()
 									* playerHitSounds.size();
-							playerHitSounds[playerHitSndPlaying]->play(0, 0);
+							playerHitSounds[playerHitSndPlaying]->play(6, 0, 0);
 						}
 					}
 

@@ -20,7 +20,7 @@ public:
 			Configuration* config);
 	void process(Player* player, std::vector<LifeForm*> enemies, bool paused);
 	void play();
-	void play(std::string name, bool now);
+	void play(int chan, std::string name, bool now);
 	~MusicManager();
 };
 

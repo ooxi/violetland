@@ -60,7 +60,7 @@ void Enemy::rollFrame(bool forward) {
 }
 
 void Enemy::hit(Bullet* bullet, float pX, float pY) {
-	Base->HitSound->play(0, 0);
+	Base->HitSound->play(7, 0, 0);
 	Base->HitSound->setPos(Object::calculateAngle(pX, pY, X, Y),
 			Object::calculateDistance(pX, pY, X, Y));
 	m_bleedCount += bullet->Damage * 5;

@@ -73,7 +73,7 @@ std::vector<Bullet*> *Weapon::fire(float x, float y, float dX, float dY) {
 		newBullets->push_back(newBullet);
 	}
 
-	m_shotSound->playInf();
+	m_shotSound->playInf(2);
 	Ammo--;
 	m_fireDelay = FireDelayTime;
 
@@ -82,7 +82,7 @@ std::vector<Bullet*> *Weapon::fire(float x, float y, float dX, float dY) {
 
 bool Weapon::reload(float timeMod) {
 	if (m_reload <= 0) {
-		m_reloadSound->play(0, 0);
+		m_reloadSound->play(3, 0, 0);
 		m_reload = (int) (ReloadTime * timeMod);
 		return true;
 	} else
