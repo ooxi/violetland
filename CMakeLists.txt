@@ -25,6 +25,7 @@ set(srcUtilityDir ${srcSystemDir}/utility)
 set(srcFileList	
 	${srcDir}/program.cpp
 	${srcGameDir}/Weapon.cpp 
+	${srcGameDir}/WeaponManager.cpp
 	${srcGameDir}/Powerup.cpp 
 	${srcGameDir}/Player.cpp 
 	${srcGameDir}/Enemy.cpp 

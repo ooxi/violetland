@@ -17,6 +17,7 @@ class Player: public LifeForm {
 private:
 	DynamicObject *m_legs;
 	StaticObject *m_arms;
+	std::vector<DynamicObject*> m_shells;
 	Weapon *m_weapon;
 	bool m_light, m_laser;
 public:

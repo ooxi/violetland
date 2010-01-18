@@ -21,10 +21,11 @@ private:
 	Texture *m_bulletTex;
 	Sound* m_shotSound;
 	Sound* m_reloadSound;
+	Sprite* m_shellSprite;
 	int m_reloadSndCh;
 public:
-	Weapon(Bullet::BulletType Type, std::string droppedImage, Sound* shotSound,
-			Sound* reloadSound);
+	Weapon(Bullet::BulletType Type, std::string droppedImage,
+			Sprite* shellSprite, Sound* shotSound, Sound* reloadSound);
 	void setBulletImage(std::string image);
 	void process(int deltaTime);
 	std::vector<Bullet*> *fire(float x, float y, float dX, float dY);
@@ -33,6 +34,7 @@ public:
 	float getReloadState();
 	void deleteResources();
 	Texture *getDroppedTex();
+	Sprite* getShellSprite();
 	~Weapon();
 	Bullet::BulletType Type;
 	std::string Name;
