@@ -34,7 +34,7 @@ std::vector<std::string> FileUtility::getFilesFromDir(std::string dir) {
 				files.push_back(ep->d_name);
 				fprintf(stdout, "\t%s\n", ep->d_name);
 			}
-#endif //linux || __FreeBSD__
+#endif //linux || __FreeBSD__ || __APPLE__
 		}
 		closedir(dp);
 	}
@@ -62,7 +62,7 @@ std::vector<std::string> FileUtility::getSubDirsFromDir(std::string dir) {
 				subDirs.push_back(ep->d_name);
 				fprintf(stdout, "\t%s\n", ep->d_name);
 			}
-#endif //linux || __FreeBSD__
+#endif //linux || __FreeBSD__ || __APPLE__
 		}
 		closedir(dp);
 	}

@@ -280,6 +280,9 @@ void initSystem() {
 #ifdef __FreeBSD__
 	printf("Assuming BSD environment...\n");
 #endif //__FreeBSD__
+#ifdef __APPLE__
+	printf("Assuming MAC environment...\n");
+#endif //__APPLE__
 	atexit(TTF_Quit);
 	atexit(SDL_Quit);
 
