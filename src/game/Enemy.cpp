@@ -60,9 +60,12 @@ void Enemy::rollFrame(bool forward) {
 }
 
 void Enemy::hit(Bullet* bullet, float pX, float pY) {
-	Base->HitSound->play(7, 0, 0);
-	Base->HitSound->setPos(Object::calculateAngle(pX, pY, X, Y),
-			Object::calculateDistance(pX, pY, X, Y));
+	if (!Base->HitSounds.empty()) {
+		int s = rand() % (int) Base->HitSounds.size();
+		Base->HitSounds[s]->play(7, 0, 0);
+		Base->HitSounds[s]->setPos(Object::calculateAngle(pX, pY, X, Y),
+				Object::calculateDistance(pX, pY, X, Y));
+	}
 	m_bleedCount += bullet->Damage * 5;
 	setHealth(getHealth() - bullet->Damage);
 	Poisoned = bullet->Poisoned || Poisoned;

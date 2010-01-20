@@ -12,7 +12,8 @@ private:
 	SoundManager* m_sndManager;
 	vector<MonsterTemplate*> m_monsters;
 	Sprite* loadMonsterSprite(string name, string animType);
-	Sound* loadMonsterSound(string name);
+	Sound* loadMonsterSound(string soundType, string monsterName,
+			string soundName);
 	void fillMonsterStats(MonsterTemplate* t, string name);
 public:
 	MonsterFactory(FileUtility* fileUtility, SoundManager* sndManager);

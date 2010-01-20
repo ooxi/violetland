@@ -25,9 +25,11 @@ Sprite* MonsterFactory::loadMonsterSprite(string name, string animType) {
 	return monsterSprite;
 }
 
-Sound* MonsterFactory::loadMonsterSound(string name) {
+Sound* MonsterFactory::loadMonsterSound(string soundType, string monsterName,
+		string soundName) {
 	char *buf;
-	sprintf(buf = new char[100], "%s/hit.ogg", name.c_str());
+	sprintf(buf = new char[100], "%s/sounds/%s/%s", monsterName.c_str(),
+			soundType.c_str(), soundName.c_str());
 	Sound* snd = m_sndManager->create(m_fileUtility->getFullPath(
 			FileUtility::monsters, buf));
 	delete[] buf;
@@ -71,8 +73,19 @@ MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 
 	for (unsigned int j = 0; j < monsters.size(); j++) {
 		MonsterTemplate* mt = new MonsterTemplate(loadMonsterSprite(
-				monsters[j], "walk"), loadMonsterSprite(monsters[j], "death"),
-				loadMonsterSound(monsters[j]));
+				monsters[j], "walk"), loadMonsterSprite(monsters[j], "death"));
+
+		char *buf;
+		sprintf(buf = new char[100], "%s/sounds/hit/", monsters[j].c_str());
+		vector<string> hitSounds = m_fileUtility->getFilesFromDir(
+				m_fileUtility->getFullPath(FileUtility::monsters, buf));
+		delete[] buf;
+
+		for (unsigned int i = 0; i < hitSounds.size(); i++) {
+			mt ->HitSounds.push_back(loadMonsterSound("hit", monsters[j],
+					hitSounds[i]));
+		}
+
 		mt->Name = monsters[j];
 		fillMonsterStats(mt, monsters[j]);
 		m_monsters.push_back(mt);
