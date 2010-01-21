@@ -12,10 +12,12 @@ SoundManager::SoundManager(FileUtility* fileUtility, Configuration* config) {
 		fprintf(stderr, "\tsound is disabled\n\t%s\n", Mix_GetError());
 	} else {
 		m_enabled = true;
+		Mix_AllocateChannels(16);
 		printf("\tsound is enabled\n");
-		fprintf(stdout, "Mix_Volume (master) %i...\n", m_config->SoundVolume
-				* 12);
-		Mix_Volume(-1, m_config->SoundVolume * 12);
+		Mix_Volume(0, m_config->MusicVolume * 12);
+		for (unsigned int a = 1; a <= 8; a++) {
+			Mix_Volume(a, m_config->SoundVolume * 12);
+		}
 	}
 }
 

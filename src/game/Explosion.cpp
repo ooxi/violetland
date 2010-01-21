@@ -57,7 +57,7 @@ Explosion::Explosion(float x, float y, int range, Texture* sparkTex,
 	Damage = 5.0f;
 	Range = range;
 
-	sound->play(0, 0);
+	sound->play(8, 0, 0);
 }
 
 float Explosion::calcDamage(Object* refObj) {

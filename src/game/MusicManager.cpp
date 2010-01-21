@@ -32,21 +32,21 @@ void MusicManager::process(Player* player, std::vector<LifeForm*> enemies,
 	}
 	bool afterPause = m_currentPlaying == DEFAULT;
 	if (player->getHealth() / player->MaxHealth() < 0.4f) {
-		play("03.ogg", afterPause);
+		play(0, "03.ogg", afterPause);
 	} else if (player->Time < 100000) {
-		play("05.ogg", afterPause);
+		play(0, "05.ogg", afterPause);
 	} else if (player->getWeapon()->Name == "Laser") {
-		play("02.ogg", afterPause);
+		play(0, "02.ogg", afterPause);
 	} else {
-		play("01.ogg", afterPause);
+		play(0, "01.ogg", afterPause);
 	}
 }
 
 void MusicManager::play() {
-	play(DEFAULT, false);
+	play(0, DEFAULT, false);
 }
 
-void MusicManager::play(std::string name, bool now) {
+void MusicManager::play(int chan, std::string name, bool now) {
 	if (m_music.size() > 0) {
 		if (m_currentPlaying != "null" && m_currentPlaying != name) {
 			if (m_music[m_currentPlaying]->isPlaying()) {
@@ -54,8 +54,8 @@ void MusicManager::play(std::string name, bool now) {
 			}
 		}
 		if (m_currentPlaying != name && m_music.count(name) > 0) {
-			m_music[name]->play(3000, -1);
-			m_music[name]->setVol(m_config->MusicVolume);
+			m_music[name]->play(chan, 3000, -1);
+			m_music[name]->setVol(m_config->MusicVolume * 12);
 			m_currentPlaying = name;
 		}
 	}

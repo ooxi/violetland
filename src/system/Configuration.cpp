@@ -11,7 +11,7 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	ShowFps = false;
 	AutoReload = true;
 	SoundVolume = 4;
-	MusicVolume = 30;
+	MusicVolume = 4;
 	MonstersAtStart = 8;
 	AimColorA = 0x000000;
 	AimColorB = 0xFFFFFF;

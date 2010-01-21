@@ -10,12 +10,12 @@ bool Sound::isPlaying() {
 	return !(m_chan == -1 || Mix_Playing(m_chan) == 0) && m_enabled;
 }
 
-void Sound::play(int fade, int loops) {
+void Sound::play(int chan, int fade, int loops) {
 	if (m_enabled) {
 		if (isPlaying())
 			stop(0);
 
-		m_chan = Mix_PlayChannel(-1, m_sndRef, loops);
+		m_chan = Mix_PlayChannel(chan, m_sndRef, loops);
 
 		//		if (fade == 0) {
 		//			m_chan = Mix_PlayChannel(-1, m_sndRef, loops);
@@ -24,12 +24,12 @@ void Sound::play(int fade, int loops) {
 	}
 }
 
-void Sound::playInf() {
+void Sound::playInf(int chan) {
 	if (m_enabled) {
 		if (isPlaying())
 			stop(0);
 
-		m_chan = Mix_PlayChannel(-1, m_sndRef, 0);
+		m_chan = Mix_PlayChannel(chan, m_sndRef, 0);
 	}
 }
 
@@ -53,7 +53,7 @@ void Sound::stop(int fade) {
 
 void Sound::setVol(int value) {
 	if (m_chan != -1)
-		Mix_Volume(m_chan, value);
+		Mix_Volume(0, value);
 }
 
 Sound::~Sound() {

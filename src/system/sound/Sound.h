@@ -11,8 +11,8 @@ private:
 public:
 	Sound(Mix_Chunk* sndRef, bool enabled);
 	bool isPlaying();
-	void play(int fade, int loop);
-	void playInf();
+	void play(int chan, int fade, int loop);
+	void playInf(int chan);
 	void setPos(Sint16 angle, Uint8 distance);
 	void setVol(int value);
 	void stop(int fade);
