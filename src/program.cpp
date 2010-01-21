@@ -22,6 +22,9 @@
 #include "system/InputHandler.h"
 #include "system/graphic/text/TextManager.h"
 #include "system/utility/FileUtility.h"
+#ifdef __APPLE__
+#include "system/utility/macBundlePath.h"
+#endif
 #include "system/graphic/Texture.h"
 #include "system/graphic/Aim.h"
 #include "system/graphic/Camera.h"
@@ -1918,6 +1921,10 @@ void parsePreferences(int argc, char *argv[]) {
 					"\n\nThese and other parametres can be adjusted in a configuration file\n");
 			exit(0);
 		}
+		
+#ifdef __APPLE__
+		fileUtility->setFullResPath(getMacBundlePath()+"/Contents/Resources");
+#endif
 
 		if (arg.compare("-r") == 0 && i + 1 < argc) {
 			fileUtility->setFullResPath(argv[i + 1]);
