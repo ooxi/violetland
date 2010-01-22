@@ -69,7 +69,6 @@ Texture* grenadeTex;
 Texture* freezeTex;
 StaticObject* crystal;
 
-Texture* playerArmsTex;
 Sprite* playerLegsSprite;
 
 Sprite* grenadeSprite;
@@ -230,7 +229,7 @@ void startSurvival() {
 	clearMessages();
 	clearExplosions();
 
-	player = new Player(0, 0, playerLegsSprite, playerArmsTex);
+	player = new Player(0, 0, playerLegsSprite);
 	player->setWeapon(weaponManager->Weapons[0]);
 	player->HitR = 0.28f;
 	player->Acceleration = 0.0004f;
@@ -1790,10 +1789,6 @@ void loadResources() {
 	playerHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
 			FileUtility::sound, "player_hit_2.ogg")));
 
-	playerArmsTex = new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "player_top.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true);
-
 	vector<SDL_Surface*> playerLegsAnimSurfaces;
 	for (unsigned i = 0; i < 25; i++) {
 		char *buf;
@@ -1867,7 +1862,6 @@ void unloadResources() {
 	delete playerKilledSound;
 	delete text;
 	delete aim;
-	delete playerArmsTex;
 	delete playerLegsSprite;
 	delete grenadeSprite;
 	delete terrain;
@@ -1921,7 +1915,7 @@ void parsePreferences(int argc, char *argv[]) {
 					"\n\nThese and other parametres can be adjusted in a configuration file\n");
 			exit(0);
 		}
-		
+
 #ifdef __APPLE__
 		fileUtility->setFullResPath(getMacBundlePath()+"/Contents/Resources");
 #endif

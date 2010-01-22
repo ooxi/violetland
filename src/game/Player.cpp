@@ -23,7 +23,7 @@ Player::Player() :
 	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = false;
 }
 
-Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex) :
+Player::Player(float x, float y, Sprite *legsSprite) :
 	LifeForm(x, y, 128, 128) {
 	*this = Player();
 
@@ -34,8 +34,6 @@ Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex) :
 
 	m_legs = new DynamicObject(x, y, legsSprite);
 	m_legs->Frame = 8;
-
-	m_arms = new StaticObject(x, y, 128, 128, armsTex, false);
 
 	Empty = false;
 }
@@ -105,8 +103,7 @@ std::vector<Bullet*> *Player::fire() {
 		if (m_weapon->BulletsAtOnce > 1)
 			AccuracyDeviation = 0;
 
-		DynamicObject* shell = new DynamicObject(X, Y,
-				m_weapon->getShellSprite());
+		DynamicObject* shell = new DynamicObject(X, Y, m_weapon->ShellSprite);
 		shell->Angle = m_arms->Angle;
 		m_shells.push_back(shell);
 	}
@@ -195,9 +192,12 @@ Weapon* Player::getWeapon() {
 }
 
 void Player::setWeapon(Weapon *value) {
-	if (m_weapon)
+	if (m_weapon) {
+		delete m_arms;
 		delete m_weapon;
+	}
 	m_weapon = new Weapon(*value);
+	m_arms = new StaticObject(X, Y, 128, 128, m_weapon->getPlayerTex(), false);
 	AccuracyDeviation = 0;
 }
 

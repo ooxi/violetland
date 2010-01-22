@@ -165,6 +165,9 @@ std::string FileUtility::getFullPath(PathType type, std::string resource) {
 	case FileUtility::monsters:
 		path.append("monsters/");
 		return path.append(resource);
+	case FileUtility::weapon:
+		path.append("weapon/");
+		return path.append(resource);
 	case FileUtility::user:
 		return usrPath.append(resource);
 	default:

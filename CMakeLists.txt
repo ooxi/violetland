@@ -77,7 +77,6 @@ endif(DEFINED DATA_INSTALL_DIR)
 
 install(TARGETS violetland DESTINATION bin)
 install(FILES
-	weapons
 	README_EN.TXT
 	README_RU.TXT
 	icon-light.png
@@ -87,6 +86,7 @@ install(DIRECTORY
 	sounds
 	images
 	monsters
+	weapon
 	music
 DESTINATION ${relResPath}
 PATTERN ".*" EXCLUDE

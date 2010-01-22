@@ -1,10 +1,9 @@
 #include "Weapon.h"
 
-Weapon::Weapon(Bullet::BulletType type, std::string droppedImage,
-		Sprite* shellSprite, Sound* shotSound, Sound* reloadSound) {
-	m_droppedTex = new Texture(ImageUtility::loadImage(droppedImage),
-			GL_TEXTURE_2D, GL_LINEAR, true);
-	m_shellSprite = shellSprite;
+Weapon::Weapon(Texture* droppedTex, Texture* playerTex, Sound* shotSound,
+		Sound* reloadSound) {
+	m_playerTex = playerTex;
+	m_droppedTex = droppedTex;
 	m_shotSound = shotSound;
 	m_reloadSound = reloadSound;
 	Damage = 1.0;
@@ -19,7 +18,6 @@ Weapon::Weapon(Bullet::BulletType type, std::string droppedImage,
 	m_fireDelay = 0;
 	m_reload = 0;
 	m_reloadSndCh = -1;
-	Type = type;
 	m_bulletTex = NULL;
 }
 
@@ -32,8 +30,8 @@ Texture *Weapon::getDroppedTex() {
 	return m_droppedTex;
 }
 
-Sprite* Weapon::getShellSprite() {
-	return m_shellSprite;
+Texture *Weapon::getPlayerTex() {
+	return m_playerTex;
 }
 
 void Weapon::process(int deltaTime) {
@@ -100,7 +98,8 @@ void Weapon::deleteResources() {
 	if (m_bulletTex)
 		delete m_bulletTex;
 	delete m_droppedTex;
-	delete m_shellSprite;
+	delete m_playerTex;
+	delete ShellSprite;
 	delete m_shotSound;
 	delete m_reloadSound;
 }

@@ -67,7 +67,7 @@ MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 	fprintf(stdout, "Total monsters found: %i\n", (int) monsters.size());
 
 	if (monsters.size() == 0) {
-		printf("Couldn't load monsters, program can't run!\n");
+		printf("Couldn't load monsters, program won't run!\n");
 		exit(5);
 	}
 
