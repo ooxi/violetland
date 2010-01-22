@@ -69,6 +69,8 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 			in >> weapon->BulletSpeed;
 			in >> weapon->ReturnForce;
 			in >> weapon->BulletsAtOnce;
+			in >> weapon->XDiff;
+			in >> weapon->YDiff;
 		}
 
 		in.close();

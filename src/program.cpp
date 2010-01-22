@@ -1673,7 +1673,10 @@ void drawGame() {
 		glBegin(GL_LINES);
 		glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
 		const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
-		glVertex3f(player->X + 50 * cos(rad), player->Y + 50 * sin(rad), 0);
+		glVertex3f(player->X + player->getWeapon()->XDiff * cos(rad)
+				+ player->getWeapon()->YDiff * sin(-rad), player->Y
+				+ player->getWeapon()->XDiff * sin(rad)
+				+ player->getWeapon()->YDiff * cos(-rad), 0);
 		glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
 		glVertex3f(player->X + cam->getH() * 0.75f * cos(rad), player->Y
 				+ cam->getH() * 0.75f * sin(rad), 0);

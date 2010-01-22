@@ -79,7 +79,9 @@ void Player::move(char movementX, char movementY, int deltaTime) {
 std::vector<Bullet*> *Player::fire() {
 	const float rad = (getArmsAngle() - 90) * M_PI / 180;
 	std::vector<Bullet*> *newBullets = m_weapon->fire(m_arms->X, m_arms->Y,
-			m_arms->X + 50 * cos(rad), m_arms->Y + 50 * sin(rad));
+			m_arms->X + m_weapon->XDiff * cos(rad) + m_weapon->YDiff
+					* sin(-rad), m_arms->Y + m_weapon->XDiff * sin(rad)
+					+ m_weapon->YDiff * cos(-rad));
 
 	if (!newBullets->empty()) {
 		std::vector<Bullet*>::iterator it;

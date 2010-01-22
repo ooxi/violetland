@@ -48,6 +48,8 @@ public:
 	float FireRange;
 	float ReturnForce;
 	int BulletsAtOnce;
+	float XDiff;
+	float YDiff;
 
 	bool Poisoned;
 };
