@@ -640,14 +640,15 @@ void createCharStatWindow() {
 			+ text->getHeight() * 2.0f, text->getHeight() * 9.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
-	charStats->addHandler("strength", increaseStrength);
-	charStats->addHandler("agility", increaseAgility);
-	charStats->addHandler("vitality", increaseVitality);
+	charStats->addHandler(Window::hdl_lclick, "strength", increaseStrength);
+	charStats->addHandler(Window::hdl_lclick, "agility", increaseAgility);
+	charStats->addHandler(Window::hdl_lclick, "vitality", increaseVitality);
 
-	charStats->addHandler("unstoppable", takeUnstoppable);
-	charStats->addHandler("poisonbullets", takePoisonBullets);
-	charStats->addHandler("bigcalibre", takeBigCalibre);
-	charStats->addHandler("telekinesis", takeTelekinesis);
+	charStats->addHandler(Window::hdl_lclick, "unstoppable", takeUnstoppable);
+	charStats->addHandler(Window::hdl_lclick, "poisonbullets",
+			takePoisonBullets);
+	charStats->addHandler(Window::hdl_lclick, "bigcalibre", takeBigCalibre);
+	charStats->addHandler(Window::hdl_lclick, "telekinesis", takeTelekinesis);
 
 	windows["charstats"] = charStats;
 }
@@ -714,7 +715,7 @@ void createHighscoresWindow() {
 	scoresWin->addElement("back", text->getObject("Back to main menu", l,
 			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	scoresWin->addHandler("back", backFromHighScores);
+	scoresWin->addHandler(Window::hdl_lclick, "back", backFromHighScores);
 
 	windows["highscores"] = scoresWin;
 }
@@ -778,9 +779,24 @@ void switchAutoReload() {
 	refreshOptionsWindow();
 }
 
-void switchSoundVolume() {
+void switchSoundVolumeDown() {
+	if (config->SoundVolume > 0) {
+		config->SoundVolume--;
+		for (unsigned int a = 1; a <= 8; a++) {
+			Mix_Volume(a, config->SoundVolume * 12);
+		}
+	} else {
+		config->SoundVolume = 10;
+		for (unsigned int a = 1; a <= 8; a++) {
+			Mix_Volume(a, 0);
+		}
+	}
+	refreshOptionsWindow();
+}
+
+void switchSoundVolumeUp() {
 	if (config->SoundVolume <= 9) {
-		config->SoundVolume += 1;
+		config->SoundVolume++;
 		for (unsigned int a = 1; a <= 8; a++) {
 			Mix_Volume(a, config->SoundVolume * 12);
 		}
@@ -793,9 +809,20 @@ void switchSoundVolume() {
 	refreshOptionsWindow();
 }
 
-void switchMusicVolume() {
+void switchMusicVolumeDown() {
+	if (config->MusicVolume > 0) {
+		config->MusicVolume--;
+		Mix_Volume(0, config->MusicVolume * 12);
+	} else {
+		config->MusicVolume = 10;
+		Mix_Volume(0, 0);
+	}
+	refreshOptionsWindow();
+}
+
+void switchMusicVolumeUp() {
 	if (config->MusicVolume <= 9) {
-		config->MusicVolume += 1;
+		config->MusicVolume++;
 		Mix_Volume(0, config->MusicVolume * 12);
 	} else {
 		config->MusicVolume = 0;
@@ -819,7 +846,28 @@ void switchFullScreen() {
 	refreshOptionsWindow();
 }
 
-void switchResolution() {
+void switchResolutionDown() {
+	vector<SDL_Rect> modes = GetAvailableVideoModes();
+
+	bool set = false;
+	for (int i = modes.size() - 1; i > 0; i--) {
+		if (tempConfig->ScreenWidth == modes[i].w && tempConfig->ScreenHeight
+				== modes[i].h) {
+			tempConfig->ScreenWidth = modes[i - 1].w;
+			tempConfig->ScreenHeight = modes[i - 1].h;
+			set = true;
+			break;
+		}
+	}
+	if (!set) {
+		tempConfig->ScreenWidth = modes[modes.size() - 1].w;
+		tempConfig->ScreenHeight = modes[modes.size() - 1].h;
+	}
+
+	refreshOptionsWindow();
+}
+
+void switchResolutionUp() {
 	vector<SDL_Rect> modes = GetAvailableVideoModes();
 
 	bool set = false;
@@ -885,17 +933,20 @@ void createOptionsWindow() {
 			+ text->getHeight() * 2.0f, text->getHeight() * 14.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
-	w->addHandler("autoreload", switchAutoReload);
-	w->addHandler("autopickup", switchAutoPickup);
-	w->addHandler("friendlyfire", switchFriendlyFire);
-	w->addHandler("soundvolume", switchSoundVolume);
-	w->addHandler("musicvolume", switchMusicVolume);
-	w->addHandler("fullscreen", switchFullScreen);
-	w->addHandler("resolution", switchResolution);
+	w->addHandler(Window::hdl_lclick, "autoreload", switchAutoReload);
+	w->addHandler(Window::hdl_lclick, "autopickup", switchAutoPickup);
+	w->addHandler(Window::hdl_lclick, "friendlyfire", switchFriendlyFire);
+	w->addHandler(Window::hdl_lclick, "soundvolume", switchSoundVolumeUp);
+	w->addHandler(Window::hdl_rclick, "soundvolume", switchSoundVolumeDown);
+	w->addHandler(Window::hdl_lclick, "musicvolume", switchMusicVolumeUp);
+	w->addHandler(Window::hdl_rclick, "musicvolume", switchMusicVolumeDown);
+	w->addHandler(Window::hdl_lclick, "fullscreen", switchFullScreen);
+	w->addHandler(Window::hdl_lclick, "resolution", switchResolutionUp);
+	w->addHandler(Window::hdl_rclick, "resolution", switchResolutionDown);
 
 	w->addElement("savereturn", text->getObject("Save and return", l,
 			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
-	w->addHandler("savereturn", backFromOptionsAndSave);
+	w->addHandler(Window::hdl_lclick, "savereturn", backFromOptionsAndSave);
 
 	windows["options"] = w;
 
@@ -933,28 +984,28 @@ void createMainMenuWindow() {
 				text->getHeight() * 7.0f, TextManager::LEFT,
 				TextManager::MIDDLE));
 
-		mainMenu->addHandler("resume", resumeGame);
+		mainMenu->addHandler(Window::hdl_lclick, "resume", resumeGame);
 	}
 
 	mainMenu->addElement("survival", text->getObject("New survival", l,
 			text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	mainMenu->addHandler("survival", startSurvival);
+	mainMenu->addHandler(Window::hdl_lclick, "survival", startSurvival);
 
 	mainMenu->addElement("options", text->getObject("Options", l,
 			text->getHeight() * 9.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	mainMenu->addHandler("options", showOptions);
+	mainMenu->addHandler(Window::hdl_lclick, "options", showOptions);
 
 	mainMenu->addElement("highscores", text->getObject("High scores", l,
 			text->getHeight() * 10.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	mainMenu->addHandler("highscores", showHighScores);
+	mainMenu->addHandler(Window::hdl_lclick, "highscores", showHighScores);
 
 	mainMenu->addElement("exit", text->getObject("Exit", l, text->getHeight()
 			* 11.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	mainMenu->addHandler("exit", endGame);
+	mainMenu->addHandler(Window::hdl_lclick, "exit", endGame);
 
 	windows["mainmenu"] = mainMenu;
 }
