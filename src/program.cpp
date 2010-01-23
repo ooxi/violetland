@@ -52,7 +52,6 @@ Camera* cam;
 
 float widthK = 1;
 float heightK = 1;
-float aspect = 1 / 3;
 
 int framesCount;
 int fpsCountingStart;
@@ -70,6 +69,8 @@ Texture* medikitTex;
 Texture* grenadeTex;
 Texture* freezeTex;
 StaticObject* crystal;
+
+SDL_Rect** modes;
 
 Sprite* playerLegsSprite;
 
@@ -283,6 +284,35 @@ void printVersion() {
 	delete[] pr;
 }
 
+bool isModeAvailable(int w, int h, int bpp, bool fullscreen, int* true_bpp) {
+	Uint32 flags = SDL_OPENGL;
+	if (fullscreen)
+		flags = flags | SDL_FULLSCREEN;
+	int r = SDL_VideoModeOK(w, h, bpp, flags);
+	if (true_bpp)
+		*true_bpp = r;
+	return (r != 0);
+}
+
+vector<SDL_Rect> GetAvailableVideoModes() {
+	int
+			wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1600, 1600,
+					1920 };
+	int hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 900, 1200, 1080 };
+
+	vector<SDL_Rect> modes;
+	for (int i = 0; i < 8; i++) {
+		if (isModeAvailable(wL[i], hL[i], config->ScreenColor, true, NULL)) {
+			SDL_Rect r;
+			r.w = wL[i];
+			r.h = hL[i];
+			modes.push_back(r);
+		}
+	}
+
+	return modes;
+}
+
 void setVideoMode() {
 	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", config->ScreenWidth,
 			config->ScreenHeight, config->FullScreen ? 'f' : 'w');
@@ -292,10 +322,9 @@ void setVideoMode() {
 			config->FullScreen ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
 
 	cam = new Camera();
-	aspect = (float) config->ScreenWidth / config->ScreenHeight;
+	float aspect = (float) config->ScreenWidth / config->ScreenHeight;
 	cam->setH(cam->getW() / aspect);
 	widthK = (float) config->ScreenWidth / cam->getW();
-	heightK = (float) config->ScreenHeight / cam->getH();
 
 	if (screen == NULL) {
 		fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
@@ -331,6 +360,14 @@ void initSystem() {
 	// seems that this code is supported only in windows
 	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+
+	modes = SDL_ListModes(NULL, SDL_ANYFORMAT | SDL_HWPALETTE | SDL_HWSURFACE
+			| SDL_DOUBLEBUF | SDL_FULLSCREEN);
+
+	if (modes == (SDL_Rect**) 0) {
+		fprintf(stderr, "No video modes available!\n");
+		exit(7);
+	}
 
 	setVideoMode();
 
@@ -783,24 +820,23 @@ void switchFullScreen() {
 }
 
 void switchResolution() {
-	switch (tempConfig->ScreenWidth) {
-	case 400:
-		tempConfig->ScreenWidth = 800;
-		tempConfig->ScreenHeight = 600;
-		break;
-	case 800:
-		tempConfig->ScreenWidth = 1024;
-		tempConfig->ScreenHeight = 768;
-		break;
-	case 1024:
-		tempConfig->ScreenWidth = 1280;
-		tempConfig->ScreenHeight = 800;
-		break;
-	default:
-		tempConfig->ScreenWidth = 400;
-		tempConfig->ScreenHeight = 300;
-		break;
+	vector<SDL_Rect> modes = GetAvailableVideoModes();
+
+	bool set = false;
+	for (unsigned int i = 0; i < modes.size() - 1; i++) {
+		if (tempConfig->ScreenWidth == modes[i].w && tempConfig->ScreenHeight
+				== modes[i].h) {
+			tempConfig->ScreenWidth = modes[i + 1].w;
+			tempConfig->ScreenHeight = modes[i + 1].h;
+			set = true;
+			break;
+		}
 	}
+	if (!set) {
+		tempConfig->ScreenWidth = modes[0].w;
+		tempConfig->ScreenHeight = modes[0].h;
+	}
+
 	refreshOptionsWindow();
 }
 
