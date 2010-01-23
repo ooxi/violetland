@@ -784,11 +784,7 @@ void switchFullScreen() {
 
 void switchResolution() {
 	switch (tempConfig->ScreenWidth) {
-	case 320:
-		tempConfig->ScreenWidth = 640;
-		tempConfig->ScreenHeight = 480;
-		break;
-	case 640:
+	case 400:
 		tempConfig->ScreenWidth = 800;
 		tempConfig->ScreenHeight = 600;
 		break;
@@ -800,9 +796,9 @@ void switchResolution() {
 		tempConfig->ScreenWidth = 1280;
 		tempConfig->ScreenHeight = 800;
 		break;
-	case 1280:
-		tempConfig->ScreenWidth = 320;
-		tempConfig->ScreenHeight = 240;
+	default:
+		tempConfig->ScreenWidth = 400;
+		tempConfig->ScreenHeight = 300;
 		break;
 	}
 	refreshOptionsWindow();
