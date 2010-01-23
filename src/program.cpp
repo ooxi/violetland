@@ -325,6 +325,7 @@ void setVideoMode() {
 	float aspect = (float) config->ScreenWidth / config->ScreenHeight;
 	cam->setH(cam->getW() / aspect);
 	widthK = (float) config->ScreenWidth / cam->getW();
+	heightK = (float) config->ScreenHeight / cam->getH();
 
 	if (screen == NULL) {
 		fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
@@ -360,14 +361,6 @@ void initSystem() {
 	// seems that this code is supported only in windows
 	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
-
-	modes = SDL_ListModes(NULL, SDL_ANYFORMAT | SDL_HWPALETTE | SDL_HWSURFACE
-			| SDL_DOUBLEBUF | SDL_FULLSCREEN);
-
-	if (modes == (SDL_Rect**) 0) {
-		fprintf(stderr, "No video modes available!\n");
-		exit(7);
-	}
 
 	setVideoMode();
 
