@@ -60,6 +60,8 @@ int fps = 0;
 
 MonsterFactory* monsterFactory;
 
+Configuration* tempConfig;
+
 Sound* playerKilledSound;
 vector<Sound*> playerHitSounds;
 int playerHitSndPlaying = 0;
@@ -263,44 +265,25 @@ char *getProjectTitle() {
 }
 
 void printVersion() {
-	char *buf = getProjectTitle();
-	cout << buf << endl;
-	delete[] buf;
-}
-
-void initSystem() {
-
-	srand((unsigned) time(NULL));
-	printVersion();
-
+	char* pr = getProjectTitle();
+	string env = "UNKNOWN";
 #ifdef _WIN32
-	printf("Assuming WINDOWS environment...\n");
+	env = "WINDOWS";
 #endif //_WIN32W
 #ifdef linux
-	printf("Assuming LINUX environment...\n");
+	env = "GNU/LINUX";
 #endif //linux
 #ifdef __FreeBSD__
-	printf("Assuming BSD environment...\n");
+	env = "BSD";
 #endif //__FreeBSD__
 #ifdef __APPLE__
-	printf("Assuming MAC environment...\n");
+	env = "MAC";
 #endif //__APPLE__
-	atexit(TTF_Quit);
-	atexit(SDL_Quit);
+	fprintf(stdout, "%s @ %s\n", pr, env.c_str());
+	delete[] pr;
+}
 
-	printf("SDL_Init...\n");
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-		exit(1);
-	}
-
-	printf("SDL_GL_SetAttribute SDL_GL_DOUBLEBUFFER...\n");
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-	// seems that this code is supported only in windows
-	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
-	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
-
+void setVideoMode() {
 	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", config->ScreenWidth,
 			config->ScreenHeight, config->FullScreen ? 'f' : 'w');
 
@@ -318,6 +301,38 @@ void initSystem() {
 		fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
 		exit(2);
 	}
+
+	printf("glViewport...\n");
+	glViewport(0, 0, config->ScreenWidth, config->ScreenHeight);
+
+	if (text)
+		delete text;
+
+	text = new TextManager(fileUtility->getFullPath(FileUtility::common,
+			"fonts/harabara.ttf"), 46 * widthK);
+}
+
+void initSystem() {
+	srand((unsigned) time(NULL));
+
+	TTF_Init();
+	atexit(TTF_Quit);
+	atexit(SDL_Quit);
+
+	printf("SDL_Init...\n");
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		exit(1);
+	}
+
+	printf("SDL_GL_SetAttribute SDL_GL_DOUBLEBUFFER...\n");
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	// seems that this code is supported only in windows
+	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
+	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+
+	setVideoMode();
 
 	char* buf;
 	buf = getProjectTitle();
@@ -337,9 +352,6 @@ void initSystem() {
 	glEnable(GL_TEXTURE_2D);
 
 	glDisable(GL_DEPTH_TEST);
-
-	printf("glViewport...\n");
-	glViewport(0, 0, config->ScreenWidth, config->ScreenHeight);
 
 	sprintf(buf = new char[100], "splash_%i.png", (rand() % 199) / 100);
 	Texture* tex = new Texture(ImageUtility::loadImage(
@@ -385,8 +397,6 @@ void initSystem() {
 
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
-	TTF_Init();
 
 	input = new InputHandler();
 
@@ -674,6 +684,7 @@ void createHighscoresWindow() {
 
 void refreshOptionsWindow() {
 	const int l = config->ScreenWidth * 0.1f;
+	const int r = config->ScreenWidth * 0.6f;
 
 	Window* w = windows.find("options")->second;
 
@@ -696,7 +707,20 @@ void refreshOptionsWindow() {
 	else
 		w->removeElement("+friendlyfire", false);
 
+	if (config->FullScreen)
+		w->addElement("+fullscreen", text->getObject("+", r, text->getHeight()
+				* 7.0f, TextManager::LEFT, TextManager::MIDDLE));
+	else
+		w->removeElement("+fullscreen", false);
+
 	char *buf;
+	sprintf(buf = new char[15], "%ix%i", tempConfig->ScreenWidth,
+			tempConfig->ScreenHeight);
+	TextObject* resInfo = text->getObject(buf, r + text->getHeight() * 7.0f,
+			text->getHeight() * 8.0f, TextManager::LEFT, TextManager::MIDDLE);
+	delete[] buf;
+	w->addElement("+resolution", resInfo);
+
 	float snd = config->SoundVolume * 10;
 	sprintf(buf = new char[30], "%.0f%%", snd);
 	TextObject* sndInd = text->getObject(buf, l, text->getHeight() * 13.0f,
@@ -753,11 +777,45 @@ void switchAutoPickup() {
 	refreshOptionsWindow();
 }
 
+void switchFullScreen() {
+	config->FullScreen = !config->FullScreen;
+	refreshOptionsWindow();
+}
+
+void switchResolution() {
+	switch (tempConfig->ScreenWidth) {
+	case 320:
+		tempConfig->ScreenWidth = 640;
+		tempConfig->ScreenHeight = 480;
+		break;
+	case 640:
+		tempConfig->ScreenWidth = 800;
+		tempConfig->ScreenHeight = 600;
+		break;
+	case 800:
+		tempConfig->ScreenWidth = 1024;
+		tempConfig->ScreenHeight = 768;
+		break;
+	case 1024:
+		tempConfig->ScreenWidth = 1280;
+		tempConfig->ScreenHeight = 800;
+		break;
+	case 1280:
+		tempConfig->ScreenWidth = 320;
+		tempConfig->ScreenHeight = 240;
+		break;
+	}
+	refreshOptionsWindow();
+}
+
 void createOptionsWindow() {
+	tempConfig = new Configuration(*config);
+
 	Window *w = new Window(0.0f, 0.0f, config->ScreenWidth,
 			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
 
 	const int l = config->ScreenWidth * 0.1f;
+	const int r = config->ScreenWidth * 0.6f;
 
 	w->addElement("options", text->getObject("Options", l, text->getHeight()
 			* 3.0f, TextManager::LEFT, TextManager::MIDDLE));
@@ -775,6 +833,16 @@ void createOptionsWindow() {
 			+ text->getHeight() * 2.0f, text->getHeight() * 9.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
+	w->addElement("sectiongraphic", text->getObject("Graphic", r,
+			text->getHeight() * 5.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	w->addElement("fullscreen", text->getObject("Fullscreen", r
+			+ text->getHeight() * 2.0f, text->getHeight() * 7.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("resolution", text->getObject("Resolution", r
+			+ text->getHeight() * 2.0f, text->getHeight() * 8.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
 	w->addElement("sectionsound", text->getObject("Sound", l, text->getHeight()
 			* 11.0f, TextManager::LEFT, TextManager::MIDDLE));
 
@@ -790,6 +858,8 @@ void createOptionsWindow() {
 	w->addHandler("friendlyfire", switchFriendlyFire);
 	w->addHandler("soundvolume", switchSoundVolume);
 	w->addHandler("musicvolume", switchMusicVolume);
+	w->addHandler("fullscreen", switchFullScreen);
+	w->addHandler("resolution", switchResolution);
 
 	w->addElement("savereturn", text->getObject("Save and return", l,
 			text->getHeight() * 18.0f, TextManager::LEFT, TextManager::MIDDLE));
@@ -858,7 +928,10 @@ void createMainMenuWindow() {
 }
 
 void backFromOptionsAndSave() {
+	config->ScreenWidth = tempConfig->ScreenWidth;
+	config->ScreenHeight = tempConfig->ScreenHeight;
 	config->write();
+	setVideoMode();
 	windows["options"]->CloseFlag = true;
 	createMainMenuWindow();
 }
@@ -1851,9 +1924,6 @@ void loadResources() {
 
 	aim = new Aim(config);
 
-	text = new TextManager(fileUtility->getFullPath(FileUtility::common,
-			"fonts/harabara.ttf"), 46 * widthK);
-
 	monsterFactory = new MonsterFactory(fileUtility, sndManager);
 	weaponManager = new WeaponManager(fileUtility, sndManager);
 }
@@ -1863,7 +1933,6 @@ void unloadResources() {
 	delete weaponManager;
 	delete monsterFactory;
 	delete playerKilledSound;
-	delete text;
 	delete aim;
 	delete playerLegsSprite;
 	delete grenadeSprite;
@@ -1958,6 +2027,7 @@ void parsePreferences(int argc, char *argv[]) {
 }
 
 void shutdownSystem() {
+	delete text;
 	delete gameState;
 	delete splash;
 	delete musicManager;
@@ -1967,6 +2037,8 @@ void shutdownSystem() {
 }
 
 int main(int argc, char *argv[]) {
+	printVersion();
+
 	parsePreferences(argc, argv);
 
 	initSystem();
