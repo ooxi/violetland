@@ -14,7 +14,7 @@ http://groups.google.com/group/violetland
 
 Before you enjoy the game make sure that you have a 3D-accelerated video card and latest drivers for your card with 3D-acceleration support.
 
-Currently are supported: windows, linux, freebsd.
+Currently are supported: windows, gnu/linux, freebsd, mac os x.
 
 3. WINDOWS
 
