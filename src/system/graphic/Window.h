@@ -7,7 +7,7 @@
 #define WINDOW_H_
 
 class Window {
-private:
+protected:
 	float m_left, m_top, m_right, m_bottom, m_r, m_g, m_b, m_a;
 	std::map<std::string, TextObject*> m_elements;
 	std::map<std::string, void(*)()> m_lcHandlers;

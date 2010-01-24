@@ -14,6 +14,7 @@ set(libList ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${SDLMIXER_LIBR
 include_directories(${incDirList})
 
 set(srcDir src)
+set(srcWindowsDir ${srcDir}/windows)
 set(srcGameDir ${srcDir}/game)
 set(srcBulletsDir ${srcGameDir}/bullets)
 set(srcSystemDir ${srcDir}/system)
@@ -56,10 +57,13 @@ set(srcFileList
 	${srcGraphicDir}/Window.cpp
 	${srcGraphicDir}/Particle.cpp
 	${srcGraphicDir}/ParticleSystem.cpp
+	${srcGraphicDir}/VideoManager.cpp
 	${srcTextDir}/TextManager.cpp 
 	${srcTextDir}/TextObject.cpp 
 	${srcSoundDir}/Sound.cpp
 	${srcSoundDir}/SoundManager.cpp
+	${srcWindowsDir}/MainMenuWindow.cpp
+	${srcWindowsDir}/HelpWindow.cpp
 )
 
 add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")

@@ -32,7 +32,7 @@ const int Camera::getHalfH() {
 	return m_halfH;
 }
 
-void Camera::apply() {
+void Camera::applyGLOrtho() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 

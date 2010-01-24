@@ -15,7 +15,7 @@ public:
 	void setH(int value);
 	const int getHalfW();
 	const int getHalfH();
-	void apply();
+	void applyGLOrtho();
 	float X, Y;
 };
 
