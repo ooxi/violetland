@@ -9,7 +9,7 @@
 #include <windows.h>
 #include <winbase.h>
 #include <time.h>
-#endif //_WIN32W
+#endif //_WIN32
 #include <stdlib.h>
 #include <vector>
 #include <cmath>
@@ -231,7 +231,7 @@ void startSurvival() {
 	clearExplosions();
 
 	player = new Player(0, 0, playerLegsSprite);
-	player->setWeapon(weaponManager->Weapons[0]);
+	player->setWeapon(weaponManager->getWeaponByName("PM"));
 	player->HitR = 0.28f;
 	player->Acceleration = 0.0004f;
 	lifeForms.push_back(player);
@@ -611,6 +611,16 @@ void createCharStatWindow() {
 	windows["charstats"] = charStats;
 }
 
+void shutdownSystem() {
+	delete videoManager;
+	delete gameState;
+	delete splash;
+	delete musicManager;
+	delete sndManager;
+	delete input;
+	delete fileUtility;
+}
+
 void backFromHighScores();
 void backFromOptionsAndSave();
 
@@ -970,10 +980,46 @@ void createMainMenuWindow() {
 	windows["mainmenu"] = mainMenu;
 }
 
+void unloadResources() {
+	delete crystal;
+	delete weaponManager;
+	delete monsterFactory;
+	delete playerKilledSound;
+	delete aim;
+	delete playerLegsSprite;
+	delete grenadeSprite;
+	delete terrain;
+	delete medikitTex;
+	for (unsigned int i = 0; i < bloodTex.size(); i++) {
+		delete bloodTex[i];
+	}
+	bloodTex.clear();
+	clearBloodStains();
+	clearPowerups();
+	clearLifeForms();
+	clearBullets();
+	clearMessages();
+	clearWindows();
+	clearExplosions();
+	clearParticleSystems();
+
+	for (unsigned int i = 0; i < playerHitSounds.size(); i++) {
+		delete playerHitSounds[i];
+	}
+	playerHitSounds.clear();
+	delete config;
+}
+
 void backFromOptionsAndSave() {
 	config->ScreenWidth = tempConfig->ScreenWidth;
 	config->ScreenHeight = tempConfig->ScreenHeight;
 	config->write();
+#ifdef _WIN32
+	fprintf(stdout,"Hot video mode changing is not supported on windows now. You should restart the game.");
+	unloadResources();
+	shutdownSystem();
+	exit(0);
+#endif //_WIN32
 	videoManager->setMode(config, cam);
 	windows["options"]->CloseFlag = true;
 	createMainMenuWindow();
@@ -1964,36 +2010,6 @@ void loadResources() {
 	weaponManager = new WeaponManager(fileUtility, sndManager);
 }
 
-void unloadResources() {
-	delete crystal;
-	delete weaponManager;
-	delete monsterFactory;
-	delete playerKilledSound;
-	delete aim;
-	delete playerLegsSprite;
-	delete grenadeSprite;
-	delete terrain;
-	delete medikitTex;
-	for (unsigned int i = 0; i < bloodTex.size(); i++) {
-		delete bloodTex[i];
-	}
-	bloodTex.clear();
-	clearBloodStains();
-	clearPowerups();
-	clearLifeForms();
-	clearBullets();
-	clearMessages();
-	clearWindows();
-	clearExplosions();
-	clearParticleSystems();
-
-	for (unsigned int i = 0; i < playerHitSounds.size(); i++) {
-		delete playerHitSounds[i];
-	}
-	playerHitSounds.clear();
-	delete config;
-}
-
 void parsePreferences(int argc, char *argv[]) {
 	fileUtility = new FileUtility(argv[0]);
 	config = new Configuration(fileUtility);
@@ -2060,16 +2076,6 @@ void parsePreferences(int argc, char *argv[]) {
 				printf("Number of monsters must be positive.\n");
 		}
 	}
-}
-
-void shutdownSystem() {
-	delete videoManager;
-	delete gameState;
-	delete splash;
-	delete musicManager;
-	delete sndManager;
-	delete input;
-	delete fileUtility;
 }
 
 int main(int argc, char *argv[]) {

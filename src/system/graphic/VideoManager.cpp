@@ -27,10 +27,10 @@ bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 
 vector<SDL_Rect> VideoManager::GetAvailableModes(Configuration* config) {
 	int wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1600, 1600, 1680,
-			1920 };
+			1920, 1920 };
 	int
 			hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 900, 1200, 1050,
-					1080 };
+					1080, 1200 };
 
 	vector<SDL_Rect> modes;
 	for (int i = 0; i < 8; i++) {

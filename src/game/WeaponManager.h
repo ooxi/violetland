@@ -12,6 +12,7 @@ public:
 	WeaponManager(FileUtility* fileUtility, SoundManager* sndManager);
 	~WeaponManager();
 	std::vector<Weapon*> Weapons;
+	Weapon* getWeaponByName(std::string name);
 };
 
 #endif /* WEAPONMANAGER_H_ */
