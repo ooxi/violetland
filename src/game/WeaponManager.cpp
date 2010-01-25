@@ -20,7 +20,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 		char *imagePath;
 		char *shotSoundPath;
 		char *reloadSoundPath;
-		char *playerPath;		
+		char *playerPath;
 		sprintf(imagePath = new char[1000], "%s/image.png", weapons[j].c_str());
 		sprintf(playerPath = new char[1000], "%s/player.png",
 				weapons[j].c_str());
@@ -102,12 +102,12 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 	fprintf(stdout, "Loading of weapons is completed.\n");
 }
 
-Weapon* WeaponManager::getWeaponByName(std::string name)
-{
+Weapon* WeaponManager::getWeaponByName(std::string name) {
 	for (unsigned int i = 0; i < Weapons.size(); i++) {
 		if (Weapons[i]->Name == name)
 			return Weapons[i];
 	}
+	return NULL;
 }
 
 WeaponManager::~WeaponManager() {

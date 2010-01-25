@@ -1276,7 +1276,6 @@ void handleLifeForms() {
 				spawnEnemy(config->GameAreaSize * 1.5, lvl);
 			}
 		}
-		player->HudInfo = "";
 	}
 
 	if (!lifeForms.empty()) {
@@ -1287,7 +1286,7 @@ void handleLifeForms() {
 			lifeForms[i]->process(deltaTime);
 
 			if (lifeForms[i]->Type == LifeForm::player
-					|| lifeForms[i]->isDead() || lifeForms[i]->Frozen > 0)
+					|| lifeForms[i]->isDead())
 				continue;
 
 			Enemy* enemy = (Enemy*) lifeForms[i];
@@ -1300,6 +1299,9 @@ void handleLifeForms() {
 				player->HudInfo = buf;
 				delete[] buf;
 			}
+
+			if (lifeForms[i]->Frozen > 0)
+				continue;
 
 			if (enemy->isBleeding() && bloodStains.size() < 12) {
 				addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
@@ -1611,8 +1613,29 @@ void handlePowerups() {
 		if (powerups[i]->Time <= 0)
 			deletePowerup = true;
 
-		if (player->Telekinesis) {
-			if (powerups[i]->detectCollide(player->TargetX, player->TargetY)) {
+		if (!gameState->Lost && powerups[i]->detectCollide(player->TargetX,
+				player->TargetY)) {
+
+			switch (powerups[i]->Type) {
+			case Powerup::medikit:
+				player->HudInfo = "a medikit";
+				break;
+			case Powerup::freeze:
+				player->HudInfo = "a nitrogen bomb";
+				break;
+			case Powerup::grenades:
+				player->HudInfo = "a hand grenade";
+				break;
+			case Powerup::weapon:
+				char *buf;
+				sprintf(buf = new char[200], "the %s",
+						((Weapon*) powerups[i]->Object)->Name.c_str());
+				player->HudInfo = buf;
+				delete[] buf;
+				break;
+			}
+
+			if (player->Telekinesis) {
 				float a = Object::calculateAngle(powerups[i]->X,
 						powerups[i]->Y, player->X, player->Y);
 				powerups[i]->X -= cos((a + 90) * M_PI / 180) * deltaTime
@@ -1696,10 +1719,10 @@ void processGame() {
 		player->Time += deltaTime;
 
 		handlePlayer();
-	}
 
-	if (player->Xp >= player->NextLevelXp) {
-		levelUp();
+		if (player->Xp >= player->NextLevelXp) {
+			levelUp();
+		}
 	}
 
 	terrain->beginDrawOn();
@@ -1727,8 +1750,10 @@ void processGame() {
 	}
 	terrain->endDrawOn();
 
-	handlePowerups();
+	player->HudInfo = "";
+
 	handleLifeForms();
+	handlePowerups();
 	handleBullets();
 	handleExplosions();
 	handleParticles();
