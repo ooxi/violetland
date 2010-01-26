@@ -28,23 +28,22 @@ bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 #define ARRSIZE(s) (sizeof(s) / sizeof(*s))
 
 /*
-i don't know what of these methods is better to use
-i even can create a static function to calculate size of array
-*/
+ i don't know what of these methods is better to use
+ i even can create a static function to calculate size of array
+ */
 
-template< typename T > size_t structsize( const T& t ) { 
-  return sizeof( t ) / sizeof( *t ); 
+template<typename T> size_t structsize(const T& t) {
+	return sizeof(t) / sizeof(*t);
 }
 
 vector<SDL_Rect> VideoManager::GetAvailableModes(Configuration* config) {
 	int wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1600, 1600, 1680,
 			1920, 1920 };
-	int
-			hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 900, 1200, 1050,
-					1080, 1200 };
+	int hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 900, 1200, 1050,
+			1080, 1200 };
 
 	vector<SDL_Rect> modes;
-	for (int i = 0; i < structsize(wL); i++) {
+	for (unsigned int i = 0; i < structsize(wL); i++) {
 		if (isModeAvailable(wL[i], hL[i], config->ScreenColor, true, NULL)) {
 			SDL_Rect r;
 			r.w = wL[i];

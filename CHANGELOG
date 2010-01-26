@@ -3,6 +3,16 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.2.8]
+
+[+] mac os x support (10.5 or later)
+[+] ability to change video settings from options screen (there are issues on windows - see README)
+[+] new graphic - image of weapon in arms will change, animation of shells
+[*] weapons structure
+[*] monsters can have any number of sounds of pain
+[!] fixed sound issues by explicit sound mixing
+[!] issues of loading resources in *nix systems
+
 [0.2.7]
 
 [*] improved animation of monsters

@@ -20,6 +20,8 @@ http://groups.google.com/group/violetland
 
 3. WINDOWS
 
+ВНИМАНИЕ! В настоящее время не доработано горячее переключение видеорежимов из экрана настроек. При применении настроек программа завершит свою работу. Необходимо вручную перезапустить программу.
+
 Файл конфигурации находится в папке с программой.
 
 Программа собрана с помощью MSVC++ 2008, поэтому может потребоваться установка Microsoft Visual C++ 2008 Redistributable Package (http://www.microsoft.com/downloads/details.aspx?familyid=9B2DA534-3E03-4391-8A4D-074B9F2BC1BF&displaylang=en).

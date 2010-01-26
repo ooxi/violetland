@@ -18,6 +18,8 @@ Currently are supported: windows, gnu/linux, freebsd, mac os x.
 
 3. WINDOWS
 
+CAUTION! Now a hot switching of video modes from options screen isn't finalized. When you will apply changes in the options screen, the program will shut down. You must manually restart the program.
+
 The executable was created with help of MSVC++ 2008, thus the Microsoft Visual C++ 2008 Redistributable Package may be needed: http://www.microsoft.com/downloads/details.aspx?familyid=9B2DA534-3E03-4391-8A4D-074B9F2BC1BF&displaylang=en
 
 The program can't be started (because it can't load resources) if the path to the executable contains cyrillic symbols.
