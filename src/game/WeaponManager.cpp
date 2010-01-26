@@ -54,12 +54,12 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 			exit(4);
 		}
 
-		char shellName[1000] = "";
+		std::string shellName;
+		std::string strbuf;
 		while (in) {
-			int weaponType;
-			in >> weaponType;
-			weapon->Type = (Bullet::BulletType) weaponType;
-			in >> shellName;
+			getline(in, strbuf, ' ');
+			weapon->Type = (Bullet::BulletType) strtol(strbuf.c_str(), NULL, 10);
+			getline(in, shellName, ' ');
 			in >> weapon->AmmoClipSize;
 			weapon->Ammo = weapon->AmmoClipSize;
 			in >> weapon->Damage;
@@ -77,16 +77,16 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		vector<SDL_Surface*> animSurfaces;
 
-		sprintf(buf = new char[100], "shells/%s", shellName);
+		sprintf(buf = new char[100], "shells/%s", shellName.c_str());
 		unsigned int framesCount = fileUtility->getFilesCountFromDir(
 				fileUtility->getFullPath(FileUtility::anima, buf));
 		delete[] buf;
 
 		fprintf(stdout, "Shell animation of %s - %s, frames count: %i.\n",
-				weapons[j].c_str(), shellName, framesCount);
+			weapons[j].c_str(), shellName.c_str(), framesCount);
 
 		for (unsigned i = 0; i < framesCount; i++) {
-			sprintf(buf = new char[100], "shells/%s/%i.png", shellName, i);
+			sprintf(buf = new char[100], "shells/%s/%i.png", shellName.c_str(), i);
 
 			SDL_Surface *surface = ImageUtility::loadImage(
 					fileUtility->getFullPath(FileUtility::anima, buf));
