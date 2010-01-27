@@ -24,17 +24,25 @@ void Window::removeElement(std::string name, bool remainHandler) {
 		m_elements.erase(name);
 	}
 	if (!remainHandler)
-		removeHandler(name);
+		removeHandler(hdl_all, name);
 }
 
-void Window::addHandler(std::string elementName, void(*func)()) {
-	removeHandler(elementName);
-	m_handlers[elementName] = func;
+void Window::addHandler(HandlerType hdl, std::string elementName, void(*func)()) {
+	removeHandler(hdl, elementName);
+	if (hdl == hdl_all || hdl == hdl_lclick)
+		m_lcHandlers[elementName] = func;
+	if (hdl == hdl_all || hdl == hdl_rclick)
+		m_rcHandlers[elementName] = func;
 }
 
-void Window::removeHandler(std::string elementName) {
-	if (m_handlers.count(elementName) > 0) {
-		m_handlers.erase(elementName);
+void Window::removeHandler(HandlerType hdl, std::string elementName) {
+	if ((hdl == hdl_all || hdl == hdl_lclick)
+			&& m_lcHandlers.count(elementName) > 0) {
+		m_lcHandlers.erase(elementName);
+	}
+	if ((hdl == hdl_all || hdl == hdl_rclick)
+			&& m_rcHandlers.count(elementName) > 0) {
+		m_rcHandlers.erase(elementName);
 	}
 }
 
@@ -74,13 +82,28 @@ void Window::process(InputHandler* input) {
 	int gmy = input->mouseY;
 
 	std::map<std::string, void(*)()>::const_iterator iter;
-	for (iter = m_handlers.begin(); iter != m_handlers.end(); ++iter) {
+	for (iter = m_lcHandlers.begin(); iter != m_lcHandlers.end(); ++iter) {
 		if (m_elements.count(iter->first) > 0) {
 			TextObject* o = m_elements.find(iter->first)->second;
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
 				o->GMask = 0.3f;
 				if (input->getPressInput(InputHandler::Fire)) {
+					iter->second();
+				}
+			} else {
+				o->GMask = 1.0f;
+			}
+		}
+	}
+
+	for (iter = m_rcHandlers.begin(); iter != m_rcHandlers.end(); ++iter) {
+		if (m_elements.count(iter->first) > 0) {
+			TextObject* o = m_elements.find(iter->first)->second;
+			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
+					&& gmy < o->getBottom()) {
+				o->GMask = 0.3f;
+				if (input->getPressInput(InputHandler::Reload)) {
 					iter->second();
 				}
 			} else {
@@ -96,5 +119,6 @@ Window::~Window() {
 		delete iter->second;
 	}
 	m_elements.clear();
-	m_handlers.clear();
+	m_lcHandlers.clear();
+	m_rcHandlers.clear();
 }

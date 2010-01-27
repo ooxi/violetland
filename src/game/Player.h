@@ -22,7 +22,7 @@ private:
 	bool m_light, m_laser;
 public:
 	Player();
-	Player(float x, float y, Sprite *legsSprite, Texture *armsTex);
+	Player(float x, float y, Sprite *legsSprite);
 	virtual void process(int deltaTime);
 	virtual void draw();
 

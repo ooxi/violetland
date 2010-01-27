@@ -16,7 +16,7 @@ private:
 	std::string m_appPath, m_resPath, m_usrPath;
 public:
 	enum PathType {
-		common = 0, image, anima, sound, music, monsters, user
+		common = 0, image, anima, sound, music, monsters, weapon, user
 	};
 	FileUtility(char *argPath);
 	static void truncateFullPathToDir(char *path);

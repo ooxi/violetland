@@ -19,13 +19,13 @@ private:
 	int m_reload;
 	Texture *m_droppedTex;
 	Texture *m_bulletTex;
+	Texture *m_playerTex;
 	Sound* m_shotSound;
 	Sound* m_reloadSound;
-	Sprite* m_shellSprite;
 	int m_reloadSndCh;
 public:
-	Weapon(Bullet::BulletType Type, std::string droppedImage,
-			Sprite* shellSprite, Sound* shotSound, Sound* reloadSound);
+	Weapon(Texture* droppedTex, Texture* playerTex, Sound* shotSound,
+			Sound* reloadSound);
 	void setBulletImage(std::string image);
 	void process(int deltaTime);
 	std::vector<Bullet*> *fire(float x, float y, float dX, float dY);
@@ -34,8 +34,9 @@ public:
 	float getReloadState();
 	void deleteResources();
 	Texture *getDroppedTex();
-	Sprite* getShellSprite();
+	Texture *getPlayerTex();
 	~Weapon();
+	Sprite* ShellSprite;
 	Bullet::BulletType Type;
 	std::string Name;
 	int FireDelayTime;
@@ -47,6 +48,8 @@ public:
 	float FireRange;
 	float ReturnForce;
 	int BulletsAtOnce;
+	float XDiff;
+	float YDiff;
 
 	bool Poisoned;
 };

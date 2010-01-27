@@ -23,7 +23,7 @@ Player::Player() :
 	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = false;
 }
 
-Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex) :
+Player::Player(float x, float y, Sprite *legsSprite) :
 	LifeForm(x, y, 128, 128) {
 	*this = Player();
 
@@ -34,8 +34,6 @@ Player::Player(float x, float y, Sprite *legsSprite, Texture *armsTex) :
 
 	m_legs = new DynamicObject(x, y, legsSprite);
 	m_legs->Frame = 8;
-
-	m_arms = new StaticObject(x, y, 128, 128, armsTex, false);
 
 	Empty = false;
 }
@@ -81,7 +79,9 @@ void Player::move(char movementX, char movementY, int deltaTime) {
 std::vector<Bullet*> *Player::fire() {
 	const float rad = (getArmsAngle() - 90) * M_PI / 180;
 	std::vector<Bullet*> *newBullets = m_weapon->fire(m_arms->X, m_arms->Y,
-			m_arms->X + 50 * cos(rad), m_arms->Y + 50 * sin(rad));
+			m_arms->X + m_weapon->XDiff * cos(rad) + m_weapon->YDiff
+					* sin(-rad), m_arms->Y + m_weapon->XDiff * sin(rad)
+					+ m_weapon->YDiff * cos(-rad));
 
 	if (!newBullets->empty()) {
 		std::vector<Bullet*>::iterator it;
@@ -105,8 +105,7 @@ std::vector<Bullet*> *Player::fire() {
 		if (m_weapon->BulletsAtOnce > 1)
 			AccuracyDeviation = 0;
 
-		DynamicObject* shell = new DynamicObject(X, Y,
-				m_weapon->getShellSprite());
+		DynamicObject* shell = new DynamicObject(X, Y, m_weapon->ShellSprite);
 		shell->Angle = m_arms->Angle;
 		m_shells.push_back(shell);
 	}
@@ -195,9 +194,12 @@ Weapon* Player::getWeapon() {
 }
 
 void Player::setWeapon(Weapon *value) {
-	if (m_weapon)
+	if (m_weapon) {
+		delete m_arms;
 		delete m_weapon;
+	}
 	m_weapon = new Weapon(*value);
+	m_arms = new StaticObject(X, Y, 128, 128, m_weapon->getPlayerTex(), false);
 	AccuracyDeviation = 0;
 }
 
