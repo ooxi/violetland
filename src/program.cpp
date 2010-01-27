@@ -916,9 +916,6 @@ void createOptionsWindow() {
 	w->addElement("sectionsound", videoManager->RegularText->getObject("Sound",
 			l, videoManager->RegularText->getHeight() * 11.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
-	w->addElement("musicvolume", text->getObject("Music volume", l
-			+ text->getHeight() * 2.0f, text->getHeight() * 14.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("soundvolume", videoManager->RegularText->getObject(
 			"Sound volume", l + videoManager->RegularText->getHeight() * 2.0f,
@@ -928,7 +925,6 @@ void createOptionsWindow() {
 			"Music volume", l + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 14.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
-	w->addHandler("musicvolume", switchMusicVolume);
 
 	w->addHandler(Window::hdl_lclick, "autoreload", switchAutoReload);
 	w->addHandler(Window::hdl_lclick, "autopickup", switchAutoPickup);
