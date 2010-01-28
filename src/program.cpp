@@ -487,25 +487,25 @@ void refreshCharStatsWindow() {
 	if (player->Unstoppable)
 		charStats->addElement("+unstoppable",
 				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 6.0f,
+						videoManager->RegularText->getHeight() * 4.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
 
 	if (player->PoisonBullets)
 		charStats->addElement("+poisonbullets",
 				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 7.0f,
+						videoManager->RegularText->getHeight() * 5.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
 
 	if (player->BigCalibre)
 		charStats->addElement("+bigcalibre",
 				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 8.0f,
+						videoManager->RegularText->getHeight() * 6.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
 
 	if (player->Telekinesis)
 		charStats->addElement("+telekinesis",
 				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 9.0f,
+						videoManager->RegularText->getHeight() * 7.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
 }
 
@@ -567,6 +567,45 @@ void takeTelekinesis() {
 	}
 }
 
+void showDetailsUnstoppable() {
+	windows["charstats"]->addElement(
+			"explantation",
+			videoManager->SmallText->getObject(
+					"Unstoppable: enemies can't block your movement any more, but they still can hurt you.",
+					config->ScreenWidth / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
+void showDetailsPoisonBullets() {
+	windows["charstats"]->addElement(
+			"explantation",
+			videoManager->SmallText->getObject(
+					"Poison bullets: after getting hit by your bullet, enemies slowly lose health until they die.",
+					config->ScreenWidth / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
+void showDetailsBigCalibre() {
+	windows["charstats"]->addElement(
+			"explantation",
+			videoManager->SmallText->getObject(
+					"Big calibre: your bullets can wound a few monsters in a row.",
+					config->ScreenWidth / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
+void showDetailsTelekinesis() {
+	windows["charstats"]->addElement("explantation",
+			videoManager->SmallText->getObject(
+					"Telekinesis: useful things slowly move towards you.",
+					config->ScreenWidth / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
 void createCharStatWindow() {
 	Window *charStats = new Window(0.0f, 0.0f, config->ScreenWidth,
 			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
@@ -574,39 +613,51 @@ void createCharStatWindow() {
 	const int r = config->ScreenWidth * 0.6f;
 
 	charStats->addElement("perks", videoManager->RegularText->getObject(
-			"Perks:", r, videoManager->RegularText->getHeight() * 4.0f,
+			"Perks:", r, videoManager->RegularText->getHeight() * 2.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	charStats->addElement("unstoppable", videoManager->RegularText->getObject(
 			"Unstoppable", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 6.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	charStats->addElement("poisonbullets",
 			videoManager->RegularText->getObject("Poison bullets", r
 					+ videoManager->RegularText->getHeight() * 2.0f,
-					videoManager->RegularText->getHeight() * 7.0f,
+					videoManager->RegularText->getHeight() * 5.0f,
 					TextManager::LEFT, TextManager::MIDDLE));
 
 	charStats->addElement("bigcalibre", videoManager->RegularText->getObject(
 			"Big calibre", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 6.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	charStats->addElement("telekinesis", videoManager->RegularText->getObject(
 			"Telekinesis", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 9.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
+
+	charStats->addElement("explantation", videoManager->SmallText->getObject(
+			"Move mouse over text to get explantation.", config->ScreenWidth
+					/ 2, videoManager->RegularText->getHeight() * 1.0f,
+			TextManager::CENTER, TextManager::MIDDLE));
 
 	charStats->addHandler(Window::hdl_lclick, "strength", increaseStrength);
 	charStats->addHandler(Window::hdl_lclick, "agility", increaseAgility);
 	charStats->addHandler(Window::hdl_lclick, "vitality", increaseVitality);
 
 	charStats->addHandler(Window::hdl_lclick, "unstoppable", takeUnstoppable);
+	charStats->addHandler(Window::hdl_move, "unstoppable",
+			showDetailsUnstoppable);
 	charStats->addHandler(Window::hdl_lclick, "poisonbullets",
 			takePoisonBullets);
+	charStats->addHandler(Window::hdl_move, "poisonbullets",
+			showDetailsPoisonBullets);
 	charStats->addHandler(Window::hdl_lclick, "bigcalibre", takeBigCalibre);
+	charStats->addHandler(Window::hdl_move, "bigcalibre", showDetailsBigCalibre);
 	charStats->addHandler(Window::hdl_lclick, "telekinesis", takeTelekinesis);
+	charStats->addHandler(Window::hdl_move, "telekinesis",
+			showDetailsTelekinesis);
 
 	windows["charstats"] = charStats;
 }
@@ -900,8 +951,8 @@ void createOptionsWindow() {
 			videoManager->RegularText->getHeight() * 9.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
-	w->addElement("sectiongraphic", videoManager->RegularText->getObject(
-			"Graphic", r, videoManager->RegularText->getHeight() * 5.0f,
+	w->addElement("sectiongraphics", videoManager->RegularText->getObject(
+			"Graphics", r, videoManager->RegularText->getHeight() * 5.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("fullscreen", videoManager->RegularText->getObject(
@@ -939,7 +990,7 @@ void createOptionsWindow() {
 
 	w->addElement("savereturn", videoManager->RegularText->getObject(
 			"Save and return", l, videoManager->RegularText->getHeight()
-					* 18.0f, TextManager::LEFT, TextManager::MIDDLE));
+					* 17.0f, TextManager::LEFT, TextManager::MIDDLE));
 	w->addHandler(Window::hdl_lclick, "savereturn", backFromOptionsAndSave);
 
 	windows["options"] = w;

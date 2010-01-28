@@ -12,9 +12,10 @@ protected:
 	std::map<std::string, TextObject*> m_elements;
 	std::map<std::string, void(*)()> m_lcHandlers;
 	std::map<std::string, void(*)()> m_rcHandlers;
+	std::map<std::string, void(*)()> m_mvHandlers;
 public:
 	enum HandlerType {
-		hdl_all = 0, hdl_lclick, hdl_rclick
+		hdl_all = 0, hdl_click, hdl_lclick, hdl_rclick, hdl_move
 	};
 	Window(float x, float y, int w, int h, float r, float g, float b, float a);
 	void addElement(std::string name, TextObject* element);
