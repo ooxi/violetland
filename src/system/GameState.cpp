@@ -5,6 +5,7 @@ GameState::GameState() {
 	Begun = false;
 	Works = true;
 	Lost = false;
+	Time = 0;
 }
 
 void GameState::startSurvival() {
@@ -12,6 +13,7 @@ void GameState::startSurvival() {
 	Lost = false;
 	Paused = false;
 	Begun = true;
+	Time = 0;
 }
 
 void GameState::endGame() {

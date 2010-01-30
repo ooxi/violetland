@@ -11,7 +11,6 @@ Player::Player() :
 	Kills = 0;
 	LevelPoints = 0;
 	AccuracyDeviation = 0.0f;
-	Time = 0;
 	Grenades = 2;
 	Type = LifeForm::player;
 	HudInfo = "";

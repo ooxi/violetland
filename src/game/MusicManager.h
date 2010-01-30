@@ -2,6 +2,7 @@
 #include <string>
 #include "../system/utility/FileUtility.h"
 #include "../system/sound/SoundManager.h"
+#include "../system/GameState.h"
 #include "Enemy.h"
 #include "Player.h"
 
@@ -18,7 +19,8 @@ private:
 public:
 	MusicManager(FileUtility* fileUtility, SoundManager* soundManager,
 			Configuration* config);
-	void process(Player* player, std::vector<LifeForm*> enemies, bool paused);
+	void process(Player* player, std::vector<LifeForm*> enemies,
+			GameState* gameState);
 	void play();
 	void play(int chan, std::string name, bool now);
 	~MusicManager();

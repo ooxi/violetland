@@ -25,7 +25,7 @@ void LaserBullet::process(int deltaTime) {
 void LaserBullet::draw() {
 	glDisable(GL_TEXTURE_2D);
 
-	glLineWidth(1.0f);
+	glLineWidth(2.0f);
 	glBegin(GL_LINES);
 	glColor4f(0.3f, 1.0f, 0.3f, Alpha / 3.0f);
 	glVertex3f(X, Y, 0);

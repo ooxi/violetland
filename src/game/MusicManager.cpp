@@ -25,15 +25,15 @@ MusicManager::MusicManager(FileUtility* fileUtility,
 }
 
 void MusicManager::process(Player* player, std::vector<LifeForm*> enemies,
-		bool paused) {
-	if (paused) {
+		GameState* gameState) {
+	if (gameState->Paused) {
 		play();
 		return;
 	}
 	bool afterPause = m_currentPlaying == DEFAULT;
 	if (player->getHealth() / player->MaxHealth() < 0.4f) {
 		play(0, "03.ogg", afterPause);
-	} else if (player->Time < 100000) {
+	} else if (gameState->Time < 100000) {
 		play(0, "05.ogg", afterPause);
 	} else if (player->getWeapon()->Name == "Laser") {
 		play(0, "02.ogg", afterPause);

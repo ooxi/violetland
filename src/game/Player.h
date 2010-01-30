@@ -46,7 +46,6 @@ public:
 	int Xp;
 	int NextLevelXp;
 	int Kills;
-	int Time;
 	int Grenades;
 	std::string HudInfo;
 

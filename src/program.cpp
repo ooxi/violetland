@@ -221,6 +221,19 @@ void spawnEnemy(float r, int lvl) {
 }
 
 void startSurvival() {
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	cam->X = cam->Y = 0.0f;
+
+	cam->applyGLOrtho();
+
+	splash->draw(false, false);
+
+	videoManager->RegularText->draw("Please wait...", 0, 0,
+			TextManager::CENTER, TextManager::MIDDLE);
+
+	SDL_GL_SwapBuffers();
+
 	gameState->startSurvival();
 
 	clearBloodStains();
@@ -341,6 +354,9 @@ void initSystem() {
 
 	splash->draw(false, false);
 
+	videoManager->RegularText->draw("Please wait...", 0, 0,
+			TextManager::CENTER, TextManager::MIDDLE);
+
 	SDL_GL_SwapBuffers();
 
 	printf("Preparing sound systems...\n");
@@ -356,8 +372,8 @@ void initSystem() {
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightColor);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightColor);
-	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0f);
-	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.001f);
+	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.8f);
+	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.0008f);
 
 	//selflight
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor);
@@ -366,7 +382,7 @@ void initSystem() {
 	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0f);
 	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.0001f);
 
-	glEnable(GL_LIGHT2);
+	//	glEnable(GL_LIGHT2);
 
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -376,7 +392,7 @@ void initSystem() {
 	gameState = new GameState();
 }
 
-void loseGame() {
+void loseGame(Player* player) {
 	gameState->Lost = true;
 	if (playerHitSounds[playerHitSndPlaying]->isPlaying())
 		playerHitSounds[playerHitSndPlaying]->stop(0);
@@ -391,7 +407,7 @@ void loseGame() {
 	h->Agility = player->Agility;
 	h->Strength = player->Strength;
 	h->Vitality = player->Vitality;
-	h->Time = player->Time;
+	h->Time = gameState->Time;
 	h->Xp = player->Xp;
 	s.add(h);
 
@@ -1180,9 +1196,124 @@ void handleParticles() {
 	}
 }
 
-void handlePlayer() {
-	if (player->isDead())
-		loseGame();
+void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
+	StaticObject *newBloodStain = new StaticObject(x, y, 128, 128,
+			bloodTex[(rand() % 299) / 100], false);
+
+	newBloodStain->Scale = scale;
+	newBloodStain->Angle = angle;
+	if (poisoned) {
+		newBloodStain->GMask = 1.0f - (rand() % 200) / 1000.0f;
+		newBloodStain->RMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
+	} else {
+		newBloodStain->RMask = 1.0f - (rand() % 200) / 1000.0f;
+		newBloodStain->GMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
+
+	}
+	bloodStains.push_back(newBloodStain);
+}
+
+void handleMonster(LifeForm* lf) {
+	float x = lf->X;
+	float y = lf->Y;
+
+	Enemy* enemy = (Enemy*) lf;
+
+	if (!gameState->Lost && enemy->detectCollide(player->TargetX,
+			player->TargetY)) {
+		char *buf;
+		sprintf(buf = new char[255], "%s (%i)", enemy->Name.c_str(),
+				enemy->Level);
+		player->HudInfo = buf;
+		delete[] buf;
+	}
+
+	if (lf->Frozen > 0)
+		return;
+
+	if (enemy->isBleeding() && bloodStains.size() < 12) {
+		addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10) / 50.0f
+				+ 0.1f, enemy->Poisoned);
+	}
+
+	float rangeToPlayer = sqrt(pow(-enemy->X + player->X, 2) + pow(enemy->Y
+			- player->Y, 2));
+
+	if (enemy->DoNotDisturb) {
+		bool reach = true;
+		if (enemy->X < enemy->TargetX - enemy->Speed * 60 || enemy->X
+				> enemy->TargetX + enemy->Speed * 60 || enemy->Y
+				< enemy->TargetY - enemy->Speed * 60 || enemy->Y
+				> enemy->TargetY + enemy->Speed * 60)
+			reach = false;
+		if (reach)
+			enemy->DoNotDisturb = false;
+	}
+
+	if ((rangeToPlayer < 400 || enemy->Angry) && !gameState->Lost) {
+		enemy->TargetX = player->X;
+		enemy->TargetY = player->Y;
+	} else if (rangeToPlayer < 800 && !gameState->Lost) {
+		enemy->TargetX = player->X - cos((player->getLegsAngle() + 90) * M_PI
+				/ 180) * rangeToPlayer / 2.0f / enemy->Speed * player->Speed;
+		enemy->TargetY = player->Y - sin((player->getLegsAngle() + 90) * M_PI
+				/ 180) * rangeToPlayer / 2.0f / enemy->Speed * player->Speed;
+	} else if (!enemy->DoNotDisturb) {
+		enemy->TargetX = (rand() % (config->GameAreaSize * 2))
+				- config->GameAreaSize;
+		enemy->TargetY = (rand() % (config->GameAreaSize * 2))
+				- config->GameAreaSize;
+		enemy->DoNotDisturb = true;
+	}
+
+	if (!gameState->Lost && player->detectCollide(enemy)) {
+		if (enemy->Attack()) {
+			if (rand() % 100 > player->ChanceToEvade() * 100) {
+				player->setHealth(player->getHealth() - enemy->Damage());
+				if (!playerHitSounds[playerHitSndPlaying]->isPlaying()) {
+					playerHitSndPlaying = (player->getHealth()
+							< player->MaxHealth() ? player->getHealth()
+							: player->getHealth() - 0.01f)
+							/ player->MaxHealth() * playerHitSounds.size();
+					playerHitSounds[playerHitSndPlaying]->play(6, 0, 0);
+				}
+			}
+
+			if (!player->Unstoppable)
+				player->Speed = 0.0f;
+		}
+
+		if (player->Attack() && rand() % 100 > enemy->ChanceToEvade() * 100)
+			enemy->setHealth(player->getHealth() - player->Damage());
+
+		enemy->X = x;
+		enemy->Y = y;
+	} else {
+		enemy->rollFrame(true);
+	}
+}
+
+void levelUp(Player* player) {
+	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 2.0f + 10);
+
+	player->NextLevelXp *= 2;
+
+	player->Level += 1;
+	player->LevelPoints += 1;
+
+	msgQueue.push_back(videoManager->RegularText->getObject(
+			"The player has reached new level.", 0, 0, TextManager::LEFT,
+			TextManager::MIDDLE));
+
+	player->setHealth(player->MaxHealth());
+}
+
+void handlePlayer(LifeForm* lf) {
+	Player* player = (Player*) lf;
+
+	if (player->Xp >= player->NextLevelXp) {
+		levelUp(player);
+	}
 
 	char movementX = 0;
 	char movementY = 0;
@@ -1198,19 +1329,17 @@ void handlePlayer() {
 
 	player->move(movementX, movementY, deltaTime);
 
-	if (player->X < -config->GameAreaSize)
+	if (lf->X < -config->GameAreaSize)
 		player->setX(-config->GameAreaSize);
-	if (player->X > config->GameAreaSize)
+	if (lf->X > config->GameAreaSize)
 		player->setX(config->GameAreaSize);
-	if (player->Y < -config->GameAreaSize)
+	if (lf->Y < -config->GameAreaSize)
 		player->setY(-config->GameAreaSize);
-	if (player->Y > config->GameAreaSize)
+	if (lf->Y > config->GameAreaSize)
 		player->setY(config->GameAreaSize);
 
-	player->TargetX = input->mouseX / videoManager->WK - cam->getHalfW()
-			+ cam->X;
-	player->TargetY = input->mouseY / videoManager->HK - cam->getHalfH()
-			+ cam->Y;
+	lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW() + cam->X;
+	lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH() + cam->Y;
 
 	if (input->getDownInput(InputHandler::Fire)) {
 		std::vector<Bullet*> *newBullets = player->fire();
@@ -1299,23 +1428,6 @@ void dropPowerup(float x, float y) {
 		powerups.push_back(newPowerup);
 }
 
-void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
-	StaticObject *newBloodStain = new StaticObject(x, y, 128, 128,
-			bloodTex[(rand() % 299) / 100], false);
-
-	newBloodStain->Scale = scale;
-	newBloodStain->Angle = angle;
-	if (poisoned) {
-		newBloodStain->GMask = 1.0f - (rand() % 200) / 1000.0f;
-		newBloodStain->RMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
-	} else {
-		newBloodStain->RMask = 1.0f - (rand() % 200) / 1000.0f;
-		newBloodStain->GMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
-
-	}
-	bloodStains.push_back(newBloodStain);
-}
-
 void handleLifeForms() {
 	if (!gameState->Lost) {
 		for (int i = 0; i < deltaTime; i++) {
@@ -1331,92 +1443,20 @@ void handleLifeForms() {
 
 	if (!lifeForms.empty()) {
 		for (int i = lifeForms.size() - 1; i >= 0; i--) {
-			float x = lifeForms[i]->X;
-			float y = lifeForms[i]->Y;
-
 			lifeForms[i]->process(deltaTime);
 
-			if (lifeForms[i]->Type == LifeForm::player
-					|| lifeForms[i]->isDead())
-				continue;
+			if (lifeForms[i]->Type == LifeForm::player) {
+				if (!gameState->Lost) {
+					if (lifeForms[i]->isDead())
+						loseGame(player);
 
-			Enemy* enemy = (Enemy*) lifeForms[i];
-
-			if (!gameState->Lost && enemy->detectCollide(player->TargetX,
-					player->TargetY)) {
-				char *buf;
-				sprintf(buf = new char[255], "%s (%i)", enemy->Name.c_str(),
-						enemy->Level);
-				player->HudInfo = buf;
-				delete[] buf;
-			}
-
-			if (lifeForms[i]->Frozen > 0)
-				continue;
-
-			if (enemy->isBleeding() && bloodStains.size() < 12) {
-				addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
-						/ 50.0f + 0.1f, enemy->Poisoned);
-			}
-
-			float rangeToPlayer = sqrt(pow(-enemy->X + player->X, 2) + pow(
-					enemy->Y - player->Y, 2));
-
-			if (enemy->DoNotDisturb) {
-				bool reach = true;
-				if (enemy->X < enemy->TargetX - enemy->Speed * 60 || enemy->X
-						> enemy->TargetX + enemy->Speed * 60 || enemy->Y
-						< enemy->TargetY - enemy->Speed * 60 || enemy->Y
-						> enemy->TargetY + enemy->Speed * 60)
-					reach = false;
-				if (reach)
-					enemy->DoNotDisturb = false;
-			}
-
-			if ((rangeToPlayer < 400 || enemy->Angry) && !gameState->Lost) {
-				enemy->TargetX = player->X;
-				enemy->TargetY = player->Y;
-			} else if (rangeToPlayer < 800 && !gameState->Lost) {
-				enemy->TargetX = player->X - cos((player->getLegsAngle() + 90)
-						* M_PI / 180) * rangeToPlayer / 2.0f / enemy->Speed
-						* player->Speed;
-				enemy->TargetY = player->Y - sin((player->getLegsAngle() + 90)
-						* M_PI / 180) * rangeToPlayer / 2.0f / enemy->Speed
-						* player->Speed;
-			} else if (!enemy->DoNotDisturb) {
-				enemy->TargetX = (rand() % (config->GameAreaSize * 2))
-						- config->GameAreaSize;
-				enemy->TargetY = (rand() % (config->GameAreaSize * 2))
-						- config->GameAreaSize;
-				enemy->DoNotDisturb = true;
-			}
-
-			if (!gameState->Lost && player->detectCollide(enemy)) {
-				if (enemy->Attack()) {
-					if (rand() % 100 > player->ChanceToEvade() * 100) {
-						player->setHealth(player->getHealth() - enemy->Damage());
-						if (!playerHitSounds[playerHitSndPlaying]->isPlaying()) {
-							playerHitSndPlaying = (player->getHealth()
-									< player->MaxHealth() ? player->getHealth()
-									: player->getHealth() - 0.01f)
-									/ player->MaxHealth()
-									* playerHitSounds.size();
-							playerHitSounds[playerHitSndPlaying]->play(6, 0, 0);
-						}
-					}
-
-					if (!player->Unstoppable)
-						player->Speed = 0.0f;
+					handlePlayer(lifeForms[i]);
 				}
+			}
 
-				if (player->Attack() && rand() % 100 > enemy->ChanceToEvade()
-						* 100)
-					enemy->setHealth(player->getHealth() - player->Damage());
-
-				enemy->X = x;
-				enemy->Y = y;
-			} else {
-				enemy->rollFrame(true);
+			if (lifeForms[i]->Type == LifeForm::monster) {
+				if (!lifeForms[i]->isDead())
+					handleMonster(lifeForms[i]);
 			}
 		}
 	}
@@ -1566,8 +1606,8 @@ void setGuiCameraMode() {
 }
 
 void drawHud() {
-	const int minutes = player->Time / 60000;
-	const int seconds = (player->Time - minutes * 60000) / 1000;
+	const int minutes = gameState->Time / 60000;
+	const int seconds = (gameState->Time - minutes * 60000) / 1000;
 
 	char *buf;
 
@@ -1749,31 +1789,10 @@ void handlePowerups() {
 	}
 }
 
-void levelUp() {
-	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 2.0f + 10);
-
-	player->NextLevelXp *= 2;
-
-	player->Level += 1;
-	player->LevelPoints += 1;
-
-	msgQueue.push_back(videoManager->RegularText->getObject(
-			"The player has reached new level.", 0, 0, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	player->setHealth(player->MaxHealth());
-}
-
 void processGame() {
 	if (!gameState->Lost) {
 		gameState->Hardness -= deltaTime * 0.00012;
-		player->Time += deltaTime;
-
-		handlePlayer();
-
-		if (player->Xp >= player->NextLevelXp) {
-			levelUp();
-		}
+		gameState->Time += deltaTime;
 	}
 
 	terrain->beginDrawOn();
@@ -1827,19 +1846,27 @@ void drawGame() {
 
 	glEnable(GL_LIGHTING);
 
-	gameState->TimeOfDay = abs(cos(player->Time / 180000.0));
+	gameState->TimeOfDay = abs(cos((gameState->Time + 45000) / 180000.0));
 
-	float globalAmbientColor = gameState->TimeOfDay / 5.0;
-	float directColor = gameState->TimeOfDay / 2.0;
+	float gawc = gameState->TimeOfDay;
+	//	float directAvgCol = gameState->TimeOfDay / 2;
+	float v = cos((gameState->Time + 45000) / 90000.0);
+	float garc = v >= 0 ? 0 : v / -3;
+	float gabc = v > 0 ? v / 3 : 0;
+	float r = gawc + garc;
+	float b = gawc + gabc;
+	if (r > 1)
+		r = 1;
+	if (b > 1)
+		b = 1;
 
-	GLfloat global_ambient[] = { globalAmbientColor, globalAmbientColor,
-			globalAmbientColor, 1.0f };
+	GLfloat global_ambient[] = { r, gawc, b, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 
-	GLfloat day_light[] = { directColor, directColor, directColor, 1.0f };
-	glLightfv(GL_LIGHT2, GL_AMBIENT, day_light);
-	glLightfv(GL_LIGHT2, GL_DIFFUSE, day_light);
-	glLightfv(GL_LIGHT2, GL_SPECULAR, day_light);
+	//	GLfloat day_light[] = { directAvgCol, directAvgCol, directAvgCol, 1.0f };
+	//	glLightfv(GL_LIGHT2, GL_AMBIENT, day_light);
+	//	glLightfv(GL_LIGHT2, GL_DIFFUSE, day_light);
+	//	glLightfv(GL_LIGHT2, GL_SPECULAR, day_light);
 
 	if (!gameState->Lost && player->getLight()) {
 		glEnable(GL_LIGHT0);
@@ -1978,7 +2005,7 @@ void runMainLoop() {
 		handleCommonControls();
 
 		if (gameState->Begun) {
-			musicManager->process(player, lifeForms, gameState->Paused);
+			musicManager->process(player, lifeForms, gameState);
 
 			if (!gameState->Paused)
 				processGame();

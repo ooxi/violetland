@@ -13,6 +13,7 @@ public:
 	bool Begun;
 	bool Paused;
 	float TimeOfDay;
+	int Time;
 };
 
 #endif /* GAMESTATE_H_ */
