@@ -11,6 +11,7 @@
 #include <time.h>
 #endif //_WIN32
 #include <stdlib.h>
+#include <algorithm>
 #include <vector>
 #include <cmath>
 #include <map>
@@ -1811,7 +1812,8 @@ void processGame() {
 					dropPowerup(lifeForms[i]->X, lifeForms[i]->Y);
 					player->Kills++;
 					player->Xp += (int) ((1.5 - gameState->TimeOfDay * -0.5)
-							* lifeForms[i]->MaxHealth() * 10);
+							* (lifeForms[i]->Strength + lifeForms[i]->Agility
+									+ lifeForms[i]->Vitality) * 3);
 					delete lifeForms[i];
 					lifeForms.erase(lifeForms.begin() + i);
 				}
@@ -1850,7 +1852,7 @@ void drawGame() {
 
 	float gawc = gameState->TimeOfDay;
 	//	float directAvgCol = gameState->TimeOfDay / 2;
-	float v = cos((gameState->Time + 45000) / 90000.0);
+	float v = cos((gameState->Time + 45000) / 45000.0);
 	float garc = v >= 0 ? 0 : v / -3;
 	float gabc = v > 0 ? v / 3 : 0;
 	float r = gawc + garc;
@@ -1890,6 +1892,9 @@ void drawGame() {
 	for (unsigned int i = 0; i < powerups.size(); i++) {
 		powerups[i]->draw(false, false);
 	}
+
+	std::sort(lifeForms.begin(), lifeForms.end(),
+			LifeForm::compareByDeadPredicate);
 
 	for (unsigned int i = 0; i < lifeForms.size(); i++) {
 		if (lifeForms[i]->getLeft() < cam->X + cam->getHalfW()
