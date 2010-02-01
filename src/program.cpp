@@ -383,8 +383,6 @@ void initSystem() {
 	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0f);
 	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.0001f);
 
-	//	glEnable(GL_LIGHT2);
-
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
@@ -1851,7 +1849,6 @@ void drawGame() {
 	gameState->TimeOfDay = abs(cos((gameState->Time + 45000) / 180000.0));
 
 	float gawc = gameState->TimeOfDay;
-	//	float directAvgCol = gameState->TimeOfDay / 2;
 	float v = cos((gameState->Time + 45000) / 45000.0);
 	float garc = v >= 0 ? 0 : v / -3;
 	float gabc = v > 0 ? v / 3 : 0;
@@ -1864,11 +1861,6 @@ void drawGame() {
 
 	GLfloat global_ambient[] = { r, gawc, b, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
-
-	//	GLfloat day_light[] = { directAvgCol, directAvgCol, directAvgCol, 1.0f };
-	//	glLightfv(GL_LIGHT2, GL_AMBIENT, day_light);
-	//	glLightfv(GL_LIGHT2, GL_DIFFUSE, day_light);
-	//	glLightfv(GL_LIGHT2, GL_SPECULAR, day_light);
 
 	if (!gameState->Lost && player->getLight()) {
 		glEnable(GL_LIGHT0);
