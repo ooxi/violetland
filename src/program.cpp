@@ -81,7 +81,8 @@ vector<Texture*> explTex;
 
 Aim* aim;
 
-vector<LifeForm*> lifeForms;
+map<string, LifeForm*> lifeForms;
+
 Player* player;
 
 vector<StaticObject*> bloodStains;
@@ -129,8 +130,9 @@ void clearBloodStains() {
 }
 
 void clearLifeForms() {
-	for (unsigned int i = 0; i < lifeForms.size(); i++) {
-		delete lifeForms[i];
+	map<string, LifeForm*>::const_iterator iter;
+	for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+		delete iter->second;
 	}
 	lifeForms.clear();
 }
@@ -218,7 +220,8 @@ void spawnEnemy(float r, int lvl) {
 	newMonster->X = r * cos(spawnAngle);
 	newMonster->Y = r * sin(spawnAngle);
 
-	lifeForms.push_back(newMonster);
+	lifeForms.insert(map<string, LifeForm*>::value_type(newMonster->Id,
+			newMonster));
 }
 
 void startSurvival() {
@@ -248,7 +251,8 @@ void startSurvival() {
 	player->setWeapon(weaponManager->getWeaponByName("PM"));
 	player->HitR = 0.28f;
 	player->Acceleration = 0.0004f;
-	lifeForms.push_back(player);
+
+	lifeForms.insert(map<string, LifeForm*>::value_type(player->Id, player));
 
 	msgQueue.push_back(videoManager->RegularText->getObject(
 			"Try to survive as long as you can.", 0, 0, TextManager::LEFT,
@@ -1077,16 +1081,22 @@ void unloadResources() {
 }
 
 void backFromOptionsAndSave() {
+	bool changeVideoMode = config->ScreenWidth != tempConfig->ScreenWidth
+			|| config->ScreenHeight != tempConfig->ScreenHeight;
+
 	config->ScreenWidth = tempConfig->ScreenWidth;
 	config->ScreenHeight = tempConfig->ScreenHeight;
 	config->write();
+
+	if (changeVideoMode) {
 #ifdef _WIN32
-	fprintf(stdout,"Hot video mode changing is not supported on windows now. You should restart the game.");
-	unloadResources();
-	shutdownSystem();
-	exit(0);
+		fprintf(stdout,"Hot video mode changing is not supported on windows now. You should restart the game.");
+		unloadResources();
+		shutdownSystem();
+		exit(0);
 #endif //_WIN32
-	videoManager->setMode(config, cam);
+		videoManager->setMode(config, cam);
+	}
 	windows["options"]->CloseFlag = true;
 	createMainMenuWindow();
 }
@@ -1160,14 +1170,15 @@ void handleExplosions() {
 			explosions[i]->process(deltaTime);
 
 			if (explosions[i]->Active && !lifeForms.empty()) {
-				for (int j = lifeForms.size() - 1; j >= 0; j--) {
-					if (lifeForms[j]->Type == LifeForm::player
-							&& !config->FriendlyFire)
+				map<string, LifeForm*>::const_iterator iter;
+				for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+					LifeForm* lf = iter->second;
+					if (lf->Type == LifeForm::player && !config->FriendlyFire)
 						continue;
 
-					float d = explosions[i]->calcDamage(lifeForms[j]);
+					float d = explosions[i]->calcDamage(lf);
 					if (d > 0) {
-						lifeForms[j]->setHealth(lifeForms[j]->getHealth() - d);
+						lf->setHealth(lf->getHealth() - d);
 					}
 				}
 			}
@@ -1441,21 +1452,24 @@ void handleLifeForms() {
 	}
 
 	if (!lifeForms.empty()) {
-		for (int i = lifeForms.size() - 1; i >= 0; i--) {
-			lifeForms[i]->process(deltaTime);
+		map<string, LifeForm*>::const_iterator iter;
+		for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+			LifeForm* lf = iter->second;
 
-			if (lifeForms[i]->Type == LifeForm::player) {
+			lf->process(deltaTime);
+
+			if (lf->Type == LifeForm::player) {
 				if (!gameState->Lost) {
-					if (lifeForms[i]->isDead())
+					if (lf->isDead())
 						loseGame(player);
 
-					handlePlayer(lifeForms[i]);
+					handlePlayer(lf);
 				}
 			}
 
-			if (lifeForms[i]->Type == LifeForm::monster) {
-				if (!lifeForms[i]->isDead())
-					handleMonster(lifeForms[i]);
+			if (lf->Type == LifeForm::monster) {
+				if (!lf->isDead())
+					handleMonster(lf);
 			}
 		}
 	}
@@ -1467,12 +1481,14 @@ void handleBullets() {
 			bullets[i]->process(deltaTime);
 
 			if (bullets[i]->isActive() && !lifeForms.empty()) {
-				for (int j = lifeForms.size() - 1; j >= 0; j--) {
-					if (lifeForms[j]->Type == LifeForm::player
-							|| lifeForms[j]->isDead())
+				map<string, LifeForm*>::const_iterator iter;
+				for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+					LifeForm* lf = iter->second;
+
+					if (lf->Type == LifeForm::player || lf->isDead())
 						continue;
 
-					Enemy* enemy = (Enemy*) lifeForms[j];
+					Enemy* enemy = (Enemy*) lf;
 
 					if (bullets[i]->checkHit(enemy)) {
 						if (bloodStains.size() < 9) {
@@ -1749,12 +1765,16 @@ void handlePowerups() {
 				msgQueue.push_back(videoManager->RegularText->getObject(
 						"All has frozen around you.", 0, 0, TextManager::LEFT,
 						TextManager::MIDDLE));
-				for (int j = lifeForms.size() - 1; j >= 0; j--) {
-					if (lifeForms[j]->Type == LifeForm::player
-							|| lifeForms[j]->isDead())
-						continue;
-					lifeForms[j]->Frozen = *(int*) powerups[i]->Object;
-				}
+
+				//				map<string, LifeForm*>::const_iterator iter;
+				//				for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+				//					LifeForm* lf = iter->second;
+				//
+				//					if (lf->Type == LifeForm::player || lf->isDead())
+				//						continue;
+				//					lf->Frozen = *(int*) powerups[i]->Object;
+				//				}
+
 				deletePowerup = true;
 				break;
 			case Powerup::grenades:
@@ -1802,18 +1822,20 @@ void processGame() {
 
 		clearBloodStains();
 
-		for (int i = lifeForms.size() - 1; i >= 0; i--) {
-			if (lifeForms[i]->Type == LifeForm::monster) {
-				Enemy* enemy = (Enemy*) lifeForms[i];
+		map<string, LifeForm*>::const_iterator iter;
+		for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+			LifeForm* lf = iter->second;
+
+			if (lf->Type == LifeForm::monster) {
+				Enemy* enemy = (Enemy*) lf;
 				if (enemy->isReasyToDisappear()) {
 					terrain ->drawOn(enemy->getCorpse());
-					dropPowerup(lifeForms[i]->X, lifeForms[i]->Y);
+					dropPowerup(lf->X, lf->Y);
 					player->Kills++;
 					player->Xp += (int) ((1.5 - gameState->TimeOfDay * -0.5)
-							* (lifeForms[i]->Strength + lifeForms[i]->Agility
-									+ lifeForms[i]->Vitality) * 3);
-					delete lifeForms[i];
-					lifeForms.erase(lifeForms.begin() + i);
+							* (lf->Strength + lf->Agility + lf->Vitality) * 3);
+					delete lf;
+					lifeForms.erase(iter->first);
 				}
 			}
 		}
@@ -1888,21 +1910,22 @@ void drawGame() {
 	std::sort(lifeForms.begin(), lifeForms.end(),
 			LifeForm::compareByDeadPredicate);
 
-	for (unsigned int i = 0; i < lifeForms.size(); i++) {
-		if (lifeForms[i]->getLeft() < cam->X + cam->getHalfW()
-				&& lifeForms[i]->getRight() > cam->X - cam->getHalfW()
-				&& lifeForms[i]->getTop() < cam->Y + cam->getHalfH()
-				&& lifeForms[i]->getBottom() > cam->Y - cam->getHalfH())
+	map<string, LifeForm*>::const_iterator iter;
+	for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+		LifeForm* lf = iter->second;
 
-			if (gameState->Lost && lifeForms[i]->Type == LifeForm::player)
+		if (lf->getLeft() < cam->X + cam->getHalfW() && lf->getRight() > cam->X
+				- cam->getHalfW() && lf->getTop() < cam->Y + cam->getHalfH()
+				&& lf->getBottom() > cam->Y - cam->getHalfH())
+
+			if (gameState->Lost && lf->Type == LifeForm::player)
 				continue;
 
-		lifeForms[i]->draw();
+		lf->draw();
 
-		if (lifeForms[i]->Frozen > 0 && !lifeForms[i]->isDead()) {
-			crystal->AMask = lifeForms[i]->Frozen / 10000.0f;
-			crystal->draw(false, false, lifeForms[i]->X, lifeForms[i]->Y,
-					lifeForms[i]->Angle, lifeForms[i]->Scale);
+		if (lf->Frozen > 0 && !lf->isDead()) {
+			crystal->AMask = lf->Frozen / 10000.0f;
+			crystal->draw(false, false, lf->X, lf->Y, lf->Angle, lf->Scale);
 		}
 	}
 
@@ -2002,7 +2025,7 @@ void runMainLoop() {
 		handleCommonControls();
 
 		if (gameState->Begun) {
-			musicManager->process(player, lifeForms, gameState);
+			musicManager->process(player, gameState);
 
 			if (!gameState->Paused)
 				processGame();

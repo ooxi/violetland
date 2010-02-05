@@ -19,8 +19,7 @@ private:
 public:
 	MusicManager(FileUtility* fileUtility, SoundManager* soundManager,
 			Configuration* config);
-	void process(Player* player, std::vector<LifeForm*> enemies,
-			GameState* gameState);
+	void process(Player* player, GameState* gameState);
 	void play();
 	void play(int chan, std::string name, bool now);
 	~MusicManager();

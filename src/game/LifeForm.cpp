@@ -2,6 +2,10 @@
 
 LifeForm::LifeForm(float x, float y, int w, int h) :
 	Object(x, y, w, h) {
+	char *buf;
+	sprintf(buf = new char[30], "%010i-%010i", (rand() % 999999999),
+			(long) time(NULL));
+	Id = buf;
 	Strength = 1.0f;
 	Agility = 1.0f;
 	Vitality = 1.0f;

@@ -15,8 +15,8 @@ MusicManager::MusicManager(FileUtility* fileUtility,
 	for (unsigned int i = 0; i < musicFiles.size(); i++) {
 		Sound* snd = m_soundManager->create(m_fileUtility->getFullPath(
 				FileUtility::music, musicFiles[i]));
-		m_music .insert(std::map<std::string, Sound*>::value_type(
-				musicFiles[i], snd));
+		m_music.insert(std::map<std::string, Sound*>::value_type(musicFiles[i],
+				snd));
 	}
 
 	fprintf(stdout, "\tloaded %i tracks\n", (int) musicFiles.size());
@@ -24,8 +24,7 @@ MusicManager::MusicManager(FileUtility* fileUtility,
 	m_currentPlaying = "null";
 }
 
-void MusicManager::process(Player* player, std::vector<LifeForm*> enemies,
-		GameState* gameState) {
+void MusicManager::process(Player* player, GameState* gameState) {
 	if (gameState->Paused) {
 		play();
 		return;

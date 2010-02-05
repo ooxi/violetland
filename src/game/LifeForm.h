@@ -19,6 +19,7 @@ public:
 	virtual void process(int deltaTime);
 	virtual void draw();
 
+	std::string Id;
 	std::string Name;
 	int Level;
 	float Strength;
@@ -42,6 +43,8 @@ public:
 	int Frozen;
 
 	static bool compareByDeadPredicate(LifeForm* lf1, LifeForm* lf2) {
+		if (lf1->isDead() == lf2->isDead())
+			return lf1->Id > lf2->Id;
 		return (lf1->isDead() > lf2->isDead());
 	}
 };
