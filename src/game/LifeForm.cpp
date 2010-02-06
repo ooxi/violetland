@@ -3,9 +3,11 @@
 LifeForm::LifeForm(float x, float y, int w, int h) :
 	Object(x, y, w, h) {
 	char *buf;
-	sprintf(buf = new char[30], "%010i-%010i", (rand() % 999999999),
-			(long) time(NULL));
+	sprintf(buf = new char[30], "%010li-%010li", (rand() % 9999999999),
+			static_cast<long int> (time(NULL)));
+	fprintf(stdout, "%s\n", buf);
 	Id = buf;
+	delete[] buf;
 	Strength = 1.0f;
 	Agility = 1.0f;
 	Vitality = 1.0f;

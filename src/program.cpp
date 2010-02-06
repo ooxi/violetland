@@ -1753,7 +1753,7 @@ void handlePowerups() {
 
 		if (!gameState->Lost && (powerups[i]->detectCollide(player))) {
 			switch (powerups[i]->Type) {
-			case Powerup::medikit:
+			case Powerup::medikit: {
 				msgQueue.push_back(videoManager->RegularText->getObject(
 						"You took a medical kit.", 0, 0, TextManager::LEFT,
 						TextManager::MIDDLE));
@@ -1761,30 +1761,33 @@ void handlePowerups() {
 						+ *(float*) powerups[i]->Object);
 				deletePowerup = true;
 				break;
-			case Powerup::freeze:
+			}
+			case Powerup::freeze: {
 				msgQueue.push_back(videoManager->RegularText->getObject(
 						"All has frozen around you.", 0, 0, TextManager::LEFT,
 						TextManager::MIDDLE));
 
-				//				map<string, LifeForm*>::const_iterator iter;
-				//				for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
-				//					LifeForm* lf = iter->second;
-				//
-				//					if (lf->Type == LifeForm::player || lf->isDead())
-				//						continue;
-				//					lf->Frozen = *(int*) powerups[i]->Object;
-				//				}
+				map<string, LifeForm*>::const_iterator iter;
+				for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+					LifeForm* lf = iter->second;
+
+					if (lf->Type == LifeForm::player || lf->isDead())
+						continue;
+					lf->Frozen = *(int*) powerups[i]->Object;
+				}
 
 				deletePowerup = true;
 				break;
-			case Powerup::grenades:
+			}
+			case Powerup::grenades: {
 				msgQueue.push_back(videoManager->RegularText->getObject(
 						"You took a grenade.", 0, 0, TextManager::LEFT,
 						TextManager::MIDDLE));
 				player->Grenades += *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
-			case Powerup::weapon:
+			}
+			case Powerup::weapon: {
 				if (input->getDownInput(InputHandler::Pickup)
 						|| config->AutoWeaponPickup) {
 					player->setWeapon((Weapon*) powerups[i]->Object);
@@ -1797,6 +1800,7 @@ void handlePowerups() {
 					deletePowerup = true;
 					break;
 				}
+			}
 			}
 		}
 
@@ -1907,8 +1911,9 @@ void drawGame() {
 		powerups[i]->draw(false, false);
 	}
 
-	std::sort(lifeForms.begin(), lifeForms.end(),
-			LifeForm::compareByDeadPredicate);
+	// TODO: sort lifeforms by isDead() state. alive lifeforms should not overlay dead ones.
+	//	std::sort(lifeForms.begin(), lifeForms.end(),
+	//			LifeForm::compareByDeadPredicate);
 
 	map<string, LifeForm*>::const_iterator iter;
 	for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
