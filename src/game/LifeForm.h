@@ -41,12 +41,6 @@ public:
 	LifeForm::LifeFormType Type;
 	bool Poisoned;
 	int Frozen;
-
-	static bool compareByDeadPredicate(LifeForm* lf1, LifeForm* lf2) {
-		if (lf1->isDead() == lf2->isDead())
-			return lf1->Id > lf2->Id;
-		return (lf1->isDead() > lf2->isDead());
-	}
 };
 
 #endif /* LIVEOBJECT_H_ */

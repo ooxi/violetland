@@ -5,6 +5,7 @@
 
 Player::Player() :
 	LifeForm(0, 0, 128, 128) {
+	Id = "20-" + Id;
 	Empty = true;
 	Xp = 0;
 	NextLevelXp = 100;
@@ -99,6 +100,7 @@ std::vector<Bullet*> *Player::fire() {
 			bullet->Angle = AccuracyDeviation < 1 ? m_arms->Angle
 					: m_arms->Angle + (rand() % (int) (AccuracyDeviation * 2))
 							- AccuracyDeviation;
+			bullet->OwnerId = Id;
 		}
 
 		if (m_weapon->BulletsAtOnce > 1)

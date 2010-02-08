@@ -1171,7 +1171,7 @@ void handleExplosions() {
 
 			if (explosions[i]->Active && !lifeForms.empty()) {
 				map<string, LifeForm*>::const_iterator iter;
-				for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 					LifeForm* lf = iter->second;
 					if (lf->Type == LifeForm::player && !config->FriendlyFire)
 						continue;
@@ -1275,6 +1275,12 @@ void handleMonster(LifeForm* lf) {
 				- config->GameAreaSize;
 		enemy->DoNotDisturb = true;
 	}
+
+	float newAngle = Object::calculateAngle(enemy->X, enemy->Y, enemy->TargetX,
+			enemy->TargetY);
+	enemy->turn(newAngle, enemy->MaxSpeed(), deltaTime);
+
+	enemy->move(deltaTime);
 
 	if (!gameState->Lost && player->detectCollide(enemy)) {
 		if (enemy->Attack()) {
@@ -1453,7 +1459,7 @@ void handleLifeForms() {
 
 	if (!lifeForms.empty()) {
 		map<string, LifeForm*>::const_iterator iter;
-		for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 			LifeForm* lf = iter->second;
 
 			lf->process(deltaTime);
@@ -1482,7 +1488,7 @@ void handleBullets() {
 
 			if (bullets[i]->isActive() && !lifeForms.empty()) {
 				map<string, LifeForm*>::const_iterator iter;
-				for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 					LifeForm* lf = iter->second;
 
 					if (lf->Type == LifeForm::player || lf->isDead())
@@ -1768,7 +1774,7 @@ void handlePowerups() {
 						TextManager::MIDDLE));
 
 				map<string, LifeForm*>::const_iterator iter;
-				for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 					LifeForm* lf = iter->second;
 
 					if (lf->Type == LifeForm::player || lf->isDead())
@@ -1827,7 +1833,7 @@ void processGame() {
 		clearBloodStains();
 
 		map<string, LifeForm*>::const_iterator iter;
-		for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 			LifeForm* lf = iter->second;
 
 			if (lf->Type == LifeForm::monster) {
@@ -1916,7 +1922,7 @@ void drawGame() {
 	//			LifeForm::compareByDeadPredicate);
 
 	map<string, LifeForm*>::const_iterator iter;
-	for (iter = lifeForms.end(); iter != lifeForms.begin(); --iter) {
+	for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 		LifeForm* lf = iter->second;
 
 		if (lf->getLeft() < cam->X + cam->getHalfW() && lf->getRight() > cam->X
@@ -1951,19 +1957,42 @@ void drawGame() {
 
 	glDisable(GL_TEXTURE_2D);
 
-	if (!gameState->Lost && player->getLaser()) {
-		glLineWidth(0.5f);
-		glBegin(GL_LINES);
-		glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
-		const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
-		glVertex3f(player->X + player->getWeapon()->XDiff * cos(rad)
-				+ player->getWeapon()->YDiff * sin(-rad), player->Y
-				+ player->getWeapon()->XDiff * sin(rad)
-				+ player->getWeapon()->YDiff * cos(-rad), 0);
-		glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
-		glVertex3f(player->X + cam->getH() * 0.75f * cos(rad), player->Y
-				+ cam->getH() * 0.75f * sin(rad), 0);
-		glEnd();
+	if (!gameState->Lost) {
+		if (player->getLaser()) {
+			glLineWidth(0.5f);
+			glBegin(GL_LINES);
+			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
+			const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
+			glVertex3f(player->X + player->getWeapon()->XDiff * cos(rad)
+					+ player->getWeapon()->YDiff * sin(-rad), player->Y
+					+ player->getWeapon()->XDiff * sin(rad)
+					+ player->getWeapon()->YDiff * cos(-rad), 0);
+			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
+			glVertex3f(player->X + cam->getH() * 0.75f * cos(rad), player->Y
+					+ cam->getH() * 0.75f * sin(rad), 0);
+			glEnd();
+		}
+		if (player->getLight()) {
+			glBegin(GL_TRIANGLES);
+			glNormal3f(0.0f, 0.0f, 1.0f);
+			const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
+			float flash = 1.0 - gameState->TimeOfDay;
+			if (flash > 0.5)
+				flash = 0.5;
+			glColor4f(1.0f, 1.0f, 1.0f, 0.5f * (1.0 - gameState->TimeOfDay));
+			glVertex3f(player->X + player->getWeapon()->XDiff * cos(rad)
+					+ player->getWeapon()->YDiff * sin(-rad), player->Y
+					+ player->getWeapon()->XDiff * sin(rad)
+					+ player->getWeapon()->YDiff * cos(-rad), 0.0f);
+
+			glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+			glVertex3f(player->X + cam->getH() * 0.75f * cos(rad - 0.5f),
+					player->Y + cam->getH() * 0.75f * sin(rad - 0.5f), 0.0f);
+			glVertex3f(player->X + cam->getH() * 0.75f * cos(rad + 0.5f),
+					player->Y + cam->getH() * 0.75f * sin(rad + 0.5f), 0.0f);
+
+			glEnd();
+		}
 	}
 
 	glEnable(GL_TEXTURE_2D);

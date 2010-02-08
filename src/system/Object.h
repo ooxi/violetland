@@ -10,8 +10,8 @@ class Object {
 protected:
 	int m_width, m_height;
 	float m_left, m_right, m_top, m_bottom;
-	void move(int deltaTime);
 public:
+	void move(int deltaTime);
 	static float fixAngle(float angle);
 	static float calculateAngle(float x1, float y1, float x2, float y2);
 	static float calculateDistance(float x1, float y1, float x2, float y2);

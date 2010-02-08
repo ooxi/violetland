@@ -1,3 +1,4 @@
+#include <string>
 #include "../../system/Object.h"
 
 #ifndef BULLET_H_
@@ -23,6 +24,7 @@ public:
 	float Damage;
 	float MaxRange;
 	Bullet::BulletType Type;
+	std::string OwnerId;
 
 	bool Poisoned;
 	bool BigCalibre;

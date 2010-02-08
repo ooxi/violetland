@@ -5,6 +5,8 @@
 
 Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	LifeForm(0, 0, 128, 128) {
+	Id = "10-" + Id;
+
 	Base = base;
 	Level = lvl;
 
@@ -104,13 +106,6 @@ void Enemy::process(int deltaTime) {
 		} else {
 			if (!isReasyToDisappear())
 				m_body->rollFrame(true);
-		}
-	} else {
-		if (Frozen == 0) {
-			float newAngle = Object::calculateAngle(X, Y, TargetX, TargetY);
-			Object::turn(newAngle, MaxSpeed(), deltaTime);
-
-			move(deltaTime);
 		}
 	}
 }
