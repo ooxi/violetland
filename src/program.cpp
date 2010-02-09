@@ -55,10 +55,6 @@ Configuration* config;
 VideoManager* videoManager;
 Camera* cam;
 
-int framesCount;
-int fpsCountingStart;
-int fps = 0;
-
 MonsterFactory* monsterFactory;
 
 Configuration* tempConfig;
@@ -1684,7 +1680,7 @@ void drawHud() {
 					TextManager::CENTER, TextManager::TOP);
 
 	if (config->ShowFps) {
-		sprintf(buf = new char[30], "FPS: %i", fps);
+		sprintf(buf = new char[30], "FPS: %i", videoManager->getFps());
 		videoManager->RegularText->draw(buf, config->ScreenWidth
 				- videoManager->RegularText->getIndent(), config->ScreenHeight
 				- videoManager->RegularText->getIndent(), TextManager::RIGHT,
@@ -1878,10 +1874,10 @@ void drawGame() {
 
 	glEnable(GL_LIGHTING);
 
-	gameState->TimeOfDay = abs(cos((gameState->Time + 45000) / 180000.0));
+	gameState->TimeOfDay = abs(cos(gameState->Time / 18000.0));
 
 	float gawc = gameState->TimeOfDay;
-	float v = cos((gameState->Time + 45000) / 45000.0);
+	float v = cos(gameState->Time / 18000.0);
 	float garc = v >= 0 ? 0 : v / -3;
 	float gabc = v > 0 ? v / 3 : 0;
 	float r = gawc + garc;
@@ -1895,7 +1891,7 @@ void drawGame() {
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 
 	if (!gameState->Lost && player->getLight()) {
-		glEnable(GL_LIGHT0);
+		//		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
 
 		GLfloat light_pos[] = { 0.0, 0.0, 1.0, 1.0 };
@@ -1958,15 +1954,16 @@ void drawGame() {
 	glDisable(GL_TEXTURE_2D);
 
 	if (!gameState->Lost) {
+		const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
+		const float wpnX = player->X + player->getWeapon()->XDiff * cos(rad)
+				+ player->getWeapon()->YDiff * sin(-rad);
+		const float wpnY = player->Y + player->getWeapon()->XDiff * sin(rad)
+				+ player->getWeapon()->YDiff * cos(-rad);
 		if (player->getLaser()) {
 			glLineWidth(0.5f);
 			glBegin(GL_LINES);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
-			const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
-			glVertex3f(player->X + player->getWeapon()->XDiff * cos(rad)
-					+ player->getWeapon()->YDiff * sin(-rad), player->Y
-					+ player->getWeapon()->XDiff * sin(rad)
-					+ player->getWeapon()->YDiff * cos(-rad), 0);
+			glVertex3f(wpnX, wpnY, 0);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
 			glVertex3f(player->X + cam->getH() * 0.75f * cos(rad), player->Y
 					+ cam->getH() * 0.75f * sin(rad), 0);
@@ -1975,21 +1972,22 @@ void drawGame() {
 		if (player->getLight()) {
 			glBegin(GL_TRIANGLES);
 			glNormal3f(0.0f, 0.0f, 1.0f);
-			const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
 			float flash = 1.0 - gameState->TimeOfDay;
-			if (flash > 0.5)
-				flash = 0.5;
+			if (flash > 0.3)
+				flash = 0.3;
 			glColor4f(1.0f, 1.0f, 1.0f, 0.5f * (1.0 - gameState->TimeOfDay));
-			glVertex3f(player->X + player->getWeapon()->XDiff * cos(rad)
-					+ player->getWeapon()->YDiff * sin(-rad), player->Y
-					+ player->getWeapon()->XDiff * sin(rad)
-					+ player->getWeapon()->YDiff * cos(-rad), 0.0f);
+			glVertex3f(wpnX, wpnY, 0.0f);
 
+			const float len = Object::calculateDistance(player->X, player->Y,
+					player->TargetX, player->TargetY);
+			float width = 0.75 - len / cam->getW();
+			if (width < 0.25)
+				width = 0.25;
 			glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
-			glVertex3f(player->X + cam->getH() * 0.75f * cos(rad - 0.5f),
-					player->Y + cam->getH() * 0.75f * sin(rad - 0.5f), 0.0f);
-			glVertex3f(player->X + cam->getH() * 0.75f * cos(rad + 0.5f),
-					player->Y + cam->getH() * 0.75f * sin(rad + 0.5f), 0.0f);
+			glVertex3f(player->X + len * cos(rad - width), player->Y + len
+					* sin(rad - width), 0.0f);
+			glVertex3f(player->X + len * cos(rad + width), player->Y + len
+					* sin(rad + width), 0.0f);
 
 			glEnd();
 		}
@@ -2037,19 +2035,12 @@ void drawWindows() {
 
 void runMainLoop() {
 	currentTime = SDL_GetTicks();
-	fpsCountingStart = currentTime;
-	framesCount = 0;
 	while (gameState->Works) {
-		framesCount++;
 		const int now = SDL_GetTicks();
 		deltaTime = now - currentTime;
 		currentTime = now;
 
-		if (now - fpsCountingStart > 5000) {
-			fpsCountingStart = now;
-			fps = framesCount / 5;
-			framesCount = 0;
-		}
+		videoManager->countFrame();
 
 		if (config->FrameDelay > 0 && deltaTime < config->FrameDelay)
 			SDL_Delay(config->FrameDelay - deltaTime);

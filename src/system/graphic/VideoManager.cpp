@@ -9,9 +9,28 @@ VideoManager::VideoManager(FileUtility* fileUtility) {
 	RegularText = NULL;
 	SmallText = NULL;
 
+	m_fpsCountingStart = SDL_GetTicks();
+	m_framesCount = 0;
+
 	// seems that this code is supported only in windows
 	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+}
+
+void VideoManager::countFrame() {
+	m_framesCount++;
+
+	int now = SDL_GetTicks();
+
+	if (now - m_fpsCountingStart > 5000) {
+		m_fpsCountingStart = now;
+		m_fps = m_framesCount / 5;
+		m_framesCount = 0;
+	}
+}
+
+int VideoManager::getFps() {
+	return m_fps;
 }
 
 bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
@@ -29,7 +48,7 @@ bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 
 /*
  i don't know what of these methods is better to use
- i even can create a static function to calculate size of array
+ just c or c++
  */
 
 template<typename T> size_t structsize(const T& t) {
