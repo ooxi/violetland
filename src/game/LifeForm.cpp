@@ -3,8 +3,21 @@
 LifeForm::LifeForm(float x, float y, int w, int h) :
 	Object(x, y, w, h) {
 	char *buf;
-	sprintf(buf = new char[30], "%010li-%010li", (rand() % 9999999999),
-			static_cast<long int> (time(NULL)));
+	unsigned long t;
+#ifdef _WIN32
+	SYSTEMTIME winT;
+	GetLocalTime(&winT);
+	FILETIME fT;
+	SystemTimeToFileTime(&winT, &fT);
+	ULARGE_INTEGER sec;
+	sec.HighPart = fT.dwHighDateTime;
+	sec.LowPart = fT.dwLowDateTime;
+	t = sec.QuadPart / 1E7;
+#endif //_WIN32
+#if defined linux || defined __FreeBSD__ || defined __APPLE__
+	t = static_cast<unsigned long> (time(NULL));
+#endif  //linux || __FreeBSD__ || __APPLE__
+	sprintf(buf = new char[30], "%09li-%09li", (rand() % 999999999), t);
 	Id = buf;
 	delete[] buf;
 	Strength = 1.0f;

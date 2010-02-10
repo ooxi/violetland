@@ -44,17 +44,6 @@ bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 	return (r != 0);
 }
 
-#define ARRSIZE(s) (sizeof(s) / sizeof(*s))
-
-/*
- i don't know what of these methods is better to use
- just c or c++
- */
-
-template<typename T> size_t structsize(const T& t) {
-	return sizeof(t) / sizeof(*t);
-}
-
 vector<SDL_Rect> VideoManager::GetAvailableModes(Configuration* config) {
 	int wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1600, 1600, 1680,
 			1920, 1920 };

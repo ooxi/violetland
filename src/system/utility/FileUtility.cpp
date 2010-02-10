@@ -29,7 +29,7 @@ std::vector<std::string> FileUtility::getFilesFromDir(std::string dir) {
 				files.push_back(ep->d_name);
 				// fprintf(stdout, "\t%s\n", ep->d_name);
 			}
-#endif //_WIN32W
+#endif //_WIN32
 #if defined linux || defined __FreeBSD__ || defined __APPLE__
 			// if (ep->d_type == DT_REG) {
 			std::string path = dir + "/" + ep->d_name;

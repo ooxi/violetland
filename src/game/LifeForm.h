@@ -1,4 +1,9 @@
 #include <string>
+#include <stdio.h>
+#include <time.h>
+#ifdef _WIN32
+	#include "windows.h"
+#endif //_WIN32W
 #include "../system/Object.h"
 #include "SDL.h"
 

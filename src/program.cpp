@@ -118,6 +118,13 @@ void clearWindows() {
 	windows.clear();
 }
 
+void clearBullets() {
+	for (unsigned int i = 0; i < bullets.size(); i++) {
+		delete bullets[i];
+	}
+	bullets.clear();
+}
+
 void clearBloodStains() {
 	for (unsigned int i = 0; i < bloodStains.size(); i++) {
 		delete bloodStains[i];
@@ -131,13 +138,6 @@ void clearLifeForms() {
 		delete iter->second;
 	}
 	lifeForms.clear();
-}
-
-void clearBullets() {
-	for (unsigned int i = 0; i < bullets.size(); i++) {
-		delete bullets[i];
-	}
-	bullets.clear();
 }
 
 void clearMessages() {
@@ -375,13 +375,6 @@ void initSystem() {
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightColor);
 	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.8f);
 	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.0008f);
-
-	//selflight
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor);
-	glLightfv(GL_LIGHT1, GL_AMBIENT, lightColor);
-	glLightfv(GL_LIGHT1, GL_SPECULAR, lightColor);
-	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0f);
-	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.0001f);
 
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -1426,8 +1419,13 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (rand() % 1000 >= 975 || player->Kills == 0) {
-		int weaponIndex = (rand() % (weaponManager->Weapons.size() - 1)) + 1;
+	int wpnDropChance = 975;
+	if (player->getWeapon()->Name == "PM")
+		wpnDropChance = 800;
+	if (player->Kills == 0)
+		wpnDropChance = 0;
+	if (rand() % 1000 >= wpnDropChance) {
+		int weaponIndex = (rand() % (weaponManager->Weapons.size() - 1));
 		newPowerup = new Powerup(x, y,
 				weaponManager->Weapons[weaponIndex]->getDroppedTex());
 		newPowerup->Type = Powerup::weapon;
@@ -1874,10 +1872,12 @@ void drawGame() {
 
 	glEnable(GL_LIGHTING);
 
-	gameState->TimeOfDay = abs(cos(gameState->Time / 18000.0));
-
+	double tod = cos(gameState->Time / 180000.0);
+	gameState->TimeOfDay = abs((float)tod);
 	float gawc = gameState->TimeOfDay;
-	float v = cos(gameState->Time / 18000.0);
+
+	double v = cos((gameState->Time + 90000) / 90000.0);
+
 	float garc = v >= 0 ? 0 : v / -3;
 	float gabc = v > 0 ? v / 3 : 0;
 	float r = gawc + garc;
@@ -1891,7 +1891,6 @@ void drawGame() {
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 
 	if (!gameState->Lost && player->getLight()) {
-		//		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
 
 		GLfloat light_pos[] = { 0.0, 0.0, 1.0, 1.0 };
