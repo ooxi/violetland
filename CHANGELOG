@@ -6,10 +6,10 @@ Legend:
 [0.2.8]
 
 [+] mac os x support (10.5 or later)
-[+] ability to change video settings from options screen (there are issues on windows - see README)
-[+] new graphic - image of weapon in arms will change, animation of shells
-[*] weapons structure
-[*] monsters can have any number of sounds of pain
+[+] possibility to change graphic settings from options screen (there are issues on windows - see README)
+[+] new graphics - image of weapon in the arms will change, animation of shells
+[*] structure of a weapon store
+[*] monsters can have any number of sounds of death
 [!] fixed sound issues by explicit sound mixing
 [!] issues of loading resources in *nix systems
 
