@@ -373,8 +373,8 @@ void initSystem() {
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightColor);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightColor);
-	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.8f);
-	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.0008f);
+	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.6f);
+	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.0001f);
 
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -1873,7 +1873,7 @@ void drawGame() {
 	glEnable(GL_LIGHTING);
 
 	double tod = cos(gameState->Time / 180000.0);
-	gameState->TimeOfDay = abs((float)tod);
+	gameState->TimeOfDay = abs((float) tod);
 	float gawc = gameState->TimeOfDay;
 
 	double v = cos((gameState->Time + 90000) / 90000.0);
@@ -1891,18 +1891,13 @@ void drawGame() {
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 
 	if (!gameState->Lost && player->getLight()) {
-		glEnable(GL_LIGHT1);
+		glEnable(GL_LIGHT0);
 
 		GLfloat light_pos[] = { 0.0, 0.0, 1.0, 1.0 };
 
 		glPushMatrix();
-		glTranslatef(player->X, player->Y, 0.0f);
-		glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-		glPopMatrix();
-
-		glPushMatrix();
 		glTranslatef(player->TargetX, player->TargetY, 0.0f);
-		glLightfv(GL_LIGHT1, GL_POSITION, light_pos);
+		glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 		glPopMatrix();
 	}
 
@@ -1940,7 +1935,6 @@ void drawGame() {
 	}
 
 	if (!gameState->Lost && player->getLight()) {
-		glDisable(GL_LIGHT1);
 		glDisable(GL_LIGHT0);
 	}
 
