@@ -28,7 +28,12 @@ There is a workaround for this problem. Run the program by the command shell scr
 
 4. LINUX
 
-Currently an easiest way to play violetland on linux is to build the program with help of the cmake build system. You probably can install it from the main repository of your linux distribution. Also your system must have the SDL packages (SDL, SDL_image, SDL_ttf, SDL_mixer), the same devel packages and gcc.
+Check for violetland package in main repositories of your linux distro. If there is nothing, check related wiki page  http://code.google.com/p/violetland/wiki/ThirdParyPackages.
+
+An universal way to play violetland on linux is to build the program with help of the cmake build system. You probably can install it from the main repository of your linux distribution. Also your system must have the SDL packages (SDL, SDL_image, SDL_ttf, SDL_mixer), the same devel packages and gcc.
+
+NOTE FOR UBUNTU USERS
+Don't panic. You can do it, I trust in you. Probably your system lacks of some dependent packages. You should execute command like "sudo apt-get install cmake libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev" to install these packages.
 
 Besides, some additional steps are required.
 
