@@ -1220,11 +1220,9 @@ void handleMonster(LifeForm* lf) {
 
 	if (!gameState->Lost && enemy->detectCollide(player->TargetX,
 			player->TargetY)) {
-		char *buf;
-		sprintf(buf = new char[255], "%s (%i)", enemy->Name.c_str(),
-				enemy->Level);
+		char buf[100];
+		sprintf(buf, "%s (%i)", enemy->Name.c_str(), enemy->Level);
 		player->HudInfo = buf;
-		delete[] buf;
 	}
 
 	if (lf->Frozen > 0)
@@ -1733,11 +1731,10 @@ void handlePowerups() {
 				player->HudInfo = "a hand grenade";
 				break;
 			case Powerup::weapon:
-				char *buf;
-				sprintf(buf = new char[200], "the %s",
+				char buf[100];
+				sprintf(buf, "the %s",
 						((Weapon*) powerups[i]->Object)->Name.c_str());
 				player->HudInfo = buf;
-				delete[] buf;
 				break;
 			}
 

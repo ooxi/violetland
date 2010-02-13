@@ -2,7 +2,6 @@
 
 LifeForm::LifeForm(float x, float y, int w, int h) :
 	Object(x, y, w, h) {
-	char *buf;
 	unsigned long t;
 #ifdef _WIN32
 	SYSTEMTIME winT;
@@ -17,9 +16,9 @@ LifeForm::LifeForm(float x, float y, int w, int h) :
 #if defined linux || defined __FreeBSD__ || defined __APPLE__
 	t = static_cast<unsigned long> (time(NULL));
 #endif  //linux || __FreeBSD__ || __APPLE__
-	sprintf(buf = new char[30], "%09i-%09li", (rand() % 999999999), t);
+	char buf[30];
+	sprintf(buf, "%09i-%09li", (rand() % 999999999), t);
 	Id = buf;
-	delete[] buf;
 	Strength = 1.0f;
 	Agility = 1.0f;
 	Vitality = 1.0f;

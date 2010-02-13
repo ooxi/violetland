@@ -5,6 +5,18 @@
 
 class InputHandler {
 public:
+	enum BindingType {
+		Keyboard = 0, Mouse
+	};
+	struct Binding {
+	public:
+		int Value;
+		BindingType Type;
+
+		Binding() {
+			Type = Keyboard;
+		}
+	};
 	enum GameInputEvents {
 		Restart = 0,
 		Exit,
@@ -30,8 +42,9 @@ public:
 	bool getPressInput(GameInputEvents evnt);
 	int mouseX, mouseY;
 private:
+	void processEvent(BindingType type, bool down, int value);
 	bool m_event[GameInputEventsCount];
-	int m_eventMap[GameInputEventsCount];
+	Binding m_binding[GameInputEventsCount];
 };
 
 #endif /* INPUTHANDLER_H_ */

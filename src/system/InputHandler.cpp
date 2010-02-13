@@ -7,23 +7,24 @@ InputHandler::InputHandler() {
 		m_event[i] = false;
 	}
 
-	m_eventMap[MoveLeft] = SDLK_a;
-	m_eventMap[MoveUp] = SDLK_w;
-	m_eventMap[MoveRight] = SDLK_d;
-	m_eventMap[MoveDown] = SDLK_s;
-	m_eventMap[Restart] = SDLK_RETURN;
-	m_eventMap[Menu] = SDLK_ESCAPE;
-	m_eventMap[Exit] = SDLK_F12;
-	m_eventMap[ToggleLight] = SDLK_f;
-	m_eventMap[ToggleLaser] = SDLK_g;
-	m_eventMap[Pause] = SDLK_p;
-	m_eventMap[ShowChar] = SDLK_c;
-	m_eventMap[Help] = SDLK_F1;
-	m_eventMap[Pickup] = SDLK_e;
-	m_eventMap[ThrowGrenade] = SDLK_SPACE;
-
-	m_eventMap[Fire] = SDL_BUTTON_LEFT;
-	m_eventMap[Reload] = SDL_BUTTON_RIGHT;
+	m_binding[MoveLeft].Value = SDLK_a;
+	m_binding[MoveUp].Value = SDLK_w;
+	m_binding[MoveRight].Value = SDLK_d;
+	m_binding[MoveDown].Value = SDLK_s;
+	m_binding[Restart].Value = SDLK_RETURN;
+	m_binding[Menu].Value = SDLK_ESCAPE;
+	m_binding[Exit].Value = SDLK_F12;
+	m_binding[ToggleLight].Value = SDLK_f;
+	m_binding[ToggleLaser].Value = SDLK_g;
+	m_binding[Pause].Value = SDLK_p;
+	m_binding[ShowChar].Value = SDLK_c;
+	m_binding[Help].Value = SDLK_F1;
+	m_binding[Pickup].Value = SDLK_e;
+	m_binding[ThrowGrenade].Value = SDLK_SPACE;
+	m_binding[Fire].Value = SDL_BUTTON_LEFT;
+	m_binding[Fire].Type = Mouse;
+	m_binding[Reload].Value = SDL_BUTTON_RIGHT;
+	m_binding[Reload].Type = Mouse;
 
 	mouseX = mouseY = 0;
 }
@@ -41,43 +42,37 @@ bool InputHandler::getPressInput(GameInputEvents evnt) {
 	}
 }
 
+void InputHandler::processEvent(BindingType type, bool down, int value) {
+	for (int i = 0; i < GameInputEventsCount; i++) {
+		if (m_binding[i].Type == type && m_binding[i].Value == value)
+			m_event[i] = down;
+	}
+}
+
 void InputHandler::process() {
 	SDL_Event event;
 
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 		case SDL_KEYDOWN:
-			for (int i = 0; i < GameInputEventsCount - 2; i++) {
-				if (m_eventMap[i] == event.key.keysym.sym)
-					m_event[i] = true;
-			}
+			processEvent(Keyboard, true, event.key.keysym.sym);
 			break;
 		case SDL_KEYUP:
-			for (int i = 0; i < GameInputEventsCount - 2; i++) {
-				if (m_eventMap[i] == event.key.keysym.sym)
-					m_event[i] = false;
-			}
+			processEvent(Keyboard, false, event.key.keysym.sym);
 			break;
-		case SDL_QUIT:
-			m_event[Exit] = true;
+		case SDL_MOUSEBUTTONDOWN:
+			processEvent(Mouse, true, event.button.button);
+			break;
+		case SDL_MOUSEBUTTONUP:
+			processEvent(Mouse, false, event.button.button);
 			break;
 		case SDL_MOUSEMOTION:
 			mouseX = event.motion.x;
 			mouseY = event.motion.y;
 			break;
-		}
-
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (m_eventMap[Fire] == event.button.button)
-				m_event[Fire] = true;
-			if (m_eventMap[Reload] == event.button.button)
-				m_event[Reload] = true;
-		}
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			if (m_eventMap[Fire] == event.button.button)
-				m_event[Fire] = false;
-			if (m_eventMap[Reload] == event.button.button)
-				m_event[Reload] = false;
+		case SDL_QUIT:
+			m_event[Exit] = true;
+			break;
 		}
 	}
 }
