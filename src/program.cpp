@@ -63,9 +63,8 @@ Sound* playerKilledSound;
 vector<Sound*> playerHitSounds;
 int playerHitSndPlaying = 0;
 
-Texture* medikitTex;
-Texture* grenadeTex;
-Texture* freezeTex;
+map<Powerup::PowerupType, Texture*> powerupTex;
+
 StaticObject* crystal;
 
 Sprite* playerLegsSprite;
@@ -138,6 +137,14 @@ void clearLifeForms() {
 		delete iter->second;
 	}
 	lifeForms.clear();
+}
+
+void clearPowerupTex() {
+	map<Powerup::PowerupType, Texture*>::const_iterator iter;
+	for (iter = powerupTex.begin(); iter != powerupTex.end(); ++iter) {
+		delete iter->second;
+	}
+	powerupTex.clear();
 }
 
 void clearMessages() {
@@ -1048,7 +1055,6 @@ void unloadResources() {
 	delete playerLegsSprite;
 	delete grenadeSprite;
 	delete terrain;
-	delete medikitTex;
 	for (unsigned int i = 0; i < bloodTex.size(); i++) {
 		delete bloodTex[i];
 	}
@@ -1061,6 +1067,7 @@ void unloadResources() {
 	clearWindows();
 	clearExplosions();
 	clearParticleSystems();
+	clearPowerupTex();
 
 	for (unsigned int i = 0; i < playerHitSounds.size(); i++) {
 		delete playerHitSounds[i];
@@ -1375,7 +1382,7 @@ void dropPowerup(float x, float y) {
 	Powerup *newPowerup;
 
 	if (!powerupDropped && rand() % 1000 >= 950) {
-		newPowerup = new Powerup(x, y, medikitTex);
+		newPowerup = new Powerup(x, y, powerupTex[Powerup::medikit]);
 		newPowerup->Scale = 0.3f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(0.1f);
@@ -1384,7 +1391,7 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 975) {
-		newPowerup = new Powerup(x, y, medikitTex);
+		newPowerup = new Powerup(x, y, powerupTex[Powerup::medikit]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(0.2f);
@@ -1393,7 +1400,7 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 990) {
-		newPowerup = new Powerup(x, y, medikitTex);
+		newPowerup = new Powerup(x, y, powerupTex[Powerup::medikit]);
 		newPowerup->Scale = 0.5f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(0.6f);
@@ -1402,7 +1409,7 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 970) {
-		newPowerup = new Powerup(x, y, grenadeTex);
+		newPowerup = new Powerup(x, y, powerupTex[Powerup::grenades]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::grenades;
 		newPowerup->Object = new int(1);
@@ -1410,9 +1417,17 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 970) {
-		newPowerup = new Powerup(x, y, freezeTex);
+		newPowerup = new Powerup(x, y, powerupTex[Powerup::freeze]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::freeze;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 970) {
+		newPowerup = new Powerup(x, y, powerupTex[Powerup::penBullets]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::penBullets;
 		newPowerup->Object = new int(10000);
 		powerupDropped = true;
 	}
@@ -1702,9 +1717,7 @@ void handlePowerups() {
 		bool deletePowerup = false;
 		powerups[i]->Time -= deltaTime;
 		powerups[i]->AMask = powerups[i]->Time / 15000.0;
-		if (powerups[i]->Type == Powerup::medikit || powerups[i]->Type
-				== Powerup::grenades || powerups[i]->Type == Powerup::freeze) {
-
+		if (powerups[i]->Type != Powerup::weapon) {
 			powerups[i]->Angle += deltaTime * 0.05f * powerups[i]->Dir;
 
 			if (powerups[i]->Angle > 45 && powerups[i]->Dir > 0)
@@ -1730,6 +1743,9 @@ void handlePowerups() {
 			case Powerup::grenades:
 				player->HudInfo = "a hand grenade";
 				break;
+			case Powerup::penBullets:
+				player->HudInfo = "penetration bullets";
+				break;
 			case Powerup::weapon:
 				char buf[100];
 				sprintf(buf, "the %s",
@@ -1751,12 +1767,14 @@ void handlePowerups() {
 		if (!gameState->Lost && (powerups[i]->detectCollide(player))) {
 			switch (powerups[i]->Type) {
 			case Powerup::medikit: {
-				msgQueue.push_back(videoManager->RegularText->getObject(
-						"You took a medical kit.", 0, 0, TextManager::LEFT,
-						TextManager::MIDDLE));
-				player->setHealth(player->getHealth()
-						+ *(float*) powerups[i]->Object);
-				deletePowerup = true;
+				if (player->getHealth() < player->MaxHealth()) {
+					msgQueue.push_back(videoManager->RegularText->getObject(
+							"You took a medical kit.", 0, 0, TextManager::LEFT,
+							TextManager::MIDDLE));
+					player->setHealth(player->getHealth()
+							+ *(float*) powerups[i]->Object);
+					deletePowerup = true;
+				}
 				break;
 			}
 			case Powerup::freeze: {
@@ -1772,7 +1790,14 @@ void handlePowerups() {
 						continue;
 					lf->Frozen = *(int*) powerups[i]->Object;
 				}
-
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::penBullets: {
+				msgQueue.push_back(videoManager->RegularText->getObject(
+						"You got powerful penetration bullets.", 0, 0,
+						TextManager::LEFT, TextManager::MIDDLE));
+				player->PenBullets = *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
@@ -1795,8 +1820,8 @@ void handlePowerups() {
 							buf, 0, 0, TextManager::LEFT, TextManager::MIDDLE));
 					delete[] buf;
 					deletePowerup = true;
-					break;
 				}
+				break;
 			}
 			}
 		}
@@ -2124,18 +2149,30 @@ void loadResources() {
 			fileUtility->getFullPath(FileUtility::image, "blood_2.png")),
 			GL_TEXTURE_2D, GL_LINEAR, true));
 
-	medikitTex
-			= new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
-					FileUtility::image, "medikit.png")), GL_TEXTURE_2D,
-					GL_LINEAR, true);
+	powerupTex.insert(map<Powerup::PowerupType, Texture*>::value_type(
+			Powerup::medikit, new Texture(
+					ImageUtility::loadImage(fileUtility->getFullPath(
+							FileUtility::image, "medikit.png")), GL_TEXTURE_2D,
+					GL_LINEAR, true)));
 
-	grenadeTex
-			= new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
-					FileUtility::image, "grenade.png")), GL_TEXTURE_2D,
-					GL_LINEAR, true);
+	powerupTex.insert(map<Powerup::PowerupType, Texture*>::value_type(
+			Powerup::grenades, new Texture(
+					ImageUtility::loadImage(fileUtility->getFullPath(
+							FileUtility::image, "grenade.png")), GL_TEXTURE_2D,
+					GL_LINEAR, true)));
 
-	freezeTex = new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
-			FileUtility::image, "freeze.png")), GL_TEXTURE_2D, GL_LINEAR, true);
+	powerupTex.insert(map<Powerup::PowerupType, Texture*>::value_type(
+			Powerup::freeze, new Texture(
+					ImageUtility::loadImage(fileUtility->getFullPath(
+							FileUtility::image, "freeze.png")), GL_TEXTURE_2D,
+					GL_LINEAR, true)));
+
+	powerupTex.insert(
+			map<Powerup::PowerupType, Texture*>::value_type(
+					Powerup::penBullets, new Texture(ImageUtility::loadImage(
+							fileUtility->getFullPath(FileUtility::image,
+									"penbullets.png")), GL_TEXTURE_2D,
+							GL_LINEAR, true)));
 
 	crystal = new StaticObject(0, 0, 128, 128, new Texture(
 			ImageUtility::loadImage(fileUtility->getFullPath(

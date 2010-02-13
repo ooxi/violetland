@@ -21,6 +21,7 @@ Player::Player() :
 	m_light = m_laser = false;
 
 	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = false;
+	PenBullets = 0;
 }
 
 Player::Player(float x, float y, Sprite *legsSprite) :
@@ -97,6 +98,11 @@ std::vector<Bullet*> *Player::fire() {
 					&& PoisonBullets;
 			bullet->BigCalibre = m_weapon->Type == Bullet::standard
 					&& BigCalibre;
+			if (BigCalibre) {
+				bullet->Damage *= 1.1;
+			}
+			bullet->Penetrating = m_weapon->Type == Bullet::standard
+					&& PenBullets > 0;
 			bullet->Angle = AccuracyDeviation < 1 ? m_arms->Angle
 					: m_arms->Angle + (rand() % (int) (AccuracyDeviation * 2))
 							- AccuracyDeviation;
@@ -158,6 +164,10 @@ void Player::process(int deltaTime) {
 	AccuracyDeviation -= deltaTime * 0.01;
 	if (AccuracyDeviation < 0)
 		AccuracyDeviation = 0;
+
+	PenBullets -= deltaTime;
+	if (PenBullets < 0)
+		PenBullets = 0;
 }
 
 void Player::draw() {

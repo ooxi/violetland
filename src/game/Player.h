@@ -53,6 +53,7 @@ public:
 	bool PoisonBullets;
 	bool BigCalibre;
 	bool Telekinesis;
+	int PenBullets;
 
 	bool Empty;
 };

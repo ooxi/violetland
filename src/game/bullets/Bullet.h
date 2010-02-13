@@ -28,6 +28,7 @@ public:
 
 	bool Poisoned;
 	bool BigCalibre;
+	bool Penetrating;
 
 	virtual ~Bullet();
 };
