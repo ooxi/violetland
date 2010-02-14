@@ -35,6 +35,7 @@
 #include "system/graphic/VideoManager.h"
 #include "system/Configuration.h"
 #include "system/GameState.h"
+#include "game/Resources.h"
 #include "game/MonsterFactory.h"
 #include "game/Enemy.h"
 #include "game/Player.h"
@@ -48,7 +49,7 @@
 #include "windows/HelpWindow.h"
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.8";
+const string VERSION = "0.2.9";
 
 GameState* gameState;
 Configuration* config;
@@ -59,22 +60,10 @@ MonsterFactory* monsterFactory;
 
 Configuration* tempConfig;
 
-Sound* playerKilledSound;
-vector<Sound*> playerHitSounds;
 int playerHitSndPlaying = 0;
 
-map<Powerup::PowerupType, Texture*> powerupTex;
-
-StaticObject* crystal;
-
-Sprite* playerLegsSprite;
-
-Sprite* grenadeSprite;
-
-vector<Texture*> bloodTex;
-vector<Texture*> explTex;
-
 Aim* aim;
+StaticObject* splash;
 
 map<string, LifeForm*> lifeForms;
 
@@ -85,8 +74,6 @@ vector<StaticObject*> bloodStains;
 vector<Explosion*> explosions;
 
 vector<ParticleSystem*> particleSystems;
-
-vector<Sound*> explosionSounds;
 
 WeaponManager* weaponManager;
 
@@ -107,7 +94,7 @@ InputHandler* input;
 SoundManager* sndManager;
 MusicManager* musicManager;
 
-StaticObject* splash;
+Resources* resources;
 
 void clearWindows() {
 	std::map<std::string, Window*>::const_iterator iter;
@@ -137,14 +124,6 @@ void clearLifeForms() {
 		delete iter->second;
 	}
 	lifeForms.clear();
-}
-
-void clearPowerupTex() {
-	map<Powerup::PowerupType, Texture*>::const_iterator iter;
-	for (iter = powerupTex.begin(); iter != powerupTex.end(); ++iter) {
-		delete iter->second;
-	}
-	powerupTex.clear();
 }
 
 void clearMessages() {
@@ -250,7 +229,7 @@ void startSurvival() {
 	clearMessages();
 	clearExplosions();
 
-	player = new Player(0, 0, playerLegsSprite);
+	player = new Player(0, 0, resources->PlayerWalkSprite);
 	player->setWeapon(weaponManager->getWeaponByName("PM"));
 	player->HitR = 0.28f;
 	player->Acceleration = 0.0004f;
@@ -393,10 +372,10 @@ void initSystem() {
 
 void loseGame(Player* player) {
 	gameState->Lost = true;
-	if (playerHitSounds[playerHitSndPlaying]->isPlaying())
-		playerHitSounds[playerHitSndPlaying]->stop(0);
+	if (resources->PlayerHitSounds[playerHitSndPlaying]->isPlaying())
+		resources->PlayerHitSounds[playerHitSndPlaying]->stop(0);
 
-	playerKilledSound->play(5, 0, 0);
+	resources->PlayerDeathSound->play(5, 0, 0);
 
 	msgQueue.push_back(videoManager->RegularText->getObject("Player is dead.",
 			0, 0, TextManager::LEFT, TextManager::BOTTOM));
@@ -680,11 +659,11 @@ void createCharStatWindow() {
 void shutdownSystem() {
 	delete videoManager;
 	delete gameState;
-	delete splash;
 	delete musicManager;
 	delete sndManager;
 	delete input;
 	delete fileUtility;
+	delete splash;
 }
 
 void backFromHighScores();
@@ -1047,18 +1026,11 @@ void createMainMenuWindow() {
 }
 
 void unloadResources() {
-	delete crystal;
 	delete weaponManager;
 	delete monsterFactory;
-	delete playerKilledSound;
 	delete aim;
-	delete playerLegsSprite;
-	delete grenadeSprite;
 	delete terrain;
-	for (unsigned int i = 0; i < bloodTex.size(); i++) {
-		delete bloodTex[i];
-	}
-	bloodTex.clear();
+	delete resources;
 	clearBloodStains();
 	clearPowerups();
 	clearLifeForms();
@@ -1067,12 +1039,7 @@ void unloadResources() {
 	clearWindows();
 	clearExplosions();
 	clearParticleSystems();
-	clearPowerupTex();
 
-	for (unsigned int i = 0; i < playerHitSounds.size(); i++) {
-		delete playerHitSounds[i];
-	}
-	playerHitSounds.clear();
 	delete config;
 }
 
@@ -1204,7 +1171,7 @@ void handleParticles() {
 
 void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 	StaticObject *newBloodStain = new StaticObject(x, y, 128, 128,
-			bloodTex[(rand() % 299) / 100], false);
+			resources->BloodTex[(rand() % 299) / 100], false);
 
 	newBloodStain->Scale = scale;
 	newBloodStain->Angle = angle;
@@ -1280,12 +1247,14 @@ void handleMonster(LifeForm* lf) {
 		if (enemy->Attack()) {
 			if (rand() % 100 > player->ChanceToEvade() * 100) {
 				player->setHealth(player->getHealth() - enemy->Damage());
-				if (!playerHitSounds[playerHitSndPlaying]->isPlaying()) {
+				if (!resources->PlayerHitSounds[playerHitSndPlaying]->isPlaying()) {
 					playerHitSndPlaying = (player->getHealth()
 							< player->MaxHealth() ? player->getHealth()
 							: player->getHealth() - 0.01f)
-							/ player->MaxHealth() * playerHitSounds.size();
-					playerHitSounds[playerHitSndPlaying]->play(6, 0, 0);
+							/ player->MaxHealth()
+							* resources->PlayerHitSounds.size();
+					resources->PlayerHitSounds[playerHitSndPlaying]->play(6, 0,
+							0);
 				}
 			}
 
@@ -1373,7 +1342,7 @@ void handlePlayer(LifeForm* lf) {
 
 	if (input->getPressInput(InputHandler::ThrowGrenade) && player->Grenades
 			> 0) {
-		bullets.push_back(player->throwGrenade(grenadeSprite));
+		bullets.push_back(player->throwGrenade(resources->GrenadeSprite));
 	}
 }
 
@@ -1382,7 +1351,7 @@ void dropPowerup(float x, float y) {
 	Powerup *newPowerup;
 
 	if (!powerupDropped && rand() % 1000 >= 950) {
-		newPowerup = new Powerup(x, y, powerupTex[Powerup::medikit]);
+		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::medikit]);
 		newPowerup->Scale = 0.3f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(0.1f);
@@ -1391,7 +1360,7 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 975) {
-		newPowerup = new Powerup(x, y, powerupTex[Powerup::medikit]);
+		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::medikit]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(0.2f);
@@ -1400,7 +1369,7 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 990) {
-		newPowerup = new Powerup(x, y, powerupTex[Powerup::medikit]);
+		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::medikit]);
 		newPowerup->Scale = 0.5f;
 		newPowerup->Type = Powerup::medikit;
 		newPowerup->Object = new float(0.6f);
@@ -1409,7 +1378,8 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 970) {
-		newPowerup = new Powerup(x, y, powerupTex[Powerup::grenades]);
+		newPowerup
+				= new Powerup(x, y, resources->PowerupTex[Powerup::grenades]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::grenades;
 		newPowerup->Object = new int(1);
@@ -1417,7 +1387,7 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 970) {
-		newPowerup = new Powerup(x, y, powerupTex[Powerup::freeze]);
+		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::freeze]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::freeze;
 		newPowerup->Object = new int(10000);
@@ -1425,7 +1395,8 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 970) {
-		newPowerup = new Powerup(x, y, powerupTex[Powerup::penBullets]);
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[Powerup::penBullets]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::penBullets;
 		newPowerup->Object = new int(10000);
@@ -1523,7 +1494,8 @@ void handleBullets() {
 							for (int k = 0; k < 6; k++) {
 								Particle* p = new Particle(enemy->X + (rand()
 										% 50) - 25, enemy->Y + (rand() % 50)
-										- 25, 128, 128, crystal->getTexture());
+										- 25, 128, 128,
+										resources->Crystal->getTexture());
 								p->RMask = p->GMask = p->BMask = 1.0f;
 								p->AMask = 1.0f;
 								p->Scale = (rand() % 50) / 100.0f
@@ -1539,8 +1511,9 @@ void handleBullets() {
 							for (int k = 0; k < 25; k++) {
 								Particle* p = new Particle(enemy->X + (rand()
 										% 50) - 25, enemy->Y + (rand() % 50)
-										- 25, 128, 128, bloodTex[(rand() % 299)
-										/ 100]);
+										- 25, 128, 128,
+										resources->BloodTex[(rand() % 299)
+												/ 100]);
 								p->RMask = p->GMask = p->BMask = 0.0f;
 								if (enemy->Poisoned)
 									p->GMask = 1.0f - (rand() % 200) / 1000.0f;
@@ -1565,8 +1538,10 @@ void handleBullets() {
 							if (((StandardBullet*) bullets[i])->isExplosive()) {
 								bullets[i]->deactivate();
 								Explosion* expl = new Explosion(bullets[i]->X,
-										bullets[i]->Y, 100.0f, explTex[0],
-										explTex[1], explosionSounds[1]);
+										bullets[i]->Y, 100.0f,
+										resources->ExplTex[0],
+										resources->ExplTex[1],
+										resources->ExplSounds[1]);
 								expl->Damage = bullets[i]->Damage;
 								explosions.push_back(expl);
 								bypassDirectDamage = true;
@@ -1577,7 +1552,8 @@ void handleBullets() {
 							float damageLoss = enemy->getHealth();
 							enemy->hit(bullets[i], player->X, player->Y);
 
-							if (bullets[i]->BigCalibre) {
+							if (bullets[i]->BigCalibre
+									&& !bullets[i]->Penetrating) {
 								bullets[i]->Damage -= damageLoss;
 								if (bullets[i]->Damage <= 0) {
 									bullets[i]->deactivate();
@@ -1591,7 +1567,8 @@ void handleBullets() {
 			if (bullets[i]->isReadyToRemove() && bullets[i]->Type
 					== Bullet::grenade) {
 				Explosion* expl = new Explosion(bullets[i]->X, bullets[i]->Y,
-						150.0f, explTex[0], explTex[1], explosionSounds[0]);
+						150.0f, resources->ExplTex[0], resources->ExplTex[1],
+						resources->ExplSounds[0]);
 				expl->Damage = bullets[i]->Damage;
 				explosions.push_back(expl);
 			}
@@ -1947,8 +1924,9 @@ void drawGame() {
 		lf->draw();
 
 		if (lf->Frozen > 0 && !lf->isDead()) {
-			crystal->AMask = lf->Frozen / 10000.0f;
-			crystal->draw(false, false, lf->X, lf->Y, lf->Angle, lf->Scale);
+			resources->Crystal->AMask = lf->Frozen / 10000.0f;
+			resources->Crystal->draw(false, false, lf->X, lf->Y, lf->Angle,
+					lf->Scale);
 		}
 	}
 
@@ -2096,88 +2074,7 @@ void runMainLoop() {
 }
 
 void loadResources() {
-	explosionSounds.push_back(sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "explode-0.ogg")));
-	explosionSounds.push_back(sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "explode-1.ogg")));
-
-	playerKilledSound = sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "player_killed.ogg"));
-	playerHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "player_hit_0.ogg")));
-	playerHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "player_hit_1.ogg")));
-	playerHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "player_hit_2.ogg")));
-
-	vector<SDL_Surface*> playerLegsAnimSurfaces;
-	for (unsigned i = 0; i < 25; i++) {
-		char *buf;
-		sprintf(buf = new char[100], "player/legs-%i.png", i);
-		SDL_Surface *surface = ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::anima, buf));
-		playerLegsAnimSurfaces.push_back(surface);
-		delete[] buf;
-	}
-	playerLegsSprite = new Sprite(playerLegsAnimSurfaces);
-
-	vector<SDL_Surface*> grenadeAnimSurfaces;
-	for (unsigned i = 0; i < 12; i++) {
-		char *buf;
-		sprintf(buf = new char[100], "grenade/%i.png", i);
-		SDL_Surface *surface = ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::anima, buf));
-		grenadeAnimSurfaces.push_back(surface);
-		delete[] buf;
-	}
-	grenadeSprite = new Sprite(grenadeAnimSurfaces);
-
-	explTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "expl_0.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true));
-	explTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "expl_1.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true));
-
-	bloodTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "blood_0.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true));
-	bloodTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "blood_1.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true));
-	bloodTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "blood_2.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true));
-
-	powerupTex.insert(map<Powerup::PowerupType, Texture*>::value_type(
-			Powerup::medikit, new Texture(
-					ImageUtility::loadImage(fileUtility->getFullPath(
-							FileUtility::image, "medikit.png")), GL_TEXTURE_2D,
-					GL_LINEAR, true)));
-
-	powerupTex.insert(map<Powerup::PowerupType, Texture*>::value_type(
-			Powerup::grenades, new Texture(
-					ImageUtility::loadImage(fileUtility->getFullPath(
-							FileUtility::image, "grenade.png")), GL_TEXTURE_2D,
-					GL_LINEAR, true)));
-
-	powerupTex.insert(map<Powerup::PowerupType, Texture*>::value_type(
-			Powerup::freeze, new Texture(
-					ImageUtility::loadImage(fileUtility->getFullPath(
-							FileUtility::image, "freeze.png")), GL_TEXTURE_2D,
-					GL_LINEAR, true)));
-
-	powerupTex.insert(
-			map<Powerup::PowerupType, Texture*>::value_type(
-					Powerup::penBullets, new Texture(ImageUtility::loadImage(
-							fileUtility->getFullPath(FileUtility::image,
-									"penbullets.png")), GL_TEXTURE_2D,
-							GL_LINEAR, true)));
-
-	crystal = new StaticObject(0, 0, 128, 128, new Texture(
-			ImageUtility::loadImage(fileUtility->getFullPath(
-					FileUtility::image, "crystal.png")), GL_TEXTURE_2D,
-			GL_LINEAR, true), true);
+	resources = new Resources(fileUtility, sndManager);
 
 	aim = new Aim(config);
 

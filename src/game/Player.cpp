@@ -172,7 +172,10 @@ void Player::process(int deltaTime) {
 
 void Player::draw() {
 	m_legs->draw();
-	m_arms->draw(false, false);
+
+	if (!m_dead)
+		m_arms->draw(false, false);
+
 	for (int i = m_shells.size() - 1; i >= 0; i--) {
 		m_shells[i]->draw();
 		if (m_shells[i]->Frame == m_shells[i]->AnimSprite->getFramesCount() - 1) {

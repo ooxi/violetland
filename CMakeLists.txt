@@ -37,6 +37,7 @@ set(srcFileList
 	${srcGameDir}/Explosion.cpp
 	${srcGameDir}/MonsterFactory.cpp
 	${srcGameDir}/MonsterTemplate.cpp
+	${srcGameDir}/Resources.cpp
 	${srcBulletsDir}/Bullet.cpp
 	${srcBulletsDir}/StandardBullet.cpp
 	${srcBulletsDir}/LaserBullet.cpp
