@@ -1281,7 +1281,7 @@ void levelUp(Player* player) {
 	player->LevelPoints += 1;
 
 	msgQueue.push_back(videoManager->RegularText->getObject(
-			"The player has reached new level.", 0, 0, TextManager::LEFT,
+			"You has reached new level.", 0, 0, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	player->setHealth(player->MaxHealth());
@@ -1405,7 +1405,7 @@ void dropPowerup(float x, float y) {
 
 	int wpnDropChance = 975;
 	if (player->getWeapon()->Name == "PM")
-		wpnDropChance = 800;
+		wpnDropChance = 750;
 	if (player->Kills == 0)
 		wpnDropChance = 0;
 	if (rand() % 1000 >= wpnDropChance) {
@@ -1952,14 +1952,15 @@ void drawGame() {
 				+ player->getWeapon()->YDiff * sin(-rad);
 		const float wpnY = player->Y + player->getWeapon()->XDiff * sin(rad)
 				+ player->getWeapon()->YDiff * cos(-rad);
+		const float maxLen = cam->getH() * 0.75f;
 		if (player->getLaser()) {
 			glLineWidth(0.5f);
 			glBegin(GL_LINES);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
 			glVertex3f(wpnX, wpnY, 0);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
-			glVertex3f(player->X + cam->getH() * 0.75f * cos(rad), player->Y
-					+ cam->getH() * 0.75f * sin(rad), 0);
+			glVertex3f(player->X + maxLen * cos(rad), player->Y
+					+ maxLen * sin(rad), 0);
 			glEnd();
 		}
 		if (player->getLight()) {
@@ -1968,7 +1969,7 @@ void drawGame() {
 			float flash = 1.0 - gameState->TimeOfDay;
 			if (flash > 0.3)
 				flash = 0.3;
-			glColor4f(1.0f, 1.0f, 1.0f, 0.5f * (1.0 - gameState->TimeOfDay));
+			glColor4f(1.0f, 1.0f, 1.0f, flash);
 			glVertex3f(wpnX, wpnY, 0.0f);
 
 			const float len = Object::calculateDistance(player->X, player->Y,

@@ -29,12 +29,12 @@ SDL_Surface *ImageUtility::createImage(TTF_Font *font, char fgR, char fgG,
 	SDL_Surface *resulting_text = NULL;
 
 	if (quality == solid)
-		resulting_text = TTF_RenderText_Solid(font, text.c_str(), tmpfontcolor);
+		resulting_text = TTF_RenderUTF8_Solid(font, text.c_str(), tmpfontcolor);
 	else if (quality == shaded)
-		resulting_text = TTF_RenderText_Shaded(font, text.c_str(),
+		resulting_text = TTF_RenderUTF8_Shaded(font, text.c_str(),
 				tmpfontcolor, tmpfontbgcolor);
 	else if (quality == blended)
-		resulting_text = TTF_RenderText_Blended(font, text.c_str(),
+		resulting_text = TTF_RenderUTF8_Blended(font, text.c_str(),
 				tmpfontcolor);
 
 	SDL_Surface *optimizedImage = SDL_DisplayFormatAlpha(resulting_text);
