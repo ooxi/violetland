@@ -60,8 +60,6 @@ MonsterFactory* monsterFactory;
 
 Configuration* tempConfig;
 
-int playerHitSndPlaying = 0;
-
 Aim* aim;
 StaticObject* splash;
 
@@ -229,7 +227,10 @@ void startSurvival() {
 	clearMessages();
 	clearExplosions();
 
-	player = new Player(0, 0, resources->PlayerWalkSprite);
+	player = new Player(0, 0, resources->PlayerWalkSprite,
+			resources->PlayerDeathSprites[(rand()
+					% (int) resources->PlayerDeathSprites.size())],
+			resources->PlayerHitSounds, resources->PlayerDeathSound);
 	player->setWeapon(weaponManager->getWeaponByName("PM"));
 	player->HitR = 0.28f;
 	player->Acceleration = 0.0004f;
@@ -372,10 +373,6 @@ void initSystem() {
 
 void loseGame(Player* player) {
 	gameState->Lost = true;
-	if (resources->PlayerHitSounds[playerHitSndPlaying]->isPlaying())
-		resources->PlayerHitSounds[playerHitSndPlaying]->stop(0);
-
-	resources->PlayerDeathSound->play(5, 0, 0);
 
 	msgQueue.push_back(videoManager->RegularText->getObject("Player is dead.",
 			0, 0, TextManager::LEFT, TextManager::BOTTOM));
@@ -1221,7 +1218,8 @@ void handleMonster(LifeForm* lf) {
 			enemy->DoNotDisturb = false;
 	}
 
-	if ((rangeToPlayer < 400 || enemy->Angry) && !gameState->Lost) {
+	if ((rangeToPlayer < 400 || enemy->Angry) && player->State
+			== LifeForm::alive) {
 		enemy->TargetX = player->X;
 		enemy->TargetY = player->Y;
 	} else if (rangeToPlayer < 800 && !gameState->Lost) {
@@ -1243,19 +1241,11 @@ void handleMonster(LifeForm* lf) {
 
 	enemy->move(deltaTime);
 
-	if (!gameState->Lost && player->detectCollide(enemy)) {
+	if (player->State == LifeForm::alive && player->detectCollide(enemy)) {
 		if (enemy->Attack()) {
 			if (rand() % 100 > player->ChanceToEvade() * 100) {
+				player->hit();
 				player->setHealth(player->getHealth() - enemy->Damage());
-				if (!resources->PlayerHitSounds[playerHitSndPlaying]->isPlaying()) {
-					playerHitSndPlaying = (player->getHealth()
-							< player->MaxHealth() ? player->getHealth()
-							: player->getHealth() - 0.01f)
-							/ player->MaxHealth()
-							* resources->PlayerHitSounds.size();
-					resources->PlayerHitSounds[playerHitSndPlaying]->play(6, 0,
-							0);
-				}
 			}
 
 			if (!player->Unstoppable)
@@ -1444,15 +1434,16 @@ void handleLifeForms() {
 
 			if (lf->Type == LifeForm::player) {
 				if (!gameState->Lost) {
-					if (lf->isDead())
+					if (lf->State == LifeForm::died)
 						loseGame(player);
 
-					handlePlayer(lf);
+					if (lf->State == LifeForm::alive)
+						handlePlayer(lf);
 				}
 			}
 
 			if (lf->Type == LifeForm::monster) {
-				if (!lf->isDead())
+				if (lf->State == LifeForm::alive)
 					handleMonster(lf);
 			}
 		}
@@ -1469,7 +1460,8 @@ void handleBullets() {
 				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 					LifeForm* lf = iter->second;
 
-					if (lf->Type == LifeForm::player || lf->isDead())
+					if (lf->Type == LifeForm::player || lf->State
+							!= LifeForm::alive)
 						continue;
 
 					Enemy* enemy = (Enemy*) lf;
@@ -1492,7 +1484,7 @@ void handleBullets() {
 						if (enemy->Frozen > 0) {
 							ParticleSystem* partSys = new ParticleSystem();
 							for (int k = 0; k < 6; k++) {
-								Particle* p = new Particle(enemy->X + (rand()
+								Particle * p = new Particle(enemy->X + (rand()
 										% 50) - 25, enemy->Y + (rand() % 50)
 										- 25, 128, 128,
 										resources->Crystal->getTexture());
@@ -1509,7 +1501,7 @@ void handleBullets() {
 						} else {
 							ParticleSystem* partSys = new ParticleSystem();
 							for (int k = 0; k < 25; k++) {
-								Particle* p = new Particle(enemy->X + (rand()
+								Particle * p = new Particle(enemy->X + (rand()
 										% 50) - 25, enemy->Y + (rand() % 50)
 										- 25, 128, 128,
 										resources->BloodTex[(rand() % 299)
@@ -1537,7 +1529,7 @@ void handleBullets() {
 						if (bullets[i]->Type == Bullet::standard) {
 							if (((StandardBullet*) bullets[i])->isExplosive()) {
 								bullets[i]->deactivate();
-								Explosion* expl = new Explosion(bullets[i]->X,
+								Explosion * expl = new Explosion(bullets[i]->X,
 										bullets[i]->Y, 100.0f,
 										resources->ExplTex[0],
 										resources->ExplTex[1],
@@ -1678,7 +1670,7 @@ void drawHud() {
 
 	if (gameState->Lost && !gameState->Paused)
 		videoManager->RegularText->draw("They have overcome...",
-				config->ScreenWidth / 2, config->ScreenHeight / 2,
+				config->ScreenWidth / 2, config->ScreenHeight / 3,
 				TextManager::CENTER, TextManager::MIDDLE);
 
 	if (gameState->Paused)
@@ -1763,7 +1755,8 @@ void handlePowerups() {
 				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 					LifeForm* lf = iter->second;
 
-					if (lf->Type == LifeForm::player || lf->isDead())
+					if (lf->Type == LifeForm::player || lf->State
+							!= LifeForm::alive)
 						continue;
 					lf->Frozen = *(int*) powerups[i]->Object;
 				}
@@ -1829,14 +1822,17 @@ void processGame() {
 		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 			LifeForm* lf = iter->second;
 
-			if (lf->Type == LifeForm::monster) {
-				Enemy* enemy = (Enemy*) lf;
-				if (enemy->isReasyToDisappear()) {
-					terrain ->drawOn(enemy->getCorpse());
+			if (lf->State == LifeForm::died) {
+				terrain ->drawOn(lf->getCorpse());
+				if (lf->Type == LifeForm::monster) {
 					dropPowerup(lf->X, lf->Y);
-					player->Kills++;
-					player->Xp += (int) ((1.5 - gameState->TimeOfDay * -0.5)
-							* (lf->Strength + lf->Agility + lf->Vitality) * 3);
+					if (player->State == LifeForm::alive) {
+						player->Kills++;
+						player->Xp
+								+= (int) ((1.5 - gameState->TimeOfDay * -0.5)
+										* (lf->Strength + lf->Agility
+												+ lf->Vitality) * 3);
+					}
 					delete lf;
 					lifeForms.erase(iter->first);
 				}
@@ -1918,12 +1914,12 @@ void drawGame() {
 				- cam->getHalfW() && lf->getTop() < cam->Y + cam->getHalfH()
 				&& lf->getBottom() > cam->Y - cam->getHalfH())
 
-			if (gameState->Lost && lf->Type == LifeForm::player)
+			if (lf->Type == LifeForm::player && lf->State == LifeForm::died)
 				continue;
 
 		lf->draw();
 
-		if (lf->Frozen > 0 && !lf->isDead()) {
+		if (lf->Frozen > 0 && lf->State == LifeForm::alive) {
 			resources->Crystal->AMask = lf->Frozen / 10000.0f;
 			resources->Crystal->draw(false, false, lf->X, lf->Y, lf->Angle,
 					lf->Scale);
@@ -1959,8 +1955,8 @@ void drawGame() {
 			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
 			glVertex3f(wpnX, wpnY, 0);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
-			glVertex3f(player->X + maxLen * cos(rad), player->Y
-					+ maxLen * sin(rad), 0);
+			glVertex3f(player->X + maxLen * cos(rad), player->Y + maxLen * sin(
+					rad), 0);
 			glEnd();
 		}
 		if (player->getLight()) {

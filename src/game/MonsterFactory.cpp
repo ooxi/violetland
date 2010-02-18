@@ -82,7 +82,7 @@ MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 		delete[] buf;
 
 		for (unsigned int i = 0; i < hitSounds.size(); i++) {
-			mt ->HitSounds.push_back(loadMonsterSound("hit", monsters[j],
+			mt->HitSounds.push_back(loadMonsterSound("hit", monsters[j],
 					hitSounds[i]));
 		}
 

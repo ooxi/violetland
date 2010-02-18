@@ -15,17 +15,23 @@
 
 class Player: public LifeForm {
 private:
-	DynamicObject *m_legs;
+	Sprite *m_deathSprite;
+	DynamicObject *m_body;
 	StaticObject *m_arms;
 	std::vector<DynamicObject*> m_shells;
+	std::vector<Sound*> m_hitSounds;
+	Sound* m_dyingSound;
 	Weapon *m_weapon;
 	bool m_light, m_laser;
+	int m_hitSndPlaying;
 public:
 	Player();
-	Player(float x, float y, Sprite *legsSprite);
+	Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
+			std::vector<Sound*> hitSounds, Sound* dyingSound);
 	virtual void process(int deltaTime);
 	virtual void draw();
 
+	void hit();
 	void move(char movementX, char movementY, int deltaTime);
 	void reload();
 	void toggleLight();
@@ -40,6 +46,7 @@ public:
 	void setWeapon(Weapon *value);
 	std::vector<Bullet*> *fire();
 	Bullet* throwGrenade(Sprite* grenadeSprite);
+	virtual StaticObject* getCorpse();
 	~Player();
 	float AccuracyDeviation;
 	int LevelPoints;

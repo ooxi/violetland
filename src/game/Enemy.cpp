@@ -85,28 +85,24 @@ bool Enemy::isBleeding() {
 	}
 }
 
-bool Enemy::isDeathPhase() {
-	return m_body->AnimSprite == Base->DeathSprite;
-}
-
-bool Enemy::isReasyToDisappear() {
-	return isDeathPhase() && m_body->Frame
-			== m_body->AnimSprite->getFramesCount() - 1;
-}
-
 void Enemy::process(int deltaTime) {
 	LifeForm::process(deltaTime);
 
 	if (m_bleedCount > 0)
 		m_bleedDelay += deltaTime;
 
-	if (m_dead) {
-		if (!isDeathPhase()) {
-			m_body = new DynamicObject(X, Y, Base->DeathSprite);
-		} else {
-			if (!isReasyToDisappear())
-				m_body->rollFrame(true);
-		}
+	if (State == LifeForm::dying) {
+		if (m_body->Frame == m_body->AnimSprite->getFramesCount() - 1)
+			State = LifeForm::died;
+	}
+
+	if (State == LifeForm::dying) {
+		m_body->rollFrame(true);
+	}
+
+	if (State == LifeForm::smitten) {
+		m_body = new DynamicObject(X, Y, Base->DeathSprite);
+		State = LifeForm::dying;
 	}
 }
 

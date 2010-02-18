@@ -23,7 +23,7 @@ LifeForm::LifeForm(float x, float y, int w, int h) :
 	Agility = 1.0f;
 	Vitality = 1.0f;
 	m_health = MaxHealth();
-	m_dead = false;
+	State = alive;
 	m_lastAttackTime = SDL_GetTicks();
 	TargetX = TargetY = 0.0f;
 	Poisoned = false;
@@ -43,9 +43,11 @@ void LifeForm::process(int deltaTime) {
 			Frozen = 0;
 	}
 
-	m_dead = m_dead || getHealth() == 0;
+	if (getHealth() == 0 && State == LifeForm::alive) {
+		State = LifeForm::smitten;
+	}
 
-	if (!m_dead && Frozen == 0) {
+	if (State == LifeForm::alive && Frozen == 0) {
 		setHealth(getHealth() + HealthRegen() * deltaTime);
 
 		if (Poisoned)
@@ -53,8 +55,8 @@ void LifeForm::process(int deltaTime) {
 	}
 }
 
-const bool LifeForm::isDead() {
-	return m_dead;
+StaticObject* LifeForm::getCorpse() {
+	return NULL;
 }
 
 const float LifeForm::MaxHealth() {

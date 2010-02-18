@@ -27,10 +27,8 @@ public:
 	void setAppearance(float scale, float rMask, float gMask, float bMask,
 			float aMask);
 	void rollFrame(bool forward);
-	StaticObject* getCorpse();
 	bool isBleeding();
-	bool isDeathPhase();
-	bool isReasyToDisappear();
+	virtual StaticObject* getCorpse();
 	void destroy();
 	~Enemy();
 	bool DoNotDisturb;
