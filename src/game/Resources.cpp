@@ -13,8 +13,8 @@ Resources::Resources(FileUtility* fileUtility, SoundManager* sndManager) {
 	PlayerHitSounds.push_back(loadSnd("player_hit_2.ogg"));
 
 	PlayerWalkSprite = loadSprite(25, "player/walk/%i.png");
-	PlayerDeathSprites.push_back(loadSprite(28, "player/death/0/%i.png"));
-	PlayerDeathSprites.push_back(loadSprite(21, "player/death/1/%i.png"));
+	PlayerDeathSprites.push_back(loadSprite(56, "player/death/0/%i.png"));
+	PlayerDeathSprites.push_back(loadSprite(42, "player/death/1/%i.png"));
 
 	GrenadeSprite = loadSprite(12, "grenade/%i.png");
 
