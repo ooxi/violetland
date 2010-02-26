@@ -3,6 +3,17 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.2.9]
+
+[+] new bonus "penetration bullets"
+[+] death animations of player
+[+] explantation of perks on char stats screen
+[*] loading screen between pressing "new survival" and starting the game
+[*] view of flashlight
+[!] last entry of high scores table was always zero
+[!] death animations of monsters were played above player
+[!] rendering of main menu on wide resolutions
+
 [0.2.8]
 
 [+] mac os x support (10.5 or later)
