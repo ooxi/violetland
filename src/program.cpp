@@ -160,7 +160,7 @@ void createTerrain() {
 
 	int baseTexCount = fileUtility->getFilesCountFromDir(
 			fileUtility->getFullPath(FileUtility::image, "terrain"));
-	int baseTex = (rand() % (baseTexCount * 100 - 1) / 100);
+	int baseTex = (rand() % baseTexCount);
 
 	string tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
 	tilesDir.append("/%i");
@@ -325,7 +325,7 @@ void initSystem() {
 
 	printf("Drawing splash screen...\n");
 
-	sprintf(buf = new char[100], "splash_%i.png", (rand() % 199) / 100);
+	sprintf(buf = new char[100], "splash_%i.png", (rand() % 2));
 	Texture* tex = new Texture(ImageUtility::loadImage(
 			fileUtility->getFullPath(FileUtility::image, buf)), GL_TEXTURE_2D,
 			GL_LINEAR, true);
@@ -1168,7 +1168,7 @@ void handleParticles() {
 
 void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 	StaticObject *newBloodStain = new StaticObject(x, y, 128, 128,
-			resources->BloodTex[(rand() % 299) / 100], false);
+			resources->BloodTex[(rand() % 3)], false);
 
 	newBloodStain->Scale = scale;
 	newBloodStain->Angle = angle;
@@ -1399,7 +1399,7 @@ void dropPowerup(float x, float y) {
 	if (player->Kills == 0)
 		wpnDropChance = 0;
 	if (rand() % 1000 >= wpnDropChance) {
-		int weaponIndex = (rand() % (weaponManager->Weapons.size() - 1));
+		int weaponIndex = (rand() % weaponManager->Weapons.size());
 		newPowerup = new Powerup(x, y,
 				weaponManager->Weapons[weaponIndex]->getDroppedTex());
 		newPowerup->Type = Powerup::weapon;
