@@ -3,10 +3,14 @@
 
 class GameState {
 public:
+	enum GameMode {
+		Survival = 0, Scenario
+	};
 	GameState();
-	void startSurvival();
-	void endGame();
+	void start(GameMode mode);
+	void end();
 	~GameState();
+	GameMode Mode;
 	double Hardness;
 	bool Works;
 	bool Lost;

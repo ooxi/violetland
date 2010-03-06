@@ -9,7 +9,7 @@ VideoManager::VideoManager(FileUtility* fileUtility) {
 	RegularText = NULL;
 	SmallText = NULL;
 
-	m_fpsCountingStart = SDL_GetTicks();
+	m_lastFrameTime = m_fpsCountingStart = SDL_GetTicks();
 	m_framesCount = 0;
 
 	// seems that this code is supported only in windows
@@ -22,15 +22,25 @@ void VideoManager::countFrame() {
 
 	int now = SDL_GetTicks();
 
+	m_frameDeltaTime = now - m_lastFrameTime;
+	m_lastFrameTime = now;
+
 	if (now - m_fpsCountingStart > 5000) {
 		m_fpsCountingStart = now;
 		m_fps = m_framesCount / 5;
 		m_framesCount = 0;
 	}
+
+	if (m_config->FrameDelay > 0 && m_frameDeltaTime < m_config->FrameDelay)
+		SDL_Delay(m_config->FrameDelay - m_frameDeltaTime);
 }
 
 int VideoManager::getFps() {
 	return m_fps;
+}
+
+int VideoManager::getFrameDeltaTime() {
+	return m_frameDeltaTime;
 }
 
 bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
@@ -66,6 +76,8 @@ vector<SDL_Rect> VideoManager::GetAvailableModes(Configuration* config) {
 void VideoManager::setMode(Configuration* config, Camera* cam) {
 	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", config->ScreenWidth,
 			config->ScreenHeight, config->FullScreen ? 'f' : 'w');
+
+	m_config = config;
 
 	SDL_Surface *screen = SDL_SetVideoMode(config->ScreenWidth,
 			config->ScreenHeight, config->ScreenColor,

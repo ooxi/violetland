@@ -1,30 +1,13 @@
 #include "InputHandler.h"
 
-InputHandler::InputHandler() {
+InputHandler::InputHandler(Binding* binding) {
 	printf("InputHandler...\n");
 
 	for (int i = 0; i < GameInputEventsCount; i++) {
 		m_event[i] = false;
 	}
 
-	m_binding[MoveLeft].Value = SDLK_a;
-	m_binding[MoveUp].Value = SDLK_w;
-	m_binding[MoveRight].Value = SDLK_d;
-	m_binding[MoveDown].Value = SDLK_s;
-	m_binding[Restart].Value = SDLK_RETURN;
-	m_binding[Menu].Value = SDLK_ESCAPE;
-	m_binding[Exit].Value = SDLK_F12;
-	m_binding[ToggleLight].Value = SDLK_f;
-	m_binding[ToggleLaser].Value = SDLK_g;
-	m_binding[Pause].Value = SDLK_p;
-	m_binding[ShowChar].Value = SDLK_c;
-	m_binding[Help].Value = SDLK_F1;
-	m_binding[Pickup].Value = SDLK_e;
-	m_binding[ThrowGrenade].Value = SDLK_SPACE;
-	m_binding[Fire].Value = SDL_BUTTON_LEFT;
-	m_binding[Fire].Type = Mouse;
-	m_binding[Reload].Value = SDL_BUTTON_RIGHT;
-	m_binding[Reload].Type = Mouse;
+	m_binding = binding;
 
 	mouseX = mouseY = 0;
 }

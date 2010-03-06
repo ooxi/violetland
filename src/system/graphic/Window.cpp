@@ -98,13 +98,14 @@ void Window::process(InputHandler* input) {
 		}
 	}
 
+	//TODO: refactor next two copypasted cycles
 	for (iter = m_lcHandlers.begin(); iter != m_lcHandlers.end(); ++iter) {
 		if (m_elements.count(iter->first) > 0) {
 			TextObject* o = m_elements.find(iter->first)->second;
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
 				o->GMask = 0.3f;
-				if (input->getPressInput(InputHandler::Fire)) {
+				if (input->getPressInput(InputHandler::MenuClickA)) {
 					iter->second();
 				}
 			} else {
@@ -119,7 +120,7 @@ void Window::process(InputHandler* input) {
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
 				o->RMask = 0.3f;
-				if (input->getPressInput(InputHandler::Reload)) {
+				if (input->getPressInput(InputHandler::MenuClickB)) {
 					iter->second();
 				}
 			} else {

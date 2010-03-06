@@ -34,7 +34,7 @@
 #include "system/graphic/Window.h"
 #include "system/graphic/VideoManager.h"
 #include "system/Configuration.h"
-#include "system/GameState.h"
+#include "game/GameState.h"
 #include "game/Resources.h"
 #include "game/MonsterFactory.h"
 #include "game/Enemy.h"
@@ -47,6 +47,7 @@
 #include "game/Explosion.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/HelpWindow.h"
+#include "windows/CharStatsWindow.h"
 
 const string PROJECT = "violetland";
 const string VERSION = "0.2.9";
@@ -81,9 +82,6 @@ vector<Bullet*> bullets;
 map<string, Window*> windows;
 
 vector<TextObject*> msgQueue;
-
-int currentTime = 0;
-int deltaTime = 0;
 
 Terrain* terrain;
 
@@ -218,7 +216,7 @@ void startSurvival() {
 
 	SDL_GL_SwapBuffers();
 
-	gameState->startSurvival();
+	gameState->start(GameState::Survival);
 
 	clearBloodStains();
 	clearPowerups();
@@ -366,7 +364,7 @@ void initSystem() {
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-	input = new InputHandler();
+	input = new InputHandler(config->PlayerInputBinding);
 
 	gameState = new GameState();
 }
@@ -598,40 +596,7 @@ void showDetailsTelekinesis() {
 }
 
 void createCharStatWindow() {
-	Window *charStats = new Window(0.0f, 0.0f, config->ScreenWidth,
-			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
-
-	const int r = config->ScreenWidth * 0.6f;
-
-	charStats->addElement("perks", videoManager->RegularText->getObject(
-			"Perks:", r, videoManager->RegularText->getHeight() * 2.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	charStats->addElement("unstoppable", videoManager->RegularText->getObject(
-			"Unstoppable", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	charStats->addElement("poisonbullets",
-			videoManager->RegularText->getObject("Poison bullets", r
-					+ videoManager->RegularText->getHeight() * 2.0f,
-					videoManager->RegularText->getHeight() * 5.0f,
-					TextManager::LEFT, TextManager::MIDDLE));
-
-	charStats->addElement("bigcalibre", videoManager->RegularText->getObject(
-			"Big calibre", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 6.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	charStats->addElement("telekinesis", videoManager->RegularText->getObject(
-			"Telekinesis", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	charStats->addElement("explantation", videoManager->SmallText->getObject(
-			"Move mouse over text to get explantation.", config->ScreenWidth
-					/ 2, videoManager->RegularText->getHeight() * 1.0f,
-			TextManager::CENTER, TextManager::MIDDLE));
+	Window *charStats = new CharStatsWindow(config, videoManager);
 
 	charStats->addHandler(Window::hdl_lclick, "strength", increaseStrength);
 	charStats->addHandler(Window::hdl_lclick, "agility", increaseAgility);
@@ -1127,7 +1092,7 @@ void handleCommonControls() {
 void handleExplosions() {
 	if (!explosions.empty()) {
 		for (int i = explosions.size() - 1; i >= 0; i--) {
-			explosions[i]->process(deltaTime);
+			explosions[i]->process(videoManager->getFrameDeltaTime());
 
 			if (explosions[i]->Active && !lifeForms.empty()) {
 				map<string, LifeForm*>::const_iterator iter;
@@ -1156,7 +1121,7 @@ void handleExplosions() {
 void handleParticles() {
 	if (!particleSystems.empty()) {
 		for (int i = particleSystems.size() - 1; i >= 0; i--) {
-			particleSystems[i]->process(deltaTime);
+			particleSystems[i]->process(videoManager->getFrameDeltaTime());
 
 			if (particleSystems[i]->isEmpty()) {
 				delete particleSystems[i];
@@ -1237,9 +1202,9 @@ void handleMonster(LifeForm* lf) {
 
 	float newAngle = Object::calculateAngle(enemy->X, enemy->Y, enemy->TargetX,
 			enemy->TargetY);
-	enemy->turn(newAngle, enemy->MaxSpeed(), deltaTime);
+	enemy->turn(newAngle, enemy->MaxSpeed(), videoManager->getFrameDeltaTime());
 
-	enemy->move(deltaTime);
+	enemy->move(videoManager->getFrameDeltaTime());
 
 	if (player->State == LifeForm::alive && player->detectCollide(enemy)) {
 		if (enemy->Attack()) {
@@ -1296,7 +1261,7 @@ void handlePlayer(LifeForm* lf) {
 	if (input->getDownInput(InputHandler::MoveRight))
 		movementX = 1;
 
-	player->move(movementX, movementY, deltaTime);
+	player->move(movementX, movementY, videoManager->getFrameDeltaTime());
 
 	if (lf->X < -config->GameAreaSize)
 		player->setX(-config->GameAreaSize);
@@ -1414,7 +1379,7 @@ void dropPowerup(float x, float y) {
 
 void handleLifeForms() {
 	if (!gameState->Lost) {
-		for (int i = 0; i < deltaTime; i++) {
+		for (int i = 0; i < videoManager->getFrameDeltaTime(); i++) {
 			if (rand() % 10000 > gameState->Hardness) {
 				int lvl = player->Level * 0.5f + player->Level * pow((rand()
 						% 100) / 125.0f, 2);
@@ -1430,7 +1395,7 @@ void handleLifeForms() {
 		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 			LifeForm* lf = iter->second;
 
-			lf->process(deltaTime);
+			lf->process(videoManager->getFrameDeltaTime());
 
 			if (lf->Type == LifeForm::player) {
 				if (!gameState->Lost) {
@@ -1453,7 +1418,7 @@ void handleLifeForms() {
 void handleBullets() {
 	if (!bullets.empty()) {
 		for (int i = bullets.size() - 1; i >= 0; i--) {
-			bullets[i]->process(deltaTime);
+			bullets[i]->process(videoManager->getFrameDeltaTime());
 
 			if (bullets[i]->isActive() && !lifeForms.empty()) {
 				map<string, LifeForm*>::const_iterator iter;
@@ -1582,7 +1547,7 @@ void drawMessagesQueue() {
 					config->ScreenHeight - s
 							* videoManager->RegularText->getHeight() + i
 							* videoManager->RegularText->getHeight());
-			msgQueue[i]->AMask -= 0.0001f * deltaTime;
+			msgQueue[i]->AMask -= 0.0001f * videoManager->getFrameDeltaTime();
 
 			if (msgQueue[i]->AMask <= 0) {
 				delete msgQueue[i];
@@ -1684,10 +1649,11 @@ void drawHud() {
 void handlePowerups() {
 	for (int i = powerups.size() - 1; i >= 0; i--) {
 		bool deletePowerup = false;
-		powerups[i]->Time -= deltaTime;
+		powerups[i]->Time -= videoManager->getFrameDeltaTime();
 		powerups[i]->AMask = powerups[i]->Time / 15000.0;
 		if (powerups[i]->Type != Powerup::weapon) {
-			powerups[i]->Angle += deltaTime * 0.05f * powerups[i]->Dir;
+			powerups[i]->Angle += videoManager->getFrameDeltaTime() * 0.05f
+					* powerups[i]->Dir;
 
 			if (powerups[i]->Angle > 45 && powerups[i]->Dir > 0)
 				powerups[i]->Dir = -1;
@@ -1726,9 +1692,11 @@ void handlePowerups() {
 			if (player->Telekinesis) {
 				float a = Object::calculateAngle(powerups[i]->X,
 						powerups[i]->Y, player->X, player->Y);
-				powerups[i]->X -= cos((a + 90) * M_PI / 180) * deltaTime
+				powerups[i]->X -= cos((a + 90) * M_PI / 180)
+						* videoManager->getFrameDeltaTime()
 						* player->MaxSpeed();
-				powerups[i]->Y -= sin((a + 90) * M_PI / 180) * deltaTime
+				powerups[i]->Y -= sin((a + 90) * M_PI / 180)
+						* videoManager->getFrameDeltaTime()
 						* player->MaxSpeed();
 			}
 		}
@@ -1806,8 +1774,8 @@ void handlePowerups() {
 
 void processGame() {
 	if (!gameState->Lost) {
-		gameState->Hardness -= deltaTime * 0.00012;
-		gameState->Time += deltaTime;
+		gameState->Hardness -= videoManager->getFrameDeltaTime() * 0.00012;
+		gameState->Time += videoManager->getFrameDeltaTime();
 	}
 
 	terrain->beginDrawOn();
@@ -2024,16 +1992,8 @@ void drawWindows() {
 }
 
 void runMainLoop() {
-	currentTime = SDL_GetTicks();
 	while (gameState->Works) {
-		const int now = SDL_GetTicks();
-		deltaTime = now - currentTime;
-		currentTime = now;
-
 		videoManager->countFrame();
-
-		if (config->FrameDelay > 0 && deltaTime < config->FrameDelay)
-			SDL_Delay(config->FrameDelay - deltaTime);
 
 		input->process();
 

@@ -21,6 +21,8 @@ public:
 		Restart = 0,
 		Exit,
 		Menu,
+		MenuClickA,
+		MenuClickB,
 		ToggleLight,
 		ToggleLaser,
 		ShowChar,
@@ -36,7 +38,7 @@ public:
 		Reload,
 		GameInputEventsCount
 	};
-	InputHandler();
+	InputHandler(Binding binding[]);
 	void process();
 	bool getDownInput(GameInputEvents evnt);
 	bool getPressInput(GameInputEvents evnt);
@@ -44,7 +46,7 @@ public:
 private:
 	void processEvent(BindingType type, bool down, int value);
 	bool m_event[GameInputEventsCount];
-	Binding m_binding[GameInputEventsCount];
+	Binding* m_binding;
 };
 
 #endif /* INPUTHANDLER_H_ */

@@ -38,6 +38,7 @@ set(srcFileList
 	${srcGameDir}/MonsterFactory.cpp
 	${srcGameDir}/MonsterTemplate.cpp
 	${srcGameDir}/Resources.cpp
+	${srcGameDir}/GameState.cpp
 	${srcBulletsDir}/Bullet.cpp
 	${srcBulletsDir}/StandardBullet.cpp
 	${srcBulletsDir}/LaserBullet.cpp
@@ -46,7 +47,6 @@ set(srcFileList
 	${srcSystemDir}/InputHandler.cpp
 	${srcSystemDir}/ConfigFile.cpp
 	${srcSystemDir}/Configuration.cpp
-	${srcSystemDir}/GameState.cpp
 	${srcUtilityDir}/FileUtility.cpp
 	${srcUtilityDir}/ImageUtility.cpp
 	${srcGraphicDir}/Texture.cpp
@@ -65,6 +65,7 @@ set(srcFileList
 	${srcSoundDir}/SoundManager.cpp
 	${srcWindowsDir}/MainMenuWindow.cpp
 	${srcWindowsDir}/HelpWindow.cpp
+	${srcWindowsDir}/CharStatsWindow.cpp
 )
 
 add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")

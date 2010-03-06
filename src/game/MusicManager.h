@@ -2,7 +2,7 @@
 #include <string>
 #include "../system/utility/FileUtility.h"
 #include "../system/sound/SoundManager.h"
-#include "../system/GameState.h"
+#include "GameState.h"
 #include "Enemy.h"
 #include "Player.h"
 
