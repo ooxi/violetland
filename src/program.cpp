@@ -19,21 +19,21 @@
 #include "SDL_image.h"
 #include "SDL_opengl.h"
 #include "SDL_ttf.h"
-#include "system/utility/ImageUtility.h"
+#include "system/Configuration.h"
 #include "system/InputHandler.h"
-#include "system/graphic/text/TextManager.h"
-#include "system/utility/FileUtility.h"
 #ifdef __APPLE__
 #include "system/utility/macBundlePath.h"
 #endif
+#include "system/utility/ImageUtility.h"
+#include "system/utility/FileUtility.h"
+#include "system/graphic/text/TextManager.h"
 #include "system/graphic/Texture.h"
 #include "system/graphic/Aim.h"
 #include "system/graphic/Camera.h"
 #include "system/graphic/Particle.h"
-#include "system/sound/SoundManager.h"
 #include "system/graphic/Window.h"
 #include "system/graphic/VideoManager.h"
-#include "system/Configuration.h"
+#include "system/sound/SoundManager.h"
 #include "game/GameState.h"
 #include "game/Resources.h"
 #include "game/MonsterFactory.h"
@@ -50,7 +50,7 @@
 #include "windows/CharStatsWindow.h"
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.9";
+const string VERSION = "0.2.10";
 
 GameState* gameState;
 Configuration* config;
@@ -91,64 +91,6 @@ SoundManager* sndManager;
 MusicManager* musicManager;
 
 Resources* resources;
-
-void clearWindows() {
-	std::map<std::string, Window*>::const_iterator iter;
-	for (iter = windows.begin(); iter != windows.end(); ++iter) {
-		delete iter->second;
-	}
-	windows.clear();
-}
-
-void clearBullets() {
-	for (unsigned int i = 0; i < bullets.size(); i++) {
-		delete bullets[i];
-	}
-	bullets.clear();
-}
-
-void clearBloodStains() {
-	for (unsigned int i = 0; i < bloodStains.size(); i++) {
-		delete bloodStains[i];
-	}
-	bloodStains.clear();
-}
-
-void clearLifeForms() {
-	map<string, LifeForm*>::const_iterator iter;
-	for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
-		delete iter->second;
-	}
-	lifeForms.clear();
-}
-
-void clearMessages() {
-	for (unsigned int i = 0; i < msgQueue.size(); i++) {
-		delete msgQueue[i];
-	}
-	msgQueue.clear();
-}
-
-void clearExplosions() {
-	for (unsigned int i = 0; i < explosions.size(); i++) {
-		delete explosions[i];
-	}
-	explosions.clear();
-}
-
-void clearParticleSystems() {
-	for (unsigned int i = 0; i < particleSystems.size(); i++) {
-		delete particleSystems[i];
-	}
-	particleSystems.clear();
-}
-
-void clearPowerups() {
-	for (unsigned int i = 0; i < powerups.size(); i++) {
-		delete powerups[i];
-	}
-	powerups.clear();
-}
 
 void createTerrain() {
 	if (terrain)
@@ -218,12 +160,14 @@ void startSurvival() {
 
 	gameState->start(GameState::Survival);
 
-	clearBloodStains();
-	clearPowerups();
-	clearLifeForms();
-	clearBullets();
-	clearMessages();
-	clearExplosions();
+	clearMap<std::string, LifeForm*> (&lifeForms);
+	clearVector<Powerup*> (&powerups);
+	clearVector<StaticObject*> (&bloodStains);
+	fprintf(stdout, "bullet %i\n", (int) bullets.size());
+	clearVector<Bullet*> (&bullets);
+	fprintf(stdout, "bullet %i\n", (int) bullets.size());
+	clearVector<TextObject*> (&msgQueue);
+	clearVector<Explosion*> (&explosions);
 
 	player = new Player(0, 0, resources->PlayerWalkSprite,
 			resources->PlayerDeathSprites[(rand()
@@ -235,13 +179,13 @@ void startSurvival() {
 
 	lifeForms.insert(map<string, LifeForm*>::value_type(player->Id, player));
 
-	msgQueue.push_back(videoManager->RegularText->getObject(
+	msgQueue.push_back(videoManager->SmallText->getObject(
 			"Try to survive as long as you can.", 0, 0, TextManager::LEFT,
 			TextManager::MIDDLE));
-	msgQueue.push_back(videoManager->RegularText->getObject(
+	msgQueue.push_back(videoManager->SmallText->getObject(
 			"Shoot monsters to receive experience and other bonuses.", 0, 0,
 			TextManager::LEFT, TextManager::MIDDLE));
-	msgQueue.push_back(videoManager->RegularText->getObject(
+	msgQueue.push_back(videoManager->SmallText->getObject(
 			"Press F1 at any moment to get additional instructions.", 0, 0,
 			TextManager::LEFT, TextManager::MIDDLE));
 
@@ -372,8 +316,8 @@ void initSystem() {
 void loseGame(Player* player) {
 	gameState->Lost = true;
 
-	msgQueue.push_back(videoManager->RegularText->getObject("Player is dead.",
-			0, 0, TextManager::LEFT, TextManager::BOTTOM));
+	msgQueue.push_back(videoManager->SmallText->getObject("Player is dead.", 0,
+			0, TextManager::LEFT, TextManager::BOTTOM));
 
 	Highscores s(fileUtility);
 	HighscoresEntry* h = new HighscoresEntry();
@@ -993,14 +937,13 @@ void unloadResources() {
 	delete aim;
 	delete terrain;
 	delete resources;
-	clearBloodStains();
-	clearPowerups();
-	clearLifeForms();
-	clearBullets();
-	clearMessages();
-	clearWindows();
-	clearExplosions();
-	clearParticleSystems();
+	clearVector<Powerup*> (&powerups);
+	clearVector<StaticObject*> (&bloodStains);
+	clearVector<Bullet*> (&bullets);
+	clearVector<TextObject*> (&msgQueue);
+	clearVector<Explosion*> (&explosions);
+	clearMap<std::string, LifeForm*> (&lifeForms);
+	clearMap<std::string, Window*> (&windows);
 
 	delete config;
 }
@@ -1040,7 +983,7 @@ void handleCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
 		if (gameState->Begun && !gameState->Lost && windows.count("charstats")
 				== 0) {
-			clearWindows();
+			clearMap<std::string, Window*> (&windows);
 
 			createCharStatWindow();
 			refreshCharStatsWindow();
@@ -1056,7 +999,7 @@ void handleCommonControls() {
 
 	if (input->getPressInput(InputHandler::Help)) {
 		if (windows.count("helpscreen") == 0) {
-			clearWindows();
+			clearMap<std::string, Window*> (&windows);
 
 			createHelpWindow();
 
@@ -1071,7 +1014,7 @@ void handleCommonControls() {
 
 	if (input->getPressInput(InputHandler::Menu)) {
 		if (windows.count("mainmenu") == 0) {
-			clearWindows();
+			clearMap<std::string, Window*> (&windows);
 
 			createMainMenuWindow();
 
@@ -1235,7 +1178,7 @@ void levelUp(Player* player) {
 	player->Level += 1;
 	player->LevelPoints += 1;
 
-	msgQueue.push_back(videoManager->RegularText->getObject(
+	msgQueue.push_back(videoManager->SmallText->getObject(
 			"You has reached new level.", 0, 0, TextManager::LEFT,
 			TextManager::MIDDLE));
 
@@ -1543,10 +1486,10 @@ void drawMessagesQueue() {
 		int s = msgQueue.size();
 		for (int i = s - 1; i >= 0; i--) {
 			msgQueue[i]->draw(true, msgQueue[i]->X
-					+ videoManager->RegularText->getIndent(),
+					+ videoManager->SmallText->getIndent(),
 					config->ScreenHeight - s
-							* videoManager->RegularText->getHeight() + i
-							* videoManager->RegularText->getHeight());
+							* videoManager->SmallText->getHeight() + i
+							* videoManager->SmallText->getHeight());
 			msgQueue[i]->AMask -= 0.0001f * videoManager->getFrameDeltaTime();
 
 			if (msgQueue[i]->AMask <= 0) {
@@ -1705,7 +1648,7 @@ void handlePowerups() {
 			switch (powerups[i]->Type) {
 			case Powerup::medikit: {
 				if (player->getHealth() < player->MaxHealth()) {
-					msgQueue.push_back(videoManager->RegularText->getObject(
+					msgQueue.push_back(videoManager->SmallText->getObject(
 							"You took a medical kit.", 0, 0, TextManager::LEFT,
 							TextManager::MIDDLE));
 					player->setHealth(player->getHealth()
@@ -1715,7 +1658,7 @@ void handlePowerups() {
 				break;
 			}
 			case Powerup::freeze: {
-				msgQueue.push_back(videoManager->RegularText->getObject(
+				msgQueue.push_back(videoManager->SmallText->getObject(
 						"All has frozen around you.", 0, 0, TextManager::LEFT,
 						TextManager::MIDDLE));
 
@@ -1732,7 +1675,7 @@ void handlePowerups() {
 				break;
 			}
 			case Powerup::penBullets: {
-				msgQueue.push_back(videoManager->RegularText->getObject(
+				msgQueue.push_back(videoManager->SmallText->getObject(
 						"You got powerful penetration bullets.", 0, 0,
 						TextManager::LEFT, TextManager::MIDDLE));
 				player->PenBullets = *(int*) powerups[i]->Object;
@@ -1740,7 +1683,7 @@ void handlePowerups() {
 				break;
 			}
 			case Powerup::grenades: {
-				msgQueue.push_back(videoManager->RegularText->getObject(
+				msgQueue.push_back(videoManager->SmallText->getObject(
 						"You took a grenade.", 0, 0, TextManager::LEFT,
 						TextManager::MIDDLE));
 				player->Grenades += *(int*) powerups[i]->Object;
@@ -1754,8 +1697,8 @@ void handlePowerups() {
 					char *buf;
 					sprintf(buf = new char[200], "You took the %s.",
 							player->getWeapon()->Name.c_str());
-					msgQueue.push_back(videoManager->RegularText->getObject(
-							buf, 0, 0, TextManager::LEFT, TextManager::MIDDLE));
+					msgQueue.push_back(videoManager->SmallText->getObject(buf,
+							0, 0, TextManager::LEFT, TextManager::MIDDLE));
 					delete[] buf;
 					deletePowerup = true;
 				}
@@ -1784,7 +1727,7 @@ void processGame() {
 			terrain->drawOn(bloodStains[i]);
 		}
 
-		clearBloodStains();
+		clearVector<StaticObject*> (&bloodStains);
 
 		map<string, LifeForm*>::const_iterator iter;
 		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {

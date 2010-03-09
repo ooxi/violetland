@@ -58,7 +58,8 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 		std::string strbuf;
 		while (in) {
 			getline(in, strbuf, ' ');
-			weapon->Type = (Bullet::BulletType) strtol(strbuf.c_str(), NULL, 10);
+			weapon->Type
+					= (Bullet::BulletType) strtol(strbuf.c_str(), NULL, 10);
 			getline(in, shellName, ' ');
 			in >> weapon->AmmoClipSize;
 			weapon->Ammo = weapon->AmmoClipSize;
@@ -83,10 +84,11 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 		delete[] buf;
 
 		fprintf(stdout, "Shell animation of %s - %s, frames count: %i.\n",
-			weapons[j].c_str(), shellName.c_str(), framesCount);
+				weapons[j].c_str(), shellName.c_str(), framesCount);
 
 		for (unsigned i = 0; i < framesCount; i++) {
-			sprintf(buf = new char[100], "shells/%s/%i.png", shellName.c_str(), i);
+			sprintf(buf = new char[100], "shells/%s/%i.png", shellName.c_str(),
+					i);
 
 			SDL_Surface *surface = ImageUtility::loadImage(
 					fileUtility->getFullPath(FileUtility::anima, buf));

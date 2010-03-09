@@ -1,4 +1,5 @@
 #include <string>
+#include <stdio.h>
 #include "../../system/Object.h"
 
 #ifndef BULLET_H_

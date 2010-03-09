@@ -61,7 +61,7 @@ vector<SDL_Rect> VideoManager::GetAvailableModes(Configuration* config) {
 			1080, 1200 };
 
 	vector<SDL_Rect> modes;
-	for (unsigned int i = 0; i < structsize(wL); i++) {
+	for (unsigned int i = 0; i < getStructSize(wL); i++) {
 		if (isModeAvailable(wL[i], hL[i], config->ScreenColor, true, NULL)) {
 			SDL_Rect r;
 			r.w = wL[i];

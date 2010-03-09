@@ -4,17 +4,7 @@
 #include "../Configuration.h"
 #include "Camera.h"
 #include "text/TextManager.h"
-
-#define ARRSIZE(s) (sizeof(s) / sizeof(*s))
-
-/*
- i don't know what of these methods is better to use
- just c or c++
- */
-
-template<typename T> size_t structsize(const T& t) {
-	return sizeof(t) / sizeof(*t);
-}
+#include "../utility/Templates.h"
 
 class VideoManager {
 private:
