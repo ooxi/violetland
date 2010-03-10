@@ -39,6 +39,7 @@ set(srcFileList
 	${srcGameDir}/MonsterTemplate.cpp
 	${srcGameDir}/Resources.cpp
 	${srcGameDir}/GameState.cpp
+	${srcGameDir}/HUD.cpp
 	${srcBulletsDir}/Bullet.cpp
 	${srcBulletsDir}/StandardBullet.cpp
 	${srcBulletsDir}/LaserBullet.cpp

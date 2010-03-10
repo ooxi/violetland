@@ -17,7 +17,7 @@ VideoManager::VideoManager(FileUtility* fileUtility) {
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 }
 
-void VideoManager::countFrame() {
+void VideoManager::countFrame(int frameDelay) {
 	m_framesCount++;
 
 	int now = SDL_GetTicks();
@@ -31,8 +31,8 @@ void VideoManager::countFrame() {
 		m_framesCount = 0;
 	}
 
-	if (m_config->FrameDelay > 0 && m_frameDeltaTime < m_config->FrameDelay)
-		SDL_Delay(m_config->FrameDelay - m_frameDeltaTime);
+	if (frameDelay > 0 && m_frameDeltaTime < frameDelay)
+		SDL_Delay(frameDelay - m_frameDeltaTime);
 }
 
 int VideoManager::getFps() {
@@ -54,7 +54,7 @@ bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 	return (r != 0);
 }
 
-vector<SDL_Rect> VideoManager::GetAvailableModes(Configuration* config) {
+vector<SDL_Rect> VideoManager::GetAvailableModes() {
 	int wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1600, 1600, 1680,
 			1920, 1920 };
 	int hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 900, 1200, 1050,
@@ -62,7 +62,7 @@ vector<SDL_Rect> VideoManager::GetAvailableModes(Configuration* config) {
 
 	vector<SDL_Rect> modes;
 	for (unsigned int i = 0; i < getStructSize(wL); i++) {
-		if (isModeAvailable(wL[i], hL[i], config->ScreenColor, true, NULL)) {
+		if (isModeAvailable(wL[i], hL[i], 16, true, NULL)) {
 			SDL_Rect r;
 			r.w = wL[i];
 			r.h = hL[i];
@@ -73,20 +73,23 @@ vector<SDL_Rect> VideoManager::GetAvailableModes(Configuration* config) {
 	return modes;
 }
 
-void VideoManager::setMode(Configuration* config, Camera* cam) {
-	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", config->ScreenWidth,
-			config->ScreenHeight, config->FullScreen ? 'f' : 'w');
+VideoMode VideoManager::getVideoMode() {
+	return m_videoMode;
+}
 
-	m_config = config;
+void VideoManager::setMode(VideoMode mode, Camera* cam) {
+	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", mode.Width,
+			mode.Height, mode.Full ? 'f' : 'w');
 
-	SDL_Surface *screen = SDL_SetVideoMode(config->ScreenWidth,
-			config->ScreenHeight, config->ScreenColor,
-			config->FullScreen ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
+	m_videoMode = mode;
 
-	float aspect = (float) config->ScreenWidth / config->ScreenHeight;
-	cam->setH((int)(cam->getW() / aspect));
-	WK = (float) config->ScreenWidth / cam->getW();
-	HK = (float) config->ScreenHeight / cam->getH();
+	SDL_Surface *screen = SDL_SetVideoMode(mode.Width, mode.Height, mode.Color,
+			mode.Full ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
+
+	float aspect = (float) mode.Width / mode.Height;
+	cam->setH((int) (cam->getW() / aspect));
+	WK = (float) mode.Width / cam->getW();
+	HK = (float) mode.Height / cam->getH();
 
 	if (screen == NULL) {
 		fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
@@ -94,7 +97,7 @@ void VideoManager::setMode(Configuration* config, Camera* cam) {
 	}
 
 	printf("glViewport...\n");
-	glViewport(0, 0, config->ScreenWidth, config->ScreenHeight);
+	glViewport(0, 0, mode.Width, mode.Height);
 
 	if (RegularText != NULL) {
 		delete RegularText;

@@ -5,6 +5,14 @@
 #ifndef CONFIGURATION_H_
 #define CONFIGURATION_H_
 
+struct VideoMode {
+public:
+	int Width;
+	int Height;
+	bool Full;
+	int Color;
+};
+
 class Configuration {
 private:
 	FileUtility* m_fileUtility;
@@ -13,9 +21,7 @@ public:
 	void read();
 	void write();
 	~Configuration();
-	int ScreenWidth, ScreenHeight;
-	int ScreenColor;
-	bool FullScreen;
+	VideoMode VMode;
 	int FrameDelay;
 	bool ShowFps;
 	bool AutoReload;

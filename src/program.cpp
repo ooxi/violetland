@@ -45,6 +45,7 @@
 #include "game/WeaponManager.h"
 #include "game/Highscores.h"
 #include "game/Explosion.h"
+#include "game/HUD.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/HelpWindow.h"
 #include "windows/CharStatsWindow.h"
@@ -56,6 +57,8 @@ GameState* gameState;
 Configuration* config;
 VideoManager* videoManager;
 Camera* cam;
+
+HUD* hud;
 
 MonsterFactory* monsterFactory;
 
@@ -80,8 +83,6 @@ vector<Powerup*> powerups;
 vector<Bullet*> bullets;
 
 map<string, Window*> windows;
-
-vector<TextObject*> msgQueue;
 
 Terrain* terrain;
 
@@ -164,7 +165,6 @@ void startSurvival() {
 	clearVector<Powerup*> (&powerups);
 	clearVector<StaticObject*> (&bloodStains);
 	clearVector<Bullet*> (&bullets);
-	clearVector<TextObject*> (&msgQueue);
 	clearVector<Explosion*> (&explosions);
 
 	player = new Player(0, 0, resources->PlayerWalkSprite,
@@ -177,15 +177,9 @@ void startSurvival() {
 
 	lifeForms.insert(map<string, LifeForm*>::value_type(player->Id, player));
 
-	msgQueue.push_back(videoManager->SmallText->getObject(
-			"Try to survive as long as you can.", 0, 0, TextManager::LEFT,
-			TextManager::MIDDLE));
-	msgQueue.push_back(videoManager->SmallText->getObject(
-			"Shoot monsters to receive experience and other bonuses.", 0, 0,
-			TextManager::LEFT, TextManager::MIDDLE));
-	msgQueue.push_back(videoManager->SmallText->getObject(
-			"Press F1 at any moment to get additional instructions.", 0, 0,
-			TextManager::LEFT, TextManager::MIDDLE));
+	hud->addMessage("Try to survive as long as you can.");
+	hud->addMessage("Shoot monsters to receive experience and other bonuses.");
+	hud->addMessage("Press F1 at any moment to get additional instructions.");
 
 	createTerrain();
 
@@ -240,7 +234,7 @@ void initSystem() {
 	videoManager = new VideoManager(fileUtility);
 
 	cam = new Camera();
-	videoManager->setMode(config, cam);
+	videoManager->setMode(config->VMode, cam);
 
 	printf("Preparing window...\n");
 
@@ -314,8 +308,7 @@ void initSystem() {
 void loseGame(Player* player) {
 	gameState->Lost = true;
 
-	msgQueue.push_back(videoManager->SmallText->getObject("Player is dead.", 0,
-			0, TextManager::LEFT, TextManager::BOTTOM));
+	hud->addMessage("You are gobbled up.");
 
 	Highscores s(fileUtility);
 	HighscoresEntry* h = new HighscoresEntry();
@@ -338,8 +331,8 @@ void switchGamePause() {
 }
 
 void refreshCharStatsWindow() {
-	const int l = config->ScreenWidth * 0.1f;
-	const int r = config->ScreenWidth * 0.6f;
+	const int l = config->VMode.Width * 0.1f;
+	const int r = config->VMode.Width * 0.6f;
 
 	Window* charStats = windows.find("charstats")->second;
 
@@ -503,7 +496,7 @@ void showDetailsUnstoppable() {
 			"explantation",
 			videoManager->SmallText->getObject(
 					"Unstoppable: enemies can't block your movement any more, but they still can hurt you.",
-					config->ScreenWidth / 2,
+					config->VMode.Width / 2,
 					videoManager->RegularText->getHeight() * 1.0f,
 					TextManager::CENTER, TextManager::MIDDLE));
 }
@@ -513,7 +506,7 @@ void showDetailsPoisonBullets() {
 			"explantation",
 			videoManager->SmallText->getObject(
 					"Poison bullets: after getting hit by your bullet, enemies slowly lose health until they die.",
-					config->ScreenWidth / 2,
+					config->VMode.Width / 2,
 					videoManager->RegularText->getHeight() * 1.0f,
 					TextManager::CENTER, TextManager::MIDDLE));
 }
@@ -523,7 +516,7 @@ void showDetailsBigCalibre() {
 			"explantation",
 			videoManager->SmallText->getObject(
 					"Big calibre: your bullets can wound a few monsters in a row.",
-					config->ScreenWidth / 2,
+					config->VMode.Width / 2,
 					videoManager->RegularText->getHeight() * 1.0f,
 					TextManager::CENTER, TextManager::MIDDLE));
 }
@@ -532,7 +525,7 @@ void showDetailsTelekinesis() {
 	windows["charstats"]->addElement("explantation",
 			videoManager->SmallText->getObject(
 					"Telekinesis: useful things slowly move towards you.",
-					config->ScreenWidth / 2,
+					config->VMode.Width / 2,
 					videoManager->RegularText->getHeight() * 1.0f,
 					TextManager::CENTER, TextManager::MIDDLE));
 }
@@ -574,10 +567,10 @@ void backFromHighScores();
 void backFromOptionsAndSave();
 
 void createHighscoresWindow() {
-	Window *scoresWin = new Window(0.0f, 0.0f, config->ScreenWidth,
-			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
+	Window *scoresWin = new Window(0.0f, 0.0f, config->VMode.Width,
+			config->VMode.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = config->ScreenWidth * 0.1f;
+	const int l = config->VMode.Width * 0.1f;
 	const int r2 = l * 2.0f;
 	const int r3 = l * 4.0f;
 
@@ -645,8 +638,8 @@ void createHighscoresWindow() {
 }
 
 void refreshOptionsWindow() {
-	const int l = config->ScreenWidth * 0.1f;
-	const int r = config->ScreenWidth * 0.6f;
+	const int l = config->VMode.Width * 0.1f;
+	const int r = config->VMode.Width * 0.6f;
 
 	Window* w = windows.find("options")->second;
 
@@ -671,7 +664,7 @@ void refreshOptionsWindow() {
 	else
 		w->removeElement("+friendlyfire", false);
 
-	if (config->FullScreen)
+	if (config->VMode.Full)
 		w->addElement("+fullscreen", videoManager->RegularText->getObject("+",
 				r, videoManager->RegularText->getHeight() * 7.0f,
 				TextManager::LEFT, TextManager::MIDDLE));
@@ -679,8 +672,8 @@ void refreshOptionsWindow() {
 		w->removeElement("+fullscreen", false);
 
 	char *buf;
-	sprintf(buf = new char[15], "%ix%i", tempConfig->ScreenWidth,
-			tempConfig->ScreenHeight);
+	sprintf(buf = new char[15], "%ix%i", tempConfig->VMode.Width,
+			tempConfig->VMode.Height);
 	TextObject* resInfo = videoManager->RegularText->getObject(buf, r
 			+ videoManager->RegularText->getHeight() * 7.0f,
 			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
@@ -773,47 +766,47 @@ void switchAutoPickup() {
 }
 
 void switchFullScreen() {
-	config->FullScreen = !config->FullScreen;
+	config->VMode.Full = !config->VMode.Full;
 	refreshOptionsWindow();
 }
 
 void switchResolutionDown() {
-	vector<SDL_Rect> modes = videoManager->GetAvailableModes(config);
+	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
 
 	bool set = false;
 	for (int i = modes.size() - 1; i > 0; i--) {
-		if (tempConfig->ScreenWidth == modes[i].w && tempConfig->ScreenHeight
+		if (tempConfig->VMode.Width == modes[i].w && tempConfig->VMode.Height
 				== modes[i].h) {
-			tempConfig->ScreenWidth = modes[i - 1].w;
-			tempConfig->ScreenHeight = modes[i - 1].h;
+			tempConfig->VMode.Width = modes[i - 1].w;
+			tempConfig->VMode.Height = modes[i - 1].h;
 			set = true;
 			break;
 		}
 	}
 	if (!set) {
-		tempConfig->ScreenWidth = modes[modes.size() - 1].w;
-		tempConfig->ScreenHeight = modes[modes.size() - 1].h;
+		tempConfig->VMode.Width = modes[modes.size() - 1].w;
+		tempConfig->VMode.Height = modes[modes.size() - 1].h;
 	}
 
 	refreshOptionsWindow();
 }
 
 void switchResolutionUp() {
-	vector<SDL_Rect> modes = videoManager->GetAvailableModes(config);
+	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
 
 	bool set = false;
 	for (unsigned int i = 0; i < modes.size() - 1; i++) {
-		if (tempConfig->ScreenWidth == modes[i].w && tempConfig->ScreenHeight
+		if (tempConfig->VMode.Width == modes[i].w && tempConfig->VMode.Height
 				== modes[i].h) {
-			tempConfig->ScreenWidth = modes[i + 1].w;
-			tempConfig->ScreenHeight = modes[i + 1].h;
+			tempConfig->VMode.Width = modes[i + 1].w;
+			tempConfig->VMode.Height = modes[i + 1].h;
 			set = true;
 			break;
 		}
 	}
 	if (!set) {
-		tempConfig->ScreenWidth = modes[0].w;
-		tempConfig->ScreenHeight = modes[0].h;
+		tempConfig->VMode.Width = modes[0].w;
+		tempConfig->VMode.Height = modes[0].h;
 	}
 
 	refreshOptionsWindow();
@@ -822,11 +815,11 @@ void switchResolutionUp() {
 void createOptionsWindow() {
 	tempConfig = new Configuration(*config);
 
-	Window *w = new Window(0.0f, 0.0f, config->ScreenWidth,
-			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
+	Window *w = new Window(0.0f, 0.0f, config->VMode.Width,
+			config->VMode.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = config->ScreenWidth * 0.1f;
-	const int r = config->ScreenWidth * 0.6f;
+	const int l = config->VMode.Width * 0.1f;
+	const int r = config->VMode.Width * 0.6f;
 
 	w->addElement("options", videoManager->RegularText->getObject("Options", l,
 			videoManager->RegularText->getHeight() * 3.0f, TextManager::LEFT,
@@ -933,12 +926,12 @@ void unloadResources() {
 	delete weaponManager;
 	delete monsterFactory;
 	delete aim;
+	delete hud;
 	delete terrain;
 	delete resources;
 	clearVector<Powerup*> (&powerups);
 	clearVector<StaticObject*> (&bloodStains);
 	clearVector<Bullet*> (&bullets);
-	clearVector<TextObject*> (&msgQueue);
 	clearVector<Explosion*> (&explosions);
 	clearMap<std::string, LifeForm*> (&lifeForms);
 	clearMap<std::string, Window*> (&windows);
@@ -947,11 +940,11 @@ void unloadResources() {
 }
 
 void backFromOptionsAndSave() {
-	bool changeVideoMode = config->ScreenWidth != tempConfig->ScreenWidth
-			|| config->ScreenHeight != tempConfig->ScreenHeight;
+	bool changeVideoMode = config->VMode.Width != tempConfig->VMode.Width
+			|| config->VMode.Height != tempConfig->VMode.Height;
 
-	config->ScreenWidth = tempConfig->ScreenWidth;
-	config->ScreenHeight = tempConfig->ScreenHeight;
+	config->VMode.Width = tempConfig->VMode.Width;
+	config->VMode.Height = tempConfig->VMode.Height;
 	config->write();
 
 	if (changeVideoMode) {
@@ -961,7 +954,7 @@ void backFromOptionsAndSave() {
 		shutdownSystem();
 		exit(0);
 #endif //_WIN32
-		videoManager->setMode(config, cam);
+		videoManager->setMode(config->VMode, cam);
 	}
 	windows["options"]->CloseFlag = true;
 	createMainMenuWindow();
@@ -1176,9 +1169,7 @@ void levelUp(Player* player) {
 	player->Level += 1;
 	player->LevelPoints += 1;
 
-	msgQueue.push_back(videoManager->SmallText->getObject(
-			"You has reached new level.", 0, 0, TextManager::LEFT,
-			TextManager::MIDDLE));
+	hud->addMessage("You have reached new level.");
 
 	player->setHealth(player->MaxHealth());
 }
@@ -1479,30 +1470,11 @@ void handleBullets() {
 	}
 }
 
-void drawMessagesQueue() {
-	if (!msgQueue.empty()) {
-		int s = msgQueue.size();
-		for (int i = s - 1; i >= 0; i--) {
-			msgQueue[i]->draw(true, msgQueue[i]->X
-					+ videoManager->SmallText->getIndent(),
-					config->ScreenHeight - s
-							* videoManager->SmallText->getHeight() + i
-							* videoManager->SmallText->getHeight());
-			msgQueue[i]->AMask -= 0.0001f * videoManager->getFrameDeltaTime();
-
-			if (msgQueue[i]->AMask <= 0) {
-				delete msgQueue[i];
-				msgQueue.erase(msgQueue.begin() + i);
-			}
-		}
-	}
-}
-
 void setGuiCameraMode() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glOrtho(0.0, config->ScreenWidth, config->ScreenHeight, 0.0, -10.0, 10.0);
+	glOrtho(0.0, config->VMode.Width, config->VMode.Height, 0.0, -10.0, 10.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -1544,14 +1516,14 @@ void drawHud() {
 	delete[] buf;
 
 	sprintf(buf = new char[30], "Time: %dm %ds", minutes, seconds);
-	videoManager->RegularText->draw(buf, config->ScreenWidth
+	videoManager->RegularText->draw(buf, config->VMode.Width
 			- videoManager->RegularText->getIndent(),
 			videoManager->RegularText->getIndent(), TextManager::RIGHT,
 			TextManager::TOP);
 	delete[] buf;
 
 	sprintf(buf = new char[30], "Xp: %d (%d)", player->Xp, player->NextLevelXp);
-	videoManager->RegularText->draw(buf, config->ScreenWidth
+	videoManager->RegularText->draw(buf, config->VMode.Width
 			- videoManager->RegularText->getIndent(),
 			videoManager->RegularText->getIndent()
 					+ videoManager->RegularText->getHeight(),
@@ -1561,14 +1533,14 @@ void drawHud() {
 	if (!gameState->Lost)
 		if (player->HudInfo != "")
 			videoManager->RegularText->draw(player->HudInfo.c_str(),
-					config->ScreenWidth / 2,
+					config->VMode.Width / 2,
 					videoManager->RegularText->getIndent(),
 					TextManager::CENTER, TextManager::TOP);
 
 	if (config->ShowFps) {
 		sprintf(buf = new char[30], "FPS: %i", videoManager->getFps());
-		videoManager->RegularText->draw(buf, config->ScreenWidth
-				- videoManager->RegularText->getIndent(), config->ScreenHeight
+		videoManager->RegularText->draw(buf, config->VMode.Width
+				- videoManager->RegularText->getIndent(), config->VMode.Height
 				- videoManager->RegularText->getIndent(), TextManager::RIGHT,
 				TextManager::BOTTOM);
 		delete[] buf;
@@ -1576,15 +1548,15 @@ void drawHud() {
 
 	if (gameState->Lost && !gameState->Paused)
 		videoManager->RegularText->draw("They have overcome...",
-				config->ScreenWidth / 2, config->ScreenHeight / 3,
+				config->VMode.Width / 2, config->VMode.Height / 3,
 				TextManager::CENTER, TextManager::MIDDLE);
 
 	if (gameState->Paused)
-		videoManager->RegularText->draw("PAUSE", config->ScreenWidth / 2,
-				config->ScreenHeight / 2, TextManager::CENTER,
+		videoManager->RegularText->draw("PAUSE", config->VMode.Width / 2,
+				config->VMode.Height / 2, TextManager::CENTER,
 				TextManager::MIDDLE);
 
-	drawMessagesQueue();
+	hud->draw();
 }
 
 void handlePowerups() {
@@ -1646,9 +1618,7 @@ void handlePowerups() {
 			switch (powerups[i]->Type) {
 			case Powerup::medikit: {
 				if (player->getHealth() < player->MaxHealth()) {
-					msgQueue.push_back(videoManager->SmallText->getObject(
-							"You took a medical kit.", 0, 0, TextManager::LEFT,
-							TextManager::MIDDLE));
+					hud->addMessage("You have taken a medical kit.");
 					player->setHealth(player->getHealth()
 							+ *(float*) powerups[i]->Object);
 					deletePowerup = true;
@@ -1656,9 +1626,7 @@ void handlePowerups() {
 				break;
 			}
 			case Powerup::freeze: {
-				msgQueue.push_back(videoManager->SmallText->getObject(
-						"All has frozen around you.", 0, 0, TextManager::LEFT,
-						TextManager::MIDDLE));
+				hud->addMessage("All have been frozen around you.");
 
 				map<string, LifeForm*>::const_iterator iter;
 				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
@@ -1673,17 +1641,13 @@ void handlePowerups() {
 				break;
 			}
 			case Powerup::penBullets: {
-				msgQueue.push_back(videoManager->SmallText->getObject(
-						"You got powerful penetration bullets.", 0, 0,
-						TextManager::LEFT, TextManager::MIDDLE));
+				hud->addMessage("You got powerful penetration bullets.");
 				player->PenBullets = *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case Powerup::grenades: {
-				msgQueue.push_back(videoManager->SmallText->getObject(
-						"You took a grenade.", 0, 0, TextManager::LEFT,
-						TextManager::MIDDLE));
+				hud->addMessage("You have taken a grenade.");
 				player->Grenades += *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
@@ -1693,10 +1657,9 @@ void handlePowerups() {
 						|| config->AutoWeaponPickup) {
 					player->setWeapon((Weapon*) powerups[i]->Object);
 					char *buf;
-					sprintf(buf = new char[200], "You took the %s.",
+					sprintf(buf = new char[200], "You have taken the %s.",
 							player->getWeapon()->Name.c_str());
-					msgQueue.push_back(videoManager->SmallText->getObject(buf,
-							0, 0, TextManager::LEFT, TextManager::MIDDLE));
+					hud->addMessage(buf);
 					delete[] buf;
 					deletePowerup = true;
 				}
@@ -1934,7 +1897,7 @@ void drawWindows() {
 
 void runMainLoop() {
 	while (gameState->Works) {
-		videoManager->countFrame();
+		videoManager->countFrame(config->FrameDelay);
 
 		input->process();
 
@@ -1975,6 +1938,7 @@ void loadResources() {
 	resources = new Resources(fileUtility, sndManager);
 
 	aim = new Aim(config);
+	hud = new HUD(videoManager);
 
 	monsterFactory = new MonsterFactory(fileUtility, sndManager);
 	weaponManager = new WeaponManager(fileUtility, sndManager);
@@ -2019,16 +1983,16 @@ void parsePreferences(int argc, char *argv[]) {
 		}
 
 		if (arg.compare("-f") == 0)
-			config->FullScreen = true;
+			config->VMode.Full = true;
 
 		if (arg.compare("-i") == 0)
-			config->FullScreen = false;
+			config->VMode.Full = false;
 
 		if (arg.compare("-w") == 0 && i + 1 < argc)
-			config->ScreenWidth = strtol(argv[i + 1], NULL, 10);
+			config->VMode.Width = strtol(argv[i + 1], NULL, 10);
 
 		if (arg.compare("-h") == 0 && i + 1 < argc)
-			config->ScreenHeight = strtol(argv[i + 1], NULL, 10);
+			config->VMode.Height = strtol(argv[i + 1], NULL, 10);
 
 		if (arg.compare("--fps") == 0 && i + 1 < argc) {
 			int lim = strtol(argv[i + 1], NULL, 10);
