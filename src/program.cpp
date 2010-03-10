@@ -163,9 +163,7 @@ void startSurvival() {
 	clearMap<std::string, LifeForm*> (&lifeForms);
 	clearVector<Powerup*> (&powerups);
 	clearVector<StaticObject*> (&bloodStains);
-	fprintf(stdout, "bullet %i\n", (int) bullets.size());
 	clearVector<Bullet*> (&bullets);
-	fprintf(stdout, "bullet %i\n", (int) bullets.size());
 	clearVector<TextObject*> (&msgQueue);
 	clearVector<Explosion*> (&explosions);
 

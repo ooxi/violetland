@@ -4,7 +4,7 @@ CharStatsWindow::CharStatsWindow(Configuration* config,
 		VideoManager* videoManager) :
 	Window(0.0f, 0.0f, config->ScreenWidth, config->ScreenHeight, 0.0f, 0.0f,
 			0.0f, 0.5f) {
-	const int r = config->ScreenWidth * 0.6f;
+	const float r = config->ScreenWidth * 0.6f;
 
 	addElement("perks", videoManager->RegularText->getObject("Perks:", r,
 			videoManager->RegularText->getHeight() * 2.0f, TextManager::LEFT,
@@ -32,7 +32,7 @@ CharStatsWindow::CharStatsWindow(Configuration* config,
 			TextManager::MIDDLE));
 
 	addElement("explantation", videoManager->SmallText->getObject(
-			"Move mouse over text to get explantation.", config->ScreenWidth
+			"Move mouse over text to get explantation...", config->ScreenWidth
 					/ 2, videoManager->RegularText->getHeight() * 1.0f,
 			TextManager::CENTER, TextManager::MIDDLE));
 }

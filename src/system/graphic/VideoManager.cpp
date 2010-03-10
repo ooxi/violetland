@@ -84,7 +84,7 @@ void VideoManager::setMode(Configuration* config, Camera* cam) {
 			config->FullScreen ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
 
 	float aspect = (float) config->ScreenWidth / config->ScreenHeight;
-	cam->setH(cam->getW() / aspect);
+	cam->setH((int)(cam->getW() / aspect));
 	WK = (float) config->ScreenWidth / cam->getW();
 	HK = (float) config->ScreenHeight / cam->getH();
 
