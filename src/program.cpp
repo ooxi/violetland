@@ -10,11 +10,6 @@
 #include <winbase.h>
 #include <time.h>
 #endif //_WIN32
-#include <stdlib.h>
-#include <algorithm>
-#include <vector>
-#include <cmath>
-#include <map>
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_opengl.h"
