@@ -22,7 +22,8 @@ Player::Player() :
 
 	m_light = m_laser = false;
 
-	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = false;
+	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision
+			= false;
 	PenBullets = 0;
 }
 

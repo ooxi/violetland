@@ -31,6 +31,11 @@ CharStatsWindow::CharStatsWindow(Configuration* config,
 			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
+	addElement("nightvision", videoManager->RegularText->getObject(
+			"Night vision", r + videoManager->RegularText->getHeight() * 2.0f,
+			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
+			TextManager::MIDDLE));
+
 	addElement("explantation", videoManager->SmallText->getObject(
 			"Move mouse over text to get explantation...", config->Screen.Width
 					/ 2, videoManager->RegularText->getHeight() * 1.0f,

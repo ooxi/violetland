@@ -52,6 +52,7 @@ public:
 	bool PoisonBullets;
 	bool BigCalibre;
 	bool Telekinesis;
+	bool NightVision;
 	int PenBullets;
 
 	bool Empty;

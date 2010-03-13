@@ -283,6 +283,15 @@ void initSystem() {
 	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.6f);
 	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.0001f);
 
+	GLfloat nvColor[] = { 0.3f, 1.0f, 0.3f, 1.0f };
+
+	//nightvision
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, nvColor);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, nvColor);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, nvColor);
+	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.5f);
+	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.00001f);
+
 	glEnable( GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
@@ -417,6 +426,12 @@ void refreshCharStatsWindow() {
 				videoManager->RegularText->getObject("+", r,
 						videoManager->RegularText->getHeight() * 7.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
+
+	if (player->NightVision)
+		charStats->addElement("+nightvision",
+				videoManager->RegularText->getObject("+", r,
+						videoManager->RegularText->getHeight() * 8.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
 }
 
 void increaseStrength() {
@@ -477,6 +492,14 @@ void takeTelekinesis() {
 	}
 }
 
+void takeNightVision() {
+	if (!player->NightVision && player->LevelPoints > 0) {
+		player->NightVision = true;
+		player->LevelPoints--;
+		refreshCharStatsWindow();
+	}
+}
+
 void showDetailsUnstoppable() {
 	windows["charstats"]->addElement(
 			"explantation",
@@ -516,6 +539,15 @@ void showDetailsTelekinesis() {
 					TextManager::CENTER, TextManager::MIDDLE));
 }
 
+void showDetailsNightVision() {
+	windows["charstats"]->addElement("explantation",
+			videoManager->SmallText->getObject(
+					"Night vision: you can see in the dark.",
+					config->Screen.Width / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
 void createCharStatWindow() {
 	Window *charStats = new CharStatsWindow(config, videoManager);
 
@@ -535,6 +567,9 @@ void createCharStatWindow() {
 	charStats->addHandler(Window::hdl_lclick, "telekinesis", takeTelekinesis);
 	charStats->addHandler(Window::hdl_move, "telekinesis",
 			showDetailsTelekinesis);
+	charStats->addHandler(Window::hdl_lclick, "nightvision", takeNightVision);
+	charStats->addHandler(Window::hdl_move, "nightvision",
+			showDetailsNightVision);
 
 	windows["charstats"] = charStats;
 }
@@ -1705,15 +1740,24 @@ void drawGame() {
 	GLfloat global_ambient[] = { r, gawc, b, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 
-	if (!gameState->Lost && player->getLight()) {
-		glEnable( GL_LIGHT0);
-
+	if (!gameState->Lost) {
 		GLfloat light_pos[] = { 0.0, 0.0, 1.0, 1.0 };
+		if (player->getLight()) {
+			glEnable( GL_LIGHT0);
 
-		glPushMatrix();
-		glTranslatef(player->TargetX, player->TargetY, 0.0f);
-		glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-		glPopMatrix();
+			glPushMatrix();
+			glTranslatef(player->TargetX, player->TargetY, 0.0f);
+			glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+			glPopMatrix();
+		}
+		if (player->NightVision) {
+			glEnable( GL_LIGHT1);
+
+			glPushMatrix();
+			glTranslatef(player->X, player->Y, 0.0f);
+			glLightfv(GL_LIGHT1, GL_POSITION, light_pos);
+			glPopMatrix();
+		}
 	}
 
 	terrain->draw(cam);
@@ -1750,8 +1794,11 @@ void drawGame() {
 		particleSystems[i]->draw();
 	}
 
-	if (!gameState->Lost && player->getLight()) {
-		glDisable( GL_LIGHT0);
+	if (!gameState->Lost) {
+		if (player->getLight())
+			glDisable( GL_LIGHT0);
+		if (player->NightVision)
+			glDisable( GL_LIGHT1);
 	}
 
 	glDisable(GL_LIGHTING);
