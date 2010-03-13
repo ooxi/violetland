@@ -1,10 +1,10 @@
+#ifndef OBJECT_H_
+#define OBJECT_H_
+
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
 #endif //_WIN32W
 #include <cmath>
-
-#ifndef OBJECT_H_
-#define OBJECT_H_
 
 class Object {
 protected:

@@ -10,7 +10,7 @@ public:
 	void process(int deltaTime);
 	void draw();
 	bool isEmpty();
-	vector<Particle*> Particles;
+	std::vector<Particle*> Particles;
 	~ParticleSystem();
 };
 

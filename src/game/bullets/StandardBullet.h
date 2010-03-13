@@ -1,8 +1,8 @@
-#include "SDL_opengl.h"
-#include "Bullet.h"
-
 #ifndef STANDARDBULLET_H_
 #define STANDARDBULLET_H_
+
+#include "SDL_opengl.h"
+#include "Bullet.h"
 
 class StandardBullet: public Bullet {
 private:

@@ -1,15 +1,10 @@
-#include <string>
-#include <stdio.h>
-#include <time.h>
+#ifndef LIVEOBJECT_H_
+#define LIVEOBJECT_H_
+
 #ifdef _WIN32
 #include "windows.h"
 #endif //_WIN32W
-#include "../system/Object.h"
 #include "../system/graphic/StaticObject.h"
-#include "SDL.h"
-
-#ifndef LIVEOBJECT_H_
-#define LIVEOBJECT_H_
 
 class LifeForm: public Object {
 private:

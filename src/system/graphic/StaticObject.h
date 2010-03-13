@@ -1,10 +1,8 @@
-#include "SDL_opengl.h"
-#include "../utility/ImageUtility.h"
-#include "../Object.h"
-#include "Texture.h"
-
 #ifndef STATICOBJECT_H_
 #define STATICOBJECT_H_
+
+#include "../Object.h"
+#include "Texture.h"
 
 class StaticObject: public Object {
 private:

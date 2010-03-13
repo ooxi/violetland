@@ -1,7 +1,7 @@
-#include "StaticObject.h"
-
 #ifndef PARTICLE_H_
 #define PARTICLE_H_
+
+#include "StaticObject.h"
 
 class Particle: public StaticObject {
 public:

@@ -1,9 +1,9 @@
 #include "HelpWindow.h"
 
 HelpWindow::HelpWindow(Configuration* config, TextManager* text) :
-	Window(0.0f, 0.0f, config->VMode.Width, config->VMode.Height, 0.0f, 0.0f,
+	Window(0.0f, 0.0f, config->Screen.Width, config->Screen.Height, 0.0f, 0.0f,
 			0.0f, 0.5f) {
-	const int l = config->VMode.Width * 0.1f;
+	const int l = config->Screen.Width * 0.1f;
 
 	addElement("label1", text->getObject("Game controls:", l, text->getHeight()
 			* 4, TextManager::LEFT, TextManager::MIDDLE));

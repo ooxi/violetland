@@ -1,7 +1,7 @@
-#include "../system/graphic/StaticObject.h"
-
 #ifndef POWERUP_H_
 #define POWERUP_H_
+
+#include "../system/graphic/StaticObject.h"
 
 class Powerup: public StaticObject {
 public:

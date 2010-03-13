@@ -1,9 +1,9 @@
+#ifndef CONFIGURATION_H_
+#define CONFIGURATION_H_
+
 #include "utility/FileUtility.h"
 #include "ConfigFile.h"
 #include "InputHandler.h"
-
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
 
 struct VideoMode {
 public:
@@ -21,7 +21,7 @@ public:
 	void read();
 	void write();
 	~Configuration();
-	VideoMode VMode;
+	VideoMode Screen;
 	int FrameDelay;
 	bool ShowFps;
 	bool AutoReload;

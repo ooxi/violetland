@@ -1,10 +1,8 @@
-#include <iostream>
-#include "StaticObject.h"
-#include "../utility/FileUtility.h"
-#include "../Configuration.h"
-
 #ifndef AIM_H_
 #define AIM_H_
+
+#include "StaticObject.h"
+#include "../Configuration.h"
 
 class Aim {
 private:

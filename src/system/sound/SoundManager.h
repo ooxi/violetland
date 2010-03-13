@@ -1,11 +1,8 @@
-#include <iostream>
-#include "SDL_mixer.h"
-#include "../utility/FileUtility.h"
-#include "Sound.h"
-#include "../Configuration.h"
-
 #ifndef SOUNDMANAGER_H_
 #define SOUNDMANAGER_H_
+
+#include "Sound.h"
+#include "../Configuration.h"
 
 class SoundManager {
 private:

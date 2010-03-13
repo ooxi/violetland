@@ -54,13 +54,13 @@ bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 	return (r != 0);
 }
 
-vector<SDL_Rect> VideoManager::GetAvailableModes() {
+std::vector<SDL_Rect> VideoManager::GetAvailableModes() {
 	int wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1600, 1600, 1680,
 			1920, 1920 };
 	int hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 900, 1200, 1050,
 			1080, 1200 };
 
-	vector<SDL_Rect> modes;
+	std::vector<SDL_Rect> modes;
 	for (unsigned int i = 0; i < getStructSize(wL); i++) {
 		if (isModeAvailable(wL[i], hL[i], 16, true, NULL)) {
 			SDL_Rect r;

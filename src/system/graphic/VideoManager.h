@@ -18,7 +18,7 @@ private:
 public:
 	VideoManager(FileUtility* fileUtility);
 	bool isModeAvailable(int w, int h, int bpp, bool fullscreen, int* true_bpp);
-	vector<SDL_Rect> GetAvailableModes();
+	std::vector<SDL_Rect> GetAvailableModes();
 	void setMode(VideoMode mode, Camera* cam);
 	void countFrame(int frameDelay);
 	int getFps();

@@ -1,7 +1,7 @@
-#include "../../system/utility/ImageUtility.h"
-
 #ifndef TEXTURE_H_
 #define TEXTURE_H_
+
+#include "../../system/utility/ImageUtility.h"
 
 class Texture {
 private:

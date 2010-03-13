@@ -1,7 +1,7 @@
-#include "SDL.h"
-
 #ifndef INPUTHANDLER_H_
 #define INPUTHANDLER_H_
+
+#include "SDL.h"
 
 class InputHandler {
 public:

@@ -8,6 +8,7 @@ Player::Player() :
 	Id = "20-" + Id;
 	Empty = true;
 	Xp = 0;
+	LastLevelXp = 0;
 	NextLevelXp = 100;
 	Kills = 0;
 	LevelPoints = 0;

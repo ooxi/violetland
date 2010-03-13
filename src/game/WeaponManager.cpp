@@ -6,7 +6,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 	m_fileUtility = fileUtility;
 	m_sndManager = sndManager;
 
-	vector<string> weapons = m_fileUtility->getSubDirsFromDir(
+	std::vector<std::string> weapons = m_fileUtility->getSubDirsFromDir(
 			m_fileUtility->getFullPath(FileUtility::weapon, "."));
 
 	fprintf(stdout, "Total weapons found: %i\n", (int) weapons.size());
@@ -43,7 +43,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		weapon->Name = weapons[j];
 
-		ifstream in;
+		std::ifstream in;
 		char *buf;
 		sprintf(buf = new char[100], "%s/stats", weapons[j].c_str());
 		in.open(m_fileUtility->getFullPath(FileUtility::weapon, buf).c_str());
@@ -76,7 +76,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		in.close();
 
-		vector<SDL_Surface*> animSurfaces;
+		std::vector<SDL_Surface*> animSurfaces;
 
 		sprintf(buf = new char[100], "shells/%s", shellName.c_str());
 		unsigned int framesCount = fileUtility->getFilesCountFromDir(

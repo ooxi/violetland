@@ -1,9 +1,8 @@
-#include <string>
-#include <stdio.h>
-#include "../../system/Object.h"
-
 #ifndef BULLET_H_
 #define BULLET_H_
+
+#include <string>
+#include "../../system/Object.h"
 
 class Bullet: public Object {
 protected:

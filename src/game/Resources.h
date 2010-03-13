@@ -2,7 +2,6 @@
 #define RESOURCES_H_
 
 #include "../system/graphic/Sprite.h"
-#include "../system/utility/FileUtility.h"
 #include "../system/sound/SoundManager.h"
 #include "Powerup.h"
 

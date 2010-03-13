@@ -8,7 +8,7 @@ class MonsterTemplate {
 public:
 	MonsterTemplate(Sprite* walkSprite, Sprite* deathSprite);
 	~MonsterTemplate();
-	vector<Sound*> HitSounds;
+	std::vector<Sound*> HitSounds;
 	Sprite* WalkSprite;
 	Sprite* DeathSprite;
 	std::string Name;

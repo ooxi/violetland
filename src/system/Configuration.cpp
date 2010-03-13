@@ -3,10 +3,10 @@
 Configuration::Configuration(FileUtility* fileUtility) {
 	m_fileUtility = fileUtility;
 
-	VMode.Width = 800;
-	VMode.Height = 600;
-	VMode.Color = 16;
-	VMode.Full = false;
+	Screen.Width = 800;
+	Screen.Height = 600;
+	Screen.Color = 16;
+	Screen.Full = false;
 
 	FrameDelay = 10;
 	ShowFps = false;
@@ -49,10 +49,10 @@ void Configuration::read() {
 		ConfigFile cFile(
 				m_fileUtility->getFullPath(FileUtility::user, "config"));
 
-		cFile.readInto(VMode.Width, "screenWidth");
-		cFile.readInto(VMode.Height, "screenHeight");
-		cFile.readInto(VMode.Color, "screenColor");
-		cFile.readInto(VMode.Full, "fullScreen");
+		cFile.readInto(Screen.Width, "screenWidth");
+		cFile.readInto(Screen.Height, "screenHeight");
+		cFile.readInto(Screen.Color, "screenColor");
+		cFile.readInto(Screen.Full, "fullScreen");
 		cFile.readInto(FrameDelay, "frameDelay");
 		cFile.readInto(ShowFps, "showFps");
 		cFile.readInto(AutoReload, "autoReload");
@@ -114,10 +114,10 @@ void Configuration::write() {
 	cFile.add("autoReload", AutoReload);
 	cFile.add("showFps", ShowFps);
 	cFile.add("frameDelay", FrameDelay);
-	cFile.add("fullScreen", VMode.Full);
-	cFile.add("screenColor", VMode.Color);
-	cFile.add("screenHeight", VMode.Height);
-	cFile.add("screenWidth", VMode.Width);
+	cFile.add("fullScreen", Screen.Full);
+	cFile.add("screenColor", Screen.Color);
+	cFile.add("screenHeight", Screen.Height);
+	cFile.add("screenWidth", Screen.Width);
 	cFile.add("autoWeaponPickup", AutoWeaponPickup);
 	cFile.add("friendlyFire", FriendlyFire);
 

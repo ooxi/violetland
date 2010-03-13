@@ -1,6 +1,6 @@
 #include "ImageUtility.h"
 
-SDL_Surface *ImageUtility::loadImage(string fileName, float prescale) {
+SDL_Surface *ImageUtility::loadImage(std::string fileName, float prescale) {
 	SDL_Surface *image = IMG_Load(fileName.c_str());
 	if (image == NULL) {
 		fprintf(stderr, "Couldn't load %s: %s\n", fileName.c_str(),
@@ -23,7 +23,7 @@ SDL_Surface *ImageUtility::loadImage(string fileName, float prescale) {
 
 SDL_Surface *ImageUtility::createImage(TTF_Font *font, char fgR, char fgG,
 		char fgB, char fgA, char bgR, char bgG, char bgB, char bgA,
-		string text, FontRenderingFlag quality) {
+		std::string text, FontRenderingFlag quality) {
 	SDL_Color tmpfontcolor = { fgR, fgG, fgB, fgA };
 	SDL_Color tmpfontbgcolor = { bgR, bgG, bgB, bgA };
 	SDL_Surface *resulting_text = NULL;
@@ -117,17 +117,15 @@ void ImageUtility::drawPixel(SDL_Surface *surface, int x, int y, Uint32 pixel) {
 	}
 }
 
-float ImageUtility::getColorChR(int color)
-{
+float ImageUtility::getColorChR(int color) {
 	return (color / 65536) / 255.0;
 }
 
-float ImageUtility::getColorChG(int color)
-{
+float ImageUtility::getColorChG(int color) {
 	return ((color - (color / 65536) * 65536) / 256) / 255.0;
 }
 
-float ImageUtility::getColorChB(int color)
-{
-	return (color - (color / 65536) * 65536 - ((color - (color / 65536) * 65536) / 256) * 256) / 255.0;
+float ImageUtility::getColorChB(int color) {
+	return (color - (color / 65536) * 65536
+			- ((color - (color / 65536) * 65536) / 256) * 256) / 255.0;
 }

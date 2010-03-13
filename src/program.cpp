@@ -45,48 +45,39 @@
 #include "windows/HelpWindow.h"
 #include "windows/CharStatsWindow.h"
 
+using namespace std;
+
 const string PROJECT = "violetland";
 const string VERSION = "0.2.10";
 
-GameState* gameState;
 Configuration* config;
+Configuration* tempConfig;
 VideoManager* videoManager;
 Camera* cam;
 
-HUD* hud;
-
-MonsterFactory* monsterFactory;
-
-Configuration* tempConfig;
-
 Aim* aim;
+HUD* hud;
 StaticObject* splash;
-
-map<string, LifeForm*> lifeForms;
-
-Player* player;
-
-vector<StaticObject*> bloodStains;
-
-vector<Explosion*> explosions;
-
-vector<ParticleSystem*> particleSystems;
-
-WeaponManager* weaponManager;
-
-vector<Powerup*> powerups;
-vector<Bullet*> bullets;
-
-map<string, Window*> windows;
-
-Terrain* terrain;
 
 FileUtility* fileUtility;
 InputHandler* input;
 SoundManager* sndManager;
-MusicManager* musicManager;
-
 Resources* resources;
+MusicManager* musicManager;
+WeaponManager* weaponManager;
+
+MonsterFactory* monsterFactory;
+GameState* gameState;
+map<string, LifeForm*> lifeForms;
+Player* player;
+vector<Powerup*> powerups;
+vector<Bullet*> bullets;
+
+vector<StaticObject*> bloodStains;
+vector<Explosion*> explosions;
+vector<ParticleSystem*> particleSystems;
+map<string, Window*> windows;
+Terrain* terrain;
 
 void createTerrain() {
 	if (terrain)
@@ -141,7 +132,7 @@ void spawnEnemy(float r, int lvl) {
 }
 
 void startSurvival() {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear( GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
 
@@ -229,7 +220,7 @@ void initSystem() {
 	videoManager = new VideoManager(fileUtility);
 
 	cam = new Camera();
-	videoManager->setMode(config->VMode, cam);
+	videoManager->setMode(config->Screen, cam);
 
 	printf("Preparing window...\n");
 
@@ -244,13 +235,13 @@ void initSystem() {
 	SDL_FreeSurface(icon);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_BLEND);
+	glEnable( GL_COLOR_MATERIAL);
+	glEnable( GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glEnable(GL_TEXTURE_2D);
+	glEnable( GL_TEXTURE_2D);
 
-	glDisable(GL_DEPTH_TEST);
+	glDisable( GL_DEPTH_TEST);
 
 	printf("Drawing splash screen...\n");
 
@@ -263,7 +254,7 @@ void initSystem() {
 	splash = new StaticObject(0, 0, tex->getWidth(), tex->getHeight(), tex,
 			true);
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear( GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
 
@@ -292,7 +283,7 @@ void initSystem() {
 	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.6f);
 	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.0001f);
 
-	glEnable(GL_LINE_SMOOTH);
+	glEnable( GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
 	input = new InputHandler(config->PlayerInputBinding);
@@ -326,8 +317,8 @@ void switchGamePause() {
 }
 
 void refreshCharStatsWindow() {
-	const int l = config->VMode.Width * 0.1f;
-	const int r = config->VMode.Width * 0.6f;
+	const int l = config->Screen.Width * 0.1f;
+	const int r = config->Screen.Width * 0.6f;
 
 	Window* charStats = windows.find("charstats")->second;
 
@@ -491,7 +482,7 @@ void showDetailsUnstoppable() {
 			"explantation",
 			videoManager->SmallText->getObject(
 					"Unstoppable: enemies can't block your movement any more, but they still can hurt you.",
-					config->VMode.Width / 2,
+					config->Screen.Width / 2,
 					videoManager->RegularText->getHeight() * 1.0f,
 					TextManager::CENTER, TextManager::MIDDLE));
 }
@@ -501,7 +492,7 @@ void showDetailsPoisonBullets() {
 			"explantation",
 			videoManager->SmallText->getObject(
 					"Poison bullets: after getting hit by your bullet, enemies slowly lose health until they die.",
-					config->VMode.Width / 2,
+					config->Screen.Width / 2,
 					videoManager->RegularText->getHeight() * 1.0f,
 					TextManager::CENTER, TextManager::MIDDLE));
 }
@@ -511,7 +502,7 @@ void showDetailsBigCalibre() {
 			"explantation",
 			videoManager->SmallText->getObject(
 					"Big calibre: your bullets can wound a few monsters in a row.",
-					config->VMode.Width / 2,
+					config->Screen.Width / 2,
 					videoManager->RegularText->getHeight() * 1.0f,
 					TextManager::CENTER, TextManager::MIDDLE));
 }
@@ -520,7 +511,7 @@ void showDetailsTelekinesis() {
 	windows["charstats"]->addElement("explantation",
 			videoManager->SmallText->getObject(
 					"Telekinesis: useful things slowly move towards you.",
-					config->VMode.Width / 2,
+					config->Screen.Width / 2,
 					videoManager->RegularText->getHeight() * 1.0f,
 					TextManager::CENTER, TextManager::MIDDLE));
 }
@@ -562,10 +553,10 @@ void backFromHighScores();
 void backFromOptionsAndSave();
 
 void createHighscoresWindow() {
-	Window *scoresWin = new Window(0.0f, 0.0f, config->VMode.Width,
-			config->VMode.Height, 0.0f, 0.0f, 0.0f, 0.5f);
+	Window *scoresWin = new Window(0.0f, 0.0f, config->Screen.Width,
+			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = config->VMode.Width * 0.1f;
+	const int l = config->Screen.Width * 0.1f;
 	const int r2 = l * 2.0f;
 	const int r3 = l * 4.0f;
 
@@ -633,8 +624,8 @@ void createHighscoresWindow() {
 }
 
 void refreshOptionsWindow() {
-	const int l = config->VMode.Width * 0.1f;
-	const int r = config->VMode.Width * 0.6f;
+	const int l = config->Screen.Width * 0.1f;
+	const int r = config->Screen.Width * 0.6f;
 
 	Window* w = windows.find("options")->second;
 
@@ -659,7 +650,7 @@ void refreshOptionsWindow() {
 	else
 		w->removeElement("+friendlyfire", false);
 
-	if (config->VMode.Full)
+	if (config->Screen.Full)
 		w->addElement("+fullscreen", videoManager->RegularText->getObject("+",
 				r, videoManager->RegularText->getHeight() * 7.0f,
 				TextManager::LEFT, TextManager::MIDDLE));
@@ -667,8 +658,8 @@ void refreshOptionsWindow() {
 		w->removeElement("+fullscreen", false);
 
 	char *buf;
-	sprintf(buf = new char[15], "%ix%i", tempConfig->VMode.Width,
-			tempConfig->VMode.Height);
+	sprintf(buf = new char[15], "%ix%i", tempConfig->Screen.Width,
+			tempConfig->Screen.Height);
 	TextObject* resInfo = videoManager->RegularText->getObject(buf, r
 			+ videoManager->RegularText->getHeight() * 7.0f,
 			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
@@ -761,7 +752,7 @@ void switchAutoPickup() {
 }
 
 void switchFullScreen() {
-	config->VMode.Full = !config->VMode.Full;
+	config->Screen.Full = !config->Screen.Full;
 	refreshOptionsWindow();
 }
 
@@ -770,17 +761,17 @@ void switchResolutionDown() {
 
 	bool set = false;
 	for (int i = modes.size() - 1; i > 0; i--) {
-		if (tempConfig->VMode.Width == modes[i].w && tempConfig->VMode.Height
+		if (tempConfig->Screen.Width == modes[i].w && tempConfig->Screen.Height
 				== modes[i].h) {
-			tempConfig->VMode.Width = modes[i - 1].w;
-			tempConfig->VMode.Height = modes[i - 1].h;
+			tempConfig->Screen.Width = modes[i - 1].w;
+			tempConfig->Screen.Height = modes[i - 1].h;
 			set = true;
 			break;
 		}
 	}
 	if (!set) {
-		tempConfig->VMode.Width = modes[modes.size() - 1].w;
-		tempConfig->VMode.Height = modes[modes.size() - 1].h;
+		tempConfig->Screen.Width = modes[modes.size() - 1].w;
+		tempConfig->Screen.Height = modes[modes.size() - 1].h;
 	}
 
 	refreshOptionsWindow();
@@ -791,17 +782,17 @@ void switchResolutionUp() {
 
 	bool set = false;
 	for (unsigned int i = 0; i < modes.size() - 1; i++) {
-		if (tempConfig->VMode.Width == modes[i].w && tempConfig->VMode.Height
+		if (tempConfig->Screen.Width == modes[i].w && tempConfig->Screen.Height
 				== modes[i].h) {
-			tempConfig->VMode.Width = modes[i + 1].w;
-			tempConfig->VMode.Height = modes[i + 1].h;
+			tempConfig->Screen.Width = modes[i + 1].w;
+			tempConfig->Screen.Height = modes[i + 1].h;
 			set = true;
 			break;
 		}
 	}
 	if (!set) {
-		tempConfig->VMode.Width = modes[0].w;
-		tempConfig->VMode.Height = modes[0].h;
+		tempConfig->Screen.Width = modes[0].w;
+		tempConfig->Screen.Height = modes[0].h;
 	}
 
 	refreshOptionsWindow();
@@ -810,11 +801,11 @@ void switchResolutionUp() {
 void createOptionsWindow() {
 	tempConfig = new Configuration(*config);
 
-	Window *w = new Window(0.0f, 0.0f, config->VMode.Width,
-			config->VMode.Height, 0.0f, 0.0f, 0.0f, 0.5f);
+	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
+			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = config->VMode.Width * 0.1f;
-	const int r = config->VMode.Width * 0.6f;
+	const int l = config->Screen.Width * 0.1f;
+	const int r = config->Screen.Width * 0.6f;
 
 	w->addElement("options", videoManager->RegularText->getObject("Options", l,
 			videoManager->RegularText->getHeight() * 3.0f, TextManager::LEFT,
@@ -935,11 +926,11 @@ void unloadResources() {
 }
 
 void backFromOptionsAndSave() {
-	bool changeVideoMode = config->VMode.Width != tempConfig->VMode.Width
-			|| config->VMode.Height != tempConfig->VMode.Height;
+	bool changeVideoMode = config->Screen.Width != tempConfig->Screen.Width
+			|| config->Screen.Height != tempConfig->Screen.Height;
 
-	config->VMode.Width = tempConfig->VMode.Width;
-	config->VMode.Height = tempConfig->VMode.Height;
+	config->Screen.Width = tempConfig->Screen.Width;
+	config->Screen.Height = tempConfig->Screen.Height;
 	config->write();
 
 	if (changeVideoMode) {
@@ -949,7 +940,7 @@ void backFromOptionsAndSave() {
 		shutdownSystem();
 		exit(0);
 #endif //_WIN32
-		videoManager->setMode(config->VMode, cam);
+		videoManager->setMode(config->Screen, cam);
 	}
 	windows["options"]->CloseFlag = true;
 	createMainMenuWindow();
@@ -1159,6 +1150,7 @@ void handleMonster(LifeForm* lf) {
 void levelUp(Player* player) {
 	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 2.0f + 10);
 
+	player->LastLevelXp = player->NextLevelXp;
 	player->NextLevelXp *= 2;
 
 	player->Level += 1;
@@ -1466,92 +1458,53 @@ void handleBullets() {
 }
 
 void setGuiCameraMode() {
-	glMatrixMode(GL_PROJECTION);
+	glMatrixMode( GL_PROJECTION);
 	glLoadIdentity();
 
-	glOrtho(0.0, config->VMode.Width, config->VMode.Height, 0.0, -10.0, 10.0);
+	glOrtho(0.0, config->Screen.Width, config->Screen.Height, 0.0, -10.0, 10.0);
 
-	glMatrixMode(GL_MODELVIEW);
+	glMatrixMode( GL_MODELVIEW);
 	glLoadIdentity();
 }
 
 void drawHud() {
-	const int minutes = gameState->Time / 60000;
-	const int seconds = (gameState->Time - minutes * 60000) / 1000;
+	hud->draw(gameState, player->getHealth() / player->MaxHealth(),
+			(float) (player->Xp - player->LastLevelXp) / (player->NextLevelXp
+					- player->LastLevelXp), player->LevelPoints,
+			player->getWeapon()->Ammo, player->Grenades);
 
-	char *buf;
-
-	float health = player->getHealth() / player->MaxHealth() * 100.0f;
-	sprintf(buf = new char[30], "Health: %.2f%%", health);
-	TextObject* healthMsg = videoManager->RegularText->getObject(buf,
-			videoManager->RegularText->getIndent(),
-			videoManager->RegularText->getIndent(), TextManager::LEFT,
-			TextManager::TOP);
-	delete[] buf;
-	if (health < 34)
-		healthMsg->GMask = healthMsg->BMask = 0.0f;
-	healthMsg->draw(true, healthMsg->X, healthMsg->Y);
-	delete healthMsg;
-
+	char* buf;
 	sprintf(buf = new char[30], "%s: %d/%d", player->getWeapon()->Name.c_str(),
 			player->getWeapon()->Ammo, player->getWeapon()->AmmoClipSize);
 	videoManager->RegularText->draw(buf,
 			videoManager->RegularText->getIndent(),
-			videoManager->RegularText->getIndent()
-					+ videoManager->RegularText->getHeight(),
-			TextManager::LEFT, TextManager::TOP);
+			videoManager->RegularText->getIndent(), TextManager::LEFT,
+			TextManager::TOP);
 	delete[] buf;
 
 	sprintf(buf = new char[30], "Grenades: %i", player->Grenades);
 	videoManager->RegularText->draw(buf,
 			videoManager->RegularText->getIndent(),
 			videoManager->RegularText->getIndent()
-					+ videoManager->RegularText->getHeight() * 2.0f,
-			TextManager::LEFT, TextManager::TOP);
-	delete[] buf;
-
-	sprintf(buf = new char[30], "Time: %dm %ds", minutes, seconds);
-	videoManager->RegularText->draw(buf, config->VMode.Width
-			- videoManager->RegularText->getIndent(),
-			videoManager->RegularText->getIndent(), TextManager::RIGHT,
-			TextManager::TOP);
-	delete[] buf;
-
-	sprintf(buf = new char[30], "Xp: %d (%d)", player->Xp, player->NextLevelXp);
-	videoManager->RegularText->draw(buf, config->VMode.Width
-			- videoManager->RegularText->getIndent(),
-			videoManager->RegularText->getIndent()
 					+ videoManager->RegularText->getHeight(),
-			TextManager::RIGHT, TextManager::TOP);
+			TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
 
 	if (!gameState->Lost)
 		if (player->HudInfo != "")
 			videoManager->RegularText->draw(player->HudInfo.c_str(),
-					config->VMode.Width / 2,
+					config->Screen.Width / 2,
 					videoManager->RegularText->getIndent(),
 					TextManager::CENTER, TextManager::TOP);
 
 	if (config->ShowFps) {
 		sprintf(buf = new char[30], "FPS: %i", videoManager->getFps());
-		videoManager->RegularText->draw(buf, config->VMode.Width
-				- videoManager->RegularText->getIndent(), config->VMode.Height
+		videoManager->RegularText->draw(buf, config->Screen.Width
+				- videoManager->RegularText->getIndent(), config->Screen.Height
 				- videoManager->RegularText->getIndent(), TextManager::RIGHT,
 				TextManager::BOTTOM);
 		delete[] buf;
 	}
-
-	if (gameState->Lost && !gameState->Paused)
-		videoManager->RegularText->draw("They have overcome...",
-				config->VMode.Width / 2, config->VMode.Height / 3,
-				TextManager::CENTER, TextManager::MIDDLE);
-
-	if (gameState->Paused)
-		videoManager->RegularText->draw("PAUSE", config->VMode.Width / 2,
-				config->VMode.Height / 2, TextManager::CENTER,
-				TextManager::MIDDLE);
-
-	hud->draw();
 }
 
 void handlePowerups() {
@@ -1732,7 +1685,7 @@ void drawGame() {
 
 	cam->applyGLOrtho();
 
-	glEnable(GL_LIGHTING);
+	glEnable( GL_LIGHTING);
 
 	double tod = cos(gameState->Time / 180000.0);
 	gameState->TimeOfDay = abs((float) tod);
@@ -1753,7 +1706,7 @@ void drawGame() {
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 
 	if (!gameState->Lost && player->getLight()) {
-		glEnable(GL_LIGHT0);
+		glEnable( GL_LIGHT0);
 
 		GLfloat light_pos[] = { 0.0, 0.0, 1.0, 1.0 };
 
@@ -1798,7 +1751,7 @@ void drawGame() {
 	}
 
 	if (!gameState->Lost && player->getLight()) {
-		glDisable(GL_LIGHT0);
+		glDisable( GL_LIGHT0);
 	}
 
 	glDisable(GL_LIGHTING);
@@ -1807,7 +1760,7 @@ void drawGame() {
 		bullets[i]->draw();
 	}
 
-	glDisable(GL_TEXTURE_2D);
+	glDisable( GL_TEXTURE_2D);
 
 	if (!gameState->Lost) {
 		const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
@@ -1818,7 +1771,7 @@ void drawGame() {
 		const float maxLen = cam->getH() * 0.75f;
 		if (player->getLaser()) {
 			glLineWidth(0.5f);
-			glBegin(GL_LINES);
+			glBegin( GL_LINES);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
 			glVertex3f(wpnX, wpnY, 0);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
@@ -1827,7 +1780,7 @@ void drawGame() {
 			glEnd();
 		}
 		if (player->getLight()) {
-			glBegin(GL_TRIANGLES);
+			glBegin( GL_TRIANGLES);
 			glNormal3f(0.0f, 0.0f, 1.0f);
 			float flash = 1.0 - gameState->TimeOfDay;
 			if (flash > 0.3)
@@ -1912,7 +1865,7 @@ void runMainLoop() {
 		} else {
 			musicManager->play();
 
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear( GL_COLOR_BUFFER_BIT);
 
 			cam->X = cam->Y = 0.0f;
 
@@ -1978,16 +1931,16 @@ void parsePreferences(int argc, char *argv[]) {
 		}
 
 		if (arg.compare("-f") == 0)
-			config->VMode.Full = true;
+			config->Screen.Full = true;
 
 		if (arg.compare("-i") == 0)
-			config->VMode.Full = false;
+			config->Screen.Full = false;
 
 		if (arg.compare("-w") == 0 && i + 1 < argc)
-			config->VMode.Width = strtol(argv[i + 1], NULL, 10);
+			config->Screen.Width = strtol(argv[i + 1], NULL, 10);
 
 		if (arg.compare("-h") == 0 && i + 1 < argc)
-			config->VMode.Height = strtol(argv[i + 1], NULL, 10);
+			config->Screen.Height = strtol(argv[i + 1], NULL, 10);
 
 		if (arg.compare("--fps") == 0 && i + 1 < argc) {
 			int lim = strtol(argv[i + 1], NULL, 10);

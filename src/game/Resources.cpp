@@ -57,8 +57,8 @@ Texture* Resources::loadTex(std::string fileName) {
 }
 
 void Resources::loadPowerupTex(Powerup::PowerupType type, std::string fileName) {
-	PowerupTex.insert(map<Powerup::PowerupType, Texture*>::value_type(type,
-			new Texture(ImageUtility::loadImage(m_fileUtil->getFullPath(
+	PowerupTex.insert(std::map<Powerup::PowerupType, Texture*>::value_type(
+			type, new Texture(ImageUtility::loadImage(m_fileUtil->getFullPath(
 					FileUtility::image, fileName)), GL_TEXTURE_2D, GL_LINEAR,
 					true)));
 }
@@ -72,7 +72,7 @@ Resources::~Resources() {
 		delete BloodTex[i];
 	}
 	BloodTex.clear();
-	map<Powerup::PowerupType, Texture*>::const_iterator iter;
+	std::map<Powerup::PowerupType, Texture*>::const_iterator iter;
 	for (iter = PowerupTex.begin(); iter != PowerupTex.end(); ++iter) {
 		delete iter->second;
 	}

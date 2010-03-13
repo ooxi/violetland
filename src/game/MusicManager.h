@@ -1,13 +1,9 @@
-#include <map>
-#include <string>
-#include "../system/utility/FileUtility.h"
-#include "../system/sound/SoundManager.h"
-#include "GameState.h"
-#include "Enemy.h"
-#include "Player.h"
-
 #ifndef MUSICMANAGER_H_
 #define MUSICMANAGER_H_
+
+#include "../system/sound/SoundManager.h"
+#include "GameState.h"
+#include "Player.h"
 
 class MusicManager {
 private:

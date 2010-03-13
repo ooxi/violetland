@@ -1,10 +1,10 @@
+#ifndef WINDOW_H_
+#define WINDOW_H_
+
 #include <map>
 #include <string>
 #include "text/TextObject.h"
 #include "../InputHandler.h"
-
-#ifndef WINDOW_H_
-#define WINDOW_H_
 
 class Window {
 protected:

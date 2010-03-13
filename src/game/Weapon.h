@@ -1,17 +1,10 @@
-#include <stdlib.h>
-#include <iostream>
-#include <vector>
-#include "SDL_opengl.h"
-#include "SDL_mixer.h"
-#include "../system/graphic/Texture.h"
-#include "../system/utility/ImageUtility.h"
+#ifndef WEAPON_H_
+#define WEAPON_H_
+
 #include "../system/sound/Sound.h"
 #include "bullets/StandardBullet.h"
 #include "bullets/LaserBullet.h"
 #include "bullets/GrenadeBullet.h"
-
-#ifndef WEAPON_H_
-#define WEAPON_H_
 
 class Weapon {
 private:

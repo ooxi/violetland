@@ -1,10 +1,7 @@
 #ifndef EXPLOSION_H_
 #define EXPLOSION_H_
 
-#include <vector>
 #include "../system/graphic/ParticleSystem.h"
-#include "../system/graphic/Particle.h"
-#include "../system/graphic/Texture.h"
 #include "../system/sound/Sound.h"
 
 class Explosion: public ParticleSystem {

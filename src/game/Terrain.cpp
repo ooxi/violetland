@@ -1,6 +1,6 @@
 #include "Terrain.h"
 
-Terrain::Terrain(SDL_Surface *surface, vector<SDL_Surface*> tiles,
+Terrain::Terrain(SDL_Surface *surface, std::vector<SDL_Surface*> tiles,
 		int gameAreaSize) {
 	m_tileWidth = surface->w;
 	m_tileHeight = surface->h;

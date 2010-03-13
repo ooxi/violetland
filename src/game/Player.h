@@ -1,17 +1,8 @@
-#include <cmath>
-#include <stdlib.h>
-#include <vector>
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_opengl.h"
-#include "../system/graphic/DynamicObject.h"
-#include "./../system/graphic/StaticObject.h"
-#include "LifeForm.h"
-#include "Weapon.h"
-#include "bullets/GrenadeBullet.h"
-
 #ifndef PLAYER_H_
 #define PLAYER_H_
+
+#include "LifeForm.h"
+#include "Weapon.h"
 
 class Player: public LifeForm {
 private:
@@ -52,6 +43,7 @@ public:
 	int LevelPoints;
 	int Xp;
 	int NextLevelXp;
+	int LastLevelXp;
 	int Kills;
 	int Grenades;
 	std::string HudInfo;
