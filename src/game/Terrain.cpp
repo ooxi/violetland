@@ -51,7 +51,7 @@ Terrain::Terrain(SDL_Surface *surface, std::vector<SDL_Surface*> tiles,
 }
 
 void Terrain::beginDrawOn() {
-	glGetIntegerv(GL_VIEWPORT, (int*) m_viewport);
+	glGetIntegerv(GL_VIEWPORT, (GLint*) m_viewport);
 	glViewport(0, 0, m_tileWidth, m_tileHeight);
 }
 
