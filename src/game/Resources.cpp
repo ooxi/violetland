@@ -27,6 +27,11 @@ Resources::Resources(FileUtility* fileUtility, SoundManager* sndManager) {
 
 	Crystal = new StaticObject(0, 0, 128, 128, loadTex("crystal.png"), true);
 
+	HealthIndicator = new StaticObject(0, 0, 128, 128, loadTex("health.png"),
+			true);
+	LevelUpIndicator = new StaticObject(0, 0, 128, 128, loadTex("levelup.png"),
+			true);
+
 	loadPowerupTex(Powerup::medikit, "medikit.png");
 	loadPowerupTex(Powerup::grenades, "grenade.png");
 	loadPowerupTex(Powerup::freeze, "freeze.png");
@@ -64,6 +69,8 @@ void Resources::loadPowerupTex(Powerup::PowerupType type, std::string fileName) 
 }
 
 Resources::~Resources() {
+	delete HealthIndicator;
+	delete LevelUpIndicator;
 	delete Crystal;
 	delete PlayerDeathSound;
 	delete PlayerWalkSprite;

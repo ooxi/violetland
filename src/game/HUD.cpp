@@ -1,7 +1,8 @@
 #include "HUD.h"
 
-HUD::HUD(VideoManager* videoManager) {
+HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
+	m_resources = resources;
 	m_bottomBasePoint = m_videoManager->getVideoMode().Height
 			- m_videoManager->RegularText->getIndent();
 	reset();
@@ -33,9 +34,15 @@ void HUD::drawExperience(float experience, int levelPoints) {
 	const int barLeft = 2 * screen.Width / 3;
 	const int barHeight = m_videoManager->RegularText->getHeight() / 4;
 
+	drawBar(barLeft, m_bottomBasePoint, barLen, barHeight, experience);
+}
+
+void HUD::drawBar(int x, int y, int width, int height, float value) {
+	glDisable( GL_TEXTURE_2D);
+
 	glPushMatrix();
 
-	glTranslatef(barLeft, m_bottomBasePoint, 0.0f);
+	glTranslatef(x, y, 0.0f);
 
 	glBegin( GL_QUADS);
 
@@ -43,22 +50,24 @@ void HUD::drawExperience(float experience, int levelPoints) {
 
 	glColor4f(0.7f, 0.7f, 0.7f, 0.5f);
 
-	glVertex3f(0.0f, -barHeight, 0);
-	glVertex3f(barLen, -barHeight, 0);
-	glVertex3f(barLen, barHeight, 0);
-	glVertex3f(0.0f, barHeight, 0);
+	glVertex3f(0.0f, -height, 0);
+	glVertex3f(width, -height, 0);
+	glVertex3f(width, height, 0);
+	glVertex3f(0.0f, height, 0);
 
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	glVertex3f(0.0f, -barHeight, 0);
-	glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-	glVertex3f(barLen * experience, -barHeight, 0);
-	glVertex3f(barLen * experience, barHeight, 0);
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	glVertex3f(0.0f, barHeight, 0);
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, -height, 0);
+	glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+	glVertex3f(width * value, -height, 0);
+	glVertex3f(width * value, height, 0);
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, height, 0);
 
 	glEnd();
 
 	glPopMatrix();
+
+	glEnable(GL_TEXTURE_2D);
 }
 
 void HUD::drawHealth(float health) {
@@ -67,32 +76,9 @@ void HUD::drawHealth(float health) {
 	const int barLen = screen.Width / 4;
 	const int barHeight = m_videoManager->RegularText->getHeight() / 4;
 
-	glPushMatrix();
+	m_resources->HealthIndicator->draw(false, false);
 
-	glTranslatef(barLeft, m_bottomBasePoint, 0.0f);
-
-	glBegin( GL_QUADS);
-
-	glNormal3f(0.0f, 0.0f, 1.0f);
-
-	glColor4f(0.7f, 0.7f, 0.7f, 0.5f);
-
-	glVertex3f(0.0f, -barHeight, 0);
-	glVertex3f(barLen, -barHeight, 0);
-	glVertex3f(barLen, barHeight, 0);
-	glVertex3f(0.0f, barHeight, 0);
-
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, -barHeight, 0);
-	glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
-	glVertex3f(barLen * health, -barHeight, 0);
-	glVertex3f(barLen * health, barHeight, 0);
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, barHeight, 0);
-
-	glEnd();
-
-	glPopMatrix();
+	drawBar(barLeft, m_bottomBasePoint, barLen, barHeight, health);
 }
 
 void HUD::drawTime(GameState* gameState) {
@@ -113,10 +99,8 @@ void HUD::draw(GameState* gameState, float health, float experience,
 	drawMessages();
 	drawTime(gameState);
 
-	glDisable( GL_TEXTURE_2D);
 	drawHealth(health);
 	drawExperience(experience, levelPoints);
-	glEnable(GL_TEXTURE_2D);
 
 	if (gameState->Lost && !gameState->Paused)
 		m_videoManager->RegularText->draw("They have overcome...", screen.Width

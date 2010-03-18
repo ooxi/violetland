@@ -1766,7 +1766,7 @@ void drawGame() {
 		powerups[i]->draw(false, false);
 	}
 
-	// TODO: sort lifeforms by isDead() state. alive lifeforms should not overlay dead ones.
+	// TODO: sort lifeforms by isDead() state. dead lifeforms should not overlay alive ones.
 	//	std::sort(lifeForms.begin(), lifeForms.end(),
 	//			LifeForm::compareByDeadPredicate);
 
@@ -1933,7 +1933,7 @@ void loadResources() {
 	resources = new Resources(fileUtility, sndManager);
 
 	aim = new Aim(config);
-	hud = new HUD(videoManager);
+	hud = new HUD(videoManager, resources);
 
 	monsterFactory = new MonsterFactory(fileUtility, sndManager);
 	weaponManager = new WeaponManager(fileUtility, sndManager);

@@ -25,6 +25,9 @@ public:
 	std::vector<Texture*> BloodTex;
 	std::vector<Texture*> ExplTex;
 	StaticObject* Crystal;
+	StaticObject* HealthIndicator;
+	StaticObject* LevelUpIndicator;
+
 	~Resources();
 };
 
