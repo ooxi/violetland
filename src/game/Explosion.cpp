@@ -1,7 +1,7 @@
 #include "Explosion.h"
 
-Explosion::Explosion(float x, float y, int range, Texture* sparkTex,
-		Texture* gruelTex, Sound* sound) :
+Explosion::Explosion(float x, float y, int range, float damage,
+		Texture* sparkTex, Texture* gruelTex, Sound* sound) :
 	ParticleSystem() {
 	m_sound = sound;
 	X = x;
@@ -54,7 +54,7 @@ Explosion::Explosion(float x, float y, int range, Texture* sparkTex,
 	Particles.push_back(baseSpark);
 
 	Active = true;
-	Damage = 5.0f;
+	Damage = damage;
 	Range = range;
 
 	sound->play(8, 0, 0);

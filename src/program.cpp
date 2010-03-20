@@ -1304,6 +1304,14 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (!powerupDropped && rand() % 1000 >= 970) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::nuke]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::nuke;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 970) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[Powerup::penBullets]);
 		newPowerup->Scale = 0.4f;
@@ -1450,10 +1458,10 @@ void handleBullets() {
 								bullets[i]->deactivate();
 								Explosion * expl = new Explosion(bullets[i]->X,
 										bullets[i]->Y, 100.0f,
+										bullets[i]->Damage,
 										resources->ExplTex[0],
 										resources->ExplTex[1],
 										resources->ExplSounds[1]);
-								expl->Damage = bullets[i]->Damage;
 								explosions.push_back(expl);
 								bypassDirectDamage = true;
 							}
@@ -1478,9 +1486,8 @@ void handleBullets() {
 			if (bullets[i]->isReadyToRemove() && bullets[i]->Type
 					== Bullet::grenade) {
 				Explosion* expl = new Explosion(bullets[i]->X, bullets[i]->Y,
-						150.0f, resources->ExplTex[0], resources->ExplTex[1],
-						resources->ExplSounds[0]);
-				expl->Damage = bullets[i]->Damage;
+						150.0f, bullets[i]->Damage, resources->ExplTex[0],
+						resources->ExplTex[1], resources->ExplSounds[0]);
 				explosions.push_back(expl);
 			}
 
@@ -1571,6 +1578,9 @@ void handlePowerups() {
 			case Powerup::freeze:
 				player->HudInfo = "a nitrogen bomb";
 				break;
+			case Powerup::nuke:
+				player->HudInfo = "nuke!";
+				break;
 			case Powerup::grenades:
 				player->HudInfo = "a hand grenade";
 				break;
@@ -1620,6 +1630,15 @@ void handlePowerups() {
 						continue;
 					lf->Frozen = *(int*) powerups[i]->Object;
 				}
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::nuke: {
+				hud->addMessage("Boom!");
+				Explosion * expl = new Explosion(player->X, player->Y, 400.0f,
+						12.0f, resources->ExplTex[0], resources->ExplTex[1],
+						resources->ExplSounds[1]);
+				explosions.push_back(expl);
 				deletePowerup = true;
 				break;
 			}

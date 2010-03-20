@@ -7,7 +7,6 @@
 
 class HUD {
 private:
-	int m_bottomBasePoint;
 	VideoManager* m_videoManager;
 	Resources* m_resources;
 	std::vector<TextObject*> m_messages;
@@ -17,7 +16,8 @@ private:
 	void drawAmmo(int ammo);
 	void drawGrenades(int grenades);
 	void drawTime(GameState* gameState);
-	void drawBar(int x, int y, int width, int height, float value);
+	void drawBar(int x, int y, int width, int height, float value,
+			GLfloat* bcolor, GLfloat* fcolor1, GLfloat* fcolor2);
 public:
 	HUD(VideoManager* videoManager, Resources* resources);
 	void draw(GameState* gameState, float health, float experience,

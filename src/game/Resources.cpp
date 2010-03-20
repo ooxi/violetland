@@ -36,6 +36,7 @@ Resources::Resources(FileUtility* fileUtility, SoundManager* sndManager) {
 	loadPowerupTex(Powerup::grenades, "grenade.png");
 	loadPowerupTex(Powerup::freeze, "freeze.png");
 	loadPowerupTex(Powerup::penBullets, "penbullets.png");
+	loadPowerupTex(Powerup::nuke, "bon_nuke.png");
 }
 
 Sprite* Resources::loadSprite(unsigned int frames, std::string pattern) {

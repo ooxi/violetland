@@ -3,13 +3,14 @@
 HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
 	m_resources = resources;
-	m_bottomBasePoint = m_videoManager->getVideoMode().Height
-			- m_videoManager->RegularText->getIndent();
 	reset();
 }
 
 void HUD::drawMessages() {
 	if (!m_messages.empty()) {
+		int m_bottomBasePoint = m_videoManager->getVideoMode().Height
+				- m_videoManager->RegularText->getIndent();
+
 		int s = m_messages.size();
 		for (int i = s - 1; i >= 0; i--) {
 			m_messages[i]->draw(true, m_messages[i]->X
@@ -29,15 +30,24 @@ void HUD::drawMessages() {
 }
 
 void HUD::drawExperience(float experience, int levelPoints) {
+	int m_bottomBasePoint = m_videoManager->getVideoMode().Height
+			- m_videoManager->RegularText->getIndent();
+
 	VideoMode screen = m_videoManager->getVideoMode();
 	const int barLen = screen.Width / 4;
 	const int barLeft = 2 * screen.Width / 3;
 	const int barHeight = m_videoManager->RegularText->getHeight() / 4;
 
-	drawBar(barLeft, m_bottomBasePoint, barLen, barHeight, experience);
+	GLfloat bcolor[] = { 1.0f, 1.0f, 1.0f, 0.3f };
+	GLfloat fcolor1[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	GLfloat fcolor2[] = { 0.0f, 1.0f, 1.0f, 1.0f };
+
+	drawBar(barLeft, m_bottomBasePoint, barLen, barHeight, experience, bcolor,
+			fcolor1, fcolor2);
 }
 
-void HUD::drawBar(int x, int y, int width, int height, float value) {
+void HUD::drawBar(int x, int y, int width, int height, float value,
+		GLfloat* bcolor, GLfloat* fcolor1, GLfloat* fcolor2) {
 	glDisable( GL_TEXTURE_2D);
 
 	glPushMatrix();
@@ -48,19 +58,19 @@ void HUD::drawBar(int x, int y, int width, int height, float value) {
 
 	glNormal3f(0.0f, 0.0f, 1.0f);
 
-	glColor4f(0.7f, 0.7f, 0.7f, 0.5f);
+	glColor4fv(bcolor);
 
 	glVertex3f(0.0f, -height, 0);
 	glVertex3f(width, -height, 0);
 	glVertex3f(width, height, 0);
 	glVertex3f(0.0f, height, 0);
 
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	glColor4fv(fcolor1);
 	glVertex3f(0.0f, -height, 0);
-	glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+	glColor4fv(fcolor2);
 	glVertex3f(width * value, -height, 0);
 	glVertex3f(width * value, height, 0);
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	glColor4fv(fcolor1);
 	glVertex3f(0.0f, height, 0);
 
 	glEnd();
@@ -71,6 +81,9 @@ void HUD::drawBar(int x, int y, int width, int height, float value) {
 }
 
 void HUD::drawHealth(float health) {
+	int m_bottomBasePoint = m_videoManager->getVideoMode().Height
+			- m_videoManager->RegularText->getIndent();
+
 	VideoMode screen = m_videoManager->getVideoMode();
 	const int barLeft = screen.Width / 12;
 	const int barLen = screen.Width / 4;
@@ -78,10 +91,18 @@ void HUD::drawHealth(float health) {
 
 	m_resources->HealthIndicator->draw(false, false);
 
-	drawBar(barLeft, m_bottomBasePoint, barLen, barHeight, health);
+	GLfloat bcolor[] = { 1.0f, 1.0f, 1.0f, 0.3f };
+	GLfloat fcolor1[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	GLfloat fcolor2[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+
+	drawBar(barLeft, m_bottomBasePoint, barLen, barHeight, health, bcolor,
+			fcolor1, fcolor2);
 }
 
 void HUD::drawTime(GameState* gameState) {
+	int m_bottomBasePoint = m_videoManager->getVideoMode().Height
+			- m_videoManager->RegularText->getIndent();
+
 	const int minutes = gameState->Time / 60000;
 	const int seconds = (gameState->Time - minutes * 60000) / 1000;
 
