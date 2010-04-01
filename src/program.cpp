@@ -1322,11 +1322,15 @@ void dropPowerup(float x, float y) {
 
 	int wpnDropChance = 975;
 	if (player->getWeapon()->Name == "PM")
-		wpnDropChance = 750;
+		wpnDropChance = 700;
 	if (player->Kills == 0)
 		wpnDropChance = 0;
 	if (rand() % 1000 >= wpnDropChance) {
-		int weaponIndex = (rand() % weaponManager->Weapons.size());
+		int weaponIndex;
+		if (true) // TODO: Allow PM drop?
+			weaponIndex = (rand() % weaponManager->Weapons.size());
+		else
+			weaponIndex = (rand() % weaponManager->Weapons.size() - 1);
 		newPowerup = new Powerup(x, y,
 				weaponManager->Weapons[weaponIndex]->getDroppedTex());
 		newPowerup->Type = Powerup::weapon;

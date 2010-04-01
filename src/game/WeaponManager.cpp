@@ -16,6 +16,15 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 		exit(6);
 	}
 
+	for (int i = 0; i < (int) weapons.size(); i++) {
+		if (weapons.at(i).compare("PM") == 0) {
+			weapons.at(i) = weapons.back();
+			weapons.back() = "PM";
+			fprintf(stdout, "EDIT: Putting PM to the end of list!\n");
+			break;
+		}
+	}
+
 	for (unsigned int j = 0; j < weapons.size(); j++) {
 		char *imagePath;
 		char *shotSoundPath;
