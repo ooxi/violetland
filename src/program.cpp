@@ -733,7 +733,7 @@ void switchSoundVolumeDown() {
 	} else {
 		config->SoundVolume = 10;
 		for (unsigned int a = 1; a <= 8; a++) {
-			Mix_Volume(a, 0);
+			Mix_Volume(a, config->SoundVolume * 12);
 		}
 	}
 	refreshOptionsWindow();
@@ -760,7 +760,7 @@ void switchMusicVolumeDown() {
 		Mix_Volume(0, config->MusicVolume * 12);
 	} else {
 		config->MusicVolume = 10;
-		Mix_Volume(0, 0);
+		Mix_Volume(0, config->MusicVolume * 12);
 	}
 	refreshOptionsWindow();
 }
