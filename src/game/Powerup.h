@@ -1,12 +1,12 @@
-#include "../system/graphic/StaticObject.h"
-
 #ifndef POWERUP_H_
 #define POWERUP_H_
+
+#include "../system/graphic/StaticObject.h"
 
 class Powerup: public StaticObject {
 public:
 	enum PowerupType {
-		medikit = 0, weapon, grenades, freeze
+		medikit = 0, weapon, grenades, freeze, penBullets, nuke, vitalityRoids, agilityRoids, strengthRoids,teleports   //aoisdno these should be caps according to convention, but w/e
 	};
 	Powerup(float x, float y, Texture *tex);
 	void *Object;

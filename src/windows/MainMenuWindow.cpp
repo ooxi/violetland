@@ -2,9 +2,9 @@
 
 MainMenuWindow::MainMenuWindow(Configuration* config, GameState* gameState,
 		TextManager* text) :
-	Window(0.0f, 0.0f, config->ScreenWidth, config->ScreenHeight, 0.0f, 0.0f,
+	Window(0.0f, 0.0f, config->Screen.Width, config->Screen.Height, 0.0f, 0.0f,
 			0.0f, 0.5f) {
-	const int l = config->ScreenWidth * 0.1f;
+	const int l = config->Screen.Width * 0.1f;
 
 	if (gameState->Begun && !gameState->Lost) {
 		addElement("resume", text->getObject("Resume", l, text->getHeight()

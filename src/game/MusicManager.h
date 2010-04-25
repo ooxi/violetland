@@ -1,12 +1,9 @@
-#include <map>
-#include <string>
-#include "../system/utility/FileUtility.h"
-#include "../system/sound/SoundManager.h"
-#include "Enemy.h"
-#include "Player.h"
-
 #ifndef MUSICMANAGER_H_
 #define MUSICMANAGER_H_
+
+#include "../system/sound/SoundManager.h"
+#include "GameState.h"
+#include "Player.h"
 
 class MusicManager {
 private:
@@ -18,7 +15,7 @@ private:
 public:
 	MusicManager(FileUtility* fileUtility, SoundManager* soundManager,
 			Configuration* config);
-	void process(Player* player, std::vector<LifeForm*> enemies, bool paused);
+	void process(Player* player, GameState* gameState);
 	void play();
 	void play(int chan, std::string name, bool now);
 	~MusicManager();

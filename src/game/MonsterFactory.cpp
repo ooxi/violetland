@@ -1,7 +1,7 @@
 #include "MonsterFactory.h"
 
-Sprite* MonsterFactory::loadMonsterSprite(string name, string animType) {
-	vector<SDL_Surface*> animSurfaces;
+Sprite* MonsterFactory::loadMonsterSprite(std::string name, std::string animType) {
+	std::vector<SDL_Surface*> animSurfaces;
 
 	char *buf;
 	sprintf(buf = new char[100], "%s/%s/", name.c_str(), animType.c_str());
@@ -25,8 +25,8 @@ Sprite* MonsterFactory::loadMonsterSprite(string name, string animType) {
 	return monsterSprite;
 }
 
-Sound* MonsterFactory::loadMonsterSound(string soundType, string monsterName,
-		string soundName) {
+Sound* MonsterFactory::loadMonsterSound(std::string soundType, std::string monsterName,
+		std::string soundName) {
 	char *buf;
 	sprintf(buf = new char[100], "%s/sounds/%s/%s", monsterName.c_str(),
 			soundType.c_str(), soundName.c_str());
@@ -36,8 +36,8 @@ Sound* MonsterFactory::loadMonsterSound(string soundType, string monsterName,
 	return snd;
 }
 
-void MonsterFactory::fillMonsterStats(MonsterTemplate* t, string name) {
-	ifstream in;
+void MonsterFactory::fillMonsterStats(MonsterTemplate* t, std::string name) {
+	std::ifstream in;
 	char *buf;
 	sprintf(buf = new char[100], "%s/stats", name.c_str());
 	in.open(m_fileUtility->getFullPath(FileUtility::monsters, buf).c_str());
@@ -61,7 +61,7 @@ MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 	m_fileUtility = fileUtility;
 	m_sndManager = sndManager;
 
-	vector<string> monsters = m_fileUtility->getSubDirsFromDir(
+	std::vector<std::string> monsters = m_fileUtility->getSubDirsFromDir(
 			m_fileUtility->getFullPath(FileUtility::monsters, "."));
 
 	fprintf(stdout, "Total monsters found: %i\n", (int) monsters.size());
@@ -77,12 +77,12 @@ MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 
 		char *buf;
 		sprintf(buf = new char[100], "%s/sounds/hit/", monsters[j].c_str());
-		vector<string> hitSounds = m_fileUtility->getFilesFromDir(
+		std::vector<std::string> hitSounds = m_fileUtility->getFilesFromDir(
 				m_fileUtility->getFullPath(FileUtility::monsters, buf));
 		delete[] buf;
 
 		for (unsigned int i = 0; i < hitSounds.size(); i++) {
-			mt ->HitSounds.push_back(loadMonsterSound("hit", monsters[j],
+			mt->HitSounds.push_back(loadMonsterSound("hit", monsters[j],
 					hitSounds[i]));
 		}
 

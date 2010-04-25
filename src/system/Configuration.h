@@ -1,8 +1,17 @@
-#include "utility/FileUtility.h"
-#include "ConfigFile.h"
-
 #ifndef CONFIGURATION_H_
 #define CONFIGURATION_H_
+
+#include "utility/FileUtility.h"
+#include "ConfigFile.h"
+#include "InputHandler.h"
+
+struct VideoMode {
+public:
+	int Width;
+	int Height;
+	bool Full;
+	int Color;
+};
 
 class Configuration {
 private:
@@ -12,9 +21,7 @@ public:
 	void read();
 	void write();
 	~Configuration();
-	int ScreenWidth, ScreenHeight;
-	int ScreenColor;
-	bool FullScreen;
+	VideoMode Screen;
 	int FrameDelay;
 	bool ShowFps;
 	bool AutoReload;
@@ -25,6 +32,12 @@ public:
 	bool AutoWeaponPickup;
 	bool FriendlyFire;
 	int GameAreaSize;
+	InputHandler::Binding
+			PlayerInputBinding[InputHandler::GameInputEventsCount];
+	void ReadPlayerBinding(ConfigFile* cFile, InputHandler::Binding* binding,
+			std::string actionName);
+	void WritePlayerBinding(ConfigFile* cFile, InputHandler::Binding* binding,
+			std::string actionName);
 };
 
 #endif /* CONFIGURATION_H_ */

@@ -1,6 +1,6 @@
 #include "Aim.h"
 
-void Aim::drawCircle(float r) {
+void Aim::constructCircle(float r) {
 	glBegin(GL_LINES);
 	for (int i = 0; i < 360; i += 4) {
 		const float radS = i * M_PI / 180;
@@ -11,7 +11,7 @@ void Aim::drawCircle(float r) {
 	glEnd();
 }
 
-void Aim::drawFilledCircle(float r) {
+void Aim::constructFilledCircle(float r) {
 	glBegin(GL_TRIANGLES);
 	for (int i = 0; i < 360; i += 4) {
 		const float radS = i * M_PI / 180;
@@ -23,9 +23,38 @@ void Aim::drawFilledCircle(float r) {
 	glEnd();
 }
 
-Aim::Aim(Configuration* config) {
+void Aim::constructAim(float cDarkR,float cDarkG,float cDarkB,float cLightR,float cLightG,float cLightB){
 	printf("Constructing aim...\n");
 
+	m_aimDListId = glGenLists(1);
+
+	glNewList(m_aimDListId, GL_COMPILE);
+	glLineWidth(3.75f);
+	glColor4f(cDarkR, cDarkG, cDarkB, 1.0f);
+	constructCircle(25.0f);
+
+	glLineWidth(1.25f);
+	glColor4f(cLightR, cLightG, cLightB, 1.0f);
+	constructCircle(25.0f);
+	glEndList();
+
+	m_pointDListId = glGenLists(1);
+
+	glNewList(m_pointDListId, GL_COMPILE);
+	glColor4f(cLightR, cLightG, cLightB, 1.0f);
+	constructFilledCircle(20.0f);
+	glLineWidth(0.3f);
+	glColor4f(cDarkR, cDarkG, cDarkB, 1.0f);
+	constructCircle(20.0f);
+	glEndList();
+}
+
+Aim::Aim(float cDarkR,float cDarkG,float cDarkB,float cLightR,float cLightG,float cLightB)
+{
+	constructAim(cDarkR,cDarkG,cDarkB,cLightR,cLightG,cLightB);
+}
+
+Aim::Aim(Configuration* config){
 	float cDarkR = ImageUtility::getColorChR(config->AimColorA);
 	float cDarkG = ImageUtility::getColorChG(config->AimColorA);
 	float cDarkB = ImageUtility::getColorChB(config->AimColorA);
@@ -34,27 +63,7 @@ Aim::Aim(Configuration* config) {
 	float cLightG = ImageUtility::getColorChG(config->AimColorB);
 	float cLightB = ImageUtility::getColorChB(config->AimColorB);
 
-	m_aimDListId = glGenLists(1);
-
-	glNewList(m_aimDListId, GL_COMPILE);
-	glLineWidth(3.75f);
-	glColor4f(cDarkR, cDarkG, cDarkB, 1.0f);
-	drawCircle(25.0f);
-
-	glLineWidth(1.25f);
-	glColor4f(cLightR, cLightG, cLightB, 1.0f);
-	drawCircle(25.0f);
-	glEndList();
-
-	m_pointDListId = glGenLists(1);
-
-	glNewList(m_pointDListId, GL_COMPILE);
-	glColor4f(cLightR, cLightG, cLightB, 1.0f);
-	drawFilledCircle(20.0f);
-	glLineWidth(0.3f);
-	glColor4f(cDarkR, cDarkG, cDarkB, 1.0f);
-	drawCircle(20.0f);
-	glEndList();
+	constructAim(cDarkR,cDarkG,cDarkB,cLightR,cLightG,cLightB);
 }
 
 void Aim::draw(float x, float y, float scale, float pointScale) {

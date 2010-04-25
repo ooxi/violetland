@@ -1,14 +1,7 @@
-#include <stdlib.h>
-#include <iostream>
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-#include "../../utility/ImageUtility.h"
-#include "../Texture.h"
-#include "TextObject.h"
-
 #ifndef TEXTMANAGER_H_
 #define TEXTMANAGER_H_
+
+#include "TextObject.h"
 
 class TextManager {
 private:
@@ -21,7 +14,7 @@ public:
 	enum TextVAlignFlag {
 		TOP, MIDDLE, BOTTOM
 	};
-	TextManager(string fontPath, int fontSize);
+	TextManager(std::string fontPath, int fontSize);
 	void draw(const char *textBuf, float x, float y, TextHAlignFlag halign,
 			TextVAlignFlag valign);
 	const int getHeight();

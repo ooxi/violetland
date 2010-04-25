@@ -6,7 +6,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 	m_fileUtility = fileUtility;
 	m_sndManager = sndManager;
 
-	vector<string> weapons = m_fileUtility->getSubDirsFromDir(
+	std::vector<std::string> weapons = m_fileUtility->getSubDirsFromDir(
 			m_fileUtility->getFullPath(FileUtility::weapon, "."));
 
 	fprintf(stdout, "Total weapons found: %i\n", (int) weapons.size());
@@ -14,6 +14,15 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 	if (weapons.size() == 0) {
 		printf("Couldn't load weapons, the program won't run!\n");
 		exit(6);
+	}
+
+	for (int i = 0; i < (int) weapons.size(); i++) {
+		if (weapons.at(i).compare("PM") == 0) {
+			weapons.at(i) = weapons.back();
+			weapons.back() = "PM";
+			fprintf(stdout, "EDIT: Putting PM to the end of list!\n");
+			break;
+		}
 	}
 
 	for (unsigned int j = 0; j < weapons.size(); j++) {
@@ -43,7 +52,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		weapon->Name = weapons[j];
 
-		ifstream in;
+		std::ifstream in;
 		char *buf;
 		sprintf(buf = new char[100], "%s/stats", weapons[j].c_str());
 		in.open(m_fileUtility->getFullPath(FileUtility::weapon, buf).c_str());
@@ -58,7 +67,8 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 		std::string strbuf;
 		while (in) {
 			getline(in, strbuf, ' ');
-			weapon->Type = (Bullet::BulletType) strtol(strbuf.c_str(), NULL, 10);
+			weapon->Type
+					= (Bullet::BulletType) strtol(strbuf.c_str(), NULL, 10);
 			getline(in, shellName, ' ');
 			in >> weapon->AmmoClipSize;
 			weapon->Ammo = weapon->AmmoClipSize;
@@ -75,7 +85,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		in.close();
 
-		vector<SDL_Surface*> animSurfaces;
+		std::vector<SDL_Surface*> animSurfaces;
 
 		sprintf(buf = new char[100], "shells/%s", shellName.c_str());
 		unsigned int framesCount = fileUtility->getFilesCountFromDir(
@@ -83,10 +93,11 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 		delete[] buf;
 
 		fprintf(stdout, "Shell animation of %s - %s, frames count: %i.\n",
-			weapons[j].c_str(), shellName.c_str(), framesCount);
+				weapons[j].c_str(), shellName.c_str(), framesCount);
 
 		for (unsigned i = 0; i < framesCount; i++) {
-			sprintf(buf = new char[100], "shells/%s/%i.png", shellName.c_str(), i);
+			sprintf(buf = new char[100], "shells/%s/%i.png", shellName.c_str(),
+					i);
 
 			SDL_Surface *surface = ImageUtility::loadImage(
 					fileUtility->getFullPath(FileUtility::anima, buf));

@@ -1,15 +1,12 @@
-#include <iostream>
+#ifndef FILEUTILITY_H_
+#define FILEUTILITY_H_
+
 #include <fstream>
 #include <vector>
-#include <stdio.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 //dirent for windows can be obtained at http://www.softagalleria.net/dirent.php
 #include <dirent.h>
-
-#ifndef FILEUTILITY_H_
-#define FILEUTILITY_H_
 
 class FileUtility {
 private:

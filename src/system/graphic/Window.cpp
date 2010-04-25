@@ -24,25 +24,31 @@ void Window::removeElement(std::string name, bool remainHandler) {
 		m_elements.erase(name);
 	}
 	if (!remainHandler)
-		removeHandler(hdl_all, name);
+		removeHandler(hdl_click, name);
 }
 
 void Window::addHandler(HandlerType hdl, std::string elementName, void(*func)()) {
 	removeHandler(hdl, elementName);
-	if (hdl == hdl_all || hdl == hdl_lclick)
+	if (hdl == hdl_click || hdl == hdl_lclick)
 		m_lcHandlers[elementName] = func;
-	if (hdl == hdl_all || hdl == hdl_rclick)
+	if (hdl == hdl_click || hdl == hdl_rclick)
 		m_rcHandlers[elementName] = func;
+	if (hdl == hdl_move)
+		m_mvHandlers[elementName] = func;
 }
 
 void Window::removeHandler(HandlerType hdl, std::string elementName) {
-	if ((hdl == hdl_all || hdl == hdl_lclick)
+	if ((hdl == hdl_all || hdl == hdl_click || hdl == hdl_lclick)
 			&& m_lcHandlers.count(elementName) > 0) {
 		m_lcHandlers.erase(elementName);
 	}
-	if ((hdl == hdl_all || hdl == hdl_rclick)
+	if ((hdl == hdl_all || hdl == hdl_click || hdl == hdl_rclick)
 			&& m_rcHandlers.count(elementName) > 0) {
 		m_rcHandlers.erase(elementName);
+	}
+	if ((hdl == hdl_all || hdl == hdl_move) && m_mvHandlers.count(elementName)
+			> 0) {
+		m_mvHandlers.erase(elementName);
 	}
 }
 
@@ -82,13 +88,24 @@ void Window::process(InputHandler* input) {
 	int gmy = input->mouseY;
 
 	std::map<std::string, void(*)()>::const_iterator iter;
+	for (iter = m_mvHandlers.begin(); iter != m_mvHandlers.end(); ++iter) {
+		if (m_elements.count(iter->first) > 0) {
+			TextObject* o = m_elements.find(iter->first)->second;
+			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
+					&& gmy < o->getBottom()) {
+				iter->second();
+			}
+		}
+	}
+
+	//TODO: refactor next two copypasted cycles
 	for (iter = m_lcHandlers.begin(); iter != m_lcHandlers.end(); ++iter) {
 		if (m_elements.count(iter->first) > 0) {
 			TextObject* o = m_elements.find(iter->first)->second;
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
 				o->GMask = 0.3f;
-				if (input->getPressInput(InputHandler::Fire)) {
+				if (input->getPressInput(InputHandler::MenuClickA)) {
 					iter->second();
 				}
 			} else {
@@ -102,12 +119,12 @@ void Window::process(InputHandler* input) {
 			TextObject* o = m_elements.find(iter->first)->second;
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
-				o->GMask = 0.3f;
-				if (input->getPressInput(InputHandler::Reload)) {
+				o->RMask = 0.3f;
+				if (input->getPressInput(InputHandler::MenuClickB)) {
 					iter->second();
 				}
 			} else {
-				o->GMask = 1.0f;
+				o->RMask = 1.0f;
 			}
 		}
 	}

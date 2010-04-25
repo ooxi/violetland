@@ -1,12 +1,11 @@
+#ifndef DYNAMICOBJECT_H_
+#define DYNAMICOBJECT_H_
+
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
 #endif //_WIN32W
 #include "../Object.h"
 #include "Sprite.h"
-#include <cmath>
-
-#ifndef DYNAMICOBJECT_H_
-#define DYNAMICOBJECT_H_
 
 class DynamicObject: public Object {
 private:

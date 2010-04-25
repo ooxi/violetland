@@ -3,7 +3,7 @@
 
 #include "../system/graphic/Window.h"
 #include "../system/Configuration.h"
-#include "../system/GameState.h"
+#include "../game/GameState.h"
 #include "../system/graphic/text/TextManager.h"
 
 class MainMenuWindow: public Window {

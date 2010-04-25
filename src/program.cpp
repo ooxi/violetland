@@ -10,30 +10,27 @@
 #include <winbase.h>
 #include <time.h>
 #endif //_WIN32
-#include <stdlib.h>
-#include <vector>
-#include <cmath>
-#include <map>
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_opengl.h"
 #include "SDL_ttf.h"
-#include "system/utility/ImageUtility.h"
+#include "system/Configuration.h"
 #include "system/InputHandler.h"
-#include "system/graphic/text/TextManager.h"
-#include "system/utility/FileUtility.h"
 #ifdef __APPLE__
 #include "system/utility/macBundlePath.h"
 #endif
+#include "system/utility/ImageUtility.h"
+#include "system/utility/FileUtility.h"
+#include "system/graphic/text/TextManager.h"
 #include "system/graphic/Texture.h"
 #include "system/graphic/Aim.h"
 #include "system/graphic/Camera.h"
 #include "system/graphic/Particle.h"
-#include "system/sound/SoundManager.h"
 #include "system/graphic/Window.h"
 #include "system/graphic/VideoManager.h"
-#include "system/Configuration.h"
-#include "system/GameState.h"
+#include "system/sound/SoundManager.h"
+#include "game/GameState.h"
+#include "game/Resources.h"
 #include "game/MonsterFactory.h"
 #include "game/Enemy.h"
 #include "game/Player.h"
@@ -43,132 +40,46 @@
 #include "game/WeaponManager.h"
 #include "game/Highscores.h"
 #include "game/Explosion.h"
+#include "game/HUD.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/HelpWindow.h"
+#include "windows/CharStatsWindow.h"
+
+using namespace std;
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.8";
+const string VERSION = "0.2.10";
 
-GameState* gameState;
 Configuration* config;
+Configuration* tempConfig;
 VideoManager* videoManager;
 Camera* cam;
 
-int framesCount;
-int fpsCountingStart;
-int fps = 0;
-
-MonsterFactory* monsterFactory;
-
-Configuration* tempConfig;
-
-Sound* playerKilledSound;
-vector<Sound*> playerHitSounds;
-int playerHitSndPlaying = 0;
-
-Texture* medikitTex;
-Texture* grenadeTex;
-Texture* freezeTex;
-StaticObject* crystal;
-
-Sprite* playerLegsSprite;
-
-Sprite* grenadeSprite;
-
-vector<Texture*> bloodTex;
-vector<Texture*> explTex;
-
 Aim* aim;
-
-vector<LifeForm*> lifeForms;
-Player* player;
-
-vector<StaticObject*> bloodStains;
-
-vector<Explosion*> explosions;
-
-vector<ParticleSystem*> particleSystems;
-
-vector<Sound*> explosionSounds;
-
-WeaponManager* weaponManager;
-
-vector<Powerup*> powerups;
-vector<Bullet*> bullets;
-
-map<string, Window*> windows;
-
-vector<TextObject*> msgQueue;
-
-int currentTime = 0;
-int deltaTime = 0;
-
-Terrain* terrain;
+HUD* hud;
+StaticObject* splash;
 
 FileUtility* fileUtility;
 InputHandler* input;
 SoundManager* sndManager;
+Resources* resources;
 MusicManager* musicManager;
+WeaponManager* weaponManager;
 
-StaticObject* splash;
+MonsterFactory* monsterFactory;
+GameState* gameState;
+map<string, LifeForm*> lifeForms;
+Player* player;
+vector<Powerup*> powerups;
+vector<Bullet*> bullets;
 
-void clearWindows() {
-	std::map<std::string, Window*>::const_iterator iter;
-	for (iter = windows.begin(); iter != windows.end(); ++iter) {
-		delete iter->second;
-	}
-	windows.clear();
-}
+vector<StaticObject*> bloodStains;
+vector<Explosion*> explosions;
+vector<ParticleSystem*> particleSystems;
+map<string, Window*> windows;
+Terrain* terrain;
 
-void clearBloodStains() {
-	for (unsigned int i = 0; i < bloodStains.size(); i++) {
-		delete bloodStains[i];
-	}
-	bloodStains.clear();
-}
-
-void clearLifeForms() {
-	for (unsigned int i = 0; i < lifeForms.size(); i++) {
-		delete lifeForms[i];
-	}
-	lifeForms.clear();
-}
-
-void clearBullets() {
-	for (unsigned int i = 0; i < bullets.size(); i++) {
-		delete bullets[i];
-	}
-	bullets.clear();
-}
-
-void clearMessages() {
-	for (unsigned int i = 0; i < msgQueue.size(); i++) {
-		delete msgQueue[i];
-	}
-	msgQueue.clear();
-}
-
-void clearExplosions() {
-	for (unsigned int i = 0; i < explosions.size(); i++) {
-		delete explosions[i];
-	}
-	explosions.clear();
-}
-
-void clearParticleSystems() {
-	for (unsigned int i = 0; i < particleSystems.size(); i++) {
-		delete particleSystems[i];
-	}
-	particleSystems.clear();
-}
-
-void clearPowerups() {
-	for (unsigned int i = 0; i < powerups.size(); i++) {
-		delete powerups[i];
-	}
-	powerups.clear();
-}
-
+// Creation of clear squares of an earth surface
 void createTerrain() {
 	if (terrain)
 		delete terrain;
@@ -177,7 +88,7 @@ void createTerrain() {
 
 	int baseTexCount = fileUtility->getFilesCountFromDir(
 			fileUtility->getFullPath(FileUtility::image, "terrain"));
-	int baseTex = (rand() % (baseTexCount * 100 - 1) / 100);
+	int baseTex = (rand() % baseTexCount);
 
 	string tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
 	tilesDir.append("/%i");
@@ -209,6 +120,9 @@ void createTerrain() {
 	tiles.clear();
 }
 
+// Creation of a new monster
+// r - distance from point of 0,0
+// lvl - level of monster
 void spawnEnemy(float r, int lvl) {
 	float spawnAngle = (rand() % 6300) / 1000.0;
 
@@ -217,34 +131,46 @@ void spawnEnemy(float r, int lvl) {
 	newMonster->X = r * cos(spawnAngle);
 	newMonster->Y = r * sin(spawnAngle);
 
-	lifeForms.push_back(newMonster);
+	lifeForms.insert(map<string, LifeForm*>::value_type(newMonster->Id,
+			newMonster));
 }
 
+// The beginning of new game in a survival mode
 void startSurvival() {
-	gameState->startSurvival();
+	glClear( GL_COLOR_BUFFER_BIT);
 
-	clearBloodStains();
-	clearPowerups();
-	clearLifeForms();
-	clearBullets();
-	clearMessages();
-	clearExplosions();
+	cam->X = cam->Y = 0.0f;
 
-	player = new Player(0, 0, playerLegsSprite);
+	cam->applyGLOrtho();
+
+	splash->draw(false, false);
+
+	videoManager->RegularText->draw("Please wait...", 0, 0,
+			TextManager::CENTER, TextManager::MIDDLE);
+
+	SDL_GL_SwapBuffers();
+
+	gameState->start(GameState::Survival);
+
+	clearMap<std::string, LifeForm*> (&lifeForms);
+	clearVector<Powerup*> (&powerups);
+	clearVector<StaticObject*> (&bloodStains);
+	clearVector<Bullet*> (&bullets);
+	clearVector<Explosion*> (&explosions);
+
+	player = new Player(0, 0, resources->PlayerWalkSprite,
+			resources->PlayerDeathSprites[(rand()
+					% (int) resources->PlayerDeathSprites.size())],
+			resources->PlayerHitSounds, resources->PlayerDeathSound);
 	player->setWeapon(weaponManager->getWeaponByName("PM"));
 	player->HitR = 0.28f;
 	player->Acceleration = 0.0004f;
-	lifeForms.push_back(player);
 
-	msgQueue.push_back(videoManager->RegularText->getObject(
-			"Try to survive as long as you can.", 0, 0, TextManager::LEFT,
-			TextManager::MIDDLE));
-	msgQueue.push_back(videoManager->RegularText->getObject(
-			"Shoot monsters to receive experience and other bonuses.", 0, 0,
-			TextManager::LEFT, TextManager::MIDDLE));
-	msgQueue.push_back(videoManager->RegularText->getObject(
-			"Press F1 at any moment to get additional instructions.", 0, 0,
-			TextManager::LEFT, TextManager::MIDDLE));
+	lifeForms.insert(map<string, LifeForm*>::value_type(player->Id, player));
+
+	hud->addMessage("Try to survive as long as you can.");
+	hud->addMessage("Shoot monsters to receive experience and other bonuses.");
+	hud->addMessage("Press F1 at any moment to get additional instructions.");
 
 	createTerrain();
 
@@ -257,6 +183,7 @@ void startSurvival() {
 	windows["mainmenu"]->CloseFlag = true;
 }
 
+// Creation of a string for the window title
 char *getProjectTitle() {
 	char *buf;
 	sprintf(buf = new char[PROJECT.size() + VERSION.size() + 4], "%s v%s",
@@ -264,6 +191,7 @@ char *getProjectTitle() {
 	return buf;
 }
 
+// Outputs the information on the program and the runtime environment
 void printVersion() {
 	char* pr = getProjectTitle();
 	string env = "UNKNOWN";
@@ -283,6 +211,7 @@ void printVersion() {
 	delete[] pr;
 }
 
+// Creation of system objects and their customization
 void initSystem() {
 	srand((unsigned) time(NULL));
 
@@ -299,7 +228,7 @@ void initSystem() {
 	videoManager = new VideoManager(fileUtility);
 
 	cam = new Camera();
-	videoManager->setMode(config, cam);
+	videoManager->setMode(config->Screen, cam);
 
 	printf("Preparing window...\n");
 
@@ -314,17 +243,17 @@ void initSystem() {
 	SDL_FreeSurface(icon);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_BLEND);
+	glEnable( GL_COLOR_MATERIAL);
+	glEnable( GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glEnable(GL_TEXTURE_2D);
+	glEnable( GL_TEXTURE_2D);
 
-	glDisable(GL_DEPTH_TEST);
+	glDisable( GL_DEPTH_TEST);
 
 	printf("Drawing splash screen...\n");
 
-	sprintf(buf = new char[100], "splash_%i.png", (rand() % 199) / 100);
+	sprintf(buf = new char[100], "splash_%i.png", (rand() % 2));
 	Texture* tex = new Texture(ImageUtility::loadImage(
 			fileUtility->getFullPath(FileUtility::image, buf)), GL_TEXTURE_2D,
 			GL_LINEAR, true);
@@ -333,13 +262,16 @@ void initSystem() {
 	splash = new StaticObject(0, 0, tex->getWidth(), tex->getHeight(), tex,
 			true);
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear( GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
 
 	cam->applyGLOrtho();
 
 	splash->draw(false, false);
+
+	videoManager->RegularText->draw("Please wait...", 0, 0,
+			TextManager::CENTER, TextManager::MIDDLE);
 
 	SDL_GL_SwapBuffers();
 
@@ -352,52 +284,51 @@ void initSystem() {
 
 	GLfloat lightColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	//flashlight
+	// flashlight
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightColor);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightColor);
-	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0f);
-	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.001f);
+	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.6f);
+	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.0001f);
 
-	//selflight
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor);
-	glLightfv(GL_LIGHT1, GL_AMBIENT, lightColor);
-	glLightfv(GL_LIGHT1, GL_SPECULAR, lightColor);
-	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0f);
-	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.0001f);
+	GLfloat nvColor[] = { 0.3f, 1.0f, 0.3f, 1.0f };
 
-	glEnable(GL_LIGHT2);
+	// night vision perk
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, nvColor);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, nvColor);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, nvColor);
+	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.5f);
+	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.00001f);
 
-	glEnable(GL_LINE_SMOOTH);
+	glEnable( GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-	input = new InputHandler();
+	input = new InputHandler(config->PlayerInputBinding);
 
 	gameState = new GameState();
 }
 
-void loseGame() {
+// Operations at destruction of the player:
+// update of the list of the best results,
+// change of a state of objects
+void loseGame(Player* player) {
 	gameState->Lost = true;
-	if (playerHitSounds[playerHitSndPlaying]->isPlaying())
-		playerHitSounds[playerHitSndPlaying]->stop(0);
 
-	playerKilledSound->play(5, 0, 0);
-
-	msgQueue.push_back(videoManager->RegularText->getObject("Player is dead.",
-			0, 0, TextManager::LEFT, TextManager::BOTTOM));
+	hud->addMessage("You are gobbled up.");
 
 	Highscores s(fileUtility);
 	HighscoresEntry* h = new HighscoresEntry();
 	h->Agility = player->Agility;
 	h->Strength = player->Strength;
 	h->Vitality = player->Vitality;
-	h->Time = player->Time;
+	h->Time = gameState->Time;
 	h->Xp = player->Xp;
 	s.add(h);
 
 	SDL_ShowCursor(1);
 }
 
+// Switches a pause mode
 void switchGamePause() {
 	gameState->Paused = !gameState->Paused;
 	if (gameState->Paused)
@@ -407,8 +338,8 @@ void switchGamePause() {
 }
 
 void refreshCharStatsWindow() {
-	const int l = config->ScreenWidth * 0.1f;
-	const int r = config->ScreenWidth * 0.6f;
+	const int l = config->Screen.Width * 0.1f;
+	const int r = config->Screen.Width * 0.6f;
 
 	Window* charStats = windows.find("charstats")->second;
 
@@ -487,25 +418,31 @@ void refreshCharStatsWindow() {
 	if (player->Unstoppable)
 		charStats->addElement("+unstoppable",
 				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 6.0f,
+						videoManager->RegularText->getHeight() * 4.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
 
 	if (player->PoisonBullets)
 		charStats->addElement("+poisonbullets",
 				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 7.0f,
+						videoManager->RegularText->getHeight() * 5.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
 
 	if (player->BigCalibre)
 		charStats->addElement("+bigcalibre",
 				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 8.0f,
+						videoManager->RegularText->getHeight() * 6.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
 
 	if (player->Telekinesis)
 		charStats->addElement("+telekinesis",
 				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 9.0f,
+						videoManager->RegularText->getHeight() * 7.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
+
+	if (player->NightVision)
+		charStats->addElement("+nightvision",
+				videoManager->RegularText->getObject("+", r,
+						videoManager->RegularText->getHeight() * 8.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
 }
 
@@ -567,46 +504,84 @@ void takeTelekinesis() {
 	}
 }
 
+void takeNightVision() {
+	if (!player->NightVision && player->LevelPoints > 0) {
+		player->NightVision = true;
+		player->LevelPoints--;
+		refreshCharStatsWindow();
+	}
+}
+
+void showDetailsUnstoppable() {
+	windows["charstats"]->addElement(
+			"explantation",
+			videoManager->SmallText->getObject(
+					"Unstoppable: enemies can't block your movement any more, but they still can hurt you.",
+					config->Screen.Width / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
+void showDetailsPoisonBullets() {
+	windows["charstats"]->addElement(
+			"explantation",
+			videoManager->SmallText->getObject(
+					"Poison bullets: after getting hit by your bullet, enemies slowly lose health until they die.",
+					config->Screen.Width / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
+void showDetailsBigCalibre() {
+	windows["charstats"]->addElement(
+			"explantation",
+			videoManager->SmallText->getObject(
+					"Big calibre: your bullets can wound a few monsters in a row.",
+					config->Screen.Width / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
+void showDetailsTelekinesis() {
+	windows["charstats"]->addElement("explantation",
+			videoManager->SmallText->getObject(
+					"Telekinesis: useful things slowly move towards you.",
+					config->Screen.Width / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
+void showDetailsNightVision() {
+	windows["charstats"]->addElement("explantation",
+			videoManager->SmallText->getObject(
+					"Night vision: you can see in the dark.",
+					config->Screen.Width / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
 void createCharStatWindow() {
-	Window *charStats = new Window(0.0f, 0.0f, config->ScreenWidth,
-			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
-
-	const int r = config->ScreenWidth * 0.6f;
-
-	charStats->addElement("perks", videoManager->RegularText->getObject(
-			"Perks:", r, videoManager->RegularText->getHeight() * 4.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	charStats->addElement("unstoppable", videoManager->RegularText->getObject(
-			"Unstoppable", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 6.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	charStats->addElement("poisonbullets",
-			videoManager->RegularText->getObject("Poison bullets", r
-					+ videoManager->RegularText->getHeight() * 2.0f,
-					videoManager->RegularText->getHeight() * 7.0f,
-					TextManager::LEFT, TextManager::MIDDLE));
-
-	charStats->addElement("bigcalibre", videoManager->RegularText->getObject(
-			"Big calibre", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	charStats->addElement("telekinesis", videoManager->RegularText->getObject(
-			"Telekinesis", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 9.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+	Window *charStats = new CharStatsWindow(config, videoManager);
 
 	charStats->addHandler(Window::hdl_lclick, "strength", increaseStrength);
 	charStats->addHandler(Window::hdl_lclick, "agility", increaseAgility);
 	charStats->addHandler(Window::hdl_lclick, "vitality", increaseVitality);
 
 	charStats->addHandler(Window::hdl_lclick, "unstoppable", takeUnstoppable);
+	charStats->addHandler(Window::hdl_move, "unstoppable",
+			showDetailsUnstoppable);
 	charStats->addHandler(Window::hdl_lclick, "poisonbullets",
 			takePoisonBullets);
+	charStats->addHandler(Window::hdl_move, "poisonbullets",
+			showDetailsPoisonBullets);
 	charStats->addHandler(Window::hdl_lclick, "bigcalibre", takeBigCalibre);
+	charStats->addHandler(Window::hdl_move, "bigcalibre", showDetailsBigCalibre);
 	charStats->addHandler(Window::hdl_lclick, "telekinesis", takeTelekinesis);
+	charStats->addHandler(Window::hdl_move, "telekinesis",
+			showDetailsTelekinesis);
+	charStats->addHandler(Window::hdl_lclick, "nightvision", takeNightVision);
+	charStats->addHandler(Window::hdl_move, "nightvision",
+			showDetailsNightVision);
 
 	windows["charstats"] = charStats;
 }
@@ -614,21 +589,21 @@ void createCharStatWindow() {
 void shutdownSystem() {
 	delete videoManager;
 	delete gameState;
-	delete splash;
 	delete musicManager;
 	delete sndManager;
 	delete input;
 	delete fileUtility;
+	delete splash;
 }
 
 void backFromHighScores();
 void backFromOptionsAndSave();
 
 void createHighscoresWindow() {
-	Window *scoresWin = new Window(0.0f, 0.0f, config->ScreenWidth,
-			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
+	Window *scoresWin = new Window(0.0f, 0.0f, config->Screen.Width,
+			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = config->ScreenWidth * 0.1f;
+	const int l = config->Screen.Width * 0.1f;
 	const int r2 = l * 2.0f;
 	const int r3 = l * 4.0f;
 
@@ -696,8 +671,8 @@ void createHighscoresWindow() {
 }
 
 void refreshOptionsWindow() {
-	const int l = config->ScreenWidth * 0.1f;
-	const int r = config->ScreenWidth * 0.6f;
+	const int l = config->Screen.Width * 0.1f;
+	const int r = config->Screen.Width * 0.6f;
 
 	Window* w = windows.find("options")->second;
 
@@ -722,7 +697,7 @@ void refreshOptionsWindow() {
 	else
 		w->removeElement("+friendlyfire", false);
 
-	if (config->FullScreen)
+	if (config->Screen.Full)
 		w->addElement("+fullscreen", videoManager->RegularText->getObject("+",
 				r, videoManager->RegularText->getHeight() * 7.0f,
 				TextManager::LEFT, TextManager::MIDDLE));
@@ -730,8 +705,8 @@ void refreshOptionsWindow() {
 		w->removeElement("+fullscreen", false);
 
 	char *buf;
-	sprintf(buf = new char[15], "%ix%i", tempConfig->ScreenWidth,
-			tempConfig->ScreenHeight);
+	sprintf(buf = new char[15], "%ix%i", tempConfig->Screen.Width,
+			tempConfig->Screen.Height);
 	TextObject* resInfo = videoManager->RegularText->getObject(buf, r
 			+ videoManager->RegularText->getHeight() * 7.0f,
 			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
@@ -770,7 +745,7 @@ void switchSoundVolumeDown() {
 	} else {
 		config->SoundVolume = 10;
 		for (unsigned int a = 1; a <= 8; a++) {
-			Mix_Volume(a, 0);
+			Mix_Volume(a, config->SoundVolume * 12);
 		}
 	}
 	refreshOptionsWindow();
@@ -797,7 +772,7 @@ void switchMusicVolumeDown() {
 		Mix_Volume(0, config->MusicVolume * 12);
 	} else {
 		config->MusicVolume = 10;
-		Mix_Volume(0, 0);
+		Mix_Volume(0, config->MusicVolume * 12);
 	}
 	refreshOptionsWindow();
 }
@@ -824,47 +799,47 @@ void switchAutoPickup() {
 }
 
 void switchFullScreen() {
-	config->FullScreen = !config->FullScreen;
+	config->Screen.Full = !config->Screen.Full;
 	refreshOptionsWindow();
 }
 
 void switchResolutionDown() {
-	vector<SDL_Rect> modes = videoManager->GetAvailableModes(config);
+	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
 
 	bool set = false;
 	for (int i = modes.size() - 1; i > 0; i--) {
-		if (tempConfig->ScreenWidth == modes[i].w && tempConfig->ScreenHeight
+		if (tempConfig->Screen.Width == modes[i].w && tempConfig->Screen.Height
 				== modes[i].h) {
-			tempConfig->ScreenWidth = modes[i - 1].w;
-			tempConfig->ScreenHeight = modes[i - 1].h;
+			tempConfig->Screen.Width = modes[i - 1].w;
+			tempConfig->Screen.Height = modes[i - 1].h;
 			set = true;
 			break;
 		}
 	}
 	if (!set) {
-		tempConfig->ScreenWidth = modes[modes.size() - 1].w;
-		tempConfig->ScreenHeight = modes[modes.size() - 1].h;
+		tempConfig->Screen.Width = modes[modes.size() - 1].w;
+		tempConfig->Screen.Height = modes[modes.size() - 1].h;
 	}
 
 	refreshOptionsWindow();
 }
 
 void switchResolutionUp() {
-	vector<SDL_Rect> modes = videoManager->GetAvailableModes(config);
+	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
 
 	bool set = false;
 	for (unsigned int i = 0; i < modes.size() - 1; i++) {
-		if (tempConfig->ScreenWidth == modes[i].w && tempConfig->ScreenHeight
+		if (tempConfig->Screen.Width == modes[i].w && tempConfig->Screen.Height
 				== modes[i].h) {
-			tempConfig->ScreenWidth = modes[i + 1].w;
-			tempConfig->ScreenHeight = modes[i + 1].h;
+			tempConfig->Screen.Width = modes[i + 1].w;
+			tempConfig->Screen.Height = modes[i + 1].h;
 			set = true;
 			break;
 		}
 	}
 	if (!set) {
-		tempConfig->ScreenWidth = modes[0].w;
-		tempConfig->ScreenHeight = modes[0].h;
+		tempConfig->Screen.Width = modes[0].w;
+		tempConfig->Screen.Height = modes[0].h;
 	}
 
 	refreshOptionsWindow();
@@ -873,11 +848,11 @@ void switchResolutionUp() {
 void createOptionsWindow() {
 	tempConfig = new Configuration(*config);
 
-	Window *w = new Window(0.0f, 0.0f, config->ScreenWidth,
-			config->ScreenHeight, 0.0f, 0.0f, 0.0f, 0.5f);
+	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
+			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = config->ScreenWidth * 0.1f;
-	const int r = config->ScreenWidth * 0.6f;
+	const int l = config->Screen.Width * 0.1f;
+	const int r = config->Screen.Width * 0.6f;
 
 	w->addElement("options", videoManager->RegularText->getObject("Options", l,
 			videoManager->RegularText->getHeight() * 3.0f, TextManager::LEFT,
@@ -900,8 +875,8 @@ void createOptionsWindow() {
 			videoManager->RegularText->getHeight() * 9.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
-	w->addElement("sectiongraphic", videoManager->RegularText->getObject(
-			"Graphic", r, videoManager->RegularText->getHeight() * 5.0f,
+	w->addElement("sectiongraphics", videoManager->RegularText->getObject(
+			"Graphics", r, videoManager->RegularText->getHeight() * 5.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("fullscreen", videoManager->RegularText->getObject(
@@ -939,7 +914,7 @@ void createOptionsWindow() {
 
 	w->addElement("savereturn", videoManager->RegularText->getObject(
 			"Save and return", l, videoManager->RegularText->getHeight()
-					* 18.0f, TextManager::LEFT, TextManager::MIDDLE));
+					* 17.0f, TextManager::LEFT, TextManager::MIDDLE));
 	w->addHandler(Window::hdl_lclick, "savereturn", backFromOptionsAndSave);
 
 	windows["options"] = w;
@@ -981,46 +956,39 @@ void createMainMenuWindow() {
 }
 
 void unloadResources() {
-	delete crystal;
 	delete weaponManager;
 	delete monsterFactory;
-	delete playerKilledSound;
 	delete aim;
-	delete playerLegsSprite;
-	delete grenadeSprite;
+	delete hud;
 	delete terrain;
-	delete medikitTex;
-	for (unsigned int i = 0; i < bloodTex.size(); i++) {
-		delete bloodTex[i];
-	}
-	bloodTex.clear();
-	clearBloodStains();
-	clearPowerups();
-	clearLifeForms();
-	clearBullets();
-	clearMessages();
-	clearWindows();
-	clearExplosions();
-	clearParticleSystems();
+	delete resources;
+	clearVector<Powerup*> (&powerups);
+	clearVector<StaticObject*> (&bloodStains);
+	clearVector<Bullet*> (&bullets);
+	clearVector<Explosion*> (&explosions);
+	clearMap<std::string, LifeForm*> (&lifeForms);
+	clearMap<std::string, Window*> (&windows);
 
-	for (unsigned int i = 0; i < playerHitSounds.size(); i++) {
-		delete playerHitSounds[i];
-	}
-	playerHitSounds.clear();
 	delete config;
 }
 
 void backFromOptionsAndSave() {
-	config->ScreenWidth = tempConfig->ScreenWidth;
-	config->ScreenHeight = tempConfig->ScreenHeight;
+	bool changeVideoMode = config->Screen.Width != tempConfig->Screen.Width
+			|| config->Screen.Height != tempConfig->Screen.Height;
+
+	config->Screen.Width = tempConfig->Screen.Width;
+	config->Screen.Height = tempConfig->Screen.Height;
 	config->write();
+
+	if (changeVideoMode) {
 #ifdef _WIN32
-	fprintf(stdout,"Hot video mode changing is not supported on windows now. You should restart the game.");
-	unloadResources();
-	shutdownSystem();
-	exit(0);
+		fprintf(stdout,"Hot video mode changing is not supported on windows now. You should restart the game.");
+		unloadResources();
+		shutdownSystem();
+		exit(0);
 #endif //_WIN32
-	videoManager->setMode(config, cam);
+		videoManager->setMode(config->Screen, cam);
+	}
 	windows["options"]->CloseFlag = true;
 	createMainMenuWindow();
 }
@@ -1039,7 +1007,7 @@ void handleCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
 		if (gameState->Begun && !gameState->Lost && windows.count("charstats")
 				== 0) {
-			clearWindows();
+			clearMap<std::string, Window*> (&windows);
 
 			createCharStatWindow();
 			refreshCharStatsWindow();
@@ -1055,7 +1023,7 @@ void handleCommonControls() {
 
 	if (input->getPressInput(InputHandler::Help)) {
 		if (windows.count("helpscreen") == 0) {
-			clearWindows();
+			clearMap<std::string, Window*> (&windows);
 
 			createHelpWindow();
 
@@ -1070,7 +1038,7 @@ void handleCommonControls() {
 
 	if (input->getPressInput(InputHandler::Menu)) {
 		if (windows.count("mainmenu") == 0) {
-			clearWindows();
+			clearMap<std::string, Window*> (&windows);
 
 			createMainMenuWindow();
 
@@ -1091,17 +1059,18 @@ void handleCommonControls() {
 void handleExplosions() {
 	if (!explosions.empty()) {
 		for (int i = explosions.size() - 1; i >= 0; i--) {
-			explosions[i]->process(deltaTime);
+			explosions[i]->process(videoManager->getFrameDeltaTime());
 
 			if (explosions[i]->Active && !lifeForms.empty()) {
-				for (int j = lifeForms.size() - 1; j >= 0; j--) {
-					if (lifeForms[j]->Type == LifeForm::player
-							&& !config->FriendlyFire)
+				map<string, LifeForm*>::const_iterator iter;
+				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+					LifeForm* lf = iter->second;
+					if (lf->Type == LifeForm::player && !config->FriendlyFire)
 						continue;
 
-					float d = explosions[i]->calcDamage(lifeForms[j]);
+					float d = explosions[i]->calcDamage(lf);
 					if (d > 0) {
-						lifeForms[j]->setHealth(lifeForms[j]->getHealth() - d);
+						lf->setHealth(lf->getHealth() - d);
 					}
 				}
 			}
@@ -1119,7 +1088,7 @@ void handleExplosions() {
 void handleParticles() {
 	if (!particleSystems.empty()) {
 		for (int i = particleSystems.size() - 1; i >= 0; i--) {
-			particleSystems[i]->process(deltaTime);
+			particleSystems[i]->process(videoManager->getFrameDeltaTime());
 
 			if (particleSystems[i]->isEmpty()) {
 				delete particleSystems[i];
@@ -1129,128 +1098,9 @@ void handleParticles() {
 	}
 }
 
-void handlePlayer() {
-	if (player->isDead())
-		loseGame();
-
-	char movementX = 0;
-	char movementY = 0;
-
-	if (input->getDownInput(InputHandler::MoveDown))
-		movementY = 1;
-	if (input->getDownInput(InputHandler::MoveUp))
-		movementY = -1;
-	if (input->getDownInput(InputHandler::MoveLeft))
-		movementX = -1;
-	if (input->getDownInput(InputHandler::MoveRight))
-		movementX = 1;
-
-	player->move(movementX, movementY, deltaTime);
-
-	if (player->X < -config->GameAreaSize)
-		player->setX(-config->GameAreaSize);
-	if (player->X > config->GameAreaSize)
-		player->setX(config->GameAreaSize);
-	if (player->Y < -config->GameAreaSize)
-		player->setY(-config->GameAreaSize);
-	if (player->Y > config->GameAreaSize)
-		player->setY(config->GameAreaSize);
-
-	player->TargetX = input->mouseX / videoManager->WK - cam->getHalfW()
-			+ cam->X;
-	player->TargetY = input->mouseY / videoManager->HK - cam->getHalfH()
-			+ cam->Y;
-
-	if (input->getDownInput(InputHandler::Fire)) {
-		std::vector<Bullet*> *newBullets = player->fire();
-		if (!newBullets->empty()) {
-			bullets.insert(bullets.end(), newBullets->begin(),
-					newBullets->end());
-			delete newBullets;
-		}
-		if (player->getWeapon()->Ammo == 0 && config->AutoReload)
-			player->reload();
-	}
-
-	if (input->getPressInput(InputHandler::ToggleLight))
-		player->toggleLight();
-
-	if (input->getPressInput(InputHandler::ToggleLaser))
-		player->toggleLaser();
-
-	if (input->getDownInput(InputHandler::Reload))
-		player->reload();
-
-	if (input->getPressInput(InputHandler::ThrowGrenade) && player->Grenades
-			> 0) {
-		bullets.push_back(player->throwGrenade(grenadeSprite));
-	}
-}
-
-void dropPowerup(float x, float y) {
-	bool powerupDropped = false;
-	Powerup *newPowerup;
-
-	if (!powerupDropped && rand() % 1000 >= 950) {
-		newPowerup = new Powerup(x, y, medikitTex);
-		newPowerup->Scale = 0.3f;
-		newPowerup->Type = Powerup::medikit;
-		newPowerup->Object = new float(0.1f);
-		newPowerup->RMask = newPowerup->BMask = 0.2f;
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && rand() % 1000 >= 975) {
-		newPowerup = new Powerup(x, y, medikitTex);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::medikit;
-		newPowerup->Object = new float(0.2f);
-		newPowerup->RMask = newPowerup->GMask = 0.4f;
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && rand() % 1000 >= 990) {
-		newPowerup = new Powerup(x, y, medikitTex);
-		newPowerup->Scale = 0.5f;
-		newPowerup->Type = Powerup::medikit;
-		newPowerup->Object = new float(0.6f);
-		newPowerup->BMask = newPowerup->GMask = 0.2f;
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && rand() % 1000 >= 970) {
-		newPowerup = new Powerup(x, y, grenadeTex);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::grenades;
-		newPowerup->Object = new int(1);
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && rand() % 1000 >= 970) {
-		newPowerup = new Powerup(x, y, freezeTex);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::freeze;
-		newPowerup->Object = new int(10000);
-		powerupDropped = true;
-	}
-
-	if (rand() % 1000 >= 975 || player->Kills == 0) {
-		int weaponIndex = (rand() % (weaponManager->Weapons.size() - 1)) + 1;
-		newPowerup = new Powerup(x, y,
-				weaponManager->Weapons[weaponIndex]->getDroppedTex());
-		newPowerup->Type = Powerup::weapon;
-		newPowerup->Object = weaponManager->Weapons[weaponIndex];
-		newPowerup->HitR = 0.5f;
-		powerupDropped = true;
-	}
-
-	if (powerupDropped)
-		powerups.push_back(newPowerup);
-}
-
 void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 	StaticObject *newBloodStain = new StaticObject(x, y, 128, 128,
-			bloodTex[(rand() % 299) / 100], false);
+			resources->BloodTex[(rand() % 3)], false);
 
 	newBloodStain->Scale = scale;
 	newBloodStain->Angle = angle;
@@ -1265,9 +1115,319 @@ void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 	bloodStains.push_back(newBloodStain);
 }
 
+void handleMonster(LifeForm* lf) {
+	float x = lf->X;
+	float y = lf->Y;
+
+	Enemy* enemy = (Enemy*) lf;
+
+	if (!gameState->Lost && enemy->detectCollide(player->TargetX,
+			player->TargetY)) {
+		char buf[100];
+		sprintf(buf, "%s (%i)", enemy->Name.c_str(), enemy->Level);
+		player->HudInfo = buf;
+	}
+
+	if (lf->Frozen > 0)
+		return;
+
+	if (enemy->isBleeding() && bloodStains.size() < 12) {
+		addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10) / 50.0f
+				+ 0.1f, enemy->Poisoned);
+	}
+
+	float rangeToPlayer = sqrt(pow(-enemy->X + player->X, 2) + pow(enemy->Y
+			- player->Y, 2));
+
+	if (enemy->DoNotDisturb) {
+		bool reach = true;
+		if (enemy->X < enemy->TargetX - enemy->Speed * 60 || enemy->X
+				> enemy->TargetX + enemy->Speed * 60 || enemy->Y
+				< enemy->TargetY - enemy->Speed * 60 || enemy->Y
+				> enemy->TargetY + enemy->Speed * 60)
+			reach = false;
+		if (reach)
+			enemy->DoNotDisturb = false;
+	}
+
+	if ((rangeToPlayer < 400 || enemy->Angry) && player->State
+			== LifeForm::alive) {
+		enemy->TargetX = player->X;
+		enemy->TargetY = player->Y;
+	} else if (rangeToPlayer < 800 && !gameState->Lost) {
+		enemy->TargetX = player->X - cos((player->getLegsAngle() + 90) * M_PI
+				/ 180) * rangeToPlayer / 2.0f / enemy->Speed * player->Speed;
+		enemy->TargetY = player->Y - sin((player->getLegsAngle() + 90) * M_PI
+				/ 180) * rangeToPlayer / 2.0f / enemy->Speed * player->Speed;
+	} else if (!enemy->DoNotDisturb) {
+		enemy->TargetX = (rand() % (config->GameAreaSize * 2))
+				- config->GameAreaSize;
+		enemy->TargetY = (rand() % (config->GameAreaSize * 2))
+				- config->GameAreaSize;
+		enemy->DoNotDisturb = true;
+	}
+
+	float newAngle = Object::calculateAngle(enemy->X, enemy->Y, enemy->TargetX,
+			enemy->TargetY);
+	enemy->turn(newAngle, enemy->MaxSpeed(), videoManager->getFrameDeltaTime());
+
+	enemy->move(videoManager->getFrameDeltaTime());
+
+	if (player->State == LifeForm::alive && player->detectCollide(enemy)) {
+		if (enemy->Attack()) {
+			if (rand() % 100 > player->ChanceToEvade() * 100) {
+				player->hit();
+				player->setHealth(player->getHealth() - enemy->Damage());
+				player->setMask(1.0f, 0.0f, 0.0f, 1.0f);
+			}
+
+			if (!player->Unstoppable)
+				player->Speed = 0.0f;
+		}
+
+		if (player->Attack() && rand() % 100 > enemy->ChanceToEvade() * 100)
+			enemy->setHealth(player->getHealth() - player->Damage());
+
+		enemy->X = x;
+		enemy->Y = y;
+	} else {
+		enemy->rollFrame(true);
+	}
+}
+
+void levelUp(Player* player) {
+	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 2.0f + 10);
+
+	player->LastLevelXp = player->NextLevelXp;
+	player->NextLevelXp *= 2;
+
+	player->Level += 1;
+	player->LevelPoints += 1;
+
+	hud->addMessage("You have reached new level.");
+
+	player->setHealth(player->MaxHealth());
+}
+
+void handlePlayer(LifeForm* lf) {
+	Player* player = (Player*) lf;
+
+	if (player->Xp >= player->NextLevelXp) {
+		levelUp(player);
+	}
+
+	char movementX = 0;
+	char movementY = 0;
+
+	if (input->getDownInput(InputHandler::MoveDown))
+		movementY = 1;
+	if (input->getDownInput(InputHandler::MoveUp))
+		movementY = -1;
+	if (input->getDownInput(InputHandler::MoveLeft))
+		movementX = -1;
+	if (input->getDownInput(InputHandler::MoveRight))
+		movementX = 1;
+
+	player->move(movementX, movementY, videoManager->getFrameDeltaTime());
+
+	if (lf->X < -config->GameAreaSize)
+		player->setX(-config->GameAreaSize);
+	if (lf->X > config->GameAreaSize)
+		player->setX(config->GameAreaSize);
+	if (lf->Y < -config->GameAreaSize)
+		player->setY(-config->GameAreaSize);
+	if (lf->Y > config->GameAreaSize)
+		player->setY(config->GameAreaSize);
+
+	lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW() + cam->X;
+	lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH() + cam->Y;
+
+	if (input->getDownInput(InputHandler::Fire)) {
+		if (player->fireingMode == 0) {
+
+			std::vector<Bullet*> *newBullets = player->fire();
+			if (!newBullets->empty()) {
+				bullets.insert(bullets.end(), newBullets->begin(),
+						newBullets->end());
+				delete newBullets;
+			}
+			if (player->getWeapon()->Ammo == 0 && config->AutoReload)
+				player->reload();
+		} else if (player->fireingMode == 1) {
+			/* TODO: Add some animation (may be using explosion)
+			 * at point where player has placed before teleportation
+			 */
+			player->teleport();
+
+			/*TODO: May use enum for fireingMode (or actionMode)?
+			 * Action mode can be "speak" or "use" for some elements of game.
+			 */
+			player->fireingMode = 0;
+			player->setMask(0.0f, 1.0f, 1.0f, 1.0f);
+			delete aim;
+			aim = new Aim(config);
+		}
+	}
+
+	if (input->getPressInput(InputHandler::ToggleLight))
+		player->toggleLight();
+
+	if (input->getPressInput(InputHandler::ToggleLaser))
+		player->toggleLaser();
+
+	if (input->getDownInput(InputHandler::Reload))
+		player->reload();
+
+	if (input->getPressInput(InputHandler::Teleport)) {
+		if (player->fireingMode != 1 && player->Teleports > 0) {
+			player->fireingMode = 1;
+			delete aim;
+			aim = new Aim(0.0f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f);
+		} else if (player->fireingMode == 1) {
+			player->fireingMode = 0;
+			delete aim;
+			aim = new Aim(config);
+		}
+	}
+
+	if (input->getPressInput(InputHandler::ThrowGrenade) && player->Grenades
+			> 0) {
+		bullets.push_back(player->throwGrenade(resources->GrenadeSprite));
+	}
+}
+
+//Choice and creation of bonus
+//TODO: The bonus magnet perk to increase the chance of bonus drop
+void dropPowerup(float x, float y) {
+	bool powerupDropped = false;
+	Powerup *newPowerup;
+
+	if (!powerupDropped && rand() % 1000 >= 950) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::medikit]);
+		newPowerup->Scale = 0.3f;
+		newPowerup->Type = Powerup::medikit;
+		newPowerup->Object = new float(0.1f);
+		newPowerup->RMask = newPowerup->BMask = 0.2f;
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 975) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::medikit]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::medikit;
+		newPowerup->Object = new float(0.2f);
+		newPowerup->RMask = newPowerup->GMask = 0.4f;
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 990) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::medikit]);
+		newPowerup->Scale = 0.5f;
+		newPowerup->Type = Powerup::medikit;
+		newPowerup->Object = new float(0.6f);
+		newPowerup->BMask = newPowerup->GMask = 0.2f;
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup
+				= new Powerup(x, y, resources->PowerupTex[Powerup::grenades]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::grenades;
+		newPowerup->Object = new int(1);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::freeze]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::freeze;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::nuke]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::nuke;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[Powerup::penBullets]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::penBullets;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[Powerup::vitalityRoids]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::vitalityRoids;
+		newPowerup->RMask = newPowerup->BMask = 0.2f;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[Powerup::strengthRoids]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::strengthRoids;
+		newPowerup->GMask = newPowerup->BMask = 0.2f;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[Powerup::agilityRoids]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::agilityRoids;
+		newPowerup->RMask = newPowerup->GMask = 0.2f;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[Powerup::teleports]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::teleports;
+		newPowerup->Object = new int(1);
+		powerupDropped = true;
+	}
+
+	int wpnDropChance = 975;
+	if (player->getWeapon()->Name == "PM")
+		wpnDropChance = 700;
+	if (player->Kills == 0)
+		wpnDropChance = 0;
+	if (rand() % 1000 >= wpnDropChance) {
+		int weaponIndex;
+		if (true) // TODO: Allow PM drop?
+			weaponIndex = (rand() % weaponManager->Weapons.size());
+		else
+			weaponIndex = (rand() % weaponManager->Weapons.size() - 1);
+		newPowerup = new Powerup(x, y,
+				weaponManager->Weapons[weaponIndex]->getDroppedTex());
+		newPowerup->Type = Powerup::weapon;
+		newPowerup->Object = weaponManager->Weapons[weaponIndex];
+		newPowerup->HitR = 0.5f;
+		powerupDropped = true;
+	}
+
+	if (powerupDropped)
+		powerups.push_back(newPowerup);
+}
+
 void handleLifeForms() {
 	if (!gameState->Lost) {
-		for (int i = 0; i < deltaTime; i++) {
+		for (int i = 0; i < videoManager->getFrameDeltaTime(); i++) {
 			if (rand() % 10000 > gameState->Hardness) {
 				int lvl = player->Level * 0.5f + player->Level * pow((rand()
 						% 100) / 125.0f, 2);
@@ -1279,93 +1439,25 @@ void handleLifeForms() {
 	}
 
 	if (!lifeForms.empty()) {
-		for (int i = lifeForms.size() - 1; i >= 0; i--) {
-			float x = lifeForms[i]->X;
-			float y = lifeForms[i]->Y;
+		map<string, LifeForm*>::const_iterator iter;
+		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+			LifeForm* lf = iter->second;
 
-			lifeForms[i]->process(deltaTime);
+			lf->process(videoManager->getFrameDeltaTime());
 
-			if (lifeForms[i]->Type == LifeForm::player
-					|| lifeForms[i]->isDead())
-				continue;
+			if (lf->Type == LifeForm::player) {
+				if (!gameState->Lost) {
+					if (lf->State == LifeForm::died)
+						loseGame(player);
 
-			Enemy* enemy = (Enemy*) lifeForms[i];
-
-			if (!gameState->Lost && enemy->detectCollide(player->TargetX,
-					player->TargetY)) {
-				char *buf;
-				sprintf(buf = new char[255], "%s (%i)", enemy->Name.c_str(),
-						enemy->Level);
-				player->HudInfo = buf;
-				delete[] buf;
-			}
-
-			if (lifeForms[i]->Frozen > 0)
-				continue;
-
-			if (enemy->isBleeding() && bloodStains.size() < 12) {
-				addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
-						/ 50.0f + 0.1f, enemy->Poisoned);
-			}
-
-			float rangeToPlayer = sqrt(pow(-enemy->X + player->X, 2) + pow(
-					enemy->Y - player->Y, 2));
-
-			if (enemy->DoNotDisturb) {
-				bool reach = true;
-				if (enemy->X < enemy->TargetX - enemy->Speed * 60 || enemy->X
-						> enemy->TargetX + enemy->Speed * 60 || enemy->Y
-						< enemy->TargetY - enemy->Speed * 60 || enemy->Y
-						> enemy->TargetY + enemy->Speed * 60)
-					reach = false;
-				if (reach)
-					enemy->DoNotDisturb = false;
-			}
-
-			if ((rangeToPlayer < 400 || enemy->Angry) && !gameState->Lost) {
-				enemy->TargetX = player->X;
-				enemy->TargetY = player->Y;
-			} else if (rangeToPlayer < 800 && !gameState->Lost) {
-				enemy->TargetX = player->X - cos((player->getLegsAngle() + 90)
-						* M_PI / 180) * rangeToPlayer / 2.0f / enemy->Speed
-						* player->Speed;
-				enemy->TargetY = player->Y - sin((player->getLegsAngle() + 90)
-						* M_PI / 180) * rangeToPlayer / 2.0f / enemy->Speed
-						* player->Speed;
-			} else if (!enemy->DoNotDisturb) {
-				enemy->TargetX = (rand() % (config->GameAreaSize * 2))
-						- config->GameAreaSize;
-				enemy->TargetY = (rand() % (config->GameAreaSize * 2))
-						- config->GameAreaSize;
-				enemy->DoNotDisturb = true;
-			}
-
-			if (!gameState->Lost && player->detectCollide(enemy)) {
-				if (enemy->Attack()) {
-					if (rand() % 100 > player->ChanceToEvade() * 100) {
-						player->setHealth(player->getHealth() - enemy->Damage());
-						if (!playerHitSounds[playerHitSndPlaying]->isPlaying()) {
-							playerHitSndPlaying = (player->getHealth()
-									< player->MaxHealth() ? player->getHealth()
-									: player->getHealth() - 0.01f)
-									/ player->MaxHealth()
-									* playerHitSounds.size();
-							playerHitSounds[playerHitSndPlaying]->play(6, 0, 0);
-						}
-					}
-
-					if (!player->Unstoppable)
-						player->Speed = 0.0f;
+					if (lf->State == LifeForm::alive)
+						handlePlayer(lf);
 				}
+			}
 
-				if (player->Attack() && rand() % 100 > enemy->ChanceToEvade()
-						* 100)
-					enemy->setHealth(player->getHealth() - player->Damage());
-
-				enemy->X = x;
-				enemy->Y = y;
-			} else {
-				enemy->rollFrame(true);
+			if (lf->Type == LifeForm::monster) {
+				if (lf->State == LifeForm::alive)
+					handleMonster(lf);
 			}
 		}
 	}
@@ -1374,15 +1466,18 @@ void handleLifeForms() {
 void handleBullets() {
 	if (!bullets.empty()) {
 		for (int i = bullets.size() - 1; i >= 0; i--) {
-			bullets[i]->process(deltaTime);
+			bullets[i]->process(videoManager->getFrameDeltaTime());
 
 			if (bullets[i]->isActive() && !lifeForms.empty()) {
-				for (int j = lifeForms.size() - 1; j >= 0; j--) {
-					if (lifeForms[j]->Type == LifeForm::player
-							|| lifeForms[j]->isDead())
+				map<string, LifeForm*>::const_iterator iter;
+				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+					LifeForm* lf = iter->second;
+
+					if (lf->Type == LifeForm::player || lf->State
+							!= LifeForm::alive)
 						continue;
 
-					Enemy* enemy = (Enemy*) lifeForms[j];
+					Enemy* enemy = (Enemy*) lf;
 
 					if (bullets[i]->checkHit(enemy)) {
 						if (bloodStains.size() < 9) {
@@ -1402,9 +1497,10 @@ void handleBullets() {
 						if (enemy->Frozen > 0) {
 							ParticleSystem* partSys = new ParticleSystem();
 							for (int k = 0; k < 6; k++) {
-								Particle* p = new Particle(enemy->X + (rand()
+								Particle * p = new Particle(enemy->X + (rand()
 										% 50) - 25, enemy->Y + (rand() % 50)
-										- 25, 128, 128, crystal->getTexture());
+										- 25, 128, 128,
+										resources->Crystal->getTexture());
 								p->RMask = p->GMask = p->BMask = 1.0f;
 								p->AMask = 1.0f;
 								p->Scale = (rand() % 50) / 100.0f
@@ -1418,10 +1514,11 @@ void handleBullets() {
 						} else {
 							ParticleSystem* partSys = new ParticleSystem();
 							for (int k = 0; k < 25; k++) {
-								Particle* p = new Particle(enemy->X + (rand()
+								Particle * p = new Particle(enemy->X + (rand()
 										% 50) - 25, enemy->Y + (rand() % 50)
-										- 25, 128, 128, bloodTex[(rand() % 299)
-										/ 100]);
+										- 25, 128, 128,
+										resources->BloodTex[(rand() % 299)
+												/ 100]);
 								p->RMask = p->GMask = p->BMask = 0.0f;
 								if (enemy->Poisoned)
 									p->GMask = 1.0f - (rand() % 200) / 1000.0f;
@@ -1445,10 +1542,12 @@ void handleBullets() {
 						if (bullets[i]->Type == Bullet::standard) {
 							if (((StandardBullet*) bullets[i])->isExplosive()) {
 								bullets[i]->deactivate();
-								Explosion* expl = new Explosion(bullets[i]->X,
-										bullets[i]->Y, 100.0f, explTex[0],
-										explTex[1], explosionSounds[1]);
-								expl->Damage = bullets[i]->Damage;
+								Explosion * expl = new Explosion(bullets[i]->X,
+										bullets[i]->Y, 100.0f,
+										bullets[i]->Damage,
+										resources->ExplTex[0],
+										resources->ExplTex[1],
+										resources->ExplSounds[1]);
 								explosions.push_back(expl);
 								bypassDirectDamage = true;
 							}
@@ -1458,7 +1557,8 @@ void handleBullets() {
 							float damageLoss = enemy->getHealth();
 							enemy->hit(bullets[i], player->X, player->Y);
 
-							if (bullets[i]->BigCalibre) {
+							if (bullets[i]->BigCalibre
+									&& !bullets[i]->Penetrating) {
 								bullets[i]->Damage -= damageLoss;
 								if (bullets[i]->Damage <= 0) {
 									bullets[i]->deactivate();
@@ -1472,8 +1572,8 @@ void handleBullets() {
 			if (bullets[i]->isReadyToRemove() && bullets[i]->Type
 					== Bullet::grenade) {
 				Explosion* expl = new Explosion(bullets[i]->X, bullets[i]->Y,
-						150.0f, explTex[0], explTex[1], explosionSounds[0]);
-				expl->Damage = bullets[i]->Damage;
+						150.0f, bullets[i]->Damage, resources->ExplTex[0],
+						resources->ExplTex[1], resources->ExplSounds[0]);
 				explosions.push_back(expl);
 			}
 
@@ -1485,123 +1585,72 @@ void handleBullets() {
 	}
 }
 
-void drawMessagesQueue() {
-	if (!msgQueue.empty()) {
-		int s = msgQueue.size();
-		for (int i = s - 1; i >= 0; i--) {
-			msgQueue[i]->draw(true, msgQueue[i]->X
-					+ videoManager->RegularText->getIndent(),
-					config->ScreenHeight - s
-							* videoManager->RegularText->getHeight() + i
-							* videoManager->RegularText->getHeight());
-			msgQueue[i]->AMask -= 0.0001f * deltaTime;
-
-			if (msgQueue[i]->AMask <= 0) {
-				delete msgQueue[i];
-				msgQueue.erase(msgQueue.begin() + i);
-			}
-		}
-	}
-}
-
 void setGuiCameraMode() {
-	glMatrixMode(GL_PROJECTION);
+	glMatrixMode( GL_PROJECTION);
 	glLoadIdentity();
 
-	glOrtho(0.0, config->ScreenWidth, config->ScreenHeight, 0.0, -10.0, 10.0);
+	glOrtho(0.0, config->Screen.Width, config->Screen.Height, 0.0, -10.0, 10.0);
 
-	glMatrixMode(GL_MODELVIEW);
+	glMatrixMode( GL_MODELVIEW);
 	glLoadIdentity();
 }
 
 void drawHud() {
-	const int minutes = player->Time / 60000;
-	const int seconds = (player->Time - minutes * 60000) / 1000;
+	hud->draw(gameState, player->getHealth() / player->MaxHealth(),
+			(float) (player->Xp - player->LastLevelXp) / (player->NextLevelXp
+					- player->LastLevelXp), player->LevelPoints,
+			player->getWeapon()->Ammo, player->Grenades);
 
-	char *buf;
-
-	float health = player->getHealth() / player->MaxHealth() * 100.0f;
-	sprintf(buf = new char[30], "Health: %.2f%%", health);
-	TextObject* healthMsg = videoManager->RegularText->getObject(buf,
-			videoManager->RegularText->getIndent(),
-			videoManager->RegularText->getIndent(), TextManager::LEFT,
-			TextManager::TOP);
-	delete[] buf;
-	if (health < 34)
-		healthMsg->GMask = healthMsg->BMask = 0.0f;
-	healthMsg->draw(true, healthMsg->X, healthMsg->Y);
-	delete healthMsg;
-
+	char* buf;
 	sprintf(buf = new char[30], "%s: %d/%d", player->getWeapon()->Name.c_str(),
 			player->getWeapon()->Ammo, player->getWeapon()->AmmoClipSize);
 	videoManager->RegularText->draw(buf,
 			videoManager->RegularText->getIndent(),
-			videoManager->RegularText->getIndent()
-					+ videoManager->RegularText->getHeight(),
-			TextManager::LEFT, TextManager::TOP);
+			videoManager->RegularText->getIndent(), TextManager::LEFT,
+			TextManager::TOP);
 	delete[] buf;
 
 	sprintf(buf = new char[30], "Grenades: %i", player->Grenades);
 	videoManager->RegularText->draw(buf,
 			videoManager->RegularText->getIndent(),
 			videoManager->RegularText->getIndent()
-					+ videoManager->RegularText->getHeight() * 2.0f,
+					+ videoManager->RegularText->getHeight(),
 			TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
 
-	sprintf(buf = new char[30], "Time: %dm %ds", minutes, seconds);
-	videoManager->RegularText->draw(buf, config->ScreenWidth
-			- videoManager->RegularText->getIndent(),
-			videoManager->RegularText->getIndent(), TextManager::RIGHT,
-			TextManager::TOP);
-	delete[] buf;
-
-	sprintf(buf = new char[30], "Xp: %d (%d)", player->Xp, player->NextLevelXp);
-	videoManager->RegularText->draw(buf, config->ScreenWidth
-			- videoManager->RegularText->getIndent(),
+	sprintf(buf = new char[30], "Teleports: %i", player->Teleports);
+	videoManager->RegularText->draw(buf,
+			videoManager->RegularText->getIndent(),
 			videoManager->RegularText->getIndent()
-					+ videoManager->RegularText->getHeight(),
-			TextManager::RIGHT, TextManager::TOP);
+					+ (videoManager->RegularText->getHeight()) * 2,
+			TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
 
 	if (!gameState->Lost)
 		if (player->HudInfo != "")
 			videoManager->RegularText->draw(player->HudInfo.c_str(),
-					config->ScreenWidth / 2,
+					config->Screen.Width / 2,
 					videoManager->RegularText->getIndent(),
 					TextManager::CENTER, TextManager::TOP);
 
 	if (config->ShowFps) {
-		sprintf(buf = new char[30], "FPS: %i", fps);
-		videoManager->RegularText->draw(buf, config->ScreenWidth
-				- videoManager->RegularText->getIndent(), config->ScreenHeight
+		sprintf(buf = new char[30], "FPS: %i", videoManager->getFps());
+		videoManager->RegularText->draw(buf, config->Screen.Width
+				- videoManager->RegularText->getIndent(), config->Screen.Height
 				- videoManager->RegularText->getIndent(), TextManager::RIGHT,
 				TextManager::BOTTOM);
 		delete[] buf;
 	}
-
-	if (gameState->Lost && !gameState->Paused)
-		videoManager->RegularText->draw("They have overcome...",
-				config->ScreenWidth / 2, config->ScreenHeight / 2,
-				TextManager::CENTER, TextManager::MIDDLE);
-
-	if (gameState->Paused)
-		videoManager->RegularText->draw("PAUSE", config->ScreenWidth / 2,
-				config->ScreenHeight / 2, TextManager::CENTER,
-				TextManager::MIDDLE);
-
-	drawMessagesQueue();
 }
 
 void handlePowerups() {
 	for (int i = powerups.size() - 1; i >= 0; i--) {
 		bool deletePowerup = false;
-		powerups[i]->Time -= deltaTime;
+		powerups[i]->Time -= videoManager->getFrameDeltaTime();
 		powerups[i]->AMask = powerups[i]->Time / 15000.0;
-		if (powerups[i]->Type == Powerup::medikit || powerups[i]->Type
-				== Powerup::grenades || powerups[i]->Type == Powerup::freeze) {
-
-			powerups[i]->Angle += deltaTime * 0.05f * powerups[i]->Dir;
+		if (powerups[i]->Type != Powerup::weapon) {
+			powerups[i]->Angle += videoManager->getFrameDeltaTime() * 0.05f
+					* powerups[i]->Dir;
 
 			if (powerups[i]->Angle > 45 && powerups[i]->Dir > 0)
 				powerups[i]->Dir = -1;
@@ -1623,70 +1672,135 @@ void handlePowerups() {
 			case Powerup::freeze:
 				player->HudInfo = "a nitrogen bomb";
 				break;
+			case Powerup::nuke:
+				player->HudInfo = "nuke!";
+				break;
 			case Powerup::grenades:
 				player->HudInfo = "a hand grenade";
 				break;
+			case Powerup::penBullets:
+				player->HudInfo = "penetration bullets";
+				break;
+			case Powerup::vitalityRoids:
+				player->HudInfo = "vitality boost";
+				break;
+			case Powerup::strengthRoids:
+				player->HudInfo = "strength boost";
+				break;
+			case Powerup::agilityRoids:
+				player->HudInfo = "agility boost";
+				break;
+			case Powerup::teleports:
+				player->HudInfo = "a teleport";
+				break;
 			case Powerup::weapon:
-				char *buf;
-				sprintf(buf = new char[200], "the %s",
+				char buf[100];
+				sprintf(buf, "the %s",
 						((Weapon*) powerups[i]->Object)->Name.c_str());
 				player->HudInfo = buf;
-				delete[] buf;
 				break;
 			}
 
 			if (player->Telekinesis) {
 				float a = Object::calculateAngle(powerups[i]->X,
 						powerups[i]->Y, player->X, player->Y);
-				powerups[i]->X -= cos((a + 90) * M_PI / 180) * deltaTime
+				powerups[i]->X -= cos((a + 90) * M_PI / 180)
+						* videoManager->getFrameDeltaTime()
 						* player->MaxSpeed();
-				powerups[i]->Y -= sin((a + 90) * M_PI / 180) * deltaTime
+				powerups[i]->Y -= sin((a + 90) * M_PI / 180)
+						* videoManager->getFrameDeltaTime()
 						* player->MaxSpeed();
 			}
 		}
 
 		if (!gameState->Lost && (powerups[i]->detectCollide(player))) {
 			switch (powerups[i]->Type) {
-			case Powerup::medikit:
-				msgQueue.push_back(videoManager->RegularText->getObject(
-						"You took a medical kit.", 0, 0, TextManager::LEFT,
-						TextManager::MIDDLE));
-				player->setHealth(player->getHealth()
-						+ *(float*) powerups[i]->Object);
-				deletePowerup = true;
+			case Powerup::medikit: {
+				if (player->getHealth() < player->MaxHealth()) {
+					hud->addMessage("You have taken a medical kit.");
+					player->setHealth(player->getHealth()
+							+ *(float*) powerups[i]->Object);
+					deletePowerup = true;
+				}
 				break;
-			case Powerup::freeze:
-				msgQueue.push_back(videoManager->RegularText->getObject(
-						"All has frozen around you.", 0, 0, TextManager::LEFT,
-						TextManager::MIDDLE));
-				for (int j = lifeForms.size() - 1; j >= 0; j--) {
-					if (lifeForms[j]->Type == LifeForm::player
-							|| lifeForms[j]->isDead())
+			}
+			case Powerup::freeze: {
+				hud->addMessage("All have been frozen around you.");
+
+				map<string, LifeForm*>::const_iterator iter;
+				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+					LifeForm* lf = iter->second;
+
+					if (lf->Type == LifeForm::player || lf->State
+							!= LifeForm::alive)
 						continue;
-					lifeForms[j]->Frozen = *(int*) powerups[i]->Object;
+					lf->Frozen = *(int*) powerups[i]->Object;
 				}
 				deletePowerup = true;
 				break;
-			case Powerup::grenades:
-				msgQueue.push_back(videoManager->RegularText->getObject(
-						"You took a grenade.", 0, 0, TextManager::LEFT,
-						TextManager::MIDDLE));
+			}
+			case Powerup::nuke: {
+				hud->addMessage("Boom!");
+				Explosion * expl = new Explosion(player->X, player->Y, 400.0f,
+						12.0f, resources->ExplTex[0], resources->ExplTex[1],
+						resources->ExplSounds[1]);
+				explosions.push_back(expl);
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::penBullets: {
+				hud->addMessage("You got powerful penetration bullets.");
+				player->bonusTimes[Player::PENBULLETS]
+						= *(int*) powerups[i]->Object;
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::vitalityRoids: {
+				hud->addMessage("You got a vitality boost.");
+				player->bonusTimes[Player::VITALITYROIDS]
+						+= *(int*) powerups[i]->Object;
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::strengthRoids: {
+				hud->addMessage("You got a strength boost.");
+				player->bonusTimes[Player::STRENGTHROIDS]
+						+= *(int*) powerups[i]->Object;
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::agilityRoids: {
+				hud->addMessage("You got a agility boost.");
+				player->bonusTimes[Player::AGILITYROIDS]
+						+= *(int*) powerups[i]->Object;
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::grenades: {
+				hud->addMessage("You have taken a grenade.");
 				player->Grenades += *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
-			case Powerup::weapon:
+			}
+			case Powerup::teleports: {
+				hud->addMessage("You have taken a teleport.");
+				player->Teleports += *(int*) powerups[i]->Object;
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::weapon: {
 				if (input->getDownInput(InputHandler::Pickup)
 						|| config->AutoWeaponPickup) {
 					player->setWeapon((Weapon*) powerups[i]->Object);
 					char *buf;
-					sprintf(buf = new char[200], "You took the %s.",
+					sprintf(buf = new char[200], "You have taken the %s.",
 							player->getWeapon()->Name.c_str());
-					msgQueue.push_back(videoManager->RegularText->getObject(
-							buf, 0, 0, TextManager::LEFT, TextManager::MIDDLE));
+					hud->addMessage(buf);
 					delete[] buf;
 					deletePowerup = true;
-					break;
 				}
+				break;
+			}
 			}
 		}
 
@@ -1698,31 +1812,10 @@ void handlePowerups() {
 	}
 }
 
-void levelUp() {
-	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 2.0f + 10);
-
-	player->NextLevelXp *= 2;
-
-	player->Level += 1;
-	player->LevelPoints += 1;
-
-	msgQueue.push_back(videoManager->RegularText->getObject(
-			"The player has reached new level.", 0, 0, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	player->setHealth(player->MaxHealth());
-}
-
 void processGame() {
 	if (!gameState->Lost) {
-		gameState->Hardness -= deltaTime * 0.00012;
-		player->Time += deltaTime;
-
-		handlePlayer();
-
-		if (player->Xp >= player->NextLevelXp) {
-			levelUp();
-		}
+		gameState->Hardness -= videoManager->getFrameDeltaTime() * 0.00012;
+		gameState->Time += videoManager->getFrameDeltaTime();
 	}
 
 	terrain->beginDrawOn();
@@ -1731,23 +1824,30 @@ void processGame() {
 			terrain->drawOn(bloodStains[i]);
 		}
 
-		clearBloodStains();
+		clearVector<StaticObject*> (&bloodStains);
 
-		for (int i = lifeForms.size() - 1; i >= 0; i--) {
-			if (lifeForms[i]->Type == LifeForm::monster) {
-				Enemy* enemy = (Enemy*) lifeForms[i];
-				if (enemy->isReasyToDisappear()) {
-					terrain ->drawOn(enemy->getCorpse());
-					dropPowerup(lifeForms[i]->X, lifeForms[i]->Y);
-					player->Kills++;
-					player->Xp += (int) ((1.5 - gameState->TimeOfDay * -0.5)
-							* lifeForms[i]->MaxHealth() * 10);
-					delete lifeForms[i];
-					lifeForms.erase(lifeForms.begin() + i);
+		map<string, LifeForm*>::const_iterator iter;
+		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+			LifeForm* lf = iter->second;
+
+			if (lf->State == LifeForm::died) {
+				terrain ->drawOn(lf->getCorpse());
+				if (lf->Type == LifeForm::monster) {
+					dropPowerup(lf->X, lf->Y);
+					if (player->State == LifeForm::alive) {
+						player->Kills++;
+						player->Xp
+								+= (int) ((1.5 - gameState->TimeOfDay * -0.5)
+										* (lf->getStrength() + lf->getAgility()
+												+ lf->getVitality()) * 3);
+					}
+					delete lf;
+					lifeForms.erase(iter->first);
 				}
 			}
 		}
 	}
+
 	terrain->endDrawOn();
 
 	player->HudInfo = "";
@@ -1774,37 +1874,44 @@ void drawGame() {
 
 	cam->applyGLOrtho();
 
-	glEnable(GL_LIGHTING);
+	glEnable( GL_LIGHTING);
 
-	gameState->TimeOfDay = abs(cos(player->Time / 180000.0));
+	double tod = cos(gameState->Time / 180000.0);
+	gameState->TimeOfDay = abs((float) tod);
+	float gawc = gameState->TimeOfDay;
 
-	float globalAmbientColor = gameState->TimeOfDay / 5.0;
-	float directColor = gameState->TimeOfDay / 2.0;
+	double v = cos((gameState->Time + 90000) / 90000.0);
 
-	GLfloat global_ambient[] = { globalAmbientColor, globalAmbientColor,
-			globalAmbientColor, 1.0f };
+	float garc = v >= 0 ? 0 : v / -3;
+	float gabc = v > 0 ? v / 3 : 0;
+	float r = gawc + garc;
+	float b = gawc + gabc;
+	if (r > 1)
+		r = 1;
+	if (b > 1)
+		b = 1;
+
+	GLfloat global_ambient[] = { r, gawc, b, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 
-	GLfloat day_light[] = { directColor, directColor, directColor, 1.0f };
-	glLightfv(GL_LIGHT2, GL_AMBIENT, day_light);
-	glLightfv(GL_LIGHT2, GL_DIFFUSE, day_light);
-	glLightfv(GL_LIGHT2, GL_SPECULAR, day_light);
-
-	if (!gameState->Lost && player->getLight()) {
-		glEnable(GL_LIGHT0);
-		glEnable(GL_LIGHT1);
-
+	if (!gameState->Lost) {
 		GLfloat light_pos[] = { 0.0, 0.0, 1.0, 1.0 };
+		if (player->getLight()) {
+			glEnable( GL_LIGHT0);
 
-		glPushMatrix();
-		glTranslatef(player->X, player->Y, 0.0f);
-		glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-		glPopMatrix();
+			glPushMatrix();
+			glTranslatef(player->TargetX, player->TargetY, 0.0f);
+			glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+			glPopMatrix();
+		}
+		if (player->NightVision) {
+			glEnable( GL_LIGHT1);
 
-		glPushMatrix();
-		glTranslatef(player->TargetX, player->TargetY, 0.0f);
-		glLightfv(GL_LIGHT1, GL_POSITION, light_pos);
-		glPopMatrix();
+			glPushMatrix();
+			glTranslatef(player->X, player->Y, 0.0f);
+			glLightfv(GL_LIGHT1, GL_POSITION, light_pos);
+			glPopMatrix();
+		}
 	}
 
 	terrain->draw(cam);
@@ -1813,21 +1920,27 @@ void drawGame() {
 		powerups[i]->draw(false, false);
 	}
 
-	for (unsigned int i = 0; i < lifeForms.size(); i++) {
-		if (lifeForms[i]->getLeft() < cam->X + cam->getHalfW()
-				&& lifeForms[i]->getRight() > cam->X - cam->getHalfW()
-				&& lifeForms[i]->getTop() < cam->Y + cam->getHalfH()
-				&& lifeForms[i]->getBottom() > cam->Y - cam->getHalfH())
+	// TODO: sort lifeforms by isDead() state. dead lifeforms should not overlay alive ones.
+	//	std::sort(lifeForms.begin(), lifeForms.end(),
+	//			LifeForm::compareByDeadPredicate);
 
-			if (gameState->Lost && lifeForms[i]->Type == LifeForm::player)
+	map<string, LifeForm*>::const_iterator iter;
+	for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+		LifeForm* lf = iter->second;
+
+		if (lf->getLeft() < cam->X + cam->getHalfW() && lf->getRight() > cam->X
+				- cam->getHalfW() && lf->getTop() < cam->Y + cam->getHalfH()
+				&& lf->getBottom() > cam->Y - cam->getHalfH())
+
+			if (lf->Type == LifeForm::player && lf->State == LifeForm::died)
 				continue;
 
-		lifeForms[i]->draw();
+		lf->draw();
 
-		if (lifeForms[i]->Frozen > 0 && !lifeForms[i]->isDead()) {
-			crystal->AMask = lifeForms[i]->Frozen / 10000.0f;
-			crystal->draw(false, false, lifeForms[i]->X, lifeForms[i]->Y,
-					lifeForms[i]->Angle, lifeForms[i]->Scale);
+		if (lf->Frozen > 0 && lf->State == LifeForm::alive) {
+			resources->Crystal->AMask = lf->Frozen / 10000.0f;
+			resources->Crystal->draw(false, false, lf->X, lf->Y, lf->Angle,
+					lf->Scale);
 		}
 	}
 
@@ -1835,9 +1948,11 @@ void drawGame() {
 		particleSystems[i]->draw();
 	}
 
-	if (!gameState->Lost && player->getLight()) {
-		glDisable(GL_LIGHT1);
-		glDisable(GL_LIGHT0);
+	if (!gameState->Lost) {
+		if (player->getLight())
+			glDisable( GL_LIGHT0);
+		if (player->NightVision)
+			glDisable( GL_LIGHT1);
 	}
 
 	glDisable(GL_LIGHTING);
@@ -1846,21 +1961,47 @@ void drawGame() {
 		bullets[i]->draw();
 	}
 
-	glDisable(GL_TEXTURE_2D);
+	glDisable( GL_TEXTURE_2D);
 
-	if (!gameState->Lost && player->getLaser()) {
-		glLineWidth(0.5f);
-		glBegin(GL_LINES);
-		glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
+	if (!gameState->Lost) {
 		const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
-		glVertex3f(player->X + player->getWeapon()->XDiff * cos(rad)
-				+ player->getWeapon()->YDiff * sin(-rad), player->Y
-				+ player->getWeapon()->XDiff * sin(rad)
-				+ player->getWeapon()->YDiff * cos(-rad), 0);
-		glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
-		glVertex3f(player->X + cam->getH() * 0.75f * cos(rad), player->Y
-				+ cam->getH() * 0.75f * sin(rad), 0);
-		glEnd();
+		const float wpnX = player->X + player->getWeapon()->XDiff * cos(rad)
+				+ player->getWeapon()->YDiff * sin(-rad);
+		const float wpnY = player->Y + player->getWeapon()->XDiff * sin(rad)
+				+ player->getWeapon()->YDiff * cos(-rad);
+		const float maxLen = cam->getH() * 0.75f;
+		if (player->getLaser()) {
+			glLineWidth(0.5f);
+			glBegin( GL_LINES);
+			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
+			glVertex3f(wpnX, wpnY, 0);
+			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
+			glVertex3f(player->X + maxLen * cos(rad), player->Y + maxLen * sin(
+					rad), 0);
+			glEnd();
+		}
+		if (player->getLight()) {
+			glBegin( GL_TRIANGLES);
+			glNormal3f(0.0f, 0.0f, 1.0f);
+			float flash = 1.0 - gameState->TimeOfDay;
+			if (flash > 0.3)
+				flash = 0.3;
+			glColor4f(1.0f, 1.0f, 1.0f, flash);
+			glVertex3f(wpnX, wpnY, 0.0f);
+
+			const float len = Object::calculateDistance(player->X, player->Y,
+					player->TargetX, player->TargetY);
+			float width = 0.75 - len / cam->getW();
+			if (width < 0.25)
+				width = 0.25;
+			glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+			glVertex3f(player->X + len * cos(rad - width), player->Y + len
+					* sin(rad - width), 0.0f);
+			glVertex3f(player->X + len * cos(rad + width), player->Y + len
+					* sin(rad + width), 0.0f);
+
+			glEnd();
+		}
 	}
 
 	glEnable(GL_TEXTURE_2D);
@@ -1904,30 +2045,15 @@ void drawWindows() {
 }
 
 void runMainLoop() {
-	currentTime = SDL_GetTicks();
-	fpsCountingStart = currentTime;
-	framesCount = 0;
 	while (gameState->Works) {
-		framesCount++;
-		const int now = SDL_GetTicks();
-		deltaTime = now - currentTime;
-		currentTime = now;
-
-		if (now - fpsCountingStart > 5000) {
-			fpsCountingStart = now;
-			fps = framesCount / 5;
-			framesCount = 0;
-		}
-
-		if (config->FrameDelay > 0 && deltaTime < config->FrameDelay)
-			SDL_Delay(config->FrameDelay - deltaTime);
+		videoManager->countFrame(config->FrameDelay);
 
 		input->process();
 
 		handleCommonControls();
 
 		if (gameState->Begun) {
-			musicManager->process(player, lifeForms, gameState->Paused);
+			musicManager->process(player, gameState);
 
 			if (!gameState->Paused)
 				processGame();
@@ -1940,7 +2066,7 @@ void runMainLoop() {
 		} else {
 			musicManager->play();
 
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear( GL_COLOR_BUFFER_BIT);
 
 			cam->X = cam->Y = 0.0f;
 
@@ -1958,78 +2084,10 @@ void runMainLoop() {
 }
 
 void loadResources() {
-	explosionSounds.push_back(sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "explode-0.ogg")));
-	explosionSounds.push_back(sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "explode-1.ogg")));
-
-	playerKilledSound = sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "player_killed.ogg"));
-	playerHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "player_hit_0.ogg")));
-	playerHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "player_hit_1.ogg")));
-	playerHitSounds.push_back(sndManager->create(fileUtility->getFullPath(
-			FileUtility::sound, "player_hit_2.ogg")));
-
-	vector<SDL_Surface*> playerLegsAnimSurfaces;
-	for (unsigned i = 0; i < 25; i++) {
-		char *buf;
-		sprintf(buf = new char[100], "player/legs-%i.png", i);
-		SDL_Surface *surface = ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::anima, buf));
-		playerLegsAnimSurfaces.push_back(surface);
-		delete[] buf;
-	}
-	playerLegsSprite = new Sprite(playerLegsAnimSurfaces);
-
-	vector<SDL_Surface*> grenadeAnimSurfaces;
-	for (unsigned i = 0; i < 12; i++) {
-		char *buf;
-		sprintf(buf = new char[100], "grenade/%i.png", i);
-		SDL_Surface *surface = ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::anima, buf));
-		grenadeAnimSurfaces.push_back(surface);
-		delete[] buf;
-	}
-	grenadeSprite = new Sprite(grenadeAnimSurfaces);
-
-	explTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "expl_0.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true));
-	explTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "expl_1.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true));
-
-	bloodTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "blood_0.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true));
-	bloodTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "blood_1.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true));
-	bloodTex.push_back(new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, "blood_2.png")),
-			GL_TEXTURE_2D, GL_LINEAR, true));
-
-	medikitTex
-			= new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
-					FileUtility::image, "medikit.png")), GL_TEXTURE_2D,
-					GL_LINEAR, true);
-
-	grenadeTex
-			= new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
-					FileUtility::image, "grenade.png")), GL_TEXTURE_2D,
-					GL_LINEAR, true);
-
-	freezeTex = new Texture(ImageUtility::loadImage(fileUtility->getFullPath(
-			FileUtility::image, "freeze.png")), GL_TEXTURE_2D, GL_LINEAR, true);
-
-	crystal = new StaticObject(0, 0, 128, 128, new Texture(
-			ImageUtility::loadImage(fileUtility->getFullPath(
-					FileUtility::image, "crystal.png")), GL_TEXTURE_2D,
-			GL_LINEAR, true), true);
+	resources = new Resources(fileUtility, sndManager);
 
 	aim = new Aim(config);
+	hud = new HUD(videoManager, resources);
 
 	monsterFactory = new MonsterFactory(fileUtility, sndManager);
 	weaponManager = new WeaponManager(fileUtility, sndManager);
@@ -2074,16 +2132,16 @@ void parsePreferences(int argc, char *argv[]) {
 		}
 
 		if (arg.compare("-f") == 0)
-			config->FullScreen = true;
+			config->Screen.Full = true;
 
 		if (arg.compare("-i") == 0)
-			config->FullScreen = false;
+			config->Screen.Full = false;
 
 		if (arg.compare("-w") == 0 && i + 1 < argc)
-			config->ScreenWidth = strtol(argv[i + 1], NULL, 10);
+			config->Screen.Width = strtol(argv[i + 1], NULL, 10);
 
 		if (arg.compare("-h") == 0 && i + 1 < argc)
-			config->ScreenHeight = strtol(argv[i + 1], NULL, 10);
+			config->Screen.Height = strtol(argv[i + 1], NULL, 10);
 
 		if (arg.compare("--fps") == 0 && i + 1 < argc) {
 			int lim = strtol(argv[i + 1], NULL, 10);

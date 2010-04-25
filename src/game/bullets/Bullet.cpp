@@ -11,6 +11,8 @@ Bullet::Bullet(float x, float y, float dX, float dY, Bullet::BulletType type) :
 	Type = type;
 	m_range = 0;
 	Poisoned = false;
+	BigCalibre = false;
+	Penetrating = false;
 }
 
 void Bullet::process(int deltaTime) {

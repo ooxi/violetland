@@ -1,7 +1,7 @@
-#include "SDL_opengl.h"
-
 #ifndef CAMERA_H_
 #define CAMERA_H_
+
+#include "SDL_opengl.h"
 
 class Camera {
 private:

@@ -1,8 +1,8 @@
-#include "../Texture.h"
-#include "../../Object.h"
-
 #ifndef TEXTOBJECT_H_
 #define TEXTOBJECT_H_
+
+#include "../Texture.h"
+#include "../../Object.h"
 
 class TextObject: public Object {
 private:

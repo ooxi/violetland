@@ -12,9 +12,11 @@ void Highscores::read() {
 
 	std::ifstream ifile(hsFile.c_str(), std::ios::binary);
 	if (!ifile.fail()) {
-		while (!ifile.eof()) {
+		while (true) {
 			HighscoresEntry* p = new HighscoresEntry();
 			ifile.read(reinterpret_cast<char*> (p), sizeof(*p));
+			if (ifile.eof())
+				break;
 			m_data.push_back(p);
 		}
 		ifile.close();

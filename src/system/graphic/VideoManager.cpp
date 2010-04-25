@@ -9,9 +9,38 @@ VideoManager::VideoManager(FileUtility* fileUtility) {
 	RegularText = NULL;
 	SmallText = NULL;
 
+	m_lastFrameTime = m_fpsCountingStart = SDL_GetTicks();
+	m_framesCount = 0;
+
 	// seems that this code is supported only in windows
 	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+}
+
+void VideoManager::countFrame(int frameDelay) {
+	m_framesCount++;
+
+	int now = SDL_GetTicks();
+
+	m_frameDeltaTime = now - m_lastFrameTime;
+	m_lastFrameTime = now;
+
+	if (now - m_fpsCountingStart > 5000) {
+		m_fpsCountingStart = now;
+		m_fps = m_framesCount / 5;
+		m_framesCount = 0;
+	}
+
+	if (frameDelay > 0 && m_frameDeltaTime < frameDelay)
+		SDL_Delay(frameDelay - m_frameDeltaTime);
+}
+
+int VideoManager::getFps() {
+	return m_fps;
+}
+
+int VideoManager::getFrameDeltaTime() {
+	return m_frameDeltaTime;
 }
 
 bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
@@ -25,26 +54,15 @@ bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 	return (r != 0);
 }
 
-#define ARRSIZE(s) (sizeof(s) / sizeof(*s))
-
-/*
- i don't know what of these methods is better to use
- i even can create a static function to calculate size of array
- */
-
-template<typename T> size_t structsize(const T& t) {
-	return sizeof(t) / sizeof(*t);
-}
-
-vector<SDL_Rect> VideoManager::GetAvailableModes(Configuration* config) {
+std::vector<SDL_Rect> VideoManager::GetAvailableModes() {
 	int wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1600, 1600, 1680,
 			1920, 1920 };
 	int hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 900, 1200, 1050,
 			1080, 1200 };
 
-	vector<SDL_Rect> modes;
-	for (unsigned int i = 0; i < structsize(wL); i++) {
-		if (isModeAvailable(wL[i], hL[i], config->ScreenColor, true, NULL)) {
+	std::vector<SDL_Rect> modes;
+	for (unsigned int i = 0; i < getStructSize(wL); i++) {
+		if (isModeAvailable(wL[i], hL[i], 16, true, NULL)) {
 			SDL_Rect r;
 			r.w = wL[i];
 			r.h = hL[i];
@@ -55,18 +73,23 @@ vector<SDL_Rect> VideoManager::GetAvailableModes(Configuration* config) {
 	return modes;
 }
 
-void VideoManager::setMode(Configuration* config, Camera* cam) {
-	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", config->ScreenWidth,
-			config->ScreenHeight, config->FullScreen ? 'f' : 'w');
+VideoMode VideoManager::getVideoMode() {
+	return m_videoMode;
+}
 
-	SDL_Surface *screen = SDL_SetVideoMode(config->ScreenWidth,
-			config->ScreenHeight, config->ScreenColor,
-			config->FullScreen ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
+void VideoManager::setMode(VideoMode mode, Camera* cam) {
+	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", mode.Width,
+			mode.Height, mode.Full ? 'f' : 'w');
 
-	float aspect = (float) config->ScreenWidth / config->ScreenHeight;
-	cam->setH(cam->getW() / aspect);
-	WK = (float) config->ScreenWidth / cam->getW();
-	HK = (float) config->ScreenHeight / cam->getH();
+	m_videoMode = mode;
+
+	SDL_Surface *screen = SDL_SetVideoMode(mode.Width, mode.Height, mode.Color,
+			mode.Full ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
+
+	float aspect = (float) mode.Width / mode.Height;
+	cam->setH((int) (cam->getW() / aspect));
+	WK = (float) mode.Width / cam->getW();
+	HK = (float) mode.Height / cam->getH();
 
 	if (screen == NULL) {
 		fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
@@ -74,7 +97,7 @@ void VideoManager::setMode(Configuration* config, Camera* cam) {
 	}
 
 	printf("glViewport...\n");
-	glViewport(0, 0, config->ScreenWidth, config->ScreenHeight);
+	glViewport(0, 0, mode.Width, mode.Height);
 
 	if (RegularText != NULL) {
 		delete RegularText;

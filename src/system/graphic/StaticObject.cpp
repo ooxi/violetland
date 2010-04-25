@@ -13,7 +13,7 @@ GLuint StaticObject::createComplexFace(int facesCount) {
 	glNewList(dListId, GL_COMPILE);
 	float faceWidth = (float) m_width / facesCount;
 	float faceHeight = (float) m_height / facesCount;
-	glBegin(GL_QUADS);
+	glBegin( GL_QUADS);
 	for (int i = 0; i < facesCount; i++) {
 		for (int j = 0; j < facesCount; j++) {
 			float faceStartX = (float) i / facesCount;
@@ -60,7 +60,7 @@ void StaticObject::draw(bool hreflect, bool vreflect, float x, float y,
 	glRotatef(angle, 0.0f, 0.0f, 1.0f);
 	glScalef(scale, scale, scale);
 
-	glBegin(GL_QUADS);
+	glBegin( GL_QUADS);
 
 	glNormal3f(0.0f, 0.0f, 1.0f);
 

@@ -5,6 +5,8 @@
 
 Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	LifeForm(0, 0, 128, 128) {
+	Id = "10-" + Id;
+
 	Base = base;
 	Level = lvl;
 
@@ -83,35 +85,24 @@ bool Enemy::isBleeding() {
 	}
 }
 
-bool Enemy::isDeathPhase() {
-	return m_body->AnimSprite == Base->DeathSprite;
-}
-
-bool Enemy::isReasyToDisappear() {
-	return isDeathPhase() && m_body->Frame
-			== m_body->AnimSprite->getFramesCount() - 1;
-}
-
 void Enemy::process(int deltaTime) {
 	LifeForm::process(deltaTime);
 
 	if (m_bleedCount > 0)
 		m_bleedDelay += deltaTime;
 
-	if (m_dead) {
-		if (!isDeathPhase()) {
-			m_body = new DynamicObject(X, Y, Base->DeathSprite);
-		} else {
-			if (!isReasyToDisappear())
-				m_body->rollFrame(true);
-		}
-	} else {
-		if (Frozen == 0) {
-			float newAngle = Object::calculateAngle(X, Y, TargetX, TargetY);
-			Object::turn(newAngle, MaxSpeed(), deltaTime);
+	if (State == LifeForm::dying) {
+		if (m_body->Frame == m_body->AnimSprite->getFramesCount() - 1)
+			State = LifeForm::died;
+	}
 
-			move(deltaTime);
-		}
+	if (State == LifeForm::dying) {
+		m_body->rollFrame(true);
+	}
+
+	if (State == LifeForm::smitten) {
+		m_body = new DynamicObject(X, Y, Base->DeathSprite);
+		State = LifeForm::dying;
 	}
 }
 

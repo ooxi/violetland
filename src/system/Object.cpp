@@ -137,7 +137,7 @@ const bool Object::detectCollide(float x1, float y1, float x2, float y2,
 	float resX1 = (-(2 * k * b - 2 * X - 2 * Y * k) - sqrt(d)) / (2 + 2 *  pow(k, 2));
 	//	float resX2 = ((-(2* k * b - 2* targetX - 2* targetY * k) + sqrt(d)) / (2
 	//			+ 2* k * k));
-	//
+
 	float resY1 = k * resX1 + b;
 
 	if (std::abs(std::abs(x1 - resX1) + std::abs(x2 - resX1) - std::abs(x2 - x1)) < 1) {
@@ -156,4 +156,11 @@ const bool Object::detectCollide(float x1, float y1, float x2, float y2,
 	// float y2 = k * resX2 + b;
 
 	return false;
+}
+void Object::setMask(float _RMask, float _GMask, float _BMask, float _AMask)
+{
+    RMask = _RMask;
+    GMask = _GMask;
+    BMask = _BMask;
+    AMask = _AMask;
 }

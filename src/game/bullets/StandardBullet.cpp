@@ -33,11 +33,11 @@ void StandardBullet::process(int deltaTime) {
 void StandardBullet::draw() {
 	glDisable(GL_TEXTURE_2D);
 
-	glLineWidth(1.0f);
+	glLineWidth(BigCalibre || Penetrating ? 3.0f : 1.0f);
 	glBegin(GL_LINES);
-	glColor4f(1.0f, 1.0f, 1.0f, Alpha);
+	glColor4f(1.0f, Penetrating ? 0.5f : 1.0f, Penetrating ? 0.2f : 1.0f, Alpha);
 	glVertex3f(X, Y, 0);
-	glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+	glColor4f(1.0f, Penetrating ? 0.5f : 1.0f, Penetrating ? 0.2f : 1.0f, 0.0f);
 	glVertex3f(dStartX, dStartY, 0);
 	glEnd();
 
@@ -51,7 +51,7 @@ bool StandardBullet::checkHit(Object* objRef) {
 		X = hx;
 		Y = hy;
 
-		if (!BigCalibre)
+		if (!(BigCalibre || Penetrating))
 			deactivate();
 		return true;
 	} else {

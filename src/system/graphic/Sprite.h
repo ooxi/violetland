@@ -1,8 +1,8 @@
-#include <vector>
-#include "Texture.h"
-
 #ifndef SPRITE_H_
 #define SPRITE_H_
+
+#include <vector>
+#include "Texture.h"
 
 class Sprite {
 private:

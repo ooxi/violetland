@@ -1,7 +1,8 @@
-#include "../../system/Object.h"
-
 #ifndef BULLET_H_
 #define BULLET_H_
+
+#include <string>
+#include "../../system/Object.h"
 
 class Bullet: public Object {
 protected:
@@ -23,9 +24,11 @@ public:
 	float Damage;
 	float MaxRange;
 	Bullet::BulletType Type;
+	std::string OwnerId;
 
 	bool Poisoned;
 	bool BigCalibre;
+	bool Penetrating;
 
 	virtual ~Bullet();
 };

@@ -5,25 +5,33 @@
 
 Player::Player() :
 	LifeForm(0, 0, 128, 128) {
+	Id = "20-" + Id;
 	Empty = true;
 	Xp = 0;
+	LastLevelXp = 0;
 	NextLevelXp = 100;
 	Kills = 0;
 	LevelPoints = 0;
+	fireingMode = 0;
 	AccuracyDeviation = 0.0f;
-	Time = 0;
 	Grenades = 2;
+	Teleports = 1;
 	Type = LifeForm::player;
 	HudInfo = "";
+	m_hitSndPlaying = 0;
 
 	m_weapon = NULL;
 
 	m_light = m_laser = false;
 
-	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = false;
+	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision
+			= false;
+    for(int i = FIRSTBONUS;i<BONUSCOUNT;i++)
+        bonusTimes[i] = 0;
 }
 
-Player::Player(float x, float y, Sprite *legsSprite) :
+Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
+		std::vector<Sound*> hitSounds, Sound* dyingSound) :
 	LifeForm(x, y, 128, 128) {
 	*this = Player();
 
@@ -32,10 +40,36 @@ Player::Player(float x, float y, Sprite *legsSprite) :
 	TargetX = x;
 	TargetY = y;
 
-	m_legs = new DynamicObject(x, y, legsSprite);
-	m_legs->Frame = 8;
+	m_body = new DynamicObject(x, y, legsSprite);
+	m_body->Frame = 8;
+	m_deathSprite = deathSprite;
+	m_hitSounds = hitSounds;
+	m_dyingSound = dyingSound;
 
 	Empty = false;
+}
+
+float Player::getStrength()
+{
+    return Strength * ((bonusTimes[STRENGTHROIDS] > 0) ? 1.2f : 1.0f);
+}
+
+float Player::getAgility()
+{
+    return Agility * ((bonusTimes[AGILITYROIDS] > 0) ? 1.2f : 1.0f);
+}
+
+float Player::getVitality()
+{
+    return Vitality * ((bonusTimes[VITALITYROIDS] > 0) ? 1.2f : 1.0f);
+}
+
+void Player::hit() {
+	if (!m_hitSounds[m_hitSndPlaying]->isPlaying()) {
+		m_hitSndPlaying = (getHealth() < MaxHealth() ? getHealth()
+				: getHealth() - 0.01f) / MaxHealth() * m_hitSounds.size();
+		m_hitSounds[m_hitSndPlaying]->play(6, 0, 0);
+	}
 }
 
 void Player::move(char movementX, char movementY, int deltaTime) {
@@ -46,10 +80,10 @@ void Player::move(char movementX, char movementY, int deltaTime) {
 
 		float newAngle = Object::calculateAngle(0, 0, movementX, movementY);
 
-		if (abs(m_legs->Angle - newAngle) < MaxSpeed() * deltaTime)
-			m_legs->Angle = newAngle;
+		if (abs(m_body->Angle - newAngle) < MaxSpeed() * deltaTime)
+			m_body->Angle = newAngle;
 		else
-			m_legs->turn(newAngle, MaxSpeed(), deltaTime);
+			m_body->turn(newAngle, MaxSpeed(), deltaTime);
 	} else {
 		Speed -= Acceleration * deltaTime;
 		if (Speed < 0)
@@ -57,21 +91,21 @@ void Player::move(char movementX, char movementY, int deltaTime) {
 	}
 
 	if (Speed > 0) {
-		m_legs->Speed = Speed;
-		m_legs->process(deltaTime);
+		m_body->Speed = Speed;
+		m_body->process(deltaTime);
 
-		X = m_arms->X = m_legs->X;
-		Y = m_arms->Y = m_legs->Y;
+		X = m_arms->X = m_body->X;
+		Y = m_arms->Y = m_body->Y;
 	}
 
 	if (Speed > MaxSpeed() / 4) {
-		m_legs->rollFrame(true);
+		m_body->rollFrame(true);
 	} else {
-		if (!(m_legs->Frame == 8 || m_legs->Frame == 20)) {
-			if ((m_legs->Frame > 8 && m_legs->Frame < 16) || m_legs->Frame > 20)
-				m_legs->rollFrame(false);
+		if (!(m_body->Frame == 8 || m_body->Frame == 20)) {
+			if ((m_body->Frame > 8 && m_body->Frame < 16) || m_body->Frame > 20)
+				m_body->rollFrame(false);
 			else
-				m_legs->rollFrame(true);
+				m_body->rollFrame(true);
 		}
 	}
 }
@@ -97,9 +131,15 @@ std::vector<Bullet*> *Player::fire() {
 					&& PoisonBullets;
 			bullet->BigCalibre = m_weapon->Type == Bullet::standard
 					&& BigCalibre;
+			if (BigCalibre) {
+				bullet->Damage *= 1.1;
+			}
+			bullet->Penetrating = m_weapon->Type == Bullet::standard
+					&& bonusTimes[PENBULLETS] > 0;
 			bullet->Angle = AccuracyDeviation < 1 ? m_arms->Angle
 					: m_arms->Angle + (rand() % (int) (AccuracyDeviation * 2))
 							- AccuracyDeviation;
+			bullet->OwnerId = Id;
 		}
 
 		if (m_weapon->BulletsAtOnce > 1)
@@ -150,6 +190,26 @@ const bool Player::getLaser() {
 void Player::process(int deltaTime) {
 	LifeForm::process(deltaTime);
 
+	if (State == LifeForm::dying) {
+		if (m_body->Frame == m_body->AnimSprite->getFramesCount() - 1)
+			State = LifeForm::died;
+	}
+
+	if (State == LifeForm::dying) {
+		m_body->rollFrame(true);
+	}
+
+	if (State == LifeForm::smitten) {
+		const float angle = m_body->Angle;
+		m_body = new DynamicObject(X, Y, m_deathSprite);
+		m_body ->Angle = angle;
+		State = LifeForm::dying;
+		if (m_hitSounds[m_hitSndPlaying]->isPlaying())
+			m_hitSounds[m_hitSndPlaying]->stop(0);
+
+		m_dyingSound->play(5, 0, 0);
+	}
+
 	m_arms->Angle = Object::calculateAngle(X, Y, TargetX, TargetY);
 
 	m_weapon->process(deltaTime);
@@ -157,11 +217,39 @@ void Player::process(int deltaTime) {
 	AccuracyDeviation -= deltaTime * 0.01;
 	if (AccuracyDeviation < 0)
 		AccuracyDeviation = 0;
+    processBonus(deltaTime);
+    fadeColor(deltaTime);
+}
+
+void Player::processBonus(int deltaTime)
+{
+    for(int i = FIRSTBONUS; i <= BONUSCOUNT; i++) {
+        bonusTimes[i] -= deltaTime;
+        if (bonusTimes[i] < 0)
+            bonusTimes[i] = 0;
+    }
+}
+
+void Player::fadeColor(int deltaTime)
+{
+    m_arms->setMask(RMask,GMask,BMask,AMask);
+    m_body->setMask(RMask,GMask,BMask,AMask);
+    if(RMask < 1.0f)
+        RMask += 0.01f;
+    if(GMask < 1.0f)
+        GMask += 0.01f;
+    if(BMask < 1.0f)
+        BMask += 0.01f;
+    if(AMask < 1.0f)
+        AMask += 0.01f;
 }
 
 void Player::draw() {
-	m_legs->draw();
-	m_arms->draw(false, false);
+	m_body->draw();
+
+	if (State == LifeForm::alive)
+		m_arms->draw(false, false);
+
 	for (int i = m_shells.size() - 1; i >= 0; i--) {
 		m_shells[i]->draw();
 		if (m_shells[i]->Frame == m_shells[i]->AnimSprite->getFramesCount() - 1) {
@@ -173,8 +261,16 @@ void Player::draw() {
 	}
 }
 
+StaticObject* Player::getCorpse() {
+	StaticObject * corpse = new StaticObject(X, Y, m_width, m_height,
+			m_body->getFrame(), false);
+	corpse->Scale = m_body->Scale;
+	corpse->Angle = Object::fixAngle(180 - m_body->Angle);
+	return corpse;
+}
+
 const float Player::getLegsAngle() {
-	return m_legs->Angle;
+	return m_body->Angle;
 }
 
 const float Player::getArmsAngle() {
@@ -182,17 +278,22 @@ const float Player::getArmsAngle() {
 }
 
 void Player::setX(float value) {
-	X = m_arms->X = m_legs->X = value;
+	X = m_arms->X = m_body->X = value;
 }
 
 void Player::setY(float value) {
-	Y = m_arms->Y = m_legs->Y = value;
+	Y = m_arms->Y = m_body->Y = value;
 }
 
 Weapon* Player::getWeapon() {
 	return m_weapon;
 }
-
+void Player::teleport()
+{
+    Teleports--;
+    setX(TargetX);
+    setY(TargetY);
+}
 void Player::setWeapon(Weapon *value) {
 	if (m_weapon) {
 		delete m_arms;
@@ -203,9 +304,10 @@ void Player::setWeapon(Weapon *value) {
 	AccuracyDeviation = 0;
 }
 
+
 Player::~Player() {
 	if (!Empty) {
-		delete m_legs;
+		delete m_body;
 		delete m_arms;
 		delete m_weapon;
 	}

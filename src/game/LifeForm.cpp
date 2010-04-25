@@ -2,11 +2,28 @@
 
 LifeForm::LifeForm(float x, float y, int w, int h) :
 	Object(x, y, w, h) {
+	unsigned long t;
+#ifdef _WIN32
+	SYSTEMTIME winT;
+	GetLocalTime(&winT);
+	FILETIME fT;
+	SystemTimeToFileTime(&winT, &fT);
+	ULARGE_INTEGER sec;
+	sec.HighPart = fT.dwHighDateTime;
+	sec.LowPart = fT.dwLowDateTime;
+	t = sec.QuadPart / 1E7;
+#endif //_WIN32
+#if defined linux || defined __FreeBSD__ || defined __APPLE__
+	t = static_cast<unsigned long> (time(NULL));
+#endif  //linux || __FreeBSD__ || __APPLE__
+	char buf[30];
+	sprintf(buf, "%09i-%09li", (rand() % 999999999), t);
+	Id = buf;
 	Strength = 1.0f;
 	Agility = 1.0f;
 	Vitality = 1.0f;
 	m_health = MaxHealth();
-	m_dead = false;
+	State = alive;
 	m_lastAttackTime = SDL_GetTicks();
 	TargetX = TargetY = 0.0f;
 	Poisoned = false;
@@ -26,9 +43,11 @@ void LifeForm::process(int deltaTime) {
 			Frozen = 0;
 	}
 
-	m_dead = m_dead || getHealth() == 0;
+	if (getHealth() == 0 && State == LifeForm::alive) {
+		State = LifeForm::smitten;
+	}
 
-	if (!m_dead && Frozen == 0) {
+	if (State == LifeForm::alive && Frozen == 0) {
 		setHealth(getHealth() + HealthRegen() * deltaTime);
 
 		if (Poisoned)
@@ -36,16 +55,26 @@ void LifeForm::process(int deltaTime) {
 	}
 }
 
-const bool LifeForm::isDead() {
-	return m_dead;
+StaticObject* LifeForm::getCorpse() {
+	return NULL;
 }
 
+float LifeForm::getStrength(){
+	return Strength;
+}
+float LifeForm::getAgility(){
+	return Agility;
+}
+
+float LifeForm::getVitality(){
+	return Vitality;
+}
 const float LifeForm::MaxHealth() {
-	return Vitality > 0.8f ? 1.0f + (Vitality - 1.0f) * 2.0f : 0.4f;
+	return getVitality() > 0.8f ? 1.0f + (getVitality() - 1.0f) * 2.0f : 0.4f;
 }
 
 const float LifeForm::ChanceToEvade() {
-	return Agility > 1.0f ? (Agility - 1.0f) / 2.0f : 0.0f;
+	return getAgility() > 1.0f ? (getAgility() - 1.0f) / 2.0f : 0.0f;
 }
 
 const bool LifeForm::Attack() {
@@ -60,27 +89,27 @@ const bool LifeForm::Attack() {
 }
 
 const float LifeForm::Damage() {
-	return Strength / 8.0f;
+	return getStrength() / 8.0f;
 }
 
 const int LifeForm::AttackDelay() {
-	return (1.0f - (Agility - 1.0f) / 2.0f) * 1000;
+	return (1.0f - (getAgility() - 1.0f) / 2.0f) * 1000;
 }
 
 const float LifeForm::MaxSpeed() {
-	return Agility / 5.0f;
+	return getAgility() / 5.0f;
 }
 
 const float LifeForm::HealthRegen() {
-	return Vitality > 1.0f ? (Vitality - 1.0f) * 0.000004f : 0.0f;
+	return getVitality() > 1.0f ? (getVitality() - 1.0f) * 0.000004f : 0.0f;
 }
 
 const float LifeForm::ReloadSpeedMod() {
-	return 1.0f / Agility;
+	return 1.0f / getAgility();
 }
 
 const float LifeForm::WeaponRetForceMod() {
-	return Strength > 1.0f ? 1.0f - (Strength - 1.0f) * 1.1f : 1.0f;
+	return getStrength() > 1.0f ? 1.0f - (getStrength() - 1.0f) * 1.1f : 1.0f;
 }
 
 void LifeForm::setHealth(float value) {

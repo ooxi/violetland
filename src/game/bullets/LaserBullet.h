@@ -1,9 +1,8 @@
-#include <iostream>
-#include "SDL_opengl.h"
-#include "Bullet.h"
-
 #ifndef LASERBULLET_H_
 #define LASERBULLET_H_
+
+#include "SDL_opengl.h"
+#include "Bullet.h"
 
 class LaserBullet: public Bullet {
 private:

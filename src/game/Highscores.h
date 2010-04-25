@@ -1,9 +1,7 @@
-#include <fstream>
-#include <vector>
-#include "../system/utility/FileUtility.h"
-
 #ifndef HIGHSCORES_H_
 #define HIGHSCORES_H_
+
+#include "../system/utility/FileUtility.h"
 
 class HighscoresEntry {
 public:
