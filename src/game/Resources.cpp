@@ -37,6 +37,10 @@ Resources::Resources(FileUtility* fileUtility, SoundManager* sndManager) {
 	loadPowerupTex(Powerup::freeze, "freeze.png");
 	loadPowerupTex(Powerup::penBullets, "penbullets.png");
 	loadPowerupTex(Powerup::nuke, "bon_nuke.png");
+	loadPowerupTex(Powerup::agilityRoids,"pill.png");
+	loadPowerupTex(Powerup::vitalityRoids,"pill.png");
+	loadPowerupTex(Powerup::strengthRoids,"pill.png");
+	loadPowerupTex(Powerup::teleports,"teleport.png");
 }
 
 Sprite* Resources::loadSprite(unsigned int frames, std::string pattern) {

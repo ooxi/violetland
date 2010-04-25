@@ -15,10 +15,14 @@ private:
 	Weapon *m_weapon;
 	bool m_light, m_laser;
 	int m_hitSndPlaying;
+	void processBonus(int deltaTime);
 public:
 	Player();
 	Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
 			std::vector<Sound*> hitSounds, Sound* dyingSound);
+    enum bonusType {
+        FIRSTBONUS = 0, PENBULLETS = FIRSTBONUS, VITALITYROIDS,AGILITYROIDS,STRENGTHROIDS,BONUSCOUNT
+	};
 	virtual void process(int deltaTime);
 	virtual void draw();
 
@@ -46,16 +50,21 @@ public:
 	int LastLevelXp;
 	int Kills;
 	int Grenades;
+	int Teleports;
 	std::string HudInfo;
-
 	bool Unstoppable;
 	bool PoisonBullets;
 	bool BigCalibre;
 	bool Telekinesis;
 	bool NightVision;
-	int PenBullets;
-
+	int bonusTimes[BONUSCOUNT];
+	float getStrength();
+	float getAgility();
+	float getVitality();
+	void teleport();
+	void fadeColor(int deltaTime);
 	bool Empty;
+	int fireingMode;
 };
 
 #endif /* PLAYER_H_ */

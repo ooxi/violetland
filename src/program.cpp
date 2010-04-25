@@ -79,6 +79,7 @@ vector<ParticleSystem*> particleSystems;
 map<string, Window*> windows;
 Terrain* terrain;
 
+// Creation of clear squares of an earth surface
 void createTerrain() {
 	if (terrain)
 		delete terrain;
@@ -119,6 +120,9 @@ void createTerrain() {
 	tiles.clear();
 }
 
+// Creation of a new monster
+// r - distance from point of 0,0
+// lvl - level of monster
 void spawnEnemy(float r, int lvl) {
 	float spawnAngle = (rand() % 6300) / 1000.0;
 
@@ -131,6 +135,7 @@ void spawnEnemy(float r, int lvl) {
 			newMonster));
 }
 
+// The beginning of new game in a survival mode
 void startSurvival() {
 	glClear( GL_COLOR_BUFFER_BIT);
 
@@ -178,6 +183,7 @@ void startSurvival() {
 	windows["mainmenu"]->CloseFlag = true;
 }
 
+// Creation of a string for the window title
 char *getProjectTitle() {
 	char *buf;
 	sprintf(buf = new char[PROJECT.size() + VERSION.size() + 4], "%s v%s",
@@ -185,6 +191,7 @@ char *getProjectTitle() {
 	return buf;
 }
 
+// Outputs the information on the program and the runtime environment
 void printVersion() {
 	char* pr = getProjectTitle();
 	string env = "UNKNOWN";
@@ -204,6 +211,7 @@ void printVersion() {
 	delete[] pr;
 }
 
+// Creation of system objects and their customization
 void initSystem() {
 	srand((unsigned) time(NULL));
 
@@ -276,7 +284,7 @@ void initSystem() {
 
 	GLfloat lightColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	//flashlight
+	// flashlight
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightColor);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightColor);
@@ -285,7 +293,7 @@ void initSystem() {
 
 	GLfloat nvColor[] = { 0.3f, 1.0f, 0.3f, 1.0f };
 
-	//nightvision
+	// night vision perk
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, nvColor);
 	glLightfv(GL_LIGHT1, GL_AMBIENT, nvColor);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, nvColor);
@@ -300,6 +308,9 @@ void initSystem() {
 	gameState = new GameState();
 }
 
+// Operations at destruction of the player:
+// update of the list of the best results,
+// change of a state of objects
 void loseGame(Player* player) {
 	gameState->Lost = true;
 
@@ -317,6 +328,7 @@ void loseGame(Player* player) {
 	SDL_ShowCursor(1);
 }
 
+// Switches a pause mode
 void switchGamePause() {
 	gameState->Paused = !gameState->Paused;
 	if (gameState->Paused)
@@ -1166,6 +1178,7 @@ void handleMonster(LifeForm* lf) {
 			if (rand() % 100 > player->ChanceToEvade() * 100) {
 				player->hit();
 				player->setHealth(player->getHealth() - enemy->Damage());
+				player->setMask(1.0f, 0.0f, 0.0f, 1.0f);
 			}
 
 			if (!player->Unstoppable)
@@ -1230,14 +1243,29 @@ void handlePlayer(LifeForm* lf) {
 	lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH() + cam->Y;
 
 	if (input->getDownInput(InputHandler::Fire)) {
-		std::vector<Bullet*> *newBullets = player->fire();
-		if (!newBullets->empty()) {
-			bullets.insert(bullets.end(), newBullets->begin(),
-					newBullets->end());
-			delete newBullets;
+		if (player->fireingMode == 0) {
+
+			std::vector<Bullet*> *newBullets = player->fire();
+			if (!newBullets->empty()) {
+				bullets.insert(bullets.end(), newBullets->begin(),
+						newBullets->end());
+				delete newBullets;
+			}
+			if (player->getWeapon()->Ammo == 0 && config->AutoReload)
+				player->reload();
+		} else if (player->fireingMode == 1) {
+			/* TODO: Add some animation (may be using explosion)
+			 at point where player has placed before teleportation
+			*/
+			player->teleport();
+
+			//TODO: May use enum for fireingMode (or actionMode)?
+			// Action mode can be "speak" or "use" for some elements of game.
+			player->fireingMode = 0;
+			player->setMask(0.0f, 1.0f, 1.0f, 1.0f);
+			delete aim;
+			aim = new Aim(config);
 		}
-		if (player->getWeapon()->Ammo == 0 && config->AutoReload)
-			player->reload();
 	}
 
 	if (input->getPressInput(InputHandler::ToggleLight))
@@ -1249,12 +1277,27 @@ void handlePlayer(LifeForm* lf) {
 	if (input->getDownInput(InputHandler::Reload))
 		player->reload();
 
+	if (input->getPressInput(InputHandler::Teleport))
+	{
+		if (player->fireingMode != 1 && player->Teleports > 0) {
+			player->fireingMode = 1;
+			delete aim;
+			aim = new Aim(0.0f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f);
+		} else if (player->fireingMode == 1) {
+			player->fireingMode = 0;
+			delete aim;
+			aim = new Aim(config);
+		}
+	}
+
 	if (input->getPressInput(InputHandler::ThrowGrenade) && player->Grenades
 			> 0) {
 		bullets.push_back(player->throwGrenade(resources->GrenadeSprite));
 	}
 }
 
+//Choice and creation of bonus
+//TODO: The bonus magnet perk to increase the chance of bonus drop
 void dropPowerup(float x, float y) {
 	bool powerupDropped = false;
 	Powerup *newPowerup;
@@ -1286,7 +1329,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 970) {
+	if (!powerupDropped && rand() % 1000 >= 980) {
 		newPowerup
 				= new Powerup(x, y, resources->PowerupTex[Powerup::grenades]);
 		newPowerup->Scale = 0.4f;
@@ -1295,7 +1338,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 970) {
+	if (!powerupDropped && rand() % 1000 >= 980) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::freeze]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::freeze;
@@ -1303,7 +1346,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 970) {
+	if (!powerupDropped && rand() % 1000 >= 980) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::nuke]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::nuke;
@@ -1311,12 +1354,51 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 970) {
+	if (!powerupDropped && rand() % 1000 >= 980) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[Powerup::penBullets]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = Powerup::penBullets;
 		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[Powerup::vitalityRoids]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::vitalityRoids;
+		newPowerup->RMask = newPowerup->BMask = 0.2f;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[Powerup::strengthRoids]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::strengthRoids;
+		newPowerup->GMask = newPowerup->BMask = 0.2f;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[Powerup::agilityRoids]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::agilityRoids;
+		newPowerup->RMask = newPowerup->GMask = 0.2f;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && rand() % 1000 >= 980) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[Powerup::teleports]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = Powerup::teleports;
+		newPowerup->Object = new int(1);
 		powerupDropped = true;
 	}
 
@@ -1536,6 +1618,14 @@ void drawHud() {
 			TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
 
+	sprintf(buf = new char[30], "Teleports: %i", player->Teleports);
+	videoManager->RegularText->draw(buf,
+			videoManager->RegularText->getIndent(),
+			videoManager->RegularText->getIndent()
+					+ (videoManager->RegularText->getHeight()) * 2,
+			TextManager::LEFT, TextManager::TOP);
+	delete[] buf;
+
 	if (!gameState->Lost)
 		if (player->HudInfo != "")
 			videoManager->RegularText->draw(player->HudInfo.c_str(),
@@ -1590,6 +1680,18 @@ void handlePowerups() {
 				break;
 			case Powerup::penBullets:
 				player->HudInfo = "penetration bullets";
+				break;
+			case Powerup::vitalityRoids:
+				player->HudInfo = "vitality boost";
+				break;
+			case Powerup::strengthRoids:
+				player->HudInfo = "strength boost";
+				break;
+			case Powerup::agilityRoids:
+				player->HudInfo = "agility boost";
+				break;
+			case Powerup::teleports:
+				player->HudInfo = "a teleport";
 				break;
 			case Powerup::weapon:
 				char buf[100];
@@ -1648,13 +1750,41 @@ void handlePowerups() {
 			}
 			case Powerup::penBullets: {
 				hud->addMessage("You got powerful penetration bullets.");
-				player->PenBullets = *(int*) powerups[i]->Object;
+				player->bonusTimes[Player::PENBULLETS]
+						= *(int*) powerups[i]->Object;
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::vitalityRoids: {
+				hud->addMessage("You got a vitality boost.");
+				player->bonusTimes[Player::VITALITYROIDS]
+						+= *(int*) powerups[i]->Object;
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::strengthRoids: {
+				hud->addMessage("You got a strength boost.");
+				player->bonusTimes[Player::STRENGTHROIDS]
+						+= *(int*) powerups[i]->Object;
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::agilityRoids: {
+				hud->addMessage("You got a agility boost.");
+				player->bonusTimes[Player::AGILITYROIDS]
+						+= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case Powerup::grenades: {
 				hud->addMessage("You have taken a grenade.");
 				player->Grenades += *(int*) powerups[i]->Object;
+				deletePowerup = true;
+				break;
+			}
+			case Powerup::teleports: {
+				hud->addMessage("You have taken a teleport.");
+				player->Teleports += *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
@@ -1708,8 +1838,8 @@ void processGame() {
 						player->Kills++;
 						player->Xp
 								+= (int) ((1.5 - gameState->TimeOfDay * -0.5)
-										* (lf->Strength + lf->Agility
-												+ lf->Vitality) * 3);
+										* (lf->getStrength() + lf->getAgility()
+												+ lf->getVitality()) * 3);
 					}
 					delete lf;
 					lifeForms.erase(iter->first);
@@ -1717,6 +1847,7 @@ void processGame() {
 			}
 		}
 	}
+
 	terrain->endDrawOn();
 
 	player->HudInfo = "";

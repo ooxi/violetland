@@ -20,6 +20,7 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	FriendlyFire = false;
 	GameAreaSize = 2048;
 
+    PlayerInputBinding[InputHandler::Teleport].Value = SDLK_q;
 	PlayerInputBinding[InputHandler::MoveLeft].Value = SDLK_a;
 	PlayerInputBinding[InputHandler::MoveUp].Value = SDLK_w;
 	PlayerInputBinding[InputHandler::MoveRight].Value = SDLK_d;

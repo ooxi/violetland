@@ -12,6 +12,7 @@ Player::Player() :
 	NextLevelXp = 100;
 	Kills = 0;
 	LevelPoints = 0;
+	fireingMode = 0;
 	AccuracyDeviation = 0.0f;
 	Grenades = 2;
 	Type = LifeForm::player;
@@ -24,7 +25,8 @@ Player::Player() :
 
 	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision
 			= false;
-	PenBullets = 0;
+    for(int i = FIRSTBONUS;i<BONUSCOUNT;i++)
+        bonusTimes[i] = 0;
 }
 
 Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
@@ -44,6 +46,21 @@ Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
 	m_dyingSound = dyingSound;
 
 	Empty = false;
+}
+
+float Player::getStrength()
+{
+    return Strength * ((bonusTimes[STRENGTHROIDS] > 0) ? 1.2f : 1.0f);
+}
+
+float Player::getAgility()
+{
+    return Agility * ((bonusTimes[AGILITYROIDS] > 0) ? 1.2f : 1.0f);
+}
+
+float Player::getVitality()
+{
+    return Vitality * ((bonusTimes[VITALITYROIDS] > 0) ? 1.2f : 1.0f);
 }
 
 void Player::hit() {
@@ -117,7 +134,7 @@ std::vector<Bullet*> *Player::fire() {
 				bullet->Damage *= 1.1;
 			}
 			bullet->Penetrating = m_weapon->Type == Bullet::standard
-					&& PenBullets > 0;
+					&& bonusTimes[PENBULLETS] > 0;
 			bullet->Angle = AccuracyDeviation < 1 ? m_arms->Angle
 					: m_arms->Angle + (rand() % (int) (AccuracyDeviation * 2))
 							- AccuracyDeviation;
@@ -199,10 +216,31 @@ void Player::process(int deltaTime) {
 	AccuracyDeviation -= deltaTime * 0.01;
 	if (AccuracyDeviation < 0)
 		AccuracyDeviation = 0;
+    processBonus(deltaTime);
+    fadeColor(deltaTime);
+}
 
-	PenBullets -= deltaTime;
-	if (PenBullets < 0)
-		PenBullets = 0;
+void Player::processBonus(int deltaTime)
+{
+    for(int i = FIRSTBONUS; i <= BONUSCOUNT; i++) {
+        bonusTimes[i] -= deltaTime;
+        if (bonusTimes[i] < 0)
+            bonusTimes[i] = 0;
+    }
+}
+
+void Player::fadeColor(int deltaTime)
+{
+    m_arms->setMask(RMask,GMask,BMask,AMask);
+    m_body->setMask(RMask,GMask,BMask,AMask);
+    if(RMask < 1.0f)
+        RMask += 0.01f;
+    if(GMask < 1.0f)
+        GMask += 0.01f;
+    if(BMask < 1.0f)
+        BMask += 0.01f;
+    if(AMask < 1.0f)
+        AMask += 0.01f;
 }
 
 void Player::draw() {
@@ -249,7 +287,12 @@ void Player::setY(float value) {
 Weapon* Player::getWeapon() {
 	return m_weapon;
 }
-
+void Player::teleport()
+{
+    Teleports--;
+    setX(TargetX);
+    setY(TargetY);
+}
 void Player::setWeapon(Weapon *value) {
 	if (m_weapon) {
 		delete m_arms;
@@ -259,6 +302,7 @@ void Player::setWeapon(Weapon *value) {
 	m_arms = new StaticObject(X, Y, 128, 128, m_weapon->getPlayerTex(), false);
 	AccuracyDeviation = 0;
 }
+
 
 Player::~Player() {
 	if (!Empty) {

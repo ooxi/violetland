@@ -36,6 +36,7 @@ public:
 		ThrowGrenade,
 		Fire,
 		Reload,
+		Teleport,
 		GameInputEventsCount
 	};
 	InputHandler(Binding binding[]);

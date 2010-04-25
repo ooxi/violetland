@@ -1,8 +1,19 @@
 #include "HUD.h"
 
+/*TODO: a good way to scale the health and level HUD images in dependency of
+ screen size
+*/
+
+// Work on this class is not completed
 HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
 	m_resources = resources;
+	VideoMode videoMode = m_videoManager->getVideoMode();
+	m_resources->HealthIndicator->Scale = (float) videoMode.Width / 4000;
+	m_resources->HealthIndicator->X = m_resources->HealthIndicator->getWidth()
+			/ 2;
+	m_resources->HealthIndicator->Y = videoMode.Height
+			- m_resources->HealthIndicator->getHeight() / 2;
 	reset();
 }
 

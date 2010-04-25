@@ -4,6 +4,7 @@
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
 #endif //_WIN32W
+
 #include <cmath>
 
 class Object {
@@ -28,6 +29,7 @@ public:
 	const bool detectCollide(float x1, float y1, float x2, float y2);
 	const bool detectCollide(float x1, float y1, float x2, float y2, float* ix,
 			float* iy);
+	void setMask(float _RMask, float _GMask, float _BMask, float _AMask);
 	float X, Y;
 	float Scale;
 	float Angle;

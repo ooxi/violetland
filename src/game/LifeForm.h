@@ -1,5 +1,5 @@
-#ifndef LIVEOBJECT_H_
-#define LIVEOBJECT_H_
+#ifndef LIFEFORM_H_
+#define LIFEFORM_H_
 
 #ifdef _WIN32
 #include "windows.h"
@@ -30,6 +30,9 @@ public:
 	float TargetX, TargetY;
 	LifeFormState State;
 	void setHealth(float value);
+	virtual float getStrength();
+	virtual float getAgility();
+	virtual float getVitality();
 	const float getHealth();
 	const float MaxHealth();
 	const float MaxSpeed();
@@ -46,4 +49,4 @@ public:
 	int Frozen;
 };
 
-#endif /* LIVEOBJECT_H_ */
+#endif /* LIFEFORM_H_ */
