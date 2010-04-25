@@ -1255,12 +1255,13 @@ void handlePlayer(LifeForm* lf) {
 				player->reload();
 		} else if (player->fireingMode == 1) {
 			/* TODO: Add some animation (may be using explosion)
-			 at point where player has placed before teleportation
-			*/
+			 * at point where player has placed before teleportation
+			 */
 			player->teleport();
 
-			//TODO: May use enum for fireingMode (or actionMode)?
-			// Action mode can be "speak" or "use" for some elements of game.
+			/*TODO: May use enum for fireingMode (or actionMode)?
+			 * Action mode can be "speak" or "use" for some elements of game.
+			 */
 			player->fireingMode = 0;
 			player->setMask(0.0f, 1.0f, 1.0f, 1.0f);
 			delete aim;
@@ -1277,8 +1278,7 @@ void handlePlayer(LifeForm* lf) {
 	if (input->getDownInput(InputHandler::Reload))
 		player->reload();
 
-	if (input->getPressInput(InputHandler::Teleport))
-	{
+	if (input->getPressInput(InputHandler::Teleport)) {
 		if (player->fireingMode != 1 && player->Teleports > 0) {
 			player->fireingMode = 1;
 			delete aim;

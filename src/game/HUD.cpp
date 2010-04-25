@@ -1,10 +1,13 @@
 #include "HUD.h"
 
-/*TODO: a good way to scale the health and level HUD images in dependency of
- screen size
-*/
+/*TODO: a good way to scale the health and level HUD images in dependency
+ * of screen size
+ */
 
-// Work on this class is not completed
+/*TODO: add to HUD a tool that will be able to show all
+ * remaining time of time-based bonuses (something like in crimsonland)
+ */
+
 HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
 	m_resources = resources;

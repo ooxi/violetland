@@ -15,6 +15,7 @@ Player::Player() :
 	fireingMode = 0;
 	AccuracyDeviation = 0.0f;
 	Grenades = 2;
+	Teleports = 1;
 	Type = LifeForm::player;
 	HudInfo = "";
 	m_hitSndPlaying = 0;
