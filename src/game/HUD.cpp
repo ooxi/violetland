@@ -1,22 +1,9 @@
 #include "HUD.h"
 
-/*TODO: a good way to scale the health and level HUD images in dependency
- * of screen size
- */
-
-/*TODO: add to HUD a tool that will be able to show all
- * remaining time of time-based bonuses (something like in crimsonland)
- */
-
 HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
 	m_resources = resources;
 	VideoMode videoMode = m_videoManager->getVideoMode();
-	m_resources->HealthIndicator->Scale = (float) videoMode.Width / 4000;
-	m_resources->HealthIndicator->X = m_resources->HealthIndicator->getWidth()
-			/ 2;
-	m_resources->HealthIndicator->Y = videoMode.Height
-			- m_resources->HealthIndicator->getHeight() / 2;
 	reset();
 }
 
@@ -52,6 +39,13 @@ void HUD::drawExperience(float experience, int levelPoints) {
 	const int barLeft = 2 * screen.Width / 3;
 	const int barHeight = m_videoManager->RegularText->getHeight() / 4;
 
+	const int indX = screen.Width - screen.Width / 24;
+	m_resources->LevelUpIndicator->Scale = m_videoManager->Scale * 0.15;
+	m_resources->LevelUpIndicator->X = indX;
+	m_resources->LevelUpIndicator->Y = m_bottomBasePoint;
+
+	m_resources->LevelUpIndicator->draw(false, false);
+
 	GLfloat bcolor[] = { 1.0f, 1.0f, 1.0f, 0.3f };
 	GLfloat fcolor1[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 	GLfloat fcolor2[] = { 0.0f, 1.0f, 1.0f, 1.0f };
@@ -62,13 +56,13 @@ void HUD::drawExperience(float experience, int levelPoints) {
 
 void HUD::drawBar(int x, int y, int width, int height, float value,
 		GLfloat* bcolor, GLfloat* fcolor1, GLfloat* fcolor2) {
-	glDisable( GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
 
 	glPushMatrix();
 
 	glTranslatef(x, y, 0.0f);
 
-	glBegin( GL_QUADS);
+	glBegin(GL_QUADS);
 
 	glNormal3f(0.0f, 0.0f, 1.0f);
 
@@ -102,6 +96,11 @@ void HUD::drawHealth(float health) {
 	const int barLeft = screen.Width / 12;
 	const int barLen = screen.Width / 4;
 	const int barHeight = m_videoManager->RegularText->getHeight() / 4;
+
+	const int indX = screen.Width / 24;
+	m_resources->HealthIndicator->Scale = m_videoManager->Scale * 0.15;
+	m_resources->HealthIndicator->X = indX;
+	m_resources->HealthIndicator->Y = m_bottomBasePoint;
 
 	m_resources->HealthIndicator->draw(false, false);
 

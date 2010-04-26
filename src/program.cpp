@@ -137,7 +137,7 @@ void spawnEnemy(float r, int lvl) {
 
 // The beginning of new game in a survival mode
 void startSurvival() {
-	glClear( GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
 
@@ -243,13 +243,13 @@ void initSystem() {
 	SDL_FreeSurface(icon);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glEnable( GL_COLOR_MATERIAL);
-	glEnable( GL_BLEND);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glEnable( GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 
-	glDisable( GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 
 	printf("Drawing splash screen...\n");
 
@@ -262,7 +262,7 @@ void initSystem() {
 	splash = new StaticObject(0, 0, tex->getWidth(), tex->getHeight(), tex,
 			true);
 
-	glClear( GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
 
@@ -300,7 +300,7 @@ void initSystem() {
 	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.5f);
 	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.00001f);
 
-	glEnable( GL_LINE_SMOOTH);
+	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
 	input = new InputHandler(config->PlayerInputBinding);
@@ -1586,12 +1586,12 @@ void handleBullets() {
 }
 
 void setGuiCameraMode() {
-	glMatrixMode( GL_PROJECTION);
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
 	glOrtho(0.0, config->Screen.Width, config->Screen.Height, 0.0, -10.0, 10.0);
 
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
 
@@ -1874,7 +1874,7 @@ void drawGame() {
 
 	cam->applyGLOrtho();
 
-	glEnable( GL_LIGHTING);
+	glEnable(GL_LIGHTING);
 
 	double tod = cos(gameState->Time / 180000.0);
 	gameState->TimeOfDay = abs((float) tod);
@@ -1897,7 +1897,7 @@ void drawGame() {
 	if (!gameState->Lost) {
 		GLfloat light_pos[] = { 0.0, 0.0, 1.0, 1.0 };
 		if (player->getLight()) {
-			glEnable( GL_LIGHT0);
+			glEnable(GL_LIGHT0);
 
 			glPushMatrix();
 			glTranslatef(player->TargetX, player->TargetY, 0.0f);
@@ -1905,7 +1905,7 @@ void drawGame() {
 			glPopMatrix();
 		}
 		if (player->NightVision) {
-			glEnable( GL_LIGHT1);
+			glEnable(GL_LIGHT1);
 
 			glPushMatrix();
 			glTranslatef(player->X, player->Y, 0.0f);
@@ -1950,9 +1950,9 @@ void drawGame() {
 
 	if (!gameState->Lost) {
 		if (player->getLight())
-			glDisable( GL_LIGHT0);
+			glDisable(GL_LIGHT0);
 		if (player->NightVision)
-			glDisable( GL_LIGHT1);
+			glDisable(GL_LIGHT1);
 	}
 
 	glDisable(GL_LIGHTING);
@@ -1961,7 +1961,7 @@ void drawGame() {
 		bullets[i]->draw();
 	}
 
-	glDisable( GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
 
 	if (!gameState->Lost) {
 		const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
@@ -1972,7 +1972,7 @@ void drawGame() {
 		const float maxLen = cam->getH() * 0.75f;
 		if (player->getLaser()) {
 			glLineWidth(0.5f);
-			glBegin( GL_LINES);
+			glBegin(GL_LINES);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
 			glVertex3f(wpnX, wpnY, 0);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
@@ -1981,7 +1981,7 @@ void drawGame() {
 			glEnd();
 		}
 		if (player->getLight()) {
-			glBegin( GL_TRIANGLES);
+			glBegin(GL_TRIANGLES);
 			glNormal3f(0.0f, 0.0f, 1.0f);
 			float flash = 1.0 - gameState->TimeOfDay;
 			if (flash > 0.3)
@@ -2066,7 +2066,7 @@ void runMainLoop() {
 		} else {
 			musicManager->play();
 
-			glClear( GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT);
 
 			cam->X = cam->Y = 0.0f;
 

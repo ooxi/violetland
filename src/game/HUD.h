@@ -5,6 +5,10 @@
 #include "GameState.h"
 #include "Resources.h"
 
+/*TODO: add to HUD a tool that will be able to show all
+ * remaining time of time-based bonuses (something like in crimsonland)
+ */
+
 class HUD {
 private:
 	VideoManager* m_videoManager;
