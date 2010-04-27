@@ -1598,7 +1598,7 @@ void setGuiCameraMode() {
 void drawHud() {
 	hud->draw(gameState, player->getHealth() / player->MaxHealth(),
 			(float) (player->Xp - player->LastLevelXp) / (player->NextLevelXp
-					- player->LastLevelXp), player->LevelPoints,
+					- player->LastLevelXp), player->Xp, player->LevelPoints,
 			player->getWeapon()->Ammo, player->Grenades);
 
 	char* buf;
