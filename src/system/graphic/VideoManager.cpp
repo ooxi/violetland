@@ -12,7 +12,7 @@ VideoManager::VideoManager(FileUtility* fileUtility) {
 	m_lastFrameTime = m_fpsCountingStart = SDL_GetTicks();
 	m_framesCount = 0;
 
-	// seems that this code is supported only in windows
+	// Seems that this code is supported only in windows.
 	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 }
@@ -55,11 +55,17 @@ bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 }
 
 std::vector<SDL_Rect> VideoManager::GetAvailableModes() {
+	/* This way is better than SDL_ListModes because of
+	 * SDL_ListModes returns not all possible modes
+	 */
+
+	// Number of possible modes
 	int wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1600, 1600, 1680,
 			1920, 1920 };
 	int hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 900, 1200, 1050,
 			1080, 1200 };
 
+	// If the mode is supported, it will be added to the return list
 	std::vector<SDL_Rect> modes;
 	for (unsigned int i = 0; i < getStructSize(wL); i++) {
 		if (isModeAvailable(wL[i], hL[i], 16, true, NULL)) {
@@ -90,6 +96,7 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 	cam->setH((int) (cam->getW() / aspect));
 	WK = (float) mode.Width / cam->getW();
 	HK = (float) mode.Height / cam->getH();
+	Scale = (float) mode.Width / 800;
 
 	if (screen == NULL) {
 		fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());

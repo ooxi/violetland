@@ -124,7 +124,7 @@ void createTerrain() {
 // r - distance from point of 0,0
 // lvl - level of monster
 void spawnEnemy(float r, int lvl) {
-	float spawnAngle = (rand() % 6300) / 1000.0;
+	float spawnAngle = (rand() % 6300) / 1000.0f;
 
 	Enemy* newMonster = monsterFactory->create(player->Level, lvl);
 
@@ -137,7 +137,7 @@ void spawnEnemy(float r, int lvl) {
 
 // The beginning of new game in a survival mode
 void startSurvival() {
-	glClear( GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
 
@@ -177,7 +177,7 @@ void startSurvival() {
 	SDL_ShowCursor(0);
 
 	for (unsigned int i = 0; i < config->MonstersAtStart; i++) {
-		spawnEnemy(cam->getW(), 1);
+		spawnEnemy((float) cam->getW(), 1);
 	}
 
 	windows["mainmenu"]->CloseFlag = true;
@@ -243,13 +243,13 @@ void initSystem() {
 	SDL_FreeSurface(icon);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glEnable( GL_COLOR_MATERIAL);
-	glEnable( GL_BLEND);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glEnable( GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 
-	glDisable( GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 
 	printf("Drawing splash screen...\n");
 
@@ -262,7 +262,7 @@ void initSystem() {
 	splash = new StaticObject(0, 0, tex->getWidth(), tex->getHeight(), tex,
 			true);
 
-	glClear( GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
 
@@ -300,7 +300,7 @@ void initSystem() {
 	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.5f);
 	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.00001f);
 
-	glEnable( GL_LINE_SMOOTH);
+	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
 	input = new InputHandler(config->PlayerInputBinding);
@@ -338,12 +338,13 @@ void switchGamePause() {
 }
 
 void refreshCharStatsWindow() {
-	const int l = config->Screen.Width * 0.1f;
-	const int r = config->Screen.Width * 0.6f;
+	const int l = (int) (config->Screen.Width * 0.1f);
+	const int r = (int) (config->Screen.Width * 0.6f);
 
 	Window* charStats = windows.find("charstats")->second;
 
 	char *buf;
+	//TODO: what is sprintf_s?
 	sprintf(buf = new char[100], "Current player level: %i",
 			(int) ((player->Level)));
 	charStats->addElement("level", videoManager->RegularText->getObject(buf, l,
@@ -714,16 +715,16 @@ void refreshOptionsWindow() {
 	delete[] buf;
 	w->addElement("+resolution", resInfo);
 
-	float snd = config->SoundVolume * 10;
-	sprintf(buf = new char[30], "%.0f%%", snd);
+	int snd = config->SoundVolume * 10;
+	sprintf(buf = new char[30], "%.0i%%", snd);
 	TextObject* sndInd = videoManager->RegularText->getObject(buf, l,
 			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
 	delete[] buf;
 	w->addElement("+soundvolume", sndInd);
 
-	float mus = config->MusicVolume * 10;
-	sprintf(buf = new char[30], "%.0f%%", mus);
+	int mus = config->MusicVolume * 10;
+	sprintf(buf = new char[30], "%.0i%%", mus);
 	TextObject * musInd = videoManager->RegularText->getObject(buf, l,
 			videoManager->RegularText->getHeight() * 14.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
@@ -1005,15 +1006,16 @@ void createHelpWindow() {
 
 void handleCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
-		if (gameState->Begun && !gameState->Lost && windows.count("charstats")
-				== 0) {
-			clearMap<std::string, Window*> (&windows);
+		if (windows.count("charstats") == 0) {
+			if (gameState->Begun && !gameState->Lost) { // it is possible to remove second check to show charstats window after player death
+				clearMap<std::string, Window*> (&windows);
 
-			createCharStatWindow();
-			refreshCharStatsWindow();
+				createCharStatWindow();
+				refreshCharStatsWindow();
 
-			if (!gameState->Paused)
-				switchGamePause();
+				if (!gameState->Paused)
+					switchGamePause();
+			}
 		} else {
 			Window* w = windows.find("charstats")->second;
 			w->CloseFlag = true;
@@ -1175,18 +1177,15 @@ void handleMonster(LifeForm* lf) {
 
 	if (player->State == LifeForm::alive && player->detectCollide(enemy)) {
 		if (enemy->Attack()) {
-			if (rand() % 100 > player->ChanceToEvade() * 100) {
-				player->hit();
-				player->setHealth(player->getHealth() - enemy->Damage());
-				player->setMask(1.0f, 0.0f, 0.0f, 1.0f);
-			}
+			if (rand() % 100 > player->ChanceToEvade() * 100)
+				player->hit(enemy->Damage(), false, 0, 0);
 
 			if (!player->Unstoppable)
 				player->Speed = 0.0f;
 		}
 
 		if (player->Attack() && rand() % 100 > enemy->ChanceToEvade() * 100)
-			enemy->setHealth(player->getHealth() - player->Damage());
+			enemy->hit(player->Damage(), false, player->X, player->Y);
 
 		enemy->X = x;
 		enemy->Y = y;
@@ -1242,31 +1241,30 @@ void handlePlayer(LifeForm* lf) {
 	lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW() + cam->X;
 	lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH() + cam->Y;
 
-	if (input->getDownInput(InputHandler::Fire)) {
-		if (player->fireingMode == 0) {
-
-			std::vector<Bullet*> *newBullets = player->fire();
-			if (!newBullets->empty()) {
-				bullets.insert(bullets.end(), newBullets->begin(),
-						newBullets->end());
-				delete newBullets;
-			}
-			if (player->getWeapon()->Ammo == 0 && config->AutoReload)
-				player->reload();
-		} else if (player->fireingMode == 1) {
-			/* TODO: Add some animation (may be using explosion)
-			 * at point where player has placed before teleportation
-			 */
-			player->teleport();
-
-			/*TODO: May use enum for fireingMode (or actionMode)?
-			 * Action mode can be "speak" or "use" for some elements of game.
-			 */
-			player->fireingMode = 0;
-			player->setMask(0.0f, 1.0f, 1.0f, 1.0f);
-			delete aim;
-			aim = new Aim(config);
+	if (player->ActionMode == 0 && input->getDownInput(InputHandler::Fire)) {
+		std::vector<Bullet*> *newBullets = player->fire();
+		if (!newBullets->empty()) {
+			bullets.insert(bullets.end(), newBullets->begin(),
+					newBullets->end());
+			delete newBullets;
 		}
+		if (player->getWeapon()->Ammo == 0 && config->AutoReload)
+			player->reload();
+	}
+
+	if (player->ActionMode == 1 && input->getPressInput(InputHandler::Fire)) {
+		/* TODO: Add some animation (may be using explosion)
+		 * at point where player has placed before teleportation
+		 */
+		player->teleport();
+
+		/*TODO: May use enum for ActionMode?
+		 * Action mode can be "speak" or "use" for some elements of game.
+		 */
+		player->ActionMode = 0;
+		player->setMask(0.0f, 1.0f, 1.0f, 1.0f);
+		delete aim;
+		aim = new Aim(config);
 	}
 
 	if (input->getPressInput(InputHandler::ToggleLight))
@@ -1279,12 +1277,12 @@ void handlePlayer(LifeForm* lf) {
 		player->reload();
 
 	if (input->getPressInput(InputHandler::Teleport)) {
-		if (player->fireingMode != 1 && player->Teleports > 0) {
-			player->fireingMode = 1;
+		if (player->ActionMode != 1 && player->Teleports > 0) {
+			player->ActionMode = 1;
 			delete aim;
 			aim = new Aim(0.0f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f);
-		} else if (player->fireingMode == 1) {
-			player->fireingMode = 0;
+		} else if (player->ActionMode == 1) {
+			player->ActionMode = 0;
 			delete aim;
 			aim = new Aim(config);
 		}
@@ -1409,10 +1407,11 @@ void dropPowerup(float x, float y) {
 		wpnDropChance = 0;
 	if (rand() % 1000 >= wpnDropChance) {
 		int weaponIndex;
-		if (true) // TODO: Allow PM drop?
+		if (true) // TODO: "Allow PM drop" to options. true for allow.
 			weaponIndex = (rand() % weaponManager->Weapons.size());
 		else
 			weaponIndex = (rand() % weaponManager->Weapons.size() - 1);
+
 		newPowerup = new Powerup(x, y,
 				weaponManager->Weapons[weaponIndex]->getDroppedTex());
 		newPowerup->Type = Powerup::weapon;
@@ -1555,7 +1554,8 @@ void handleBullets() {
 
 						if (!bypassDirectDamage) {
 							float damageLoss = enemy->getHealth();
-							enemy->hit(bullets[i], player->X, player->Y);
+							enemy->hit(bullets[i]->Damage,
+									bullets[i]->Poisoned, player->X, player->Y);
 
 							if (bullets[i]->BigCalibre
 									&& !bullets[i]->Penetrating) {
@@ -1586,19 +1586,19 @@ void handleBullets() {
 }
 
 void setGuiCameraMode() {
-	glMatrixMode( GL_PROJECTION);
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
 	glOrtho(0.0, config->Screen.Width, config->Screen.Height, 0.0, -10.0, 10.0);
 
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
 
 void drawHud() {
 	hud->draw(gameState, player->getHealth() / player->MaxHealth(),
 			(float) (player->Xp - player->LastLevelXp) / (player->NextLevelXp
-					- player->LastLevelXp), player->LevelPoints,
+					- player->LastLevelXp), player->Xp, player->LevelPoints,
 			player->getWeapon()->Ammo, player->Grenades);
 
 	char* buf;
@@ -1874,7 +1874,7 @@ void drawGame() {
 
 	cam->applyGLOrtho();
 
-	glEnable( GL_LIGHTING);
+	glEnable(GL_LIGHTING);
 
 	double tod = cos(gameState->Time / 180000.0);
 	gameState->TimeOfDay = abs((float) tod);
@@ -1897,7 +1897,7 @@ void drawGame() {
 	if (!gameState->Lost) {
 		GLfloat light_pos[] = { 0.0, 0.0, 1.0, 1.0 };
 		if (player->getLight()) {
-			glEnable( GL_LIGHT0);
+			glEnable(GL_LIGHT0);
 
 			glPushMatrix();
 			glTranslatef(player->TargetX, player->TargetY, 0.0f);
@@ -1905,7 +1905,7 @@ void drawGame() {
 			glPopMatrix();
 		}
 		if (player->NightVision) {
-			glEnable( GL_LIGHT1);
+			glEnable(GL_LIGHT1);
 
 			glPushMatrix();
 			glTranslatef(player->X, player->Y, 0.0f);
@@ -1950,9 +1950,9 @@ void drawGame() {
 
 	if (!gameState->Lost) {
 		if (player->getLight())
-			glDisable( GL_LIGHT0);
+			glDisable(GL_LIGHT0);
 		if (player->NightVision)
-			glDisable( GL_LIGHT1);
+			glDisable(GL_LIGHT1);
 	}
 
 	glDisable(GL_LIGHTING);
@@ -1961,7 +1961,7 @@ void drawGame() {
 		bullets[i]->draw();
 	}
 
-	glDisable( GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
 
 	if (!gameState->Lost) {
 		const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
@@ -1972,7 +1972,7 @@ void drawGame() {
 		const float maxLen = cam->getH() * 0.75f;
 		if (player->getLaser()) {
 			glLineWidth(0.5f);
-			glBegin( GL_LINES);
+			glBegin(GL_LINES);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
 			glVertex3f(wpnX, wpnY, 0);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
@@ -1981,7 +1981,7 @@ void drawGame() {
 			glEnd();
 		}
 		if (player->getLight()) {
-			glBegin( GL_TRIANGLES);
+			glBegin(GL_TRIANGLES);
 			glNormal3f(0.0f, 0.0f, 1.0f);
 			float flash = 1.0 - gameState->TimeOfDay;
 			if (flash > 0.3)
@@ -2066,7 +2066,7 @@ void runMainLoop() {
 		} else {
 			musicManager->play();
 
-			glClear( GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT);
 
 			cam->X = cam->Y = 0.0f;
 

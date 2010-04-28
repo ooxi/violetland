@@ -20,6 +20,7 @@ public:
 	LifeForm(float x, float y, int w, int h);
 	virtual void process(int deltaTime);
 	virtual void draw();
+	virtual void hit(float damage, bool poison, float pX, float pY);
 
 	std::string Id;
 	std::string Name;

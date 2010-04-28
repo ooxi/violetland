@@ -15,7 +15,7 @@ HelpWindow::HelpWindow(Configuration* config, TextManager* text) :
 			* 8, TextManager::LEFT, TextManager::MIDDLE));
 	addElement("label6", text->getObject("Move right: D", l, text->getHeight()
 			* 9, TextManager::LEFT, TextManager::MIDDLE));
-	addElement("label7", text->getObject("Fire: Left mouse button", l,
+	addElement("label7", text->getObject("Fire/teleport: Left mouse button", l,
 			text->getHeight() * 10, TextManager::LEFT, TextManager::MIDDLE));
 	addElement("label8", text->getObject("Reload: Right mouse button", l,
 			text->getHeight() * 11, TextManager::LEFT, TextManager::MIDDLE));
@@ -23,14 +23,16 @@ HelpWindow::HelpWindow(Configuration* config, TextManager* text) :
 			text->getHeight() * 12, TextManager::LEFT, TextManager::MIDDLE));
 	addElement("label14", text->getObject("Throw grenade: SPACE", l,
 			text->getHeight() * 13, TextManager::LEFT, TextManager::MIDDLE));
-	addElement("label9", text->getObject("Toggle flashlight: F", l,
+	addElement("label15", text->getObject("Toggle fire/teleport mode: Q", l,
 			text->getHeight() * 14, TextManager::LEFT, TextManager::MIDDLE));
-	addElement("label10", text->getObject("Toggle laser aim: G", l,
+	addElement("label9", text->getObject("Toggle flashlight: F", l,
 			text->getHeight() * 15, TextManager::LEFT, TextManager::MIDDLE));
-	addElement("label13", text->getObject("Open player char stats: C", l,
+	addElement("label10", text->getObject("Toggle laser aim: G", l,
 			text->getHeight() * 16, TextManager::LEFT, TextManager::MIDDLE));
-	addElement("label12", text->getObject("Main menu: Esc", l,
+	addElement("label13", text->getObject("Open player char stats: C", l,
 			text->getHeight() * 17, TextManager::LEFT, TextManager::MIDDLE));
+	addElement("label12", text->getObject("Main menu: Esc", l,
+			text->getHeight() * 18, TextManager::LEFT, TextManager::MIDDLE));
 }
 
 HelpWindow::~HelpWindow() {

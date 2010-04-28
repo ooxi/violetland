@@ -61,18 +61,18 @@ void Enemy::rollFrame(bool forward) {
 	m_body->rollFrame(forward);
 }
 
-void Enemy::hit(Bullet* bullet, float pX, float pY) {
+void Enemy::hit(float damage, bool poison, float pX, float pY) {
+	LifeForm::hit(damage, poison, pX, pY);
 	if (!Base->HitSounds.empty()) {
 		int s = rand() % (int) Base->HitSounds.size();
 		Base->HitSounds[s]->play(7, 0, 0);
 		Base->HitSounds[s]->setPos(Object::calculateAngle(pX, pY, X, Y),
 				Object::calculateDistance(pX, pY, X, Y));
 	}
-	m_bleedCount += bullet->Damage * 5;
-	setHealth(getHealth() - bullet->Damage);
-	Poisoned = bullet->Poisoned || Poisoned;
+	m_bleedCount += damage * 5;
+	Poisoned = poison || Poisoned;
 	Angry = true;
-	Angle += ((rand() % 50) - 25) * bullet->Damage;
+	Angle += ((rand() % 50) - 25) * damage;
 }
 
 bool Enemy::isBleeding() {
@@ -94,9 +94,7 @@ void Enemy::process(int deltaTime) {
 	if (State == LifeForm::dying) {
 		if (m_body->Frame == m_body->AnimSprite->getFramesCount() - 1)
 			State = LifeForm::died;
-	}
 
-	if (State == LifeForm::dying) {
 		m_body->rollFrame(true);
 	}
 
