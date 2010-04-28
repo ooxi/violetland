@@ -1244,31 +1244,30 @@ void handlePlayer(LifeForm* lf) {
 	lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW() + cam->X;
 	lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH() + cam->Y;
 
-	if (input->getDownInput(InputHandler::Fire)) {
-		if (player->fireingMode == 0) {
-
-			std::vector<Bullet*> *newBullets = player->fire();
-			if (!newBullets->empty()) {
-				bullets.insert(bullets.end(), newBullets->begin(),
-						newBullets->end());
-				delete newBullets;
-			}
-			if (player->getWeapon()->Ammo == 0 && config->AutoReload)
-				player->reload();
-		} else if (player->fireingMode == 1) {
-			/* TODO: Add some animation (may be using explosion)
-			 * at point where player has placed before teleportation
-			 */
-			player->teleport();
-
-			/*TODO: May use enum for fireingMode (or actionMode)?
-			 * Action mode can be "speak" or "use" for some elements of game.
-			 */
-			player->fireingMode = 0;
-			player->setMask(0.0f, 1.0f, 1.0f, 1.0f);
-			delete aim;
-			aim = new Aim(config);
+	if (player->ActionMode == 0 && input->getDownInput(InputHandler::Fire)) {
+		std::vector<Bullet*> *newBullets = player->fire();
+		if (!newBullets->empty()) {
+			bullets.insert(bullets.end(), newBullets->begin(),
+					newBullets->end());
+			delete newBullets;
 		}
+		if (player->getWeapon()->Ammo == 0 && config->AutoReload)
+			player->reload();
+	}
+
+	if (player->ActionMode == 1 && input->getPressInput(InputHandler::Fire)) {
+		/* TODO: Add some animation (may be using explosion)
+		 * at point where player has placed before teleportation
+		 */
+		player->teleport();
+
+		/*TODO: May use enum for ActionMode?
+		 * Action mode can be "speak" or "use" for some elements of game.
+		 */
+		player->ActionMode = 0;
+		player->setMask(0.0f, 1.0f, 1.0f, 1.0f);
+		delete aim;
+		aim = new Aim(config);
 	}
 
 	if (input->getPressInput(InputHandler::ToggleLight))
@@ -1281,12 +1280,12 @@ void handlePlayer(LifeForm* lf) {
 		player->reload();
 
 	if (input->getPressInput(InputHandler::Teleport)) {
-		if (player->fireingMode != 1 && player->Teleports > 0) {
-			player->fireingMode = 1;
+		if (player->ActionMode != 1 && player->Teleports > 0) {
+			player->ActionMode = 1;
 			delete aim;
 			aim = new Aim(0.0f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f);
-		} else if (player->fireingMode == 1) {
-			player->fireingMode = 0;
+		} else if (player->ActionMode == 1) {
+			player->ActionMode = 0;
 			delete aim;
 			aim = new Aim(config);
 		}

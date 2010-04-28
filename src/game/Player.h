@@ -64,7 +64,7 @@ public:
 	void teleport();
 	void fadeColor(int deltaTime);
 	bool Empty;
-	int fireingMode;
+	int ActionMode;
 };
 
 #endif /* PLAYER_H_ */

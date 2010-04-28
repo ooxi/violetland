@@ -12,7 +12,7 @@ Player::Player() :
 	NextLevelXp = 100;
 	Kills = 0;
 	LevelPoints = 0;
-	fireingMode = 0;
+	ActionMode = 0;
 	AccuracyDeviation = 0.0f;
 	Grenades = 2;
 	Teleports = 1;
