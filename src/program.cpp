@@ -124,7 +124,7 @@ void createTerrain() {
 // r - distance from point of 0,0
 // lvl - level of monster
 void spawnEnemy(float r, int lvl) {
-	float spawnAngle = (rand() % 6300) / 1000.0;
+	float spawnAngle = (rand() % 6300) / 1000.0f;
 
 	Enemy* newMonster = monsterFactory->create(player->Level, lvl);
 
@@ -177,7 +177,7 @@ void startSurvival() {
 	SDL_ShowCursor(0);
 
 	for (unsigned int i = 0; i < config->MonstersAtStart; i++) {
-		spawnEnemy(cam->getW(), 1);
+		spawnEnemy((float) cam->getW(), 1);
 	}
 
 	windows["mainmenu"]->CloseFlag = true;
@@ -338,12 +338,13 @@ void switchGamePause() {
 }
 
 void refreshCharStatsWindow() {
-	const int l = config->Screen.Width * 0.1f;
-	const int r = config->Screen.Width * 0.6f;
+	const int l = (int) (config->Screen.Width * 0.1f);
+	const int r = (int) (config->Screen.Width * 0.6f);
 
 	Window* charStats = windows.find("charstats")->second;
 
 	char *buf;
+	//TODO: what is sprintf_s?
 	sprintf(buf = new char[100], "Current player level: %i",
 			(int) ((player->Level)));
 	charStats->addElement("level", videoManager->RegularText->getObject(buf, l,
@@ -714,16 +715,16 @@ void refreshOptionsWindow() {
 	delete[] buf;
 	w->addElement("+resolution", resInfo);
 
-	float snd = config->SoundVolume * 10;
-	sprintf(buf = new char[30], "%.0f%%", snd);
+	int snd = config->SoundVolume * 10;
+	sprintf(buf = new char[30], "%.0i%%", snd);
 	TextObject* sndInd = videoManager->RegularText->getObject(buf, l,
 			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
 	delete[] buf;
 	w->addElement("+soundvolume", sndInd);
 
-	float mus = config->MusicVolume * 10;
-	sprintf(buf = new char[30], "%.0f%%", mus);
+	int mus = config->MusicVolume * 10;
+	sprintf(buf = new char[30], "%.0i%%", mus);
 	TextObject * musInd = videoManager->RegularText->getObject(buf, l,
 			videoManager->RegularText->getHeight() * 14.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
@@ -1005,15 +1006,16 @@ void createHelpWindow() {
 
 void handleCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
-		if (gameState->Begun && !gameState->Lost && windows.count("charstats")
-				== 0) {
-			clearMap<std::string, Window*> (&windows);
+		if (windows.count("charstats") == 0) {
+			if (gameState->Begun && !gameState->Lost) { // it is possible to remove second check to show charstats window after player death
+				clearMap<std::string, Window*> (&windows);
 
-			createCharStatWindow();
-			refreshCharStatsWindow();
+				createCharStatWindow();
+				refreshCharStatsWindow();
 
-			if (!gameState->Paused)
-				switchGamePause();
+				if (!gameState->Paused)
+					switchGamePause();
+			}
 		} else {
 			Window* w = windows.find("charstats")->second;
 			w->CloseFlag = true;
@@ -1409,10 +1411,11 @@ void dropPowerup(float x, float y) {
 		wpnDropChance = 0;
 	if (rand() % 1000 >= wpnDropChance) {
 		int weaponIndex;
-		if (true) // TODO: Allow PM drop?
+		if (true) // TODO: "Allow PM drop" to options. true for allow.
 			weaponIndex = (rand() % weaponManager->Weapons.size());
 		else
 			weaponIndex = (rand() % weaponManager->Weapons.size() - 1);
+
 		newPowerup = new Powerup(x, y,
 				weaponManager->Weapons[weaponIndex]->getDroppedTex());
 		newPowerup->Type = Powerup::weapon;

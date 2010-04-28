@@ -3,6 +3,20 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.2.10]
+
+[+] new perk "night vision"
+[+] new bonus "nuke"
+[+] new bonus "strength boost"
+[+] new bonus "agility boost"
+[+] new bonus "vitality boost"
+[+] new bonus "teleport" and a possibility to switch action mode (fire/teleport)
+[+] possibility to change some input binding (now in test mode, see comment for the commit r198)
+[*] new HUD (Head-Up Display)
+[!] fixed issue 32 (pressing C when the player is dead will crash the game)
+[!] fixed issues 29 and 33 (problems with adding of new weapons)
+
+
 [0.2.9]
 
 [+] new bonus "penetration bullets"
