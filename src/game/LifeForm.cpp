@@ -36,6 +36,10 @@ void LifeForm::draw() {
 	// nothing
 }
 
+void LifeForm::hit(float damage, bool poison, float pX, float pY) {
+	setHealth(getHealth() - damage);
+}
+
 void LifeForm::process(int deltaTime) {
 	if (Frozen > 0) {
 		Frozen -= deltaTime;
@@ -59,14 +63,14 @@ StaticObject* LifeForm::getCorpse() {
 	return NULL;
 }
 
-float LifeForm::getStrength(){
+float LifeForm::getStrength() {
 	return Strength;
 }
-float LifeForm::getAgility(){
+float LifeForm::getAgility() {
 	return Agility;
 }
 
-float LifeForm::getVitality(){
+float LifeForm::getVitality() {
 	return Vitality;
 }
 const float LifeForm::MaxHealth() {

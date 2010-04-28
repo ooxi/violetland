@@ -1177,18 +1177,15 @@ void handleMonster(LifeForm* lf) {
 
 	if (player->State == LifeForm::alive && player->detectCollide(enemy)) {
 		if (enemy->Attack()) {
-			if (rand() % 100 > player->ChanceToEvade() * 100) {
-				player->hit();
-				player->setHealth(player->getHealth() - enemy->Damage());
-				player->setMask(1.0f, 0.0f, 0.0f, 1.0f);
-			}
+			if (rand() % 100 > player->ChanceToEvade() * 100)
+				player->hit(enemy->Damage(), false, 0, 0);
 
 			if (!player->Unstoppable)
 				player->Speed = 0.0f;
 		}
 
 		if (player->Attack() && rand() % 100 > enemy->ChanceToEvade() * 100)
-			enemy->setHealth(player->getHealth() - player->Damage());
+			enemy->hit(player->Damage(), false, player->X, player->Y);
 
 		enemy->X = x;
 		enemy->Y = y;
@@ -1557,7 +1554,8 @@ void handleBullets() {
 
 						if (!bypassDirectDamage) {
 							float damageLoss = enemy->getHealth();
-							enemy->hit(bullets[i], player->X, player->Y);
+							enemy->hit(bullets[i]->Damage,
+									bullets[i]->Poisoned, player->X, player->Y);
 
 							if (bullets[i]->BigCalibre
 									&& !bullets[i]->Penetrating) {

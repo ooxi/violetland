@@ -16,15 +16,23 @@ private:
 	bool m_light, m_laser;
 	int m_hitSndPlaying;
 	void processBonus(int deltaTime);
+    void processState();
+    void processArms(int deltaTime);
 public:
 	Player();
 	Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
 			std::vector<Sound*> hitSounds, Sound* dyingSound);
-    enum bonusType {
-        FIRSTBONUS = 0, PENBULLETS = FIRSTBONUS, VITALITYROIDS,AGILITYROIDS,STRENGTHROIDS,BONUSCOUNT
+	enum bonusType {
+		FIRSTBONUS = 0,
+		PENBULLETS = FIRSTBONUS,
+		VITALITYROIDS,
+		AGILITYROIDS,
+		STRENGTHROIDS,
+		BONUSCOUNT
 	};
 	virtual void process(int deltaTime);
 	virtual void draw();
+	virtual void hit(float damage, bool poison, float pX, float pY);
 
 	void hit();
 	void move(char movementX, char movementY, int deltaTime);
