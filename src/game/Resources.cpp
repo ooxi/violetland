@@ -80,21 +80,9 @@ Resources::~Resources() {
 	delete PlayerDeathSound;
 	delete PlayerWalkSprite;
 	delete GrenadeSprite;
-	for (unsigned int i = 0; i < BloodTex.size(); i++) {
-		delete BloodTex[i];
-	}
-	BloodTex.clear();
-	std::map<Powerup::PowerupType, Texture*>::const_iterator iter;
-	for (iter = PowerupTex.begin(); iter != PowerupTex.end(); ++iter) {
-		delete iter->second;
-	}
-	PowerupTex.clear();
-	for (unsigned int i = 0; i < PlayerHitSounds.size(); i++) {
-		delete PlayerHitSounds[i];
-	}
-	PlayerHitSounds.clear();
-	for (unsigned int i = 0; i < PlayerDeathSprites.size(); i++) {
-		delete PlayerDeathSprites[i];
-	}
-	PlayerDeathSprites.clear();
+
+	clearVector<Texture*>(&BloodTex);
+	clearVector<Sound*>(&PlayerHitSounds);
+	clearVector<Sprite*>(&PlayerDeathSprites);
+	clearMap<Powerup::PowerupType, Texture*>(&PowerupTex);
 }

@@ -28,6 +28,7 @@ public:
 		VITALITYROIDS,
 		AGILITYROIDS,
 		STRENGTHROIDS,
+		FREEZE,
 		BONUSCOUNT
 	};
 	virtual void process(int deltaTime);

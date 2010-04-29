@@ -715,16 +715,16 @@ void refreshOptionsWindow() {
 	delete[] buf;
 	w->addElement("+resolution", resInfo);
 
-	int snd = config->SoundVolume * 10;
-	sprintf(buf = new char[30], "%.0i%%", snd);
+	float snd = (float) config->SoundVolume * 10;
+	sprintf(buf = new char[30], "%.0f%%", snd);
 	TextObject* sndInd = videoManager->RegularText->getObject(buf, l,
 			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
 	delete[] buf;
 	w->addElement("+soundvolume", sndInd);
 
-	int mus = config->MusicVolume * 10;
-	sprintf(buf = new char[30], "%.0i%%", mus);
+	float mus = (float) config->MusicVolume * 10;
+	sprintf(buf = new char[30], "%.0f%%", mus);
 	TextObject * musInd = videoManager->RegularText->getObject(buf, l,
 			videoManager->RegularText->getHeight() * 14.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
@@ -1596,10 +1596,7 @@ void setGuiCameraMode() {
 }
 
 void drawHud() {
-	hud->draw(gameState, player->getHealth() / player->MaxHealth(),
-			(float) (player->Xp - player->LastLevelXp) / (player->NextLevelXp
-					- player->LastLevelXp), player->Xp, player->LevelPoints,
-			player->getWeapon()->Ammo, player->Grenades);
+	hud->draw(gameState, player);
 
 	char* buf;
 	sprintf(buf = new char[30], "%s: %d/%d", player->getWeapon()->Name.c_str(),
@@ -1622,7 +1619,7 @@ void drawHud() {
 	videoManager->RegularText->draw(buf,
 			videoManager->RegularText->getIndent(),
 			videoManager->RegularText->getIndent()
-					+ (videoManager->RegularText->getHeight()) * 2,
+					+ videoManager->RegularText->getHeight() * 2,
 			TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
 
@@ -1706,10 +1703,10 @@ void handlePowerups() {
 						powerups[i]->Y, player->X, player->Y);
 				powerups[i]->X -= cos((a + 90) * M_PI / 180)
 						* videoManager->getFrameDeltaTime()
-						* player->MaxSpeed();
+						* player->MaxSpeed() * 2;
 				powerups[i]->Y -= sin((a + 90) * M_PI / 180)
 						* videoManager->getFrameDeltaTime()
-						* player->MaxSpeed();
+						* player->MaxSpeed() * 2;
 			}
 		}
 
@@ -1736,6 +1733,8 @@ void handlePowerups() {
 						continue;
 					lf->Frozen = *(int*) powerups[i]->Object;
 				}
+				player->bonusTimes[Player::FREEZE]
+						= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}

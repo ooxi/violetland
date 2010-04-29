@@ -26,6 +26,7 @@ Player::Player() :
 
 	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision
 			= false;
+
 	for (int i = FIRSTBONUS; i < BONUSCOUNT; i++)
 		bonusTimes[i] = 0;
 }

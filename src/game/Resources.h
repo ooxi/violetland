@@ -3,6 +3,7 @@
 
 #include "../system/graphic/Sprite.h"
 #include "../system/sound/SoundManager.h"
+#include "../system/utility/Templates.h"
 #include "Powerup.h"
 
 class Resources {

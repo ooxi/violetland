@@ -2,8 +2,23 @@
 
 HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
-	m_resources = resources;
 	VideoMode videoMode = m_videoManager->getVideoMode();
+
+	m_resources = resources;
+	m_bonusImg.insert(std::map<Player::bonusType, StaticObject*>::value_type(
+		Player::PENBULLETS, new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[Powerup::penBullets], false)));
+	m_bonusImg.insert(std::map<Player::bonusType, StaticObject*>::value_type(
+		Player::AGILITYROIDS, new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[Powerup::agilityRoids], false)));
+	m_bonusImg[Player::AGILITYROIDS]->RMask = m_bonusImg[Player::AGILITYROIDS]->GMask = 0.2f;
+	m_bonusImg.insert(std::map<Player::bonusType, StaticObject*>::value_type(
+		Player::VITALITYROIDS, new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[Powerup::vitalityRoids], false)));
+	m_bonusImg[Player::VITALITYROIDS]->RMask = m_bonusImg[Player::VITALITYROIDS]->BMask = 0.2f;
+	m_bonusImg.insert(std::map<Player::bonusType, StaticObject*>::value_type(
+		Player::STRENGTHROIDS, new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[Powerup::strengthRoids], false)));
+	m_bonusImg[Player::STRENGTHROIDS]->GMask = m_bonusImg[Player::STRENGTHROIDS]->BMask = 0.2f;
+	m_bonusImg.insert(std::map<Player::bonusType, StaticObject*>::value_type(
+		Player::FREEZE, new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[Powerup::freeze], false)));	
+	
 	m_bounce = 0;
 	reset();
 }
@@ -56,7 +71,7 @@ void HUD::drawMessages() {
 }
 
 void HUD::drawExperience(float experience, int levelPoints) {
-	int m_bottomBasePoint = m_videoManager->getVideoMode().Height
+	int bottomBasePoint = m_videoManager->getVideoMode().Height
 			- m_videoManager->RegularText->getIndent();
 
 	VideoMode screen = m_videoManager->getVideoMode();
@@ -66,7 +81,7 @@ void HUD::drawExperience(float experience, int levelPoints) {
 
 	const int indX = screen.Width - screen.Width / 24;
 	m_resources->LevelUpIndicator->X = indX;
-	m_resources->LevelUpIndicator->Y = m_bottomBasePoint;
+	m_resources->LevelUpIndicator->Y = bottomBasePoint;
 
 	m_resources->LevelUpIndicator->draw(false, false);
 
@@ -74,7 +89,7 @@ void HUD::drawExperience(float experience, int levelPoints) {
 	GLfloat fcolor1[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 	GLfloat fcolor2[] = { 0.0f, 1.0f, 1.0f, 1.0f };
 
-	drawBar(barLeft, m_bottomBasePoint, barLen, barHeight, experience, bcolor,
+	drawBar(barLeft, bottomBasePoint, barLen, barHeight, experience, bcolor,
 			fcolor1, fcolor2);
 }
 
@@ -112,8 +127,37 @@ void HUD::drawBar(int x, int y, int width, int height, float value,
 	glEnable(GL_TEXTURE_2D);
 }
 
+void HUD::drawBonusStack(int* bonusTimes)
+{
+	int topBasePoint = m_videoManager->RegularText->getIndent()
+					+ (m_videoManager->RegularText->getHeight()) * 4;
+
+	VideoMode screen = m_videoManager->getVideoMode();
+	const int barLeft = screen.Width / 25;
+	const int barLen = screen.Width / 15;
+	const int barHeight = m_videoManager->RegularText->getHeight() / 10;
+
+	GLfloat bcolor[] = { 1.0f, 1.0f, 1.0f, 0.0f };
+	GLfloat fcolor1[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat fcolor2[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	const float baseScale = m_videoManager->Scale * 0.2;
+
+	int bonusN = 0;
+	for (int i = Player::FIRSTBONUS; i < Player::BONUSCOUNT; i++)
+	{
+		if (bonusTimes[i] > 0)
+		{
+			const int y = topBasePoint + bonusN * 132 * baseScale;
+			m_bonusImg[(Player::bonusType) i]->draw(false, false, barLeft, y, 0, baseScale);
+			drawBar(barLeft + 25 * m_videoManager->Scale, y, barLen, barHeight, bonusTimes[i] / 15000.0f, bcolor, fcolor1, fcolor2);
+			bonusN++;
+		}
+	}
+}
+
 void HUD::drawHealth(float health) {
-	int m_bottomBasePoint = m_videoManager->getVideoMode().Height
+	int bottomBasePoint = m_videoManager->getVideoMode().Height
 			- m_videoManager->RegularText->getIndent();
 
 	VideoMode screen = m_videoManager->getVideoMode();
@@ -123,7 +167,7 @@ void HUD::drawHealth(float health) {
 
 	const int indX = screen.Width / 24;
 	m_resources->HealthIndicator->X = indX;
-	m_resources->HealthIndicator->Y = m_bottomBasePoint;
+	m_resources->HealthIndicator->Y = bottomBasePoint;
 
 	m_resources->HealthIndicator->draw(false, false);
 
@@ -131,12 +175,12 @@ void HUD::drawHealth(float health) {
 	GLfloat fcolor1[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 	GLfloat fcolor2[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
-	drawBar(barLeft, m_bottomBasePoint, barLen, barHeight, health, bcolor,
+	drawBar(barLeft, bottomBasePoint, barLen, barHeight, health, bcolor,
 			fcolor1, fcolor2);
 }
 
 void HUD::drawTime(GameState* gameState) {
-	int m_bottomBasePoint = m_videoManager->getVideoMode().Height
+	int bottomBasePoint = m_videoManager->getVideoMode().Height
 			- m_videoManager->RegularText->getIndent();
 
 	const int minutes = gameState->Time / 60000;
@@ -145,21 +189,26 @@ void HUD::drawTime(GameState* gameState) {
 	char *buf;
 	sprintf(buf = new char[20], "%02d:%02d", minutes, seconds);
 	m_videoManager->RegularText->draw(buf, m_videoManager->getVideoMode().Width
-			/ 2, m_bottomBasePoint, TextManager::CENTER, TextManager::MIDDLE);
+			/ 2, bottomBasePoint, TextManager::CENTER, TextManager::MIDDLE);
 	delete[] buf;
 }
 
-void HUD::draw(GameState* gameState, float health, float experience,
-		int totalExperience, int levelPoints, int ammo, int grenades) {
+void HUD::draw(GameState* gameState, Player* player) {
+	float health = player->getHealth() / player->MaxHealth();
+	float experience = (float) (player->Xp - player->LastLevelXp) / (player->NextLevelXp
+		- player->LastLevelXp);
+
 	VideoMode screen = m_videoManager->getVideoMode();
 
 	drawMessages();
 	drawTime(gameState);
 
-	applyEffects(health, levelPoints);
+	applyEffects(health, player->LevelPoints);
 
 	drawHealth(health);
-	drawExperience(experience, levelPoints);
+	drawExperience(experience, player->LevelPoints);
+
+	drawBonusStack(player->bonusTimes);
 
 	if (gameState->Lost && !gameState->Paused) {
 		int y = screen.Height / 4;
@@ -167,7 +216,7 @@ void HUD::draw(GameState* gameState, float health, float experience,
 				/ 2, y, TextManager::CENTER, TextManager::MIDDLE);
 		char* buf;
 		sprintf(buf = new char[30], "You have earned %i points.",
-				totalExperience);
+			player->Xp);
 		m_videoManager->RegularText->draw(buf, screen.Width / 2, y
 				+ m_videoManager->RegularText->getHeight(),
 				TextManager::CENTER, TextManager::MIDDLE);
@@ -188,6 +237,7 @@ void HUD::reset() {
 	clearVector<TextObject*> (&m_messages);
 }
 
-HUD::~HUD() {
+HUD::~HUD() {	
 	reset();
+	clearMap<Player::bonusType, StaticObject*>(&m_bonusImg);
 }
