@@ -2,7 +2,7 @@
 
 const std::string DEFAULT = "04.ogg";
 
-MusicManager::MusicManager(FileUtility* fileUtility,
+violetland::MusicManager::MusicManager(FileUtility* fileUtility,
 		SoundManager* soundManager, Configuration* config) {
 	printf("MusicManager...\n");
 	m_fileUtility = fileUtility;
@@ -24,7 +24,7 @@ MusicManager::MusicManager(FileUtility* fileUtility,
 	m_currentPlaying = "null";
 }
 
-void MusicManager::process(Player* player, GameState* gameState) {
+void violetland::MusicManager::process(Player* player, GameState* gameState) {
 	if (gameState->Paused) {
 		play();
 		return;
@@ -41,11 +41,11 @@ void MusicManager::process(Player* player, GameState* gameState) {
 	}
 }
 
-void MusicManager::play() {
+void violetland::MusicManager::play() {
 	play(0, DEFAULT, false);
 }
 
-void MusicManager::play(int chan, std::string name, bool now) {
+void violetland::MusicManager::play(int chan, std::string name, bool now) {
 	if (m_music.size() > 0) {
 		if (m_currentPlaying != "null" && m_currentPlaying != name) {
 			if (m_music[m_currentPlaying]->isPlaying()) {
@@ -60,7 +60,7 @@ void MusicManager::play(int chan, std::string name, bool now) {
 	}
 }
 
-MusicManager::~MusicManager() {
+violetland::MusicManager::~MusicManager() {
 	std::map<std::string, Sound*>::const_iterator iter;
 	for (iter = m_music.begin(); iter != m_music.end(); ++iter) {
 		delete iter->second;

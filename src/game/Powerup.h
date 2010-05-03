@@ -3,16 +3,28 @@
 
 #include "../system/graphic/StaticObject.h"
 
+namespace violetland {
+enum BonusType {
+	BONUS_MEDIKIT = 0,
+	BONUS_WEAPON,
+	BONUS_GRENADES,
+	BONUS_FREEZE,
+	BONUS_PENBULLETS,
+	BONUS_NUKE,
+	BONUS_VITALITYROIDS,
+	BONUS_AGILITYROIDS,
+	BONUS_STRENGTHROIDS,
+	BONUS_TELEPORTS
+};
+
 class Powerup: public StaticObject {
 public:
-	enum PowerupType {
-		medikit = 0, weapon, grenades, freeze, penBullets, nuke, vitalityRoids, agilityRoids, strengthRoids,teleports   //aoisdno these should be caps according to convention, but w/e
-	};
 	Powerup(float x, float y, Texture *tex);
 	void *Object;
-	Powerup::PowerupType Type;
+	BonusType Type;
 	int Time;
 	int Dir;
 };
+}
 
 #endif /* POWERUP_H_ */

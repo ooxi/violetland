@@ -1,6 +1,7 @@
 #include "Resources.h"
 
-Resources::Resources(FileUtility* fileUtility, SoundManager* sndManager) {
+violetland::Resources::Resources(FileUtility* fileUtility,
+		SoundManager* sndManager) {
 	m_fileUtil = fileUtility;
 	m_sndManager = sndManager;
 
@@ -32,18 +33,19 @@ Resources::Resources(FileUtility* fileUtility, SoundManager* sndManager) {
 	LevelUpIndicator = new StaticObject(0, 0, 128, 128, loadTex("levelup.png"),
 			true);
 
-	loadPowerupTex(Powerup::medikit, "medikit.png");
-	loadPowerupTex(Powerup::grenades, "grenade.png");
-	loadPowerupTex(Powerup::freeze, "freeze.png");
-	loadPowerupTex(Powerup::penBullets, "penbullets.png");
-	loadPowerupTex(Powerup::nuke, "bon_nuke.png");
-	loadPowerupTex(Powerup::agilityRoids,"pill.png");
-	loadPowerupTex(Powerup::vitalityRoids,"pill.png");
-	loadPowerupTex(Powerup::strengthRoids,"pill.png");
-	loadPowerupTex(Powerup::teleports,"teleport.png");
+	loadPowerupTex(BONUS_MEDIKIT, "medikit.png");
+	loadPowerupTex(BONUS_GRENADES, "grenade.png");
+	loadPowerupTex(BONUS_FREEZE, "freeze.png");
+	loadPowerupTex(BONUS_PENBULLETS, "penbullets.png");
+	loadPowerupTex(BONUS_NUKE, "bon_nuke.png");
+	loadPowerupTex(BONUS_AGILITYROIDS, "pill.png");
+	loadPowerupTex(BONUS_VITALITYROIDS, "pill.png");
+	loadPowerupTex(BONUS_STRENGTHROIDS, "pill.png");
+	loadPowerupTex(BONUS_TELEPORTS, "teleport.png");
 }
 
-Sprite* Resources::loadSprite(unsigned int frames, std::string pattern) {
+Sprite* violetland::Resources::loadSprite(unsigned int frames,
+		std::string pattern) {
 	std::vector<SDL_Surface*> animSurfaces;
 	for (unsigned i = 0; i < frames; i++) {
 		char *buf;
@@ -56,24 +58,25 @@ Sprite* Resources::loadSprite(unsigned int frames, std::string pattern) {
 	return new Sprite(animSurfaces);
 }
 
-Sound* Resources::loadSnd(std::string fileName) {
+Sound* violetland::Resources::loadSnd(std::string fileName) {
 	return m_sndManager->create(m_fileUtil->getFullPath(FileUtility::sound,
 			fileName));
 }
 
-Texture* Resources::loadTex(std::string fileName) {
+Texture* violetland::Resources::loadTex(std::string fileName) {
 	return new Texture(ImageUtility::loadImage(m_fileUtil->getFullPath(
 			FileUtility::image, fileName)), GL_TEXTURE_2D, GL_LINEAR, true);
 }
 
-void Resources::loadPowerupTex(Powerup::PowerupType type, std::string fileName) {
-	PowerupTex.insert(std::map<Powerup::PowerupType, Texture*>::value_type(
-			type, new Texture(ImageUtility::loadImage(m_fileUtil->getFullPath(
+void violetland::Resources::loadPowerupTex(BonusType type,
+		std::string fileName) {
+	PowerupTex.insert(std::map<BonusType, Texture*>::value_type(type,
+			new Texture(ImageUtility::loadImage(m_fileUtil->getFullPath(
 					FileUtility::image, fileName)), GL_TEXTURE_2D, GL_LINEAR,
 					true)));
 }
 
-Resources::~Resources() {
+violetland::Resources::~Resources() {
 	delete HealthIndicator;
 	delete LevelUpIndicator;
 	delete Crystal;
@@ -81,8 +84,8 @@ Resources::~Resources() {
 	delete PlayerWalkSprite;
 	delete GrenadeSprite;
 
-	clearVector<Texture*>(&BloodTex);
-	clearVector<Sound*>(&PlayerHitSounds);
-	clearVector<Sprite*>(&PlayerDeathSprites);
-	clearMap<Powerup::PowerupType, Texture*>(&PowerupTex);
+	clearVector<Texture*> (&BloodTex);
+	clearVector<Sound*> (&PlayerHitSounds);
+	clearVector<Sprite*> (&PlayerDeathSprites);
+	clearMap<BonusType, Texture*> (&PowerupTex);
 }

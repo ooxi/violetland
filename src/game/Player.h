@@ -4,6 +4,21 @@
 #include "LifeForm.h"
 #include "Weapon.h"
 
+namespace violetland {
+enum PlayerActionMode {
+	PLAYER_ACT_MODE_FIRE = 0, PLAYER_ACT_MODE_TELEPORT
+};
+
+enum PlayerBonusType {
+	PLAYER_BONUS_FIRST = 0,
+	PLAYER_BONUS_PENBULLETS = PLAYER_BONUS_FIRST,
+	PLAYER_BONUS_VITALITYBOOST,
+	PLAYER_BONUS_AGILITYBOOST,
+	PLAYER_BONUS_STRENGTHBOOST,
+	PLAYER_BONUS_FREEZE,
+	PLAYER_BONUS_COUNT
+};
+
 class Player: public LifeForm {
 private:
 	Sprite *m_deathSprite;
@@ -16,21 +31,13 @@ private:
 	bool m_light, m_laser;
 	int m_hitSndPlaying;
 	void processBonus(int deltaTime);
-    void processState();
-    void processArms(int deltaTime);
+	void processState();
+	void processArms(int deltaTime);
 public:
 	Player();
 	Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
 			std::vector<Sound*> hitSounds, Sound* dyingSound);
-	enum bonusType {
-		FIRSTBONUS = 0,
-		PENBULLETS = FIRSTBONUS,
-		VITALITYROIDS,
-		AGILITYROIDS,
-		STRENGTHROIDS,
-		FREEZE,
-		BONUSCOUNT
-	};
+
 	virtual void process(int deltaTime);
 	virtual void draw();
 	virtual void hit(float damage, bool poison, float pX, float pY);
@@ -66,14 +73,15 @@ public:
 	bool BigCalibre;
 	bool Telekinesis;
 	bool NightVision;
-	int bonusTimes[BONUSCOUNT];
+	int bonusTimes[PLAYER_BONUS_COUNT];
 	float getStrength();
 	float getAgility();
 	float getVitality();
 	void teleport();
 	void fadeColor(int deltaTime);
 	bool Empty;
-	int ActionMode;
+	PlayerActionMode ActionMode;
 };
+}
 
 #endif /* PLAYER_H_ */

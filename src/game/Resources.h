@@ -6,11 +6,12 @@
 #include "../system/utility/Templates.h"
 #include "Powerup.h"
 
+namespace violetland {
 class Resources {
 private:
 	FileUtility* m_fileUtil;
 	SoundManager* m_sndManager;
-	void loadPowerupTex(Powerup::PowerupType type, std::string fileName);
+	void loadPowerupTex(BonusType type, std::string fileName);
 	Texture* loadTex(std::string fileName);
 	Sound* loadSnd(std::string fileName);
 	Sprite* loadSprite(unsigned int frames, std::string pattern);
@@ -21,15 +22,15 @@ public:
 	Sound* PlayerDeathSound;
 	std::vector<Sound*> PlayerHitSounds;
 	std::vector<Sound*> ExplSounds;
-	std::map<Powerup::PowerupType, Texture*> PowerupTex;
+	std::map<BonusType, Texture*> PowerupTex;
 	Sprite* GrenadeSprite;
 	std::vector<Texture*> BloodTex;
 	std::vector<Texture*> ExplTex;
 	StaticObject* Crystal;
 	StaticObject* HealthIndicator;
 	StaticObject* LevelUpIndicator;
-
 	~Resources();
 };
+}
 
 #endif /* RESOURCES_H_ */

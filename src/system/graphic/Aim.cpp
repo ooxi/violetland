@@ -23,9 +23,8 @@ void Aim::constructFilledCircle(float r) {
 	glEnd();
 }
 
-void Aim::constructAim(float cDarkR,float cDarkG,float cDarkB,float cLightR,float cLightG,float cLightB){
-	printf("Constructing aim...\n");
-
+void Aim::constructAim(float cDarkR, float cDarkG, float cDarkB, float cLightR,
+		float cLightG, float cLightB) {
 	m_aimDListId = glGenLists(1);
 
 	glNewList(m_aimDListId, GL_COMPILE);
@@ -49,12 +48,12 @@ void Aim::constructAim(float cDarkR,float cDarkG,float cDarkB,float cLightR,floa
 	glEndList();
 }
 
-Aim::Aim(float cDarkR,float cDarkG,float cDarkB,float cLightR,float cLightG,float cLightB)
-{
-	constructAim(cDarkR,cDarkG,cDarkB,cLightR,cLightG,cLightB);
+Aim::Aim(float cDarkR, float cDarkG, float cDarkB, float cLightR,
+		float cLightG, float cLightB) {
+	constructAim(cDarkR, cDarkG, cDarkB, cLightR, cLightG, cLightB);
 }
 
-Aim::Aim(Configuration* config){
+Aim::Aim(Configuration* config) {
 	float cDarkR = ImageUtility::getColorChR(config->AimColorA);
 	float cDarkG = ImageUtility::getColorChG(config->AimColorA);
 	float cDarkB = ImageUtility::getColorChB(config->AimColorA);
@@ -63,7 +62,7 @@ Aim::Aim(Configuration* config){
 	float cLightG = ImageUtility::getColorChG(config->AimColorB);
 	float cLightB = ImageUtility::getColorChB(config->AimColorB);
 
-	constructAim(cDarkR,cDarkG,cDarkB,cLightR,cLightG,cLightB);
+	constructAim(cDarkR, cDarkG, cDarkB, cLightR, cLightG, cLightB);
 }
 
 void Aim::draw(float x, float y, float scale, float pointScale) {

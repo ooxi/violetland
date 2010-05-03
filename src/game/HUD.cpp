@@ -1,37 +1,45 @@
 #include "HUD.h"
 
-HUD::HUD(VideoManager* videoManager, Resources* resources) {
+violetland::HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
 	VideoMode videoMode = m_videoManager->getVideoMode();
 
 	m_resources = resources;
-	m_bonusImg.insert(std::map<Player::bonusType, StaticObject*>::value_type(
-		Player::PENBULLETS, new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[Powerup::penBullets], false)));
-	m_bonusImg.insert(std::map<Player::bonusType, StaticObject*>::value_type(
-		Player::AGILITYROIDS, new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[Powerup::agilityRoids], false)));
-	m_bonusImg[Player::AGILITYROIDS]->RMask = m_bonusImg[Player::AGILITYROIDS]->GMask = 0.2f;
-	m_bonusImg.insert(std::map<Player::bonusType, StaticObject*>::value_type(
-		Player::VITALITYROIDS, new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[Powerup::vitalityRoids], false)));
-	m_bonusImg[Player::VITALITYROIDS]->RMask = m_bonusImg[Player::VITALITYROIDS]->BMask = 0.2f;
-	m_bonusImg.insert(std::map<Player::bonusType, StaticObject*>::value_type(
-		Player::STRENGTHROIDS, new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[Powerup::strengthRoids], false)));
-	m_bonusImg[Player::STRENGTHROIDS]->GMask = m_bonusImg[Player::STRENGTHROIDS]->BMask = 0.2f;
-	m_bonusImg.insert(std::map<Player::bonusType, StaticObject*>::value_type(
-		Player::FREEZE, new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[Powerup::freeze], false)));	
-	
+	m_bonusImg.insert(std::map<PlayerBonusType, StaticObject*>::value_type(
+			PLAYER_BONUS_PENBULLETS, new StaticObject(0, 0, 128, 128,
+					m_resources->PowerupTex[BONUS_PENBULLETS], false)));
+	m_bonusImg.insert(std::map<PlayerBonusType, StaticObject*>::value_type(
+			PLAYER_BONUS_AGILITYBOOST, new StaticObject(0, 0, 128, 128,
+					m_resources->PowerupTex[BONUS_AGILITYROIDS], false)));
+	m_bonusImg[PLAYER_BONUS_AGILITYBOOST]->RMask
+			= m_bonusImg[PLAYER_BONUS_AGILITYBOOST]->GMask = 0.2f;
+	m_bonusImg.insert(std::map<PlayerBonusType, StaticObject*>::value_type(
+			PLAYER_BONUS_VITALITYBOOST, new StaticObject(0, 0, 128, 128,
+					m_resources->PowerupTex[BONUS_VITALITYROIDS], false)));
+	m_bonusImg[PLAYER_BONUS_VITALITYBOOST]->RMask
+			= m_bonusImg[PLAYER_BONUS_VITALITYBOOST]->BMask = 0.2f;
+	m_bonusImg.insert(std::map<PlayerBonusType, StaticObject*>::value_type(
+			PLAYER_BONUS_STRENGTHBOOST, new StaticObject(0, 0, 128, 128,
+					m_resources->PowerupTex[BONUS_STRENGTHROIDS], false)));
+	m_bonusImg[PLAYER_BONUS_STRENGTHBOOST]->GMask
+			= m_bonusImg[PLAYER_BONUS_STRENGTHBOOST]->BMask = 0.2f;
+	m_bonusImg.insert(std::map<PlayerBonusType, StaticObject*>::value_type(
+			PLAYER_BONUS_FREEZE, new StaticObject(0, 0, 128, 128,
+					m_resources->PowerupTex[BONUS_FREEZE], false)));
+
 	m_bounce = 0;
 	reset();
 }
 
-void HUD::applyEffects(float health, int levelPoints) {
+void violetland::HUD::applyEffects(float health, int levelPoints) {
 	m_bounce += m_videoManager->getFrameDeltaTime();
-	float bounceState = (float) -cos(m_bounce / 800.0);
+	float bounceState = (float) cos(m_bounce / 800.0);
 	float factor = bounceState < 0 ? bounceState * -1 : bounceState;
 
 	float baseScale = m_videoManager->Scale * 0.15;
 
 	if (health < 0.33) {
-		m_resources->HealthIndicator->setMask(1.0, factor, 1.0, 1.0);
+		m_resources->HealthIndicator->setMask(1.0, 1.0 - factor, 1.0, 1.0);
 		m_resources->HealthIndicator->Scale = baseScale * (factor + 0.5);
 	} else {
 		m_resources->HealthIndicator->setMask(1.0, 1.0, 1.0, 1.0);
@@ -39,7 +47,7 @@ void HUD::applyEffects(float health, int levelPoints) {
 	}
 
 	if (levelPoints > 0) {
-		m_resources->LevelUpIndicator->setMask(1.0, factor, 1.0, 1.0);
+		m_resources->LevelUpIndicator->setMask(1.0, 1.0 - factor, 1.0, 1.0);
 		m_resources->LevelUpIndicator->Scale = baseScale * (factor + 0.5);
 	} else {
 		m_resources->LevelUpIndicator->setMask(1.0, 1.0, 1.0, 1.0);
@@ -47,7 +55,7 @@ void HUD::applyEffects(float health, int levelPoints) {
 	}
 }
 
-void HUD::drawMessages() {
+void violetland::HUD::drawMessages() {
 	if (!m_messages.empty()) {
 		int m_bottomBasePoint = m_videoManager->getVideoMode().Height
 				- m_videoManager->RegularText->getIndent();
@@ -70,10 +78,8 @@ void HUD::drawMessages() {
 	}
 }
 
-void HUD::drawExperience(float experience, int levelPoints) {
-	int bottomBasePoint = m_videoManager->getVideoMode().Height
-			- m_videoManager->RegularText->getIndent();
-
+void violetland::HUD::drawExperience(float experience, int levelPoints,
+		int bottomBasePoint) {
 	VideoMode screen = m_videoManager->getVideoMode();
 	const int barLen = screen.Width / 4;
 	const int barLeft = 2 * screen.Width / 3;
@@ -93,7 +99,7 @@ void HUD::drawExperience(float experience, int levelPoints) {
 			fcolor1, fcolor2);
 }
 
-void HUD::drawBar(int x, int y, int width, int height, float value,
+void violetland::HUD::drawBar(int x, int y, int width, int height, float value,
 		GLfloat* bcolor, GLfloat* fcolor1, GLfloat* fcolor2) {
 	glDisable(GL_TEXTURE_2D);
 
@@ -127,10 +133,9 @@ void HUD::drawBar(int x, int y, int width, int height, float value,
 	glEnable(GL_TEXTURE_2D);
 }
 
-void HUD::drawBonusStack(int* bonusTimes)
-{
+void violetland::HUD::drawBonusStack(int* bonusTimes) {
 	int topBasePoint = m_videoManager->RegularText->getIndent()
-					+ (m_videoManager->RegularText->getHeight()) * 4;
+			+ (m_videoManager->RegularText->getHeight()) * 4;
 
 	VideoMode screen = m_videoManager->getVideoMode();
 	const int barLeft = screen.Width / 25;
@@ -144,22 +149,19 @@ void HUD::drawBonusStack(int* bonusTimes)
 	const float baseScale = m_videoManager->Scale * 0.2;
 
 	int bonusN = 0;
-	for (int i = Player::FIRSTBONUS; i < Player::BONUSCOUNT; i++)
-	{
-		if (bonusTimes[i] > 0)
-		{
+	for (int i = PLAYER_BONUS_FIRST; i < PLAYER_BONUS_COUNT; i++) {
+		if (bonusTimes[i] > 0) {
 			const int y = topBasePoint + bonusN * 132 * baseScale;
-			m_bonusImg[(Player::bonusType) i]->draw(false, false, barLeft, y, 0, baseScale);
-			drawBar(barLeft + 25 * m_videoManager->Scale, y, barLen, barHeight, bonusTimes[i] / 15000.0f, bcolor, fcolor1, fcolor2);
+			m_bonusImg[(PlayerBonusType) i]->draw(false, false, barLeft, y, 0,
+					baseScale);
+			drawBar(barLeft + 25 * m_videoManager->Scale, y, barLen, barHeight,
+					bonusTimes[i] / 15000.0f, bcolor, fcolor1, fcolor2);
 			bonusN++;
 		}
 	}
 }
 
-void HUD::drawHealth(float health) {
-	int bottomBasePoint = m_videoManager->getVideoMode().Height
-			- m_videoManager->RegularText->getIndent();
-
+void violetland::HUD::drawHealth(float health, int bottomBasePoint) {
 	VideoMode screen = m_videoManager->getVideoMode();
 	const int barLeft = screen.Width / 12;
 	const int barLen = screen.Width / 4;
@@ -179,7 +181,7 @@ void HUD::drawHealth(float health) {
 			fcolor1, fcolor2);
 }
 
-void HUD::drawTime(GameState* gameState) {
+void violetland::HUD::drawTime(GameState* gameState) {
 	int bottomBasePoint = m_videoManager->getVideoMode().Height
 			- m_videoManager->RegularText->getIndent();
 
@@ -193,10 +195,10 @@ void HUD::drawTime(GameState* gameState) {
 	delete[] buf;
 }
 
-void HUD::draw(GameState* gameState, Player* player) {
+void violetland::HUD::draw(GameState* gameState, Player* player) {
 	float health = player->getHealth() / player->MaxHealth();
-	float experience = (float) (player->Xp - player->LastLevelXp) / (player->NextLevelXp
-		- player->LastLevelXp);
+	float experience = (float) (player->Xp - player->LastLevelXp)
+			/ (player->NextLevelXp - player->LastLevelXp);
 
 	VideoMode screen = m_videoManager->getVideoMode();
 
@@ -205,8 +207,11 @@ void HUD::draw(GameState* gameState, Player* player) {
 
 	applyEffects(health, player->LevelPoints);
 
-	drawHealth(health);
-	drawExperience(experience, player->LevelPoints);
+	int bottomBasePoint = m_videoManager->getVideoMode().Height
+			- m_videoManager->RegularText->getIndent() * 2;
+
+	drawHealth(health, bottomBasePoint);
+	drawExperience(experience, player->LevelPoints, bottomBasePoint);
 
 	drawBonusStack(player->bonusTimes);
 
@@ -215,8 +220,7 @@ void HUD::draw(GameState* gameState, Player* player) {
 		m_videoManager->RegularText->draw("They have overcome...", screen.Width
 				/ 2, y, TextManager::CENTER, TextManager::MIDDLE);
 		char* buf;
-		sprintf(buf = new char[30], "You have earned %i points.",
-			player->Xp);
+		sprintf(buf = new char[30], "You have earned %i points.", player->Xp);
 		m_videoManager->RegularText->draw(buf, screen.Width / 2, y
 				+ m_videoManager->RegularText->getHeight(),
 				TextManager::CENTER, TextManager::MIDDLE);
@@ -228,16 +232,16 @@ void HUD::draw(GameState* gameState, Player* player) {
 				screen.Height / 2, TextManager::CENTER, TextManager::MIDDLE);
 }
 
-void HUD::addMessage(std::string message) {
+void violetland::HUD::addMessage(std::string message) {
 	m_messages.push_back(m_videoManager->SmallText->getObject(message.c_str(),
 			0, 0, TextManager::LEFT, TextManager::MIDDLE));
 }
 
-void HUD::reset() {
+void violetland::HUD::reset() {
 	clearVector<TextObject*> (&m_messages);
 }
 
-HUD::~HUD() {	
+violetland::HUD::~HUD() {
 	reset();
-	clearMap<Player::bonusType, StaticObject*>(&m_bonusImg);
+	clearMap<PlayerBonusType, StaticObject*> (&m_bonusImg);
 }

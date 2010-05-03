@@ -7,8 +7,8 @@
 class ParticleSystem {
 public:
 	ParticleSystem();
-	void process(int deltaTime);
-	void draw();
+	virtual void process(int deltaTime);
+	virtual void draw();
 	bool isEmpty();
 	std::vector<Particle*> Particles;
 	~ParticleSystem();

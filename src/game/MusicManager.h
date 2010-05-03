@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "Player.h"
 
+namespace violetland {
 class MusicManager {
 private:
 	FileUtility* m_fileUtility;
@@ -20,5 +21,6 @@ public:
 	void play(int chan, std::string name, bool now);
 	~MusicManager();
 };
+}
 
 #endif /* MUSICMANAGER_H_ */

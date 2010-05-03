@@ -46,6 +46,7 @@
 #include "windows/CharStatsWindow.h"
 
 using namespace std;
+using namespace violetland;
 
 const string PROJECT = "violetland";
 const string VERSION = "0.2.10";
@@ -78,6 +79,10 @@ vector<Explosion*> explosions;
 vector<ParticleSystem*> particleSystems;
 map<string, Window*> windows;
 Terrain* terrain;
+
+bool roulette(float eventProbability) {
+	return (rand() % 1000000) < eventProbability * 1000000;
+}
 
 // Creation of clear squares of an earth surface
 void createTerrain() {
@@ -1257,11 +1262,7 @@ void handlePlayer(LifeForm* lf) {
 		 * at point where player has placed before teleportation
 		 */
 		player->teleport();
-
-		/*TODO: May use enum for ActionMode?
-		 * Action mode can be "speak" or "use" for some elements of game.
-		 */
-		player->ActionMode = 0;
+		player->ActionMode = PLAYER_ACT_MODE_FIRE;
 		player->setMask(0.0f, 1.0f, 1.0f, 1.0f);
 		delete aim;
 		aim = new Aim(config);
@@ -1278,11 +1279,11 @@ void handlePlayer(LifeForm* lf) {
 
 	if (input->getPressInput(InputHandler::Teleport)) {
 		if (player->ActionMode != 1 && player->Teleports > 0) {
-			player->ActionMode = 1;
+			player->ActionMode = PLAYER_ACT_MODE_TELEPORT;
 			delete aim;
 			aim = new Aim(0.0f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f);
-		} else if (player->ActionMode == 1) {
-			player->ActionMode = 0;
+		} else if (player->ActionMode == PLAYER_ACT_MODE_TELEPORT) {
+			player->ActionMode = PLAYER_ACT_MODE_FIRE;
 			delete aim;
 			aim = new Aim(config);
 		}
@@ -1300,112 +1301,109 @@ void dropPowerup(float x, float y) {
 	bool powerupDropped = false;
 	Powerup *newPowerup;
 
-	if (!powerupDropped && rand() % 1000 >= 950) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::medikit]);
+	if (!powerupDropped && roulette(0.05)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.3f;
-		newPowerup->Type = Powerup::medikit;
+		newPowerup->Type = BONUS_MEDIKIT;
 		newPowerup->Object = new float(0.1f);
 		newPowerup->RMask = newPowerup->BMask = 0.2f;
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 975) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::medikit]);
+	if (!powerupDropped && roulette(0.025)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::medikit;
+		newPowerup->Type = BONUS_MEDIKIT;
 		newPowerup->Object = new float(0.2f);
 		newPowerup->RMask = newPowerup->GMask = 0.4f;
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 990) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::medikit]);
+	if (!powerupDropped && roulette(0.01)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.5f;
-		newPowerup->Type = Powerup::medikit;
+		newPowerup->Type = BONUS_MEDIKIT;
 		newPowerup->Object = new float(0.6f);
 		newPowerup->BMask = newPowerup->GMask = 0.2f;
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 980) {
-		newPowerup
-				= new Powerup(x, y, resources->PowerupTex[Powerup::grenades]);
+	if (!powerupDropped && roulette(0.02)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_GRENADES]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::grenades;
+		newPowerup->Type = BONUS_GRENADES;
 		newPowerup->Object = new int(1);
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 980) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::freeze]);
+	if (!powerupDropped && roulette(0.02)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_FREEZE]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::freeze;
+		newPowerup->Type = BONUS_FREEZE;
 		newPowerup->Object = new int(10000);
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 980) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[Powerup::nuke]);
+	if (!powerupDropped && roulette(0.02)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_NUKE]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::nuke;
+		newPowerup->Type = BONUS_NUKE;
 		newPowerup->Object = new int(10000);
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 980) {
+	if (!powerupDropped && roulette(0.02)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_PENBULLETS]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = BONUS_PENBULLETS;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(0.02)) {
 		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[Powerup::penBullets]);
+				resources->PowerupTex[BONUS_VITALITYROIDS]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::penBullets;
-		newPowerup->Object = new int(10000);
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && rand() % 1000 >= 980) {
-		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[Powerup::vitalityRoids]);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::vitalityRoids;
+		newPowerup->Type = BONUS_VITALITYROIDS;
 		newPowerup->RMask = newPowerup->BMask = 0.2f;
 		newPowerup->Object = new int(10000);
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 980) {
+	if (!powerupDropped && roulette(0.02)) {
 		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[Powerup::strengthRoids]);
+				resources->PowerupTex[BONUS_STRENGTHROIDS]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::strengthRoids;
+		newPowerup->Type = BONUS_STRENGTHROIDS;
 		newPowerup->GMask = newPowerup->BMask = 0.2f;
 		newPowerup->Object = new int(10000);
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 980) {
+	if (!powerupDropped && roulette(0.02)) {
 		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[Powerup::agilityRoids]);
+				resources->PowerupTex[BONUS_AGILITYROIDS]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::agilityRoids;
+		newPowerup->Type = BONUS_AGILITYROIDS;
 		newPowerup->RMask = newPowerup->GMask = 0.2f;
 		newPowerup->Object = new int(10000);
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && rand() % 1000 >= 980) {
-		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[Powerup::teleports]);
+	if (!powerupDropped && roulette(0.02)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_TELEPORTS]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = Powerup::teleports;
+		newPowerup->Type = BONUS_TELEPORTS;
 		newPowerup->Object = new int(1);
 		powerupDropped = true;
 	}
 
-	int wpnDropChance = 975;
+	float wpnDropChance = 0.25;
 	if (player->getWeapon()->Name == "PM")
-		wpnDropChance = 700;
+		wpnDropChance = 0.5;
 	if (player->Kills == 0)
-		wpnDropChance = 0;
-	if (rand() % 1000 >= wpnDropChance) {
+		wpnDropChance = 1;
+	if (roulette(wpnDropChance)) {
 		int weaponIndex;
 		if (true) // TODO: "Allow PM drop" to options. true for allow.
 			weaponIndex = (rand() % weaponManager->Weapons.size());
@@ -1414,7 +1412,7 @@ void dropPowerup(float x, float y) {
 
 		newPowerup = new Powerup(x, y,
 				weaponManager->Weapons[weaponIndex]->getDroppedTex());
-		newPowerup->Type = Powerup::weapon;
+		newPowerup->Type = BONUS_WEAPON;
 		newPowerup->Object = weaponManager->Weapons[weaponIndex];
 		newPowerup->HitR = 0.5f;
 		powerupDropped = true;
@@ -1645,7 +1643,7 @@ void handlePowerups() {
 		bool deletePowerup = false;
 		powerups[i]->Time -= videoManager->getFrameDeltaTime();
 		powerups[i]->AMask = powerups[i]->Time / 15000.0;
-		if (powerups[i]->Type != Powerup::weapon) {
+		if (powerups[i]->Type != BONUS_WEAPON) {
 			powerups[i]->Angle += videoManager->getFrameDeltaTime() * 0.05f
 					* powerups[i]->Dir;
 
@@ -1663,34 +1661,34 @@ void handlePowerups() {
 				player->TargetY)) {
 
 			switch (powerups[i]->Type) {
-			case Powerup::medikit:
+			case BONUS_MEDIKIT:
 				player->HudInfo = "a medikit";
 				break;
-			case Powerup::freeze:
+			case BONUS_FREEZE:
 				player->HudInfo = "a nitrogen bomb";
 				break;
-			case Powerup::nuke:
+			case BONUS_NUKE:
 				player->HudInfo = "nuke!";
 				break;
-			case Powerup::grenades:
+			case BONUS_GRENADES:
 				player->HudInfo = "a hand grenade";
 				break;
-			case Powerup::penBullets:
+			case BONUS_PENBULLETS:
 				player->HudInfo = "penetration bullets";
 				break;
-			case Powerup::vitalityRoids:
+			case BONUS_VITALITYROIDS:
 				player->HudInfo = "vitality boost";
 				break;
-			case Powerup::strengthRoids:
+			case BONUS_STRENGTHROIDS:
 				player->HudInfo = "strength boost";
 				break;
-			case Powerup::agilityRoids:
+			case BONUS_AGILITYROIDS:
 				player->HudInfo = "agility boost";
 				break;
-			case Powerup::teleports:
+			case BONUS_TELEPORTS:
 				player->HudInfo = "a teleport";
 				break;
-			case Powerup::weapon:
+			case BONUS_WEAPON:
 				char buf[100];
 				sprintf(buf, "the %s",
 						((Weapon*) powerups[i]->Object)->Name.c_str());
@@ -1712,7 +1710,7 @@ void handlePowerups() {
 
 		if (!gameState->Lost && (powerups[i]->detectCollide(player))) {
 			switch (powerups[i]->Type) {
-			case Powerup::medikit: {
+			case BONUS_MEDIKIT: {
 				if (player->getHealth() < player->MaxHealth()) {
 					hud->addMessage("You have taken a medical kit.");
 					player->setHealth(player->getHealth()
@@ -1721,7 +1719,7 @@ void handlePowerups() {
 				}
 				break;
 			}
-			case Powerup::freeze: {
+			case BONUS_FREEZE: {
 				hud->addMessage("All have been frozen around you.");
 
 				map<string, LifeForm*>::const_iterator iter;
@@ -1733,12 +1731,12 @@ void handlePowerups() {
 						continue;
 					lf->Frozen = *(int*) powerups[i]->Object;
 				}
-				player->bonusTimes[Player::FREEZE]
+				player->bonusTimes[PLAYER_BONUS_FREEZE]
 						= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
-			case Powerup::nuke: {
+			case BONUS_NUKE: {
 				hud->addMessage("Boom!");
 				Explosion * expl = new Explosion(player->X, player->Y, 400.0f,
 						12.0f, resources->ExplTex[0], resources->ExplTex[1],
@@ -1747,47 +1745,47 @@ void handlePowerups() {
 				deletePowerup = true;
 				break;
 			}
-			case Powerup::penBullets: {
+			case BONUS_PENBULLETS: {
 				hud->addMessage("You got powerful penetration bullets.");
-				player->bonusTimes[Player::PENBULLETS]
+				player->bonusTimes[PLAYER_BONUS_PENBULLETS]
 						= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
-			case Powerup::vitalityRoids: {
+			case BONUS_VITALITYROIDS: {
 				hud->addMessage("You got a vitality boost.");
-				player->bonusTimes[Player::VITALITYROIDS]
+				player->bonusTimes[PLAYER_BONUS_VITALITYBOOST]
 						+= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
-			case Powerup::strengthRoids: {
+			case BONUS_STRENGTHROIDS: {
 				hud->addMessage("You got a strength boost.");
-				player->bonusTimes[Player::STRENGTHROIDS]
+				player->bonusTimes[PLAYER_BONUS_STRENGTHBOOST]
 						+= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
-			case Powerup::agilityRoids: {
+			case BONUS_AGILITYROIDS: {
 				hud->addMessage("You got a agility boost.");
-				player->bonusTimes[Player::AGILITYROIDS]
+				player->bonusTimes[PLAYER_BONUS_AGILITYBOOST]
 						+= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
-			case Powerup::grenades: {
+			case BONUS_GRENADES: {
 				hud->addMessage("You have taken a grenade.");
 				player->Grenades += *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
-			case Powerup::teleports: {
+			case BONUS_TELEPORTS: {
 				hud->addMessage("You have taken a teleport.");
 				player->Teleports += *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
-			case Powerup::weapon: {
+			case BONUS_WEAPON: {
 				if (input->getDownInput(InputHandler::Pickup)
 						|| config->AutoWeaponPickup) {
 					player->setWeapon((Weapon*) powerups[i]->Object);
