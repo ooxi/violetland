@@ -49,7 +49,7 @@ using namespace std;
 using namespace violetland;
 
 const string PROJECT = "violetland";
-const string VERSION = "0.2.10";
+const string VERSION = "0.3.0";
 
 Configuration* config;
 Configuration* tempConfig;
@@ -1063,6 +1063,23 @@ void handleCommonControls() {
 	}
 }
 
+void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
+	StaticObject *newBloodStain = new StaticObject(x, y, 128, 128,
+			resources->BloodTex[(rand() % 3)], false);
+
+	newBloodStain->Scale = scale;
+	newBloodStain->Angle = angle;
+	if (poisoned) {
+		newBloodStain->GMask = 1.0f - (rand() % 200) / 1000.0f;
+		newBloodStain->RMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
+	} else {
+		newBloodStain->RMask = 1.0f - (rand() % 200) / 1000.0f;
+		newBloodStain->GMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
+
+	}
+	bloodStains.push_back(newBloodStain);
+}
+
 void handleExplosions() {
 	if (!explosions.empty()) {
 		for (int i = explosions.size() - 1; i >= 0; i--) {
@@ -1071,13 +1088,63 @@ void handleExplosions() {
 			if (explosions[i]->Active && !lifeForms.empty()) {
 				map<string, LifeForm*>::const_iterator iter;
 				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
-					LifeForm* lf = iter->second;
-					if (lf->Type == LifeForm::player && !config->FriendlyFire)
+					LifeForm* lifeForm = iter->second;
+					if (lifeForm->Type == LIFEFORM_PLAYER
+							&& !config->FriendlyFire)
 						continue;
 
-					float d = explosions[i]->calcDamage(lf);
-					if (d > 0) {
-						lf->setHealth(lf->getHealth() - d);
+					float d = explosions[i]->calcDamage(lifeForm);
+					if (d > 0)
+						lifeForm->setHealth(lifeForm->getHealth() - d);
+					if (lifeForm->getHealth() == 0) {
+						lifeForm->State = LIFEFORM_STATE_BURST;
+
+						float angle =
+								Object::calculateAngle(lifeForm->X,
+										lifeForm->Y, explosions[i]->X,
+										explosions[i]->Y);
+
+						for (int k = 0; k < 5; k++) {
+							int angleDev = 90 + (rand() % 90) - 45;
+							float distance = (rand() % 200);
+							float bX = lifeForm->X + distance * -cos((angle
+									- angleDev) * M_PI / 180.0f);
+							float bY = lifeForm->Y + distance * -sin((angle
+									- angleDev) * M_PI / 180.0f);
+
+							addBloodStain(bX, bY, (rand() % 6300) / 1000.0f,
+									lifeForm->Scale, lifeForm->Poisoned);
+						}
+
+						ParticleSystem* partSys = new ParticleSystem();
+						for (int k = 0; k < 10; k++) {
+							Particle * p = new Particle(lifeForm->X,
+									lifeForm->Y, 128, 128,
+									resources->BloodTex[(rand() % 299) / 100]);
+							p->setMask(0.0f, 0.0f, 0.0f, 1.0f);
+							if (lifeForm->Poisoned)
+								p->GMask = 1.0f - (rand() % 200) / 1000.0f;
+							else
+								p->RMask = 1.0f - (rand() % 200) / 1000.0f;
+
+							p->Scale = (rand() % 150) / 100.0f
+									* lifeForm->Scale;
+
+							p->Angle = (rand() % 6300) / 1000.0f;
+
+							int angleDev = 90 + (rand() % 90) - 45;
+
+							p->XSpeed
+									= -cos((angle - angleDev) * M_PI / 180.0f)
+											* 1 / p->Scale * 0.2;
+							p->YSpeed
+									= -sin((angle - angleDev) * M_PI / 180.0f)
+											* 1 / p->Scale * 0.2;
+
+							p->AMod = -0.0015 * 1 / p->Scale;
+							partSys->Particles.push_back(p);
+						}
+						particleSystems.push_back(partSys);
 					}
 				}
 			}
@@ -1103,23 +1170,6 @@ void handleParticles() {
 			}
 		}
 	}
-}
-
-void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
-	StaticObject *newBloodStain = new StaticObject(x, y, 128, 128,
-			resources->BloodTex[(rand() % 3)], false);
-
-	newBloodStain->Scale = scale;
-	newBloodStain->Angle = angle;
-	if (poisoned) {
-		newBloodStain->GMask = 1.0f - (rand() % 200) / 1000.0f;
-		newBloodStain->RMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
-	} else {
-		newBloodStain->RMask = 1.0f - (rand() % 200) / 1000.0f;
-		newBloodStain->GMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
-
-	}
-	bloodStains.push_back(newBloodStain);
 }
 
 void handleMonster(LifeForm* lf) {
@@ -1158,7 +1208,7 @@ void handleMonster(LifeForm* lf) {
 	}
 
 	if ((rangeToPlayer < 400 || enemy->Angry) && player->State
-			== LifeForm::alive) {
+			== LIFEFORM_STATE_ALIVE) {
 		enemy->TargetX = player->X;
 		enemy->TargetY = player->Y;
 	} else if (rangeToPlayer < 800 && !gameState->Lost) {
@@ -1180,7 +1230,7 @@ void handleMonster(LifeForm* lf) {
 
 	enemy->move(videoManager->getFrameDeltaTime());
 
-	if (player->State == LifeForm::alive && player->detectCollide(enemy)) {
+	if (player->State == LIFEFORM_STATE_ALIVE && player->detectCollide(enemy)) {
 		if (enemy->Attack()) {
 			if (rand() % 100 > player->ChanceToEvade() * 100)
 				player->hit(enemy->Damage(), false, 0, 0);
@@ -1438,23 +1488,101 @@ void handleLifeForms() {
 	if (!lifeForms.empty()) {
 		map<string, LifeForm*>::const_iterator iter;
 		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
-			LifeForm* lf = iter->second;
+			LifeForm* lifeForm = iter->second;
 
-			lf->process(videoManager->getFrameDeltaTime());
+			lifeForm->process(videoManager->getFrameDeltaTime());
 
-			if (lf->Type == LifeForm::player) {
+			if (lifeForm->Type == LIFEFORM_PLAYER) {
 				if (!gameState->Lost) {
-					if (lf->State == LifeForm::died)
+					if (lifeForm->State == LIFEFORM_STATE_DIED
+							|| lifeForm->State == LIFEFORM_STATE_BURST)
 						loseGame(player);
 
-					if (lf->State == LifeForm::alive)
-						handlePlayer(lf);
+					if (lifeForm->State == LIFEFORM_STATE_ALIVE)
+						handlePlayer(lifeForm);
 				}
 			}
 
-			if (lf->Type == LifeForm::monster) {
-				if (lf->State == LifeForm::alive)
-					handleMonster(lf);
+			if (lifeForm->Type == LIFEFORM_MONSTER) {
+				if (lifeForm->State == LIFEFORM_STATE_ALIVE)
+					handleMonster(lifeForm);
+			}
+		}
+	}
+}
+
+void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
+	if (bloodStains.size() < 9) {
+		for (int k = 0; k < 3; k++) {
+			int angleDev = 90 + (rand() % 60) - 30;
+			float distance = (rand() % 100);
+			float bX = enemy->X - cos((bullet->Angle + angleDev) * M_PI
+					/ 180.0f) * distance;
+			float bY = enemy->Y - sin((bullet->Angle + angleDev) * M_PI
+					/ 180.0f) * distance;
+
+			addBloodStain(bX, bY, enemy->Angle, enemy->Scale * 0.5f,
+					enemy->Poisoned);
+		}
+	}
+
+	if (enemy->Frozen > 0) {
+		ParticleSystem* partSys = new ParticleSystem();
+		for (int k = 0; k < 6; k++) {
+			Particle * p = new Particle(enemy->X + (rand() % 50) - 25, enemy->Y
+					+ (rand() % 50) - 25, 128, 128,
+					resources->Crystal->getTexture());
+			p->RMask = p->GMask = p->BMask = 1.0f;
+			p->AMask = 1.0f;
+			p->Scale = (rand() % 50) / 100.0f * enemy->Scale;
+			p->XSpeed = ((rand() % 400) - 200) / 1000.0f;
+			p->YSpeed = ((rand() % 400) - 200) / 1000.0f;
+			p->AMod = -0.002;
+			partSys->Particles.push_back(p);
+		}
+		particleSystems.push_back(partSys);
+	} else {
+		ParticleSystem* partSys = new ParticleSystem();
+		for (int k = 0; k < 25; k++) {
+			Particle * p = new Particle(enemy->X + (rand() % 50) - 25, enemy->Y
+					+ (rand() % 50) - 25, 128, 128, resources->BloodTex[(rand()
+					% 299) / 100]);
+			p->RMask = p->GMask = p->BMask = 0.0f;
+			if (enemy->Poisoned)
+				p->GMask = 1.0f - (rand() % 200) / 1000.0f;
+			else
+				p->RMask = 1.0f - (rand() % 200) / 1000.0f;
+			p->AMask = 1.0f;
+			p->Scale = (rand() % 15) / 100.0f * enemy->Scale;
+			int angleDev = 90 + (rand() % 60) - 30;
+			p->XSpeed = -cos((bullet->Angle + angleDev) * M_PI / 180.0f) / 3.0f;
+			p->YSpeed = -sin((bullet->Angle + angleDev) * M_PI / 180.0f) / 3.0f;
+			p->AMod = -0.004;
+			partSys->Particles.push_back(p);
+		}
+		particleSystems.push_back(partSys);
+	}
+
+	bool bypassDirectDamage = false;
+	if (bullet->Type == Bullet::standard) {
+		if (((StandardBullet*) bullet)->isExplosive()) {
+			bullet->deactivate();
+			Explosion * expl = new Explosion(bullet->X, bullet->Y, 100.0f,
+					bullet->Damage, resources->ExplTex[0],
+					resources->ExplTex[1], resources->ExplSounds[1]);
+			explosions.push_back(expl);
+			bypassDirectDamage = true;
+		}
+	}
+
+	if (!bypassDirectDamage) {
+		float damageLoss = enemy->getHealth();
+		enemy->hit(bullet->Damage, bullet->Poisoned, player->X, player->Y);
+
+		if (bullet->BigCalibre && !bullet->Penetrating) {
+			bullet->Damage -= damageLoss;
+			if (bullet->Damage <= 0) {
+				bullet->deactivate();
 			}
 		}
 	}
@@ -1470,99 +1598,14 @@ void handleBullets() {
 				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 					LifeForm* lf = iter->second;
 
-					if (lf->Type == LifeForm::player || lf->State
-							!= LifeForm::alive)
+					if (lf->Type == LIFEFORM_PLAYER || lf->State
+							!= LIFEFORM_STATE_ALIVE)
 						continue;
 
 					Enemy* enemy = (Enemy*) lf;
 
 					if (bullets[i]->checkHit(enemy)) {
-						if (bloodStains.size() < 9) {
-							for (int k = 0; k < 3; k++) {
-								int angleDev = 90 + (rand() % 60) - 30;
-								float distance = (rand() % 100);
-								float bX = enemy->X - cos((bullets[i]->Angle
-										+ angleDev) * M_PI / 180.0f) * distance;
-								float bY = enemy->Y - sin((bullets[i]->Angle
-										+ angleDev) * M_PI / 180.0f) * distance;
-
-								addBloodStain(bX, bY, enemy->Angle,
-										enemy->Scale * 0.5f, enemy->Poisoned);
-							}
-						}
-
-						if (enemy->Frozen > 0) {
-							ParticleSystem* partSys = new ParticleSystem();
-							for (int k = 0; k < 6; k++) {
-								Particle * p = new Particle(enemy->X + (rand()
-										% 50) - 25, enemy->Y + (rand() % 50)
-										- 25, 128, 128,
-										resources->Crystal->getTexture());
-								p->RMask = p->GMask = p->BMask = 1.0f;
-								p->AMask = 1.0f;
-								p->Scale = (rand() % 50) / 100.0f
-										* enemy->Scale;
-								p->XSpeed = ((rand() % 400) - 200) / 1000.0f;
-								p->YSpeed = ((rand() % 400) - 200) / 1000.0f;
-								p->AMod = -0.002;
-								partSys->Particles.push_back(p);
-							}
-							particleSystems.push_back(partSys);
-						} else {
-							ParticleSystem* partSys = new ParticleSystem();
-							for (int k = 0; k < 25; k++) {
-								Particle * p = new Particle(enemy->X + (rand()
-										% 50) - 25, enemy->Y + (rand() % 50)
-										- 25, 128, 128,
-										resources->BloodTex[(rand() % 299)
-												/ 100]);
-								p->RMask = p->GMask = p->BMask = 0.0f;
-								if (enemy->Poisoned)
-									p->GMask = 1.0f - (rand() % 200) / 1000.0f;
-								else
-									p->RMask = 1.0f - (rand() % 200) / 1000.0f;
-								p->AMask = 1.0f;
-								p->Scale = (rand() % 15) / 100.0f
-										* enemy->Scale;
-								int angleDev = 90 + (rand() % 60) - 30;
-								p->XSpeed = -cos((bullets[i]->Angle + angleDev)
-										* M_PI / 180.0f) / 3.0f;
-								p->YSpeed = -sin((bullets[i]->Angle + angleDev)
-										* M_PI / 180.0f) / 3.0f;
-								p->AMod = -0.004;
-								partSys->Particles.push_back(p);
-							}
-							particleSystems.push_back(partSys);
-						}
-
-						bool bypassDirectDamage = false;
-						if (bullets[i]->Type == Bullet::standard) {
-							if (((StandardBullet*) bullets[i])->isExplosive()) {
-								bullets[i]->deactivate();
-								Explosion * expl = new Explosion(bullets[i]->X,
-										bullets[i]->Y, 100.0f,
-										bullets[i]->Damage,
-										resources->ExplTex[0],
-										resources->ExplTex[1],
-										resources->ExplSounds[1]);
-								explosions.push_back(expl);
-								bypassDirectDamage = true;
-							}
-						}
-
-						if (!bypassDirectDamage) {
-							float damageLoss = enemy->getHealth();
-							enemy->hit(bullets[i]->Damage,
-									bullets[i]->Poisoned, player->X, player->Y);
-
-							if (bullets[i]->BigCalibre
-									&& !bullets[i]->Penetrating) {
-								bullets[i]->Damage -= damageLoss;
-								if (bullets[i]->Damage <= 0) {
-									bullets[i]->deactivate();
-								}
-							}
-						}
+						collideBulletAndEnemy(bullets[i], enemy);
 					}
 				}
 			}
@@ -1726,8 +1769,8 @@ void handlePowerups() {
 				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 					LifeForm* lf = iter->second;
 
-					if (lf->Type == LifeForm::player || lf->State
-							!= LifeForm::alive)
+					if (lf->Type == LIFEFORM_PLAYER || lf->State
+							!= LIFEFORM_STATE_ALIVE)
 						continue;
 					lf->Frozen = *(int*) powerups[i]->Object;
 				}
@@ -1827,11 +1870,15 @@ void processGame() {
 		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 			LifeForm* lf = iter->second;
 
-			if (lf->State == LifeForm::died) {
+			if (lf->State == LIFEFORM_STATE_DIED)
 				terrain ->drawOn(lf->getCorpse());
-				if (lf->Type == LifeForm::monster) {
+
+			if (lf->State == LIFEFORM_STATE_DIED || lf->State
+					== LIFEFORM_STATE_BURST) {
+
+				if (lf->Type == LIFEFORM_MONSTER) {
 					dropPowerup(lf->X, lf->Y);
-					if (player->State == LifeForm::alive) {
+					if (player->State == LIFEFORM_STATE_ALIVE) {
 						player->Kills++;
 						player->Xp
 								+= (int) ((1.5 - gameState->TimeOfDay * -0.5)
@@ -1923,21 +1970,24 @@ void drawGame() {
 
 	map<string, LifeForm*>::const_iterator iter;
 	for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
-		LifeForm* lf = iter->second;
+		LifeForm* lifeForm = iter->second;
 
-		if (lf->getLeft() < cam->X + cam->getHalfW() && lf->getRight() > cam->X
-				- cam->getHalfW() && lf->getTop() < cam->Y + cam->getHalfH()
-				&& lf->getBottom() > cam->Y - cam->getHalfH())
+		if (lifeForm->getLeft() < cam->X + cam->getHalfW()
+				&& lifeForm->getRight() > cam->X - cam->getHalfW()
+				&& lifeForm->getTop() < cam->Y + cam->getHalfH()
+				&& lifeForm->getBottom() > cam->Y - cam->getHalfH())
 
-			if (lf->Type == LifeForm::player && lf->State == LifeForm::died)
+			if (lifeForm->Type == LIFEFORM_PLAYER && (lifeForm->State
+					== LIFEFORM_STATE_DIED || lifeForm->State
+					== LIFEFORM_STATE_BURST))
 				continue;
 
-		lf->draw();
+		lifeForm->draw();
 
-		if (lf->Frozen > 0 && lf->State == LifeForm::alive) {
-			resources->Crystal->AMask = lf->Frozen / 10000.0f;
-			resources->Crystal->draw(false, false, lf->X, lf->Y, lf->Angle,
-					lf->Scale);
+		if (lifeForm->Frozen > 0 && lifeForm->State == LIFEFORM_STATE_ALIVE) {
+			resources->Crystal->AMask = lifeForm->Frozen / 10000.0f;
+			resources->Crystal->draw(false, false, lifeForm->X, lifeForm->Y,
+					lifeForm->Angle, lifeForm->Scale);
 		}
 	}
 

@@ -3,7 +3,7 @@
 #endif //_WIN32W
 #include "Enemy.h"
 
-Enemy::Enemy(MonsterTemplate* base, int lvl) :
+violetland::Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	LifeForm(0, 0, 128, 128) {
 	Id = "10-" + Id;
 
@@ -21,26 +21,18 @@ Enemy::Enemy(MonsterTemplate* base, int lvl) :
 
 	if ((rand() % 100) > 95) {
 		Strength *= 2.0f;
-		RMask = 0.2f;
-		GMask = 0.7f;
-		BMask = 0.2f;
+		setMask(0.2f, 0.7f, 0.2f, 1.0f);
 		Name = "Strong " + Base->Name;
 	} else if ((rand() % 100) > 95) {
 		Agility *= 1.8f;
-		RMask = 0.3f;
-		GMask = 0.4f;
-		BMask = 0.7f;
+		setMask(0.3f, 0.4f, 0.7f, 1.0f);
 		Name = "Fast " + Base->Name;
 	} else if ((rand() % 100) > 95) {
 		Vitality *= 2.0f;
-		RMask = 1.0f;
-		GMask = 0.2f;
-		BMask = 0.2f;
+		setMask(1.0f, 0.2f, 0.2f, 1.0f);
 		Name = "Healthy " + Base->Name;
 	} else {
-		RMask = 0.8f;
-		GMask = 0.7f;
-		BMask = 0.4f;
+		setMask(0.8f, 0.7f, 0.4f, 1.0f);
 		Name = "Regular " + Base->Name;
 	}
 
@@ -54,14 +46,14 @@ Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	m_bleedCount = 0;
 	DoNotDisturb = false;
 	Angry = false;
-	Type = LifeForm::monster;
+	Type = LIFEFORM_MONSTER;
 }
 
-void Enemy::rollFrame(bool forward) {
+void violetland::Enemy::rollFrame(bool forward) {
 	m_body->rollFrame(forward);
 }
 
-void Enemy::hit(float damage, bool poison, float pX, float pY) {
+void violetland::Enemy::hit(float damage, bool poison, float pX, float pY) {
 	LifeForm::hit(damage, poison, pX, pY);
 	if (!Base->HitSounds.empty()) {
 		int s = rand() % (int) Base->HitSounds.size();
@@ -75,7 +67,7 @@ void Enemy::hit(float damage, bool poison, float pX, float pY) {
 	Angle += ((rand() % 50) - 25) * damage;
 }
 
-bool Enemy::isBleeding() {
+bool violetland::Enemy::isBleeding() {
 	if (m_bleedCount > 0 && m_bleedDelay > 600) {
 		m_bleedDelay = 0;
 		m_bleedCount--;
@@ -85,41 +77,38 @@ bool Enemy::isBleeding() {
 	}
 }
 
-void Enemy::process(int deltaTime) {
+void violetland::Enemy::process(int deltaTime) {
 	LifeForm::process(deltaTime);
 
 	if (m_bleedCount > 0)
 		m_bleedDelay += deltaTime;
 
-	if (State == LifeForm::dying) {
+	if (State == LIFEFORM_STATE_DYING) {
 		if (m_body->Frame == m_body->AnimSprite->getFramesCount() - 1)
-			State = LifeForm::died;
+			State = LIFEFORM_STATE_DIED;
 
 		m_body->rollFrame(true);
 	}
 
-	if (State == LifeForm::smitten) {
+	if (State == LIFEFORM_STATE_SMITTEN) {
 		m_body = new DynamicObject(X, Y, Base->DeathSprite);
-		State = LifeForm::dying;
+		State = LIFEFORM_STATE_DYING;
 	}
 }
 
-StaticObject* Enemy::getCorpse() {
+StaticObject* violetland::Enemy::getCorpse() {
 	StaticObject * corpse = new StaticObject(X, Y, m_width, m_height,
 			m_body->getFrame(), false);
 	corpse->Scale = Scale;
 	corpse->Angle = Object::fixAngle(180 - Angle);
-	corpse->RMask = RMask;
-	corpse->GMask = GMask;
-	corpse->BMask = BMask;
-	corpse->AMask = AMask;
+	corpse->setMask(RMask, GMask, BMask, AMask);
 	return corpse;
 }
 
-void Enemy::draw() {
+void violetland::Enemy::draw() {
 	m_body->draw(X, Y, Angle, Scale, RMask, GMask, BMask, AMask);
 }
 
-Enemy::~Enemy() {
+violetland::Enemy::~Enemy() {
 	delete m_body;
 }

@@ -3,6 +3,12 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.3.0]
+
+[+] bonuses timers
+[!] invalid volume of sound at options screen
+[!] extra shot after teleportation
+
 [0.2.10]
 
 [+] new perk "night vision"

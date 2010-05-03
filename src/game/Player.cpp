@@ -16,7 +16,7 @@ violetland::Player::Player() :
 	AccuracyDeviation = 0.0f;
 	Grenades = 2;
 	Teleports = 1;
-	Type = LifeForm::player;
+	Type = LIFEFORM_PLAYER;
 	HudInfo = "";
 	m_hitSndPlaying = 0;
 
@@ -51,15 +51,18 @@ violetland::Player::Player(float x, float y, Sprite *legsSprite,
 }
 
 float violetland::Player::getStrength() {
-	return Strength * ((bonusTimes[PLAYER_BONUS_STRENGTHBOOST] > 0) ? 1.2f : 1.0f);
+	return Strength * ((bonusTimes[PLAYER_BONUS_STRENGTHBOOST] > 0) ? 1.2f
+			: 1.0f);
 }
 
 float violetland::Player::getAgility() {
-	return Agility * ((bonusTimes[PLAYER_BONUS_AGILITYBOOST] > 0) ? 1.2f : 1.0f);
+	return Agility
+			* ((bonusTimes[PLAYER_BONUS_AGILITYBOOST] > 0) ? 1.2f : 1.0f);
 }
 
 float violetland::Player::getVitality() {
-	return Vitality * ((bonusTimes[PLAYER_BONUS_VITALITYBOOST] > 0) ? 1.2f : 1.0f);
+	return Vitality * ((bonusTimes[PLAYER_BONUS_VITALITYBOOST] > 0) ? 1.2f
+			: 1.0f);
 }
 
 void violetland::Player::hit(float damage, bool poison, float pX, float pY) {
@@ -188,17 +191,17 @@ const bool violetland::Player::getLaser() {
 }
 
 void violetland::Player::processState() {
-	if (State == LifeForm::dying) {
+	if (State == LIFEFORM_STATE_DYING) {
 		if (m_body->Frame == m_body->AnimSprite->getFramesCount() - 1)
-			State = LifeForm::died;
+			State = LIFEFORM_STATE_DIED;
 
 		m_body->rollFrame(true);
 	}
-	if (State == LifeForm::smitten) {
+	if (State == LIFEFORM_STATE_SMITTEN) {
 		const float angle = m_body->Angle;
 		m_body = new DynamicObject(X, Y, m_deathSprite);
 		m_body->Angle = angle;
-		State = LifeForm::dying;
+		State = LIFEFORM_STATE_DYING;
 		if (m_hitSounds[m_hitSndPlaying]->isPlaying())
 			m_hitSounds[m_hitSndPlaying]->stop(0);
 
@@ -255,7 +258,7 @@ void violetland::Player::fadeColor(int deltaTime) {
 void violetland::Player::draw() {
 	m_body->draw();
 
-	if (State == LifeForm::alive)
+	if (State == LIFEFORM_STATE_ALIVE)
 		m_arms->draw(false, false);
 
 	for (int i = m_shells.size() - 1; i >= 0; i--) {
@@ -298,8 +301,8 @@ Weapon* violetland::Player::getWeapon() {
 }
 void violetland::Player::teleport() {
 	Teleports--;
-	setX(TargetX);
-	setY(TargetY);
+	setX( TargetX);
+	setY( TargetY);
 }
 void violetland::Player::setWeapon(Weapon *value) {
 	if (m_weapon) {

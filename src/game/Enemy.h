@@ -6,6 +6,7 @@
 #include "bullets/Bullet.h"
 #include "MonsterTemplate.h"
 
+namespace violetland {
 class Enemy: public LifeForm {
 private:
 	DynamicObject* m_body;
@@ -29,5 +30,6 @@ public:
 	bool Angry;
 	MonsterTemplate* Base;
 };
+}
 
 #endif /* ENEMY_H_ */

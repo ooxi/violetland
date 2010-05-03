@@ -4,6 +4,7 @@
 #include "../system/sound/SoundManager.h"
 #include "Enemy.h"
 
+namespace violetland {
 class MonsterFactory {
 private:
 	FileUtility* m_fileUtility;
@@ -18,5 +19,6 @@ public:
 	Enemy* create(int baseLvl, int lvl);
 	~MonsterFactory();
 };
+}
 
 #endif /* MONSTERFACTORY_H_ */

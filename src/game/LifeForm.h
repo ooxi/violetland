@@ -6,17 +6,24 @@
 #endif //_WIN32W
 #include "../system/graphic/StaticObject.h"
 
+namespace violetland {
+enum LifeFormType {
+	LIFEFORM_PLAYER = 0, LIFEFORM_MONSTER
+};
+
+enum LifeFormState {
+	LIFEFORM_STATE_ALIVE = 0,
+	LIFEFORM_STATE_SMITTEN,
+	LIFEFORM_STATE_DYING,
+	LIFEFORM_STATE_DIED,
+	LIFEFORM_STATE_BURST
+};
+
 class LifeForm: public Object {
 private:
 	int m_lastAttackTime;
 	float m_health;
 public:
-	enum LifeFormType {
-		player = 0, monster
-	};
-	enum LifeFormState {
-		alive = 0, smitten, dying, died
-	};
 	LifeForm(float x, float y, int w, int h);
 	virtual void process(int deltaTime);
 	virtual void draw();
@@ -44,10 +51,11 @@ public:
 	const float ReloadSpeedMod();
 	const float WeaponRetForceMod();
 	const float HealthRegen();
-	LifeForm::LifeFormType Type;
+	LifeFormType Type;
 	virtual StaticObject* getCorpse();
 	bool Poisoned;
 	int Frozen;
 };
+}
 
 #endif /* LIFEFORM_H_ */
