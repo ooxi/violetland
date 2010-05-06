@@ -33,24 +33,38 @@ violetland::HUD::HUD(VideoManager* videoManager, Resources* resources) {
 
 void violetland::HUD::applyEffects(float health, int levelPoints) {
 	m_bounce += m_videoManager->getFrameDeltaTime();
-	float bounceState = (float) cos(m_bounce / 800.0);
-	float factor = bounceState < 0 ? bounceState * -1 : bounceState;
+
+	int lMultiplier = fmin(levelPoints, 4);
+	double hMultiplier = fmin(health, 0.5);
+
+	//To avoid zero
+	lMultiplier = fmax(lMultiplier, 1);
+	hMultiplier = fmax(hMultiplier, 0.1);
+
+	float factorLevel = (float) fabs(cos(m_bounce / (800.0 / lMultiplier))
+			/ 2.0) + 0.5;
+	float factorHealth = (float) fabs(cos(m_bounce / (800.0 * hMultiplier))
+			/ 2.0) + 0.5;
 
 	float baseScale = m_videoManager->Scale * 0.15;
+	float bigScaleLevel = m_videoManager->Scale * (0.2 + (0.025 * lMultiplier));
+	float bigScaleHealth = m_videoManager->Scale * (0.25 - (0.1 * hMultiplier));
 
-	if (health < 0.33) {
-		m_resources->HealthIndicator->setMask(1.0, 1.0 - factor, 1.0, 1.0);
-		m_resources->HealthIndicator->Scale = baseScale * (factor + 0.5);
+	if (health < 0.75) {
+		m_resources->HealthIndicator->setMask(1.0, 1.0 - factorHealth, 1.0
+				- factorHealth, 1.0);
+		m_resources->HealthIndicator->Scale = bigScaleHealth;
 	} else {
-		m_resources->HealthIndicator->setMask(1.0, 1.0, 1.0, 1.0);
+		m_resources->HealthIndicator->setMask(1.0, 1.0, 1.0, 0.5);
 		m_resources->HealthIndicator->Scale = baseScale;
 	}
 
 	if (levelPoints > 0) {
-		m_resources->LevelUpIndicator->setMask(1.0, 1.0 - factor, 1.0, 1.0);
-		m_resources->LevelUpIndicator->Scale = baseScale * (factor + 0.5);
+		m_resources->LevelUpIndicator->setMask(1.0 - factorLevel, 1.0
+				- factorLevel, 1.0, 1.0);
+		m_resources->LevelUpIndicator->Scale = bigScaleLevel;
 	} else {
-		m_resources->LevelUpIndicator->setMask(1.0, 1.0, 1.0, 1.0);
+		m_resources->LevelUpIndicator->setMask(1.0, 1.0, 1.0, 0.5);
 		m_resources->LevelUpIndicator->Scale = baseScale;
 	}
 }
