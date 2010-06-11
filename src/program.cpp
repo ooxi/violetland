@@ -450,6 +450,12 @@ void refreshCharStatsWindow() {
 				videoManager->RegularText->getObject("+", r,
 						videoManager->RegularText->getHeight() * 8.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
+
+	if (player->Looting)
+		charStats->addElement("+looting",
+				videoManager->RegularText->getObject("+", r,
+						videoManager->RegularText->getHeight() * 9.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
 }
 
 void increaseStrength() {
@@ -518,6 +524,14 @@ void takeNightVision() {
 	}
 }
 
+void takeLooting() {
+	if (!player->Looting && player->LevelPoints > 0) {
+		player->Looting = true;
+		player->LevelPoints--;
+		refreshCharStatsWindow();
+	}
+}
+
 void showDetailsUnstoppable() {
 	windows["charstats"]->addElement(
 			"explantation",
@@ -566,6 +580,15 @@ void showDetailsNightVision() {
 					TextManager::CENTER, TextManager::MIDDLE));
 }
 
+void showDetailsLooting() {
+	windows["charstats"]->addElement("explantation",
+			videoManager->SmallText->getObject(
+					"Looting: Monsters will drop more bonuses.",
+					config->Screen.Width / 2,
+					videoManager->RegularText->getHeight() * 1.0f,
+					TextManager::CENTER, TextManager::MIDDLE));
+}
+
 void createCharStatWindow() {
 	Window *charStats = new CharStatsWindow(config, videoManager);
 
@@ -588,6 +611,9 @@ void createCharStatWindow() {
 	charStats->addHandler(Window::hdl_lclick, "nightvision", takeNightVision);
 	charStats->addHandler(Window::hdl_move, "nightvision",
 			showDetailsNightVision);
+	charStats->addHandler(Window::hdl_lclick, "looting", takeLooting);
+	charStats->addHandler(Window::hdl_move, "looting",
+			showDetailsLooting);
 
 	windows["charstats"] = charStats;
 }
@@ -1348,10 +1374,17 @@ void handlePlayer(LifeForm* lf) {
 //Choice and creation of bonus
 //TODO: The bonus magnet perk to increase the chance of bonus drop
 void dropPowerup(float x, float y) {
+	float chance;
+	if ((player->Looting == false)) {
+		chance = 1;
+	}else{
+		chance = 2;
+	}
+
 	bool powerupDropped = false;
 	Powerup *newPowerup;
 
-	if (!powerupDropped && roulette(0.05)) {
+	if (!powerupDropped && roulette(chance / 20)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.3f;
 		newPowerup->Type = BONUS_MEDIKIT;
@@ -1360,7 +1393,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && roulette(0.025)) {
+	if (!powerupDropped && roulette(chance / 40)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_MEDIKIT;
@@ -1369,7 +1402,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && roulette(0.01)) {
+	if (!powerupDropped && roulette(chance / 100)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.5f;
 		newPowerup->Type = BONUS_MEDIKIT;
@@ -1378,7 +1411,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && roulette(0.02)) {
+	if (!powerupDropped && roulette(chance / 50)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_GRENADES]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_GRENADES;
@@ -1386,7 +1419,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && roulette(0.02)) {
+	if (!powerupDropped && roulette(chance / 50)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_FREEZE]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_FREEZE;
@@ -1394,7 +1427,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && roulette(0.02)) {
+	if (!powerupDropped && roulette(chance / 50)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_NUKE]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_NUKE;
@@ -1402,7 +1435,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && roulette(0.02)) {
+	if (!powerupDropped && roulette(chance / 50)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_PENBULLETS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_PENBULLETS;
@@ -1410,7 +1443,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && roulette(0.02)) {
+	if (!powerupDropped && roulette(chance / 50)) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[BONUS_VITALITYROIDS]);
 		newPowerup->Scale = 0.4f;
@@ -1420,7 +1453,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && roulette(0.02)) {
+	if (!powerupDropped && roulette(chance / 50)) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[BONUS_STRENGTHROIDS]);
 		newPowerup->Scale = 0.4f;
@@ -1430,7 +1463,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && roulette(0.02)) {
+	if (!powerupDropped && roulette(chance / 50)) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[BONUS_AGILITYROIDS]);
 		newPowerup->Scale = 0.4f;
@@ -1440,7 +1473,7 @@ void dropPowerup(float x, float y) {
 		powerupDropped = true;
 	}
 
-	if (!powerupDropped && roulette(0.02)) {
+	if (!powerupDropped && roulette(chance / 50)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_TELEPORTS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_TELEPORTS;

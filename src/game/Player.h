@@ -73,6 +73,7 @@ public:
 	bool BigCalibre;
 	bool Telekinesis;
 	bool NightVision;
+	bool Looting;
 	int bonusTimes[PLAYER_BONUS_COUNT];
 	float getStrength();
 	float getAgility();

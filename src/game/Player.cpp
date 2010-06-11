@@ -24,7 +24,7 @@ violetland::Player::Player() :
 
 	m_light = m_laser = false;
 
-	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision
+	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision = Looting
 			= false;
 
 	for (int i = PLAYER_BONUS_FIRST; i < PLAYER_BONUS_COUNT; i++)
