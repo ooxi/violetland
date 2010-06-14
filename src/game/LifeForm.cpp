@@ -74,7 +74,8 @@ float violetland::LifeForm::getVitality() {
 	return Vitality;
 }
 const float violetland::LifeForm::MaxHealth() {
-	return getVitality() > 0.8f ? 1.0f + (getVitality() - 1.0f) * 2.0f : 0.4f;
+	return getVitality() > 0.8f ? 1.0f + (getVitality() - 1.0f) * 2.0f
+			+ (getStrength() - 1.0f) : 0.4f;
 }
 
 const float violetland::LifeForm::ChanceToEvade() {
@@ -105,7 +106,7 @@ const float violetland::LifeForm::MaxSpeed() {
 }
 
 const float violetland::LifeForm::HealthRegen() {
-	return getVitality() > 1.0f ? (getVitality() - 1.0f) * 0.000004f : 0.0f;
+	return getVitality() > 1.0f ? (getVitality() - 1.0f) * 0.000005f : 0.0f;
 }
 
 const float violetland::LifeForm::ReloadSpeedMod() {

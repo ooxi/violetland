@@ -452,10 +452,9 @@ void refreshCharStatsWindow() {
 						TextManager::CENTER, TextManager::MIDDLE));
 
 	if (player->Looting)
-		charStats->addElement("+looting",
-				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 9.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
+		charStats->addElement("+looting", videoManager->RegularText->getObject(
+				"+", r, videoManager->RegularText->getHeight() * 9.0f,
+				TextManager::CENTER, TextManager::MIDDLE));
 }
 
 void increaseStrength() {
@@ -612,8 +611,7 @@ void createCharStatWindow() {
 	charStats->addHandler(Window::hdl_move, "nightvision",
 			showDetailsNightVision);
 	charStats->addHandler(Window::hdl_lclick, "looting", takeLooting);
-	charStats->addHandler(Window::hdl_move, "looting",
-			showDetailsLooting);
+	charStats->addHandler(Window::hdl_move, "looting", showDetailsLooting);
 
 	windows["charstats"] = charStats;
 }
@@ -1107,6 +1105,8 @@ void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 }
 
 void handleExplosions() {
+	unsigned int fxLevel = 10;
+
 	if (!explosions.empty()) {
 		for (int i = explosions.size() - 1; i >= 0; i--) {
 			explosions[i]->process(videoManager->getFrameDeltaTime());
@@ -1130,7 +1130,7 @@ void handleExplosions() {
 										lifeForm->Y, explosions[i]->X,
 										explosions[i]->Y);
 
-						for (int k = 0; k < 5; k++) {
+						for (unsigned int k = 0; k < fxLevel / 2; k++) {
 							int angleDev = 90 + (rand() % 90) - 45;
 							float distance = (rand() % 200);
 							float bX = lifeForm->X + distance * -cos((angle
@@ -1143,7 +1143,7 @@ void handleExplosions() {
 						}
 
 						ParticleSystem* partSys = new ParticleSystem();
-						for (int k = 0; k < 10; k++) {
+						for (unsigned int k = 0; k < fxLevel; k++) {
 							Particle * p = new Particle(lifeForm->X,
 									lifeForm->Y, 128, 128,
 									resources->BloodTex[(rand() % 299) / 100]);
@@ -1372,121 +1372,18 @@ void handlePlayer(LifeForm* lf) {
 }
 
 //Choice and creation of bonus
-//TODO: The bonus magnet perk to increase the chance of bonus drop
 void dropPowerup(float x, float y) {
-	float chance;
-	if ((player->Looting == false)) {
-		chance = 1;
-	}else{
-		chance = 2;
-	}
+	float chance = player->Looting ? 0.01 : 0.02;
 
 	bool powerupDropped = false;
 	Powerup *newPowerup;
 
-	if (!powerupDropped && roulette(chance / 20)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
-		newPowerup->Scale = 0.3f;
-		newPowerup->Type = BONUS_MEDIKIT;
-		newPowerup->Object = new float(0.1f);
-		newPowerup->RMask = newPowerup->BMask = 0.2f;
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && roulette(chance / 40)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_MEDIKIT;
-		newPowerup->Object = new float(0.2f);
-		newPowerup->RMask = newPowerup->GMask = 0.4f;
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && roulette(chance / 100)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
-		newPowerup->Scale = 0.5f;
-		newPowerup->Type = BONUS_MEDIKIT;
-		newPowerup->Object = new float(0.6f);
-		newPowerup->BMask = newPowerup->GMask = 0.2f;
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && roulette(chance / 50)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_GRENADES]);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_GRENADES;
-		newPowerup->Object = new int(1);
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && roulette(chance / 50)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_FREEZE]);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_FREEZE;
-		newPowerup->Object = new int(10000);
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && roulette(chance / 50)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_NUKE]);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_NUKE;
-		newPowerup->Object = new int(10000);
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && roulette(chance / 50)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_PENBULLETS]);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_PENBULLETS;
-		newPowerup->Object = new int(10000);
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && roulette(chance / 50)) {
-		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[BONUS_VITALITYROIDS]);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_VITALITYROIDS;
-		newPowerup->RMask = newPowerup->BMask = 0.2f;
-		newPowerup->Object = new int(10000);
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && roulette(chance / 50)) {
-		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[BONUS_STRENGTHROIDS]);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_STRENGTHROIDS;
-		newPowerup->GMask = newPowerup->BMask = 0.2f;
-		newPowerup->Object = new int(10000);
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && roulette(chance / 50)) {
-		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[BONUS_AGILITYROIDS]);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_AGILITYROIDS;
-		newPowerup->RMask = newPowerup->GMask = 0.2f;
-		newPowerup->Object = new int(10000);
-		powerupDropped = true;
-	}
-
-	if (!powerupDropped && roulette(chance / 50)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_TELEPORTS]);
-		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_TELEPORTS;
-		newPowerup->Object = new int(1);
-		powerupDropped = true;
-	}
-
-	float wpnDropChance = 0.25;
+	// The PM will increase chance of bonus drop
 	if (player->getWeapon()->Name == "PM")
-		wpnDropChance = 0.5;
-	if (player->Kills == 0)
-		wpnDropChance = 1;
-	if (roulette(wpnDropChance)) {
+		chance *= 2;
+
+	// Weapon drop - should be first check
+	if (player->Kills == 0 || roulette(chance * 2.5)) {
 		int weaponIndex;
 		if (true) // TODO: "Allow PM drop" to options. true for allow.
 			weaponIndex = (rand() % weaponManager->Weapons.size());
@@ -1498,6 +1395,103 @@ void dropPowerup(float x, float y) {
 		newPowerup->Type = BONUS_WEAPON;
 		newPowerup->Object = weaponManager->Weapons[weaponIndex];
 		newPowerup->HitR = 0.5f;
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance * 5)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
+		newPowerup->Scale = 0.3f;
+		newPowerup->Type = BONUS_MEDIKIT;
+		newPowerup->Object = new float(0.1f);
+		newPowerup->RMask = newPowerup->BMask = 0.2f;
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance * 2.5)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = BONUS_MEDIKIT;
+		newPowerup->Object = new float(0.2f);
+		newPowerup->RMask = newPowerup->GMask = 0.4f;
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
+		newPowerup->Scale = 0.5f;
+		newPowerup->Type = BONUS_MEDIKIT;
+		newPowerup->Object = new float(0.6f);
+		newPowerup->BMask = newPowerup->GMask = 0.2f;
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance * 2)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_GRENADES]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = BONUS_GRENADES;
+		newPowerup->Object = new int(1);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance * 2)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_FREEZE]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = BONUS_FREEZE;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance * 2)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_NUKE]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = BONUS_NUKE;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance * 2)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_PENBULLETS]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = BONUS_PENBULLETS;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance * 2)) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[BONUS_VITALITYROIDS]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = BONUS_VITALITYROIDS;
+		newPowerup->RMask = newPowerup->BMask = 0.2f;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance * 2)) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[BONUS_STRENGTHROIDS]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = BONUS_STRENGTHROIDS;
+		newPowerup->GMask = newPowerup->BMask = 0.2f;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance * 2)) {
+		newPowerup = new Powerup(x, y,
+				resources->PowerupTex[BONUS_AGILITYROIDS]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = BONUS_AGILITYROIDS;
+		newPowerup->RMask = newPowerup->GMask = 0.2f;
+		newPowerup->Object = new int(10000);
+		powerupDropped = true;
+	}
+
+	if (!powerupDropped && roulette(chance * 2)) {
+		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_TELEPORTS]);
+		newPowerup->Scale = 0.4f;
+		newPowerup->Type = BONUS_TELEPORTS;
+		newPowerup->Object = new int(1);
 		powerupDropped = true;
 	}
 
@@ -1545,8 +1539,10 @@ void handleLifeForms() {
 }
 
 void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
-	if (bloodStains.size() < 9) {
-		for (int k = 0; k < 3; k++) {
+	unsigned int fxLevel = 10;
+
+	if (bloodStains.size() < fxLevel) {
+		for (unsigned int k = 0; k < fxLevel / 3; k++) {
 			int angleDev = 90 + (rand() % 60) - 30;
 			float distance = (rand() % 100);
 			float bX = enemy->X - cos((bullet->Angle + angleDev) * M_PI
@@ -1561,7 +1557,7 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 
 	if (enemy->Frozen > 0) {
 		ParticleSystem* partSys = new ParticleSystem();
-		for (int k = 0; k < 6; k++) {
+		for (unsigned int k = 0; k < fxLevel / 2; k++) {
 			Particle * p = new Particle(enemy->X + (rand() % 50) - 25, enemy->Y
 					+ (rand() % 50) - 25, 128, 128,
 					resources->Crystal->getTexture());
@@ -1576,7 +1572,7 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 		particleSystems.push_back(partSys);
 	} else {
 		ParticleSystem* partSys = new ParticleSystem();
-		for (int k = 0; k < 25; k++) {
+		for (unsigned int k = 0; k < fxLevel * 3; k++) {
 			Particle * p = new Particle(enemy->X + (rand() % 50) - 25, enemy->Y
 					+ (rand() % 50) - 25, 128, 128, resources->BloodTex[(rand()
 					% 299) / 100]);
@@ -1996,10 +1992,6 @@ void drawGame() {
 	for (unsigned int i = 0; i < powerups.size(); i++) {
 		powerups[i]->draw(false, false);
 	}
-
-	// TODO: sort lifeforms by isDead() state. dead lifeforms should not overlay alive ones.
-	//	std::sort(lifeForms.begin(), lifeForms.end(),
-	//			LifeForm::compareByDeadPredicate);
 
 	map<string, LifeForm*>::const_iterator iter;
 	for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
