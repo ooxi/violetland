@@ -65,3 +65,16 @@ $ mkdir build
 $ cd build
 $ cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DDATA_INSTALL_DIR=/usr/share/games/violetland ..
 $ sudo make install
+
+5. Controls
+
+w - Up
+a - Left
+s - Down
+d - Right
+q - Enter/leave teleport mode
+space - Grenade
+c - Abilities menu pause
+esc - Main menu pause
+right mouse click - Fire
+left mouse click - Reload
