@@ -74,6 +74,8 @@ s - Down
 d - Right
 q - Enter/leave teleport mode
 space - Grenade
+f - Toggle Flashlight
+g - Toggle laser sight
 c - Abilities menu pause
 esc - Main menu pause
 right mouse click - Fire
