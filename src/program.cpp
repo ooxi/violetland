@@ -875,6 +875,75 @@ void switchResolutionUp() {
 	refreshOptionsWindow();
 }
 
+void keyClicked();
+
+void refreshControlsMenu() {
+	Window* w = windows.find("controls")->second;
+	
+	const int l = config->Screen.Width * 0.1f;
+	const int r = config->Screen.Width * 0.6f;
+
+	int i;
+	for(i=0;i<InputHandler::GameInputEventsCount;i++) {
+		w->addElement(InputHandler::getName(i),videoManager->RegularText->getObject(InputHandler::getName(i),
+		l, videoManager->RegularText->getHeight() * (i+1.0f),
+			TextManager::LEFT, TextManager::MIDDLE));
+		char* skey = (char*)malloc(sizeof(char)*(strlen(InputHandler::getName(i))+4));
+		sprintf(skey,"%skey",InputHandler::getName(i));
+		w->addElement(skey,videoManager->RegularText->getObject(InputHandler::getKeyName(config->PlayerInputBinding[i]),
+		r, videoManager->RegularText->getHeight() * (i+1.0f),
+			TextManager::LEFT, TextManager::MIDDLE));
+			
+		w->addHandler(Window::hdl_lclick, skey, keyClicked);
+	}
+}
+
+void drawWindows();
+
+void keyClicked() {
+	int key = (input->mouseY-videoManager->RegularText->getHeight()/2)/videoManager->RegularText->getHeight();
+	videoManager->RegularText->draw("Please press a key...", config->Screen.Width * 0.4f, config->Screen.Height * 0.5f - videoManager->RegularText->getHeight()/2,TextManager::CENTER, TextManager::MIDDLE);
+	SDL_Event event;
+	videoManager->countFrame(config->FrameDelay);
+	drawWindows();
+
+	SDL_GL_SwapBuffers();
+	while(event.type!=SDL_QUIT&&event.type!=SDL_KEYDOWN&&event.type!=SDL_MOUSEBUTTONDOWN) {
+		SDL_WaitEvent(&event);
+		switch(event.type) {
+			case SDL_QUIT:
+				break;
+			case SDL_KEYDOWN:
+				config->PlayerInputBinding[key].Type = InputHandler::Keyboard;
+				config->PlayerInputBinding[key].Value = event.key.keysym.sym;
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				config->PlayerInputBinding[key].Type = InputHandler::Mouse;
+				config->PlayerInputBinding[key].Value = event.button.button;
+			default:
+				break;
+		}
+	}
+	config->write();
+	refreshControlsMenu();
+}
+
+void goControlsMenu() {
+	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
+			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
+	windows["controls"] = w;
+	
+	refreshControlsMenu();
+	
+	windows["options"]->CloseFlag = true;
+}
+
+void resetControls() {
+	Configuration* config_default = new Configuration(fileUtility);
+	for(int i=0;i<InputHandler::GameInputEventsCount;i++)
+		config->PlayerInputBinding[i] = config_default->PlayerInputBinding[i];
+}
+
 void createOptionsWindow() {
 	tempConfig = new Configuration(*config);
 
@@ -931,6 +1000,18 @@ void createOptionsWindow() {
 			videoManager->RegularText->getHeight() * 14.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
+	w->addElement("controlstitle", videoManager->RegularText->getObject("Controls",
+			r, videoManager->RegularText->getHeight() * 11.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
+	w->addElement("controlsmenu", videoManager->RegularText->getObject("Edit Controls",
+			r + videoManager->RegularText->getHeight() * 2.0f, videoManager->RegularText->getHeight() * 13.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
+	w->addElement("controlsreset", videoManager->RegularText->getObject("Reset Controls",
+			r + videoManager->RegularText->getHeight() * 2.0f, videoManager->RegularText->getHeight() * 14.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
 	w->addHandler(Window::hdl_lclick, "autoreload", switchAutoReload);
 	w->addHandler(Window::hdl_lclick, "autopickup", switchAutoPickup);
 	w->addHandler(Window::hdl_lclick, "friendlyfire", switchFriendlyFire);
@@ -941,6 +1022,8 @@ void createOptionsWindow() {
 	w->addHandler(Window::hdl_lclick, "fullscreen", switchFullScreen);
 	w->addHandler(Window::hdl_lclick, "resolution", switchResolutionUp);
 	w->addHandler(Window::hdl_rclick, "resolution", switchResolutionDown);
+	w->addHandler(Window::hdl_lclick, "controlsmenu", goControlsMenu);
+	w->addHandler(Window::hdl_lclick, "controlsreset", resetControls);
 
 	w->addElement("savereturn", videoManager->RegularText->getObject(
 			"Save and return", l, videoManager->RegularText->getHeight()

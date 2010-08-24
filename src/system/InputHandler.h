@@ -44,6 +44,8 @@ public:
 	bool getDownInput(GameInputEvents evnt);
 	bool getPressInput(GameInputEvents evnt);
 	int mouseX, mouseY;
+	static const char* getName(int event);
+	static const char* getKeyName(Binding bind);
 private:
 	void processEvent(BindingType type, bool down, int value);
 	bool m_event[GameInputEventsCount];
