@@ -142,7 +142,7 @@ void spawnEnemy(float r, int lvl) {
 
 // The beginning of new game in a survival mode
 void startSurvival() {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear( GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
 
@@ -221,8 +221,8 @@ void initSystem() {
 	srand((unsigned) time(NULL));
 
 	TTF_Init();
-	atexit(TTF_Quit);
-	atexit(SDL_Quit);
+	atexit( TTF_Quit);
+	atexit( SDL_Quit);
 
 	printf("SDL_Init...\n");
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
@@ -248,13 +248,13 @@ void initSystem() {
 	SDL_FreeSurface(icon);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_BLEND);
+	glEnable( GL_COLOR_MATERIAL);
+	glEnable( GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glEnable(GL_TEXTURE_2D);
+	glEnable( GL_TEXTURE_2D);
 
-	glDisable(GL_DEPTH_TEST);
+	glDisable( GL_DEPTH_TEST);
 
 	printf("Drawing splash screen...\n");
 
@@ -267,7 +267,7 @@ void initSystem() {
 	splash = new StaticObject(0, 0, tex->getWidth(), tex->getHeight(), tex,
 			true);
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear( GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
 
@@ -305,7 +305,7 @@ void initSystem() {
 	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.5f);
 	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.00001f);
 
-	glEnable(GL_LINE_SMOOTH);
+	glEnable( GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
 	input = new InputHandler(config->PlayerInputBinding);
@@ -697,8 +697,8 @@ void createHighscoresWindow() {
 					* 18.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addElement("reset", videoManager->RegularText->getObject(
-				"Reset list", r3, videoManager->RegularText->getHeight()
-						* 18.0f, TextManager::LEFT, TextManager::MIDDLE));
+			"Reset list", r3, videoManager->RegularText->getHeight() * 18.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addHandler(Window::hdl_lclick, "back", backFromHighScores);
 
@@ -841,7 +841,7 @@ void switchFullScreen() {
 }
 
 void switchResolutionDown() {
-	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
+	vector < SDL_Rect > modes = videoManager->GetAvailableModes();
 
 	bool set = false;
 	for (int i = modes.size() - 1; i > 0; i--) {
@@ -862,7 +862,7 @@ void switchResolutionDown() {
 }
 
 void switchResolutionUp() {
-	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
+	vector < SDL_Rect > modes = videoManager->GetAvailableModes();
 
 	bool set = false;
 	for (unsigned int i = 0; i < modes.size() - 1; i++) {
@@ -886,21 +886,24 @@ void keyClicked();
 
 void refreshControlsMenu() {
 	Window* w = windows.find("controls")->second;
-	
+
 	const int l = config->Screen.Width * 0.1f;
 	const int r = config->Screen.Width * 0.6f;
 
 	int i;
-	for(i=0;i<InputHandler::GameInputEventsCount;i++) {
-		w->addElement(InputHandler::getName(i),videoManager->RegularText->getObject(InputHandler::getName(i),
-		l, videoManager->RegularText->getHeight() * (i+1.0f),
-			TextManager::LEFT, TextManager::MIDDLE));
-		char* skey = (char*)malloc(sizeof(char)*(strlen(InputHandler::getName(i))+4));
-		sprintf(skey,"%skey",InputHandler::getName(i));
-		w->addElement(skey,videoManager->RegularText->getObject(InputHandler::getKeyName(config->PlayerInputBinding[i]),
-		r, videoManager->RegularText->getHeight() * (i+1.0f),
-			TextManager::LEFT, TextManager::MIDDLE));
-			
+	for (i = 0; i < InputHandler::GameInputEventsCount; i++) {
+		w->addElement(InputHandler::getName(i),
+				videoManager->RegularText->getObject(InputHandler::getName(i),
+						l, videoManager->RegularText->getHeight() * (i + 1.0f),
+						TextManager::LEFT, TextManager::MIDDLE));
+		char* skey = (char*) malloc(sizeof(char) * (strlen(
+				InputHandler::getName(i)) + 4));
+		sprintf(skey, "%skey", InputHandler::getName(i));
+		w->addElement(skey, videoManager->RegularText->getObject(
+				InputHandler::getKeyName(config->PlayerInputBinding[i]), r,
+				videoManager->RegularText->getHeight() * (i + 1.0f),
+				TextManager::LEFT, TextManager::MIDDLE));
+
 		w->addHandler(Window::hdl_lclick, skey, keyClicked);
 	}
 }
@@ -908,27 +911,32 @@ void refreshControlsMenu() {
 void drawWindows();
 
 void keyClicked() {
-	int key = (input->mouseY-videoManager->RegularText->getHeight()/2)/videoManager->RegularText->getHeight();
-	videoManager->RegularText->draw("Please press a key...", config->Screen.Width * 0.4f, config->Screen.Height * 0.5f - videoManager->RegularText->getHeight()/2,TextManager::CENTER, TextManager::MIDDLE);
+	int key = (input->mouseY - videoManager->RegularText->getHeight() / 2)
+			/ videoManager->RegularText->getHeight();
+	videoManager->RegularText->draw("Please press a key...",
+			config->Screen.Width * 0.4f, config->Screen.Height * 0.5f
+					- videoManager->RegularText->getHeight() / 2,
+			TextManager::CENTER, TextManager::MIDDLE);
 	SDL_Event event;
 	videoManager->countFrame(config->FrameDelay);
 	drawWindows();
 
 	SDL_GL_SwapBuffers();
-	while(event.type!=SDL_QUIT&&event.type!=SDL_KEYDOWN&&event.type!=SDL_MOUSEBUTTONDOWN) {
+	while (event.type != SDL_QUIT && event.type != SDL_KEYDOWN && event.type
+			!= SDL_MOUSEBUTTONDOWN) {
 		SDL_WaitEvent(&event);
-		switch(event.type) {
-			case SDL_QUIT:
-				break;
-			case SDL_KEYDOWN:
-				config->PlayerInputBinding[key].Type = InputHandler::Keyboard;
-				config->PlayerInputBinding[key].Value = event.key.keysym.sym;
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-				config->PlayerInputBinding[key].Type = InputHandler::Mouse;
-				config->PlayerInputBinding[key].Value = event.button.button;
-			default:
-				break;
+		switch (event.type) {
+		case SDL_QUIT:
+			break;
+		case SDL_KEYDOWN:
+			config->PlayerInputBinding[key].Type = InputHandler::Keyboard;
+			config->PlayerInputBinding[key].Value = event.key.keysym.sym;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			config->PlayerInputBinding[key].Type = InputHandler::Mouse;
+			config->PlayerInputBinding[key].Value = event.button.button;
+		default:
+			break;
 		}
 	}
 	config->write();
@@ -939,15 +947,15 @@ void goControlsMenu() {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 	windows["controls"] = w;
-	
+
 	refreshControlsMenu();
-	
+
 	windows["options"]->CloseFlag = true;
 }
 
 void resetControls() {
 	Configuration* config_default = new Configuration(fileUtility);
-	for(int i=0;i<InputHandler::GameInputEventsCount;i++)
+	for (int i = 0; i < InputHandler::GameInputEventsCount; i++)
 		config->PlayerInputBinding[i] = config_default->PlayerInputBinding[i];
 }
 
@@ -1007,17 +1015,20 @@ void createOptionsWindow() {
 			videoManager->RegularText->getHeight() * 14.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
-	w->addElement("controlstitle", videoManager->RegularText->getObject("Controls",
-			r, videoManager->RegularText->getHeight() * 11.0f,
+	w->addElement("controlstitle", videoManager->RegularText->getObject(
+			"Controls", r, videoManager->RegularText->getHeight() * 11.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
-	w->addElement("controlsmenu", videoManager->RegularText->getObject("Edit Controls",
-			r + videoManager->RegularText->getHeight() * 2.0f, videoManager->RegularText->getHeight() * 13.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("controlsmenu", videoManager->RegularText->getObject(
+			"Edit Controls", r + videoManager->RegularText->getHeight() * 2.0f,
+			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
+			TextManager::MIDDLE));
 
-	w->addElement("controlsreset", videoManager->RegularText->getObject("Reset Controls",
-			r + videoManager->RegularText->getHeight() * 2.0f, videoManager->RegularText->getHeight() * 14.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("controlsreset", videoManager->RegularText->getObject(
+			"Reset Controls",
+			r + videoManager->RegularText->getHeight() * 2.0f,
+			videoManager->RegularText->getHeight() * 14.0f, TextManager::LEFT,
+			TextManager::MIDDLE));
 
 	w->addHandler(Window::hdl_lclick, "autoreload", switchAutoReload);
 	w->addHandler(Window::hdl_lclick, "autopickup", switchAutoPickup);
@@ -1752,12 +1763,12 @@ void handleBullets() {
 }
 
 void setGuiCameraMode() {
-	glMatrixMode(GL_PROJECTION);
+	glMatrixMode( GL_PROJECTION);
 	glLoadIdentity();
 
 	glOrtho(0.0, config->Screen.Width, config->Screen.Height, 0.0, -10.0, 10.0);
 
-	glMatrixMode(GL_MODELVIEW);
+	glMatrixMode( GL_MODELVIEW);
 	glLoadIdentity();
 }
 
@@ -2043,7 +2054,7 @@ void drawGame() {
 
 	cam->applyGLOrtho();
 
-	glEnable(GL_LIGHTING);
+	glEnable( GL_LIGHTING);
 
 	double tod = cos(gameState->Time / 180000.0);
 	gameState->TimeOfDay = abs((float) tod);
@@ -2066,7 +2077,7 @@ void drawGame() {
 	if (!gameState->Lost) {
 		GLfloat light_pos[] = { 0.0, 0.0, 1.0, 1.0 };
 		if (player->getLight()) {
-			glEnable(GL_LIGHT0);
+			glEnable( GL_LIGHT0);
 
 			glPushMatrix();
 			glTranslatef(player->TargetX, player->TargetY, 0.0f);
@@ -2074,7 +2085,7 @@ void drawGame() {
 			glPopMatrix();
 		}
 		if (player->NightVision) {
-			glEnable(GL_LIGHT1);
+			glEnable( GL_LIGHT1);
 
 			glPushMatrix();
 			glTranslatef(player->X, player->Y, 0.0f);
@@ -2118,9 +2129,9 @@ void drawGame() {
 
 	if (!gameState->Lost) {
 		if (player->getLight())
-			glDisable(GL_LIGHT0);
+			glDisable( GL_LIGHT0);
 		if (player->NightVision)
-			glDisable(GL_LIGHT1);
+			glDisable( GL_LIGHT1);
 	}
 
 	glDisable(GL_LIGHTING);
@@ -2129,7 +2140,7 @@ void drawGame() {
 		bullets[i]->draw();
 	}
 
-	glDisable(GL_TEXTURE_2D);
+	glDisable( GL_TEXTURE_2D);
 
 	if (!gameState->Lost) {
 		const float rad = (player->getArmsAngle() - 90) * M_PI / 180;
@@ -2140,7 +2151,7 @@ void drawGame() {
 		const float maxLen = cam->getH() * 0.75f;
 		if (player->getLaser()) {
 			glLineWidth(0.5f);
-			glBegin(GL_LINES);
+			glBegin( GL_LINES);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
 			glVertex3f(wpnX, wpnY, 0);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
@@ -2149,7 +2160,7 @@ void drawGame() {
 			glEnd();
 		}
 		if (player->getLight()) {
-			glBegin(GL_TRIANGLES);
+			glBegin( GL_TRIANGLES);
 			glNormal3f(0.0f, 0.0f, 1.0f);
 			float flash = 1.0 - gameState->TimeOfDay;
 			if (flash > 0.3)
@@ -2234,7 +2245,7 @@ void runMainLoop() {
 		} else {
 			musicManager->play();
 
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear( GL_COLOR_BUFFER_BIT);
 
 			cam->X = cam->Y = 0.0f;
 

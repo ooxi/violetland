@@ -60,13 +60,13 @@ std::vector<SDL_Rect> VideoManager::GetAvailableModes() {
 	 */
 
 	// Number of possible modes
-	int wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1600, 1600, 1680,
-			1920, 1920 };
-	int hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 900, 1200, 1050,
+	int wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1366, 1600, 1600,
+			1680, 1920, 1920 };
+	int hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 768, 900, 1200, 1050,
 			1080, 1200 };
 
 	// If the mode is supported, it will be added to the return list
-	std::vector<SDL_Rect> modes;
+	std::vector < SDL_Rect > modes;
 	for (unsigned int i = 0; i < getStructSize(wL); i++) {
 		if (isModeAvailable(wL[i], hL[i], 16, true, NULL)) {
 			SDL_Rect r;
