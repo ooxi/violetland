@@ -62,63 +62,89 @@ void InputHandler::process() {
 
 const char* InputHandler::getName(int event) {
 	switch (event) {
-		case Restart: return "Restart";
+	case Restart:
+		return "Restart";
 		break;
-		case Exit: return "Exit";
+	case Exit:
+		return "Exit";
 		break;
-		case Menu: return "Menu";
+	case Menu:
+		return "Menu";
 		break;
-		case MenuClickA: return "MenuClickA";
+	case MenuClickA:
+		return "MenuClickA";
 		break;
-		case MenuClickB: return "MenuClickB";
+	case MenuClickB:
+		return "MenuClickB";
 		break;
-		case ToggleLight: return "Toggle Light";
+	case ToggleLight:
+		return "Toggle Light";
 		break;
-		case ToggleLaser: return "Toggle Laser";
+	case ToggleLaser:
+		return "Toggle Laser";
 		break;
-		case ShowChar: return "Show Char";
+	case ShowChar:
+		return "Show Char";
 		break;
-		case Pause: return "Pause";
+	case Pause:
+		return "Pause";
 		break;
-		case MoveLeft: return "Move Left";
+	case MoveLeft:
+		return "Move Left";
 		break;
-		case MoveRight: return "Move Right";
+	case MoveRight:
+		return "Move Right";
 		break;
-		case MoveUp: return "Move Up";
+	case MoveUp:
+		return "Move Up";
 		break;
-		case MoveDown: return "Move Down";
+	case MoveDown:
+		return "Move Down";
 		break;
-		case Help: return "Help";
+	case Help:
+		return "Help";
 		break;
-		case Pickup: return "Pick Up";
+	case Pickup:
+		return "Pick Up";
 		break;
-		case ThrowGrenade: return "Throw Grenade";
+	case ThrowGrenade:
+		return "Throw Grenade";
 		break;
-		case Fire: return "Fire";
+	case Fire:
+		return "Fire";
 		break;
-		case Reload: return "Reload";
+	case Reload:
+		return "Reload";
 		break;
-		case Teleport: return "Teleport";
+	case Teleport:
+		return "Teleport";
 		break;
-		case GameInputEventsCount: return "GameInputEventsCount";
+	case GameInputEventsCount:
+		return "GameInputEventsCount";
 		break;
-		default: return "Uknown event";
+	default:
+		return "Uknown event";
 		break;
 	}
 }
 
 const char* InputHandler::getKeyName(Binding bind) {
-	if(bind.Type==InputHandler::Keyboard)
+	if (bind.Type == InputHandler::Keyboard)
 		return SDL_GetKeyName(SDLKey(bind.Value));
-	else if(bind.Type==InputHandler::Mouse)
-		switch(bind.Value) {
-			default:
-			case SDL_BUTTON_LEFT: return "left mouse button";
+	else if (bind.Type == InputHandler::Mouse)
+		switch (bind.Value) {
+		default:
+		case SDL_BUTTON_LEFT:
+			return "left mouse button";
 			break;
-			case SDL_BUTTON_RIGHT: return "right mouse button";
+		case SDL_BUTTON_RIGHT:
+			return "right mouse button";
 			break;
-			case SDL_BUTTON_MIDDLE: return "middle mouse button";
+		case SDL_BUTTON_MIDDLE:
+			return "middle mouse button";
 			break;
 		}
+
+	return NULL;
 }
 

@@ -18,6 +18,7 @@ private:
 	FileUtility* m_fileUtility;
 public:
 	Highscores(FileUtility* fileUtility);
+	void clear();
 	void read();
 	void add(HighscoresEntry* entry);
 	std::vector<HighscoresEntry*> getData();

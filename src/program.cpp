@@ -627,6 +627,7 @@ void shutdownSystem() {
 }
 
 void backFromHighScores();
+void resetHighScores();
 void backFromOptionsAndSave();
 
 void createHighscoresWindow() {
@@ -695,7 +696,13 @@ void createHighscoresWindow() {
 			"Back to main menu", l, videoManager->RegularText->getHeight()
 					* 18.0f, TextManager::LEFT, TextManager::MIDDLE));
 
+	scoresWin->addElement("reset", videoManager->RegularText->getObject(
+				"Reset list", r3, videoManager->RegularText->getHeight()
+						* 18.0f, TextManager::LEFT, TextManager::MIDDLE));
+
 	scoresWin->addHandler(Window::hdl_lclick, "back", backFromHighScores);
+
+	scoresWin->addHandler(Window::hdl_lclick, "reset", resetHighScores);
 
 	windows["highscores"] = scoresWin;
 }
@@ -1109,6 +1116,12 @@ void backFromOptionsAndSave() {
 void backFromHighScores() {
 	windows["highscores"]->CloseFlag = true;
 	createMainMenuWindow();
+}
+
+void resetHighScores() {
+	Highscores s(fileUtility);
+	s.clear();
+	backFromHighScores();
 }
 
 void createHelpWindow() {

@@ -25,6 +25,14 @@ void Highscores::read() {
 	}
 }
 
+void Highscores::clear()
+{
+	std::string hsFile = m_fileUtility->getFullPath(FileUtility::user,
+				"highscores");
+
+	remove(hsFile.c_str());
+}
+
 void Highscores::add(HighscoresEntry* entry) {
 	std::string hsFile = m_fileUtility->getFullPath(FileUtility::user,
 			"highscores");
