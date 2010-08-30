@@ -639,18 +639,18 @@ void createHighscoresWindow() {
 	const int r3 = l * 4.0f;
 
 	scoresWin->addElement("highscores", videoManager->RegularText->getObject(
-			"Highscores", l, videoManager->RegularText->getHeight() * 3.0f,
+			"Highscores", l, videoManager->RegularText->getHeight() * 2.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addElement("headerXp", videoManager->RegularText->getObject(
-			"XP", l, videoManager->RegularText->getHeight() * 5.0f,
+			"XP", l, videoManager->RegularText->getHeight() * 4.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	scoresWin->addElement("headerParams", videoManager->RegularText->getObject(
 			"Str/Agil/Vital", r2,
-			videoManager->RegularText->getHeight() * 5.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 	scoresWin->addElement("headerTime", videoManager->RegularText->getObject(
-			"Time", r3, videoManager->RegularText->getHeight() * 5.0f,
+			"Time", r3, videoManager->RegularText->getHeight() * 4.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	Highscores s(fileUtility);
@@ -664,7 +664,7 @@ void createHighscoresWindow() {
 			sprintf(line = new char[30], "%i", highscores[i]->Xp);
 			scoresWin->addElement(label, videoManager->RegularText->getObject(
 					line, l, videoManager->RegularText->getHeight()
-							* (6.0f + i), TextManager::LEFT,
+							* (5.0f + i), TextManager::LEFT,
 					TextManager::MIDDLE));
 			delete[] label;
 			delete[] line;
@@ -675,7 +675,7 @@ void createHighscoresWindow() {
 					(int) (highscores[i]->Agility * 100),
 					(int) (highscores[i]->Vitality * 100));
 			scoresWin->addElement(label, videoManager->RegularText->getObject(
-					line, r2, videoManager->RegularText->getHeight() * (6.0f
+					line, r2, videoManager->RegularText->getHeight() * (5.0f
 							+ i), TextManager::LEFT, TextManager::MIDDLE));
 			delete[] label;
 			delete[] line;
@@ -686,7 +686,7 @@ void createHighscoresWindow() {
 			sprintf(label = new char[30], "time%i", i);
 			sprintf(line = new char[30], "%im %is", minutes, seconds);
 			scoresWin->addElement(label, videoManager->RegularText->getObject(
-					line, r3, videoManager->RegularText->getHeight() * (6.0f
+					line, r3, videoManager->RegularText->getHeight() * (5.0f
 							+ i), TextManager::LEFT, TextManager::MIDDLE));
 			delete[] label;
 			delete[] line;
@@ -694,10 +694,10 @@ void createHighscoresWindow() {
 
 	scoresWin->addElement("back", videoManager->RegularText->getObject(
 			"Back to main menu", l, videoManager->RegularText->getHeight()
-					* 18.0f, TextManager::LEFT, TextManager::MIDDLE));
+					* 16.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addElement("reset", videoManager->RegularText->getObject(
-			"Reset list", r3, videoManager->RegularText->getHeight() * 18.0f,
+			"Reset list", r3, videoManager->RegularText->getHeight() * 16.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addHandler(Window::hdl_lclick, "back", backFromHighScores);
@@ -715,28 +715,28 @@ void refreshOptionsWindow() {
 
 	if (config->AutoReload)
 		w->addElement("+autoreload", videoManager->RegularText->getObject("+",
-				l, videoManager->RegularText->getHeight() * 7.0f,
+				l, videoManager->RegularText->getHeight() * 6.0f,
 				TextManager::LEFT, TextManager::MIDDLE));
 	else
 		w->removeElement("+autoreload", false);
 
 	if (config->AutoWeaponPickup)
 		w->addElement("+autopickup", videoManager->RegularText->getObject("+",
-				l, videoManager->RegularText->getHeight() * 8.0f,
+				l, videoManager->RegularText->getHeight() * 7.0f,
 				TextManager::LEFT, TextManager::MIDDLE));
 	else
 		w->removeElement("+autopickup", false);
 
 	if (config->FriendlyFire)
 		w->addElement("+friendlyfire", videoManager->RegularText->getObject(
-				"+", l, videoManager->RegularText->getHeight() * 9.0f,
+				"+", l, videoManager->RegularText->getHeight() * 8.0f,
 				TextManager::LEFT, TextManager::MIDDLE));
 	else
 		w->removeElement("+friendlyfire", false);
 
 	if (config->Screen.Full)
 		w->addElement("+fullscreen", videoManager->RegularText->getObject("+",
-				r, videoManager->RegularText->getHeight() * 7.0f,
+				r, videoManager->RegularText->getHeight() * 6.0f,
 				TextManager::LEFT, TextManager::MIDDLE));
 	else
 		w->removeElement("+fullscreen", false);
@@ -745,8 +745,8 @@ void refreshOptionsWindow() {
 	sprintf(buf = new char[15], "%ix%i", tempConfig->Screen.Width,
 			tempConfig->Screen.Height);
 	TextObject* resInfo = videoManager->RegularText->getObject(buf, r
-			+ videoManager->RegularText->getHeight() * 7.0f,
-			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
+			+ videoManager->RegularText->getHeight() * 6.0f,
+			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
 	delete[] buf;
 	w->addElement("+resolution", resInfo);
@@ -754,7 +754,7 @@ void refreshOptionsWindow() {
 	float snd = (float) config->SoundVolume * 10;
 	sprintf(buf = new char[30], "%.0f%%", snd);
 	TextObject* sndInd = videoManager->RegularText->getObject(buf, l,
-			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
 	delete[] buf;
 	w->addElement("+soundvolume", sndInd);
@@ -762,7 +762,7 @@ void refreshOptionsWindow() {
 	float mus = (float) config->MusicVolume * 10;
 	sprintf(buf = new char[30], "%.0f%%", mus);
 	TextObject * musInd = videoManager->RegularText->getObject(buf, l,
-			videoManager->RegularText->getHeight() * 14.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
 	delete[] buf;
 	w->addElement("+musicvolume", musInd);
@@ -969,65 +969,65 @@ void createOptionsWindow() {
 	const int r = config->Screen.Width * 0.6f;
 
 	w->addElement("options", videoManager->RegularText->getObject("Options", l,
-			videoManager->RegularText->getHeight() * 3.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 2.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("sectiongame", videoManager->RegularText->getObject(
-			"Gameplay", l, videoManager->RegularText->getHeight() * 5.0f,
+			"Gameplay", l, videoManager->RegularText->getHeight() * 4.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("autoreload", videoManager->RegularText->getObject(
 			"Weapon autoreloading", l + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 7.0f,
+					* 2.0f, videoManager->RegularText->getHeight() * 6.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	w->addElement("autopickup", videoManager->RegularText->getObject(
 			"Weapon autotaking", l + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 8.0f,
+					* 2.0f, videoManager->RegularText->getHeight() * 7.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	w->addElement("friendlyfire", videoManager->RegularText->getObject(
 			"Friendly fire", l + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 9.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("sectiongraphics", videoManager->RegularText->getObject(
-			"Graphics", r, videoManager->RegularText->getHeight() * 5.0f,
+			"Graphics", r, videoManager->RegularText->getHeight() * 4.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("fullscreen", videoManager->RegularText->getObject(
 			"Fullscreen", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 6.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 	w->addElement("resolution", videoManager->RegularText->getObject(
 			"Resolution", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("sectionsound", videoManager->RegularText->getObject("Sound",
-			l, videoManager->RegularText->getHeight() * 11.0f,
+			l, videoManager->RegularText->getHeight() * 10.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("soundvolume", videoManager->RegularText->getObject(
 			"Sound volume", l + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 	w->addElement("musicvolume", videoManager->RegularText->getObject(
 			"Music volume", l + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 14.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("controlstitle", videoManager->RegularText->getObject(
-			"Controls", r, videoManager->RegularText->getHeight() * 11.0f,
+			"Controls", r, videoManager->RegularText->getHeight() * 10.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("controlsmenu", videoManager->RegularText->getObject(
 			"Edit Controls", r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("controlsreset", videoManager->RegularText->getObject(
 			"Reset Controls",
 			r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 14.0f, TextManager::LEFT,
+			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addHandler(Window::hdl_lclick, "autoreload", switchAutoReload);
@@ -1045,7 +1045,7 @@ void createOptionsWindow() {
 
 	w->addElement("savereturn", videoManager->RegularText->getObject(
 			"Save and return", l, videoManager->RegularText->getHeight()
-					* 17.0f, TextManager::LEFT, TextManager::MIDDLE));
+					* 16.0f, TextManager::LEFT, TextManager::MIDDLE));
 	w->addHandler(Window::hdl_lclick, "savereturn", backFromOptionsAndSave);
 
 	windows["options"] = w;
