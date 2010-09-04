@@ -463,7 +463,7 @@ void increaseVioletParam(std::string elementName) {
 			player->Strength += 0.1;
 
 		if (elementName.compare("agility") == 0)
-			player->Strength += 0.1;
+			player->Agility += 0.1;
 
 		if (elementName.compare("vitality") == 0) {
 			float h = player->getHealth() / player->MaxHealth();
