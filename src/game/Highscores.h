@@ -2,9 +2,15 @@
 #define HIGHSCORES_H_
 
 #include "../system/utility/FileUtility.h"
+#include "Player.h"
+
+//class Player;
 
 class HighscoresEntry {
 public:
+	HighscoresEntry();
+	HighscoresEntry(violetland::Player* player, int Time);
+	std::string *Name;
 	float Strength;
 	float Agility;
 	float Vitality;
@@ -20,7 +26,8 @@ public:
 	Highscores(FileUtility* fileUtility);
 	void clear();
 	void read();
-	void add(HighscoresEntry* entry);
+	bool isHighscore(HighscoresEntry* entry);
+	bool add(HighscoresEntry* entry);
 	std::vector<HighscoresEntry*> getData();
 	~Highscores();
 };

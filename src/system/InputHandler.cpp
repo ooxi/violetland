@@ -1,4 +1,6 @@
 #include "InputHandler.h"
+#define MAX_CHARACTERS 20
+using namespace std;
 
 InputHandler::InputHandler(Binding* binding) {
 	printf("InputHandler...\n");
@@ -10,6 +12,46 @@ InputHandler::InputHandler(Binding* binding) {
 	m_binding = binding;
 
 	mouseX = mouseY = 0;
+
+	m_mode = Direct;
+	validated = false;
+	contentArea = "";
+	pos = 0;
+}
+
+void InputHandler::setInputMode(InputMode mode) {
+	if (m_mode == mode)
+		return;
+
+	if (mode == Text || mode == TextMandatory) {
+		validated = false;
+		contentArea = "";
+		pos = 0;
+	}
+
+	m_mode = mode;
+}
+
+void InputHandler::setInputModeText(bool mandatory, std::string text) {
+	if ((!mandatory && m_mode == Text)
+			|| (mandatory && m_mode == TextMandatory))
+		return;
+
+	if (mandatory)
+		setInputMode( TextMandatory);
+	else
+		setInputMode( Text);
+
+	contentArea = text;
+	pos = strlen(contentArea.c_str());
+}
+
+string InputHandler::getTextToShow() {
+	return contentArea;
+}
+
+bool InputHandler::hasBeenValidated() {
+	return validated;
 }
 
 bool InputHandler::getDownInput(GameInputEvents evnt) {
@@ -38,10 +80,40 @@ void InputHandler::process() {
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 		case SDL_KEYDOWN:
-			processEvent(Keyboard, true, event.key.keysym.sym);
+			if (m_mode == Direct) {
+				processEvent(Keyboard, true, event.key.keysym.sym);
+			}
+
+			if (m_mode == Text || m_mode == TextMandatory) {
+				switch (event.key.keysym.sym) {
+				case SDLK_ESCAPE:
+					setInputMode( Direct);
+					break;
+				case SDLK_BACKSPACE:
+					if (pos > 0)
+						contentArea.erase(--pos, 1);
+					break;
+				case SDLK_RETURN:
+					if ((m_mode == TextMandatory && contentArea.size() >= 1)
+							|| m_mode == Text) {
+						printf("User input: %s\n", contentArea.c_str());
+						validated = true;
+					}
+					break;
+				default:
+					if (event.key.keysym.unicode < 127 && pos < MAX_CHARACTERS) {
+						char c = event.key.keysym.unicode;
+						if (' ' <= c && c <= '~')
+							contentArea.insert(pos++, 1, c);
+					}
+					break;
+				}
+			}
 			break;
 		case SDL_KEYUP:
-			processEvent(Keyboard, false, event.key.keysym.sym);
+			if (m_mode == Direct) {
+				processEvent(Keyboard, false, event.key.keysym.sym);
+			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			processEvent(Mouse, true, event.button.button);

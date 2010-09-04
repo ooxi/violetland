@@ -115,13 +115,13 @@ void violetland::HUD::drawExperience(float experience, int levelPoints,
 
 void violetland::HUD::drawBar(int x, int y, int width, int height, float value,
 		GLfloat* bcolor, GLfloat* fcolor1, GLfloat* fcolor2) {
-	glDisable(GL_TEXTURE_2D);
+	glDisable( GL_TEXTURE_2D);
 
 	glPushMatrix();
 
 	glTranslatef(x, y, 0.0f);
 
-	glBegin(GL_QUADS);
+	glBegin( GL_QUADS);
 
 	glNormal3f(0.0f, 0.0f, 1.0f);
 
@@ -239,6 +239,16 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 				+ m_videoManager->RegularText->getHeight(),
 				TextManager::CENTER, TextManager::MIDDLE);
 		delete[] buf;
+
+		if (gameState->HighScore) {
+			m_videoManager->RegularText->draw("Enter your name:", screen.Width
+					/ 2, y + m_videoManager->RegularText->getHeight() * 2,
+					TextManager::CENTER, TextManager::MIDDLE);
+			m_videoManager ->RegularText->draw(std::string(
+					gameState->PlayerName).append("_").c_str(), screen.Width
+					/ 2, y + m_videoManager->RegularText->getHeight() * 3,
+					TextManager::CENTER, TextManager::MIDDLE);
+		}
 	}
 
 	if (gameState->Paused)

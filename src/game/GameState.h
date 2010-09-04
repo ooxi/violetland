@@ -1,6 +1,8 @@
 #ifndef GAMESTATE_H_
 #define GAMESTATE_H_
 
+#include <string>
+
 class GameState {
 public:
 	enum GameMode {
@@ -14,8 +16,10 @@ public:
 	double Hardness;
 	bool Works;
 	bool Lost;
+	bool HighScore;
 	bool Begun;
 	bool Paused;
+	std::string PlayerName;
 	float TimeOfDay;
 	int Time;
 };

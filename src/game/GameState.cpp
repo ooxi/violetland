@@ -6,6 +6,8 @@ GameState::GameState() {
 	Works = true;
 	Lost = false;
 	Time = 0;
+	HighScore = false;
+	PlayerName = "";
 }
 
 void GameState::start(GameMode mode) {

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "SDL.h"
+#include <string>
 
 class InputHandler {
 public:
@@ -40,8 +41,15 @@ public:
 		Teleport,
 		GameInputEventsCount
 	};
+	enum InputMode {
+		Direct = 0, Text, TextMandatory
+	};
 	InputHandler(Binding binding[]);
 	void process();
+	void setInputMode(InputMode mode);
+	void setInputModeText(bool mandatory, std::string text);
+	std::string getTextToShow();
+	bool hasBeenValidated();
 	bool getDownInput(GameInputEvents evnt);
 	bool getPressInput(GameInputEvents evnt);
 	int mouseX, mouseY;
@@ -51,7 +59,11 @@ public:
 private:
 	void processEvent(BindingType type, bool down, int value);
 	bool m_event[GameInputEventsCount];
+	InputMode m_mode;
+	bool validated;
+	std::string contentArea;
 	Binding* m_binding;
+	int pos;
 };
 
 #endif /* INPUTHANDLER_H_ */

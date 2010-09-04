@@ -7,13 +7,17 @@ TextManager::TextManager(std::string fontPath, int fontSize) {
 		exit(5);
 	}
 	m_height = TTF_FontHeight(m_font);
-	m_ident = (int)(m_height * 0.5);
+	m_ident = (int) (m_height * 0.5);
 }
 
 void TextManager::draw(const char *textBuf, float x, float y,
 		TextHAlignFlag halign, TextVAlignFlag valign) {
+	if (strlen(textBuf) == 0)
+		return;
+
 	TextObject *textObject = TextManager::getObject(textBuf, x, y, halign,
 			valign);
+
 	textObject->draw(true, textObject->X, textObject->Y);
 	delete textObject;
 }
@@ -66,5 +70,5 @@ TextObject* TextManager::getObject(const char *textBuf, float x, float y,
 }
 
 TextManager::~TextManager() {
-	TTF_CloseFont(m_font);
+	TTF_CloseFont( m_font);
 }

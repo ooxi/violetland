@@ -80,6 +80,8 @@ vector<ParticleSystem*> particleSystems;
 map<string, Window*> windows;
 Terrain* terrain;
 
+HighscoresEntry* highscore;
+
 bool roulette(float eventProbability) {
 	return (rand() % 1000000) < eventProbability * 1000000;
 }
@@ -175,7 +177,6 @@ void startSurvival(std::string elementName) {
 
 	hud->addMessage("Try to survive as long as you can.");
 	hud->addMessage("Shoot monsters to receive experience and other bonuses.");
-	hud->addMessage("Press F1 at any moment to get additional instructions.");
 
 	createTerrain();
 
@@ -246,6 +247,8 @@ void initSystem() {
 			FileUtility::common, "icon-light.png"), 1.0f);
 	SDL_WM_SetIcon(icon, NULL);
 	SDL_FreeSurface(icon);
+
+	SDL_EnableUNICODE(1);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable( GL_COLOR_MATERIAL);
@@ -322,13 +325,13 @@ void loseGame(Player* player) {
 	hud->addMessage("You are gobbled up.");
 
 	Highscores s(fileUtility);
-	HighscoresEntry* h = new HighscoresEntry();
-	h->Agility = player->Agility;
-	h->Strength = player->Strength;
-	h->Vitality = player->Vitality;
-	h->Time = gameState->Time;
-	h->Xp = player->Xp;
-	s.add(h);
+	highscore = new HighscoresEntry(player, gameState->Time);
+	gameState->HighScore = s.isHighscore(highscore);
+
+	if (gameState->HighScore) {
+		gameState->PlayerName = "Violet";
+		input->setInputModeText(true, gameState->PlayerName);
+	}
 
 	SDL_ShowCursor(1);
 }
@@ -1060,6 +1063,7 @@ void createHighscoresWindow() {
 	const int l = config->Screen.Width * 0.1f;
 	const int r2 = l * 2.0f;
 	const int r3 = l * 4.0f;
+	const int r4 = l * 6.0f;
 
 	scoresWin->addElement("highscores", videoManager->RegularText->getObject(
 			"Highscores", l, videoManager->RegularText->getHeight() * 2.0f,
@@ -1074,6 +1078,9 @@ void createHighscoresWindow() {
 			TextManager::MIDDLE));
 	scoresWin->addElement("headerTime", videoManager->RegularText->getObject(
 			"Time", r3, videoManager->RegularText->getHeight() * 4.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+	scoresWin->addElement("headerName", videoManager->RegularText->getObject(
+			"Name", r4, videoManager->RegularText->getHeight() * 4.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	Highscores s(fileUtility);
@@ -1111,8 +1118,14 @@ void createHighscoresWindow() {
 			scoresWin->addElement(label, videoManager->RegularText->getObject(
 					line, r3, videoManager->RegularText->getHeight() * (5.0f
 							+ i), TextManager::LEFT, TextManager::MIDDLE));
+
 			delete[] label;
-			delete[] line;
+			sprintf(label = new char[30], "name%i", i);
+			scoresWin->addElement(label, videoManager->RegularText->getObject(
+					highscores[i]->Name->c_str(), r4,
+					videoManager->RegularText->getHeight() * (5.0f + i),
+					TextManager::LEFT, TextManager::MIDDLE));
+			delete[] label;
 		}
 
 	scoresWin->addElement("back", videoManager->RegularText->getObject(
@@ -1675,6 +1688,18 @@ void handleLifeForms() {
 
 					if (lifeForm->State == LIFEFORM_STATE_ALIVE)
 						handlePlayer(lifeForm);
+				}
+
+				if (gameState->HighScore) {
+					if (input->hasBeenValidated()) {
+						highscore->Name = new string(gameState->PlayerName);
+						input->setInputMode(InputHandler::Direct);
+						Highscores s(fileUtility);
+						s.add(highscore);
+						gameState->HighScore = false;
+					} else {
+						gameState->PlayerName = input->getTextToShow();
+					}
 				}
 			}
 
