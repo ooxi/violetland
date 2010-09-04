@@ -58,12 +58,13 @@ public:
 	static const char* getKeyName(Binding bind);
 private:
 	void processEvent(BindingType type, bool down, int value);
+	void processTextInput(SDL_Event event);
 	bool m_event[GameInputEventsCount];
 	InputMode m_mode;
-	bool validated;
-	std::string contentArea;
+	bool m_textValidated;
+	std::string m_textContent;
+	int m_curTextPos;
 	Binding* m_binding;
-	int pos;
 };
 
 #endif /* INPUTHANDLER_H_ */

@@ -14,9 +14,9 @@ InputHandler::InputHandler(Binding* binding) {
 	mouseX = mouseY = 0;
 
 	m_mode = Direct;
-	validated = false;
-	contentArea = "";
-	pos = 0;
+	m_textValidated = false;
+	m_textContent = "";
+	m_curTextPos = 0;
 }
 
 void InputHandler::setInputMode(InputMode mode) {
@@ -24,9 +24,9 @@ void InputHandler::setInputMode(InputMode mode) {
 		return;
 
 	if (mode == Text || mode == TextMandatory) {
-		validated = false;
-		contentArea = "";
-		pos = 0;
+		m_textValidated = false;
+		m_textContent = "";
+		m_curTextPos = 0;
 	}
 
 	m_mode = mode;
@@ -42,16 +42,16 @@ void InputHandler::setInputModeText(bool mandatory, std::string text) {
 	else
 		setInputMode( Text);
 
-	contentArea = text;
-	pos = strlen(contentArea.c_str());
+	m_textContent = text;
+	m_curTextPos = strlen(m_textContent.c_str());
 }
 
 string InputHandler::getTextToShow() {
-	return contentArea;
+	return m_textContent;
 }
 
 bool InputHandler::hasBeenValidated() {
-	return validated;
+	return m_textValidated;
 }
 
 bool InputHandler::getDownInput(GameInputEvents evnt) {
@@ -74,46 +74,49 @@ void InputHandler::processEvent(BindingType type, bool down, int value) {
 	}
 }
 
+void InputHandler::processTextInput(SDL_Event event) {
+	switch (event.key.keysym.sym) {
+	case SDLK_ESCAPE:
+		setInputMode( Direct);
+		break;
+	case SDLK_BACKSPACE:
+		if (m_curTextPos > 0)
+			m_textContent.erase(--m_curTextPos, 1);
+		break;
+	case SDLK_RETURN:
+		if ((m_mode == TextMandatory && m_textContent.size() >= 1) || m_mode
+				== Text) {
+			printf("User input: %s\n", m_textContent.c_str());
+			m_textValidated = true;
+		}
+		break;
+	default:
+		if (event.key.keysym.unicode < 127 && m_curTextPos < MAX_CHARACTERS) {
+			char c = event.key.keysym.unicode;
+			if (' ' <= c && c <= '~')
+				m_textContent.insert(m_curTextPos++, 1, c);
+		}
+		break;
+	}
+}
+
 void InputHandler::process() {
 	SDL_Event event;
 
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 		case SDL_KEYDOWN:
-			if (m_mode == Direct) {
+			if (m_mode == Direct)
 				processEvent(Keyboard, true, event.key.keysym.sym);
-			}
 
-			if (m_mode == Text || m_mode == TextMandatory) {
-				switch (event.key.keysym.sym) {
-				case SDLK_ESCAPE:
-					setInputMode( Direct);
-					break;
-				case SDLK_BACKSPACE:
-					if (pos > 0)
-						contentArea.erase(--pos, 1);
-					break;
-				case SDLK_RETURN:
-					if ((m_mode == TextMandatory && contentArea.size() >= 1)
-							|| m_mode == Text) {
-						printf("User input: %s\n", contentArea.c_str());
-						validated = true;
-					}
-					break;
-				default:
-					if (event.key.keysym.unicode < 127 && pos < MAX_CHARACTERS) {
-						char c = event.key.keysym.unicode;
-						if (' ' <= c && c <= '~')
-							contentArea.insert(pos++, 1, c);
-					}
-					break;
-				}
-			}
+			if (m_mode == Text || m_mode == TextMandatory)
+				processTextInput(event);
+
 			break;
 		case SDL_KEYUP:
-			if (m_mode == Direct) {
+			if (m_mode == Direct)
 				processEvent(Keyboard, false, event.key.keysym.sym);
-			}
+
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			processEvent(Mouse, true, event.button.button);

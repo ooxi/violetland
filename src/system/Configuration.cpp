@@ -20,7 +20,7 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	FriendlyFire = false;
 	GameAreaSize = 2048;
 
-    PlayerInputBinding[InputHandler::Teleport].Value = SDLK_q;
+	PlayerInputBinding[InputHandler::Teleport].Value = SDLK_q;
 	PlayerInputBinding[InputHandler::MoveLeft].Value = SDLK_a;
 	PlayerInputBinding[InputHandler::MoveUp].Value = SDLK_w;
 	PlayerInputBinding[InputHandler::MoveRight].Value = SDLK_d;
@@ -78,6 +78,30 @@ void Configuration::read() {
 				"Fire");
 		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Reload],
 				"Reload");
+		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Teleport],
+				"Teleport");
+		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Restart],
+				"Restart");
+		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Menu],
+				"Menu");
+		ReadPlayerBinding(&cFile,
+				&PlayerInputBinding[InputHandler::MenuClickA], "MenuClickA");
+		ReadPlayerBinding(&cFile,
+				&PlayerInputBinding[InputHandler::MenuClickB], "MenuClickB");
+		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Exit],
+				"Exit");
+		ReadPlayerBinding(&cFile,
+				&PlayerInputBinding[InputHandler::ToggleLight], "ToggleLight");
+		ReadPlayerBinding(&cFile,
+				&PlayerInputBinding[InputHandler::ToggleLaser], "ToggleLaser");
+		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Pause],
+				"Pause");
+		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::ShowChar],
+				"ShowChar");
+		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Help],
+				"Help");
+		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Pickup],
+				"Pickup");
 	} catch (...) {
 		printf("Can't open config file.\n");
 	}
@@ -135,6 +159,27 @@ void Configuration::write() {
 	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Fire], "Fire");
 	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Reload],
 			"Reload");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Teleport],
+			"Teleport");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Restart],
+			"Restart");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Menu], "Menu");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MenuClickA],
+			"MenuClickA");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MenuClickB],
+			"MenuClickB");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Exit], "Exit");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::ToggleLight],
+			"ToggleLight");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::ToggleLaser],
+			"ToggleLaser");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Pause],
+			"Pause");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::ShowChar],
+			"ShowChar");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Help], "Help");
+	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Pickup],
+			"Pickup");
 
 	std::ofstream ofile(
 			m_fileUtility->getFullPath(FileUtility::user, "config").c_str());
