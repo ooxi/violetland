@@ -60,8 +60,8 @@ void InputHandler::process() {
 	}
 }
 
-const char* InputHandler::getName(int event) {
-	switch (event) {
+const char* InputHandler::getEventName(int eventNumber) {
+	switch (eventNumber) {
 	case Restart:
 		return "Restart";
 		break;
@@ -123,9 +123,70 @@ const char* InputHandler::getName(int event) {
 		return "GameInputEventsCount";
 		break;
 	default:
-		return "Uknown event";
+		return "Unknown event";
 		break;
 	}
+}
+
+const int InputHandler::getEventNumber(std::string eventName) {
+	if (eventName.compare("Restart") == 0)
+		return Restart;
+
+	if (eventName.compare("Exit") == 0)
+		return Exit;
+
+	if (eventName.compare("Menu") == 0)
+		return Menu;
+
+	if (eventName.compare("MenuClickA") == 0)
+		return MenuClickA;
+
+	if (eventName.compare("MenuClickB") == 0)
+		return MenuClickB;
+
+	if (eventName.compare("Toggle Light") == 0)
+		return ToggleLight;
+
+	if (eventName.compare("Toggle Laser") == 0)
+		return ToggleLaser;
+
+	if (eventName.compare("Show Char") == 0)
+		return ShowChar;
+
+	if (eventName.compare("Pause") == 0)
+		return Pause;
+
+	if (eventName.compare("Move Left") == 0)
+		return MoveLeft;
+
+	if (eventName.compare("Move Right") == 0)
+		return MoveRight;
+
+	if (eventName.compare("Move Up") == 0)
+		return MoveUp;
+
+	if (eventName.compare("Move Down") == 0)
+		return MoveDown;
+
+	if (eventName.compare("Help") == 0)
+		return Help;
+
+	if (eventName.compare("Pick Up") == 0)
+		return Pickup;
+
+	if (eventName.compare("Throw Grenade") == 0)
+		return ThrowGrenade;
+
+	if (eventName.compare("Fire") == 0)
+		return Fire;
+
+	if (eventName.compare("Reload") == 0)
+		return Reload;
+
+	if (eventName.compare("Teleport") == 0)
+		return Teleport;
+
+	return GameInputEventsCount;
 }
 
 const char* InputHandler::getKeyName(Binding bind) {
@@ -135,13 +196,13 @@ const char* InputHandler::getKeyName(Binding bind) {
 		switch (bind.Value) {
 		default:
 		case SDL_BUTTON_LEFT:
-			return "left mouse button";
+			return "left mouse";
 			break;
 		case SDL_BUTTON_RIGHT:
-			return "right mouse button";
+			return "right mouse";
 			break;
 		case SDL_BUTTON_MIDDLE:
-			return "middle mouse button";
+			return "middle mouse";
 			break;
 		}
 

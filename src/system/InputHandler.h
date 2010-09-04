@@ -1,6 +1,7 @@
 #ifndef INPUTHANDLER_H_
 #define INPUTHANDLER_H_
 
+#include <string>
 #include "SDL.h"
 
 class InputHandler {
@@ -44,7 +45,8 @@ public:
 	bool getDownInput(GameInputEvents evnt);
 	bool getPressInput(GameInputEvents evnt);
 	int mouseX, mouseY;
-	static const char* getName(int event);
+	static const char* getEventName(int eventNumber);
+	static const int getEventNumber(std::string eventName);
 	static const char* getKeyName(Binding bind);
 private:
 	void processEvent(BindingType type, bool down, int value);

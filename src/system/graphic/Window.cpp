@@ -27,7 +27,8 @@ void Window::removeElement(std::string name, bool remainHandler) {
 		removeHandler(hdl_click, name);
 }
 
-void Window::addHandler(HandlerType hdl, std::string elementName, void(*func)()) {
+void Window::addHandler(HandlerType hdl, std::string elementName, void(*func)(
+		std::string elementName)) {
 	removeHandler(hdl, elementName);
 	if (hdl == hdl_click || hdl == hdl_lclick)
 		m_lcHandlers[elementName] = func;
@@ -53,13 +54,13 @@ void Window::removeHandler(HandlerType hdl, std::string elementName) {
 }
 
 void Window::draw() {
-	glDisable(GL_TEXTURE_2D);
+	glDisable( GL_TEXTURE_2D);
 
 	glPushMatrix();
 
 	glLoadIdentity();
 
-	glBegin(GL_QUADS);
+	glBegin( GL_QUADS);
 
 	glNormal3f(0.0f, 0.0f, 1.0f);
 
@@ -87,13 +88,13 @@ void Window::process(InputHandler* input) {
 	int gmx = input->mouseX;
 	int gmy = input->mouseY;
 
-	std::map<std::string, void(*)()>::const_iterator iter;
+	std::map<std::string, void(*)(std::string)>::const_iterator iter;
 	for (iter = m_mvHandlers.begin(); iter != m_mvHandlers.end(); ++iter) {
 		if (m_elements.count(iter->first) > 0) {
 			TextObject* o = m_elements.find(iter->first)->second;
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
-				iter->second();
+				iter->second(iter->first);
 			}
 		}
 	}
@@ -106,7 +107,7 @@ void Window::process(InputHandler* input) {
 					&& gmy < o->getBottom()) {
 				o->GMask = 0.3f;
 				if (input->getPressInput(InputHandler::MenuClickA)) {
-					iter->second();
+					iter->second(iter->first);
 				}
 			} else {
 				o->GMask = 1.0f;
@@ -121,7 +122,7 @@ void Window::process(InputHandler* input) {
 					&& gmy < o->getBottom()) {
 				o->RMask = 0.3f;
 				if (input->getPressInput(InputHandler::MenuClickB)) {
-					iter->second();
+					iter->second(iter->first);
 				}
 			} else {
 				o->RMask = 1.0f;

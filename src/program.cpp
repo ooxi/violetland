@@ -49,7 +49,7 @@ using namespace std;
 using namespace violetland;
 
 const string PROJECT = "violetland";
-const string VERSION = "0.3.0";
+const string VERSION = "0.3.1";
 
 Configuration* config;
 Configuration* tempConfig;
@@ -141,7 +141,7 @@ void spawnEnemy(float r, int lvl) {
 }
 
 // The beginning of new game in a survival mode
-void startSurvival() {
+void startSurvival(std::string elementName) {
 	glClear( GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
@@ -457,161 +457,139 @@ void refreshCharStatsWindow() {
 				TextManager::CENTER, TextManager::MIDDLE));
 }
 
-void increaseStrength() {
+void increaseVioletParam(std::string elementName) {
 	if (player->LevelPoints > 0) {
-		player->Strength += 0.1;
+		if (elementName.compare("strength") == 0)
+			player->Strength += 0.1;
+
+		if (elementName.compare("agility") == 0)
+			player->Strength += 0.1;
+
+		if (elementName.compare("vitality") == 0) {
+			float h = player->getHealth() / player->MaxHealth();
+			player->Vitality += 0.1;
+			player->setHealth(h * player->MaxHealth());
+		}
+
 		player->LevelPoints--;
 		refreshCharStatsWindow();
 	}
 }
 
-void increaseAgility() {
+void takePerk(std::string elementName) {
 	if (player->LevelPoints > 0) {
-		player->Agility += 0.1;
-		player->LevelPoints--;
+		if (elementName.compare("unstoppable") == 0 && !player->Unstoppable) {
+			player->Unstoppable = true;
+			player->LevelPoints--;
+		}
+
+		if (elementName.compare("poisonbullets") == 0 && !player->PoisonBullets) {
+			player->PoisonBullets = true;
+			player->LevelPoints--;
+		}
+
+		if (elementName.compare("bigcalibre") == 0 && !player->BigCalibre) {
+			player->BigCalibre = true;
+			player->LevelPoints--;
+		}
+
+		if (elementName.compare("telekinesis") == 0 && !player->Telekinesis) {
+			player->Telekinesis = true;
+			player->LevelPoints--;
+		}
+
+		if (elementName.compare("nightvision") == 0 && !player->NightVision) {
+			player->NightVision = true;
+			player->LevelPoints--;
+		}
+
+		if (elementName.compare("looting") == 0 && !player->Looting) {
+			player->Looting = true;
+			player->LevelPoints--;
+		}
+
 		refreshCharStatsWindow();
 	}
 }
 
-void increaseVitality() {
-	if (player->LevelPoints > 0) {
-		float h = player->getHealth() / player->MaxHealth();
-		player->Vitality += 0.1;
-		player->setHealth(h * player->MaxHealth());
-		player->LevelPoints--;
-		refreshCharStatsWindow();
+void showPerkDetails(std::string elementName) {
+	if (elementName.compare("unstoppable") == 0) {
+		windows["charstats"]->addElement(
+				"explantation",
+				videoManager->SmallText->getObject(
+						"Unstoppable: enemies can't block your movement any more, but they still can hurt you.",
+						config->Screen.Width / 2,
+						videoManager->RegularText->getHeight() * 1.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
 	}
-}
 
-void takePoisonBullets() {
-	if (!player->PoisonBullets && player->LevelPoints > 0) {
-		player->PoisonBullets = true;
-		player->LevelPoints--;
-		refreshCharStatsWindow();
+	if (elementName.compare("poisonbullets") == 0) {
+		windows["charstats"]->addElement(
+				"explantation",
+				videoManager->SmallText->getObject(
+						"Poison bullets: after getting hit by your bullet, enemies slowly lose health until they die.",
+						config->Screen.Width / 2,
+						videoManager->RegularText->getHeight() * 1.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
 	}
-}
 
-void takeUnstoppable() {
-	if (!player->Unstoppable && player->LevelPoints > 0) {
-		player->Unstoppable = true;
-		player->LevelPoints--;
-		refreshCharStatsWindow();
+	if (elementName.compare("bigcalibre") == 0) {
+		windows["charstats"]->addElement(
+				"explantation",
+				videoManager->SmallText->getObject(
+						"Big calibre: your bullets can wound a few monsters in a row.",
+						config->Screen.Width / 2,
+						videoManager->RegularText->getHeight() * 1.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
 	}
-}
 
-void takeBigCalibre() {
-	if (!player->BigCalibre && player->LevelPoints > 0) {
-		player->BigCalibre = true;
-		player->LevelPoints--;
-		refreshCharStatsWindow();
+	if (elementName.compare("telekinesis") == 0) {
+		windows["charstats"]->addElement("explantation",
+				videoManager->SmallText->getObject(
+						"Telekinesis: useful things slowly move towards you.",
+						config->Screen.Width / 2,
+						videoManager->RegularText->getHeight() * 1.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
 	}
-}
 
-void takeTelekinesis() {
-	if (!player->Telekinesis && player->LevelPoints > 0) {
-		player->Telekinesis = true;
-		player->LevelPoints--;
-		refreshCharStatsWindow();
+	if (elementName.compare("nightvision") == 0) {
+		windows["charstats"]->addElement("explantation",
+				videoManager->SmallText->getObject(
+						"Night vision: you can see in the dark.",
+						config->Screen.Width / 2,
+						videoManager->RegularText->getHeight() * 1.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
 	}
-}
 
-void takeNightVision() {
-	if (!player->NightVision && player->LevelPoints > 0) {
-		player->NightVision = true;
-		player->LevelPoints--;
-		refreshCharStatsWindow();
+	if (elementName.compare("looting") == 0) {
+		windows["charstats"]->addElement("explantation",
+				videoManager->SmallText->getObject(
+						"Looting: Monsters will drop more bonuses.",
+						config->Screen.Width / 2,
+						videoManager->RegularText->getHeight() * 1.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
 	}
-}
-
-void takeLooting() {
-	if (!player->Looting && player->LevelPoints > 0) {
-		player->Looting = true;
-		player->LevelPoints--;
-		refreshCharStatsWindow();
-	}
-}
-
-void showDetailsUnstoppable() {
-	windows["charstats"]->addElement(
-			"explantation",
-			videoManager->SmallText->getObject(
-					"Unstoppable: enemies can't block your movement any more, but they still can hurt you.",
-					config->Screen.Width / 2,
-					videoManager->RegularText->getHeight() * 1.0f,
-					TextManager::CENTER, TextManager::MIDDLE));
-}
-
-void showDetailsPoisonBullets() {
-	windows["charstats"]->addElement(
-			"explantation",
-			videoManager->SmallText->getObject(
-					"Poison bullets: after getting hit by your bullet, enemies slowly lose health until they die.",
-					config->Screen.Width / 2,
-					videoManager->RegularText->getHeight() * 1.0f,
-					TextManager::CENTER, TextManager::MIDDLE));
-}
-
-void showDetailsBigCalibre() {
-	windows["charstats"]->addElement(
-			"explantation",
-			videoManager->SmallText->getObject(
-					"Big calibre: your bullets can wound a few monsters in a row.",
-					config->Screen.Width / 2,
-					videoManager->RegularText->getHeight() * 1.0f,
-					TextManager::CENTER, TextManager::MIDDLE));
-}
-
-void showDetailsTelekinesis() {
-	windows["charstats"]->addElement("explantation",
-			videoManager->SmallText->getObject(
-					"Telekinesis: useful things slowly move towards you.",
-					config->Screen.Width / 2,
-					videoManager->RegularText->getHeight() * 1.0f,
-					TextManager::CENTER, TextManager::MIDDLE));
-}
-
-void showDetailsNightVision() {
-	windows["charstats"]->addElement("explantation",
-			videoManager->SmallText->getObject(
-					"Night vision: you can see in the dark.",
-					config->Screen.Width / 2,
-					videoManager->RegularText->getHeight() * 1.0f,
-					TextManager::CENTER, TextManager::MIDDLE));
-}
-
-void showDetailsLooting() {
-	windows["charstats"]->addElement("explantation",
-			videoManager->SmallText->getObject(
-					"Looting: Monsters will drop more bonuses.",
-					config->Screen.Width / 2,
-					videoManager->RegularText->getHeight() * 1.0f,
-					TextManager::CENTER, TextManager::MIDDLE));
 }
 
 void createCharStatWindow() {
 	Window *charStats = new CharStatsWindow(config, videoManager);
 
-	charStats->addHandler(Window::hdl_lclick, "strength", increaseStrength);
-	charStats->addHandler(Window::hdl_lclick, "agility", increaseAgility);
-	charStats->addHandler(Window::hdl_lclick, "vitality", increaseVitality);
+	charStats->addHandler(Window::hdl_lclick, "strength", increaseVioletParam);
+	charStats->addHandler(Window::hdl_lclick, "agility", increaseVioletParam);
+	charStats->addHandler(Window::hdl_lclick, "vitality", increaseVioletParam);
 
-	charStats->addHandler(Window::hdl_lclick, "unstoppable", takeUnstoppable);
-	charStats->addHandler(Window::hdl_move, "unstoppable",
-			showDetailsUnstoppable);
-	charStats->addHandler(Window::hdl_lclick, "poisonbullets",
-			takePoisonBullets);
-	charStats->addHandler(Window::hdl_move, "poisonbullets",
-			showDetailsPoisonBullets);
-	charStats->addHandler(Window::hdl_lclick, "bigcalibre", takeBigCalibre);
-	charStats->addHandler(Window::hdl_move, "bigcalibre", showDetailsBigCalibre);
-	charStats->addHandler(Window::hdl_lclick, "telekinesis", takeTelekinesis);
-	charStats->addHandler(Window::hdl_move, "telekinesis",
-			showDetailsTelekinesis);
-	charStats->addHandler(Window::hdl_lclick, "nightvision", takeNightVision);
-	charStats->addHandler(Window::hdl_move, "nightvision",
-			showDetailsNightVision);
-	charStats->addHandler(Window::hdl_lclick, "looting", takeLooting);
-	charStats->addHandler(Window::hdl_move, "looting", showDetailsLooting);
+	charStats->addHandler(Window::hdl_lclick, "unstoppable", takePerk);
+	charStats->addHandler(Window::hdl_move, "unstoppable", showPerkDetails);
+	charStats->addHandler(Window::hdl_lclick, "poisonbullets", takePerk);
+	charStats->addHandler(Window::hdl_move, "poisonbullets", showPerkDetails);
+	charStats->addHandler(Window::hdl_lclick, "bigcalibre", takePerk);
+	charStats->addHandler(Window::hdl_move, "bigcalibre", showPerkDetails);
+	charStats->addHandler(Window::hdl_lclick, "telekinesis", takePerk);
+	charStats->addHandler(Window::hdl_move, "telekinesis", showPerkDetails);
+	charStats->addHandler(Window::hdl_lclick, "nightvision", takePerk);
+	charStats->addHandler(Window::hdl_move, "nightvision", showPerkDetails);
+	charStats->addHandler(Window::hdl_lclick, "looting", takePerk);
+	charStats->addHandler(Window::hdl_move, "looting", showPerkDetails);
 
 	windows["charstats"] = charStats;
 }
@@ -626,86 +604,7 @@ void shutdownSystem() {
 	delete splash;
 }
 
-void backFromHighScores();
-void resetHighScores();
-void backFromOptionsAndSave();
-
-void createHighscoresWindow() {
-	Window *scoresWin = new Window(0.0f, 0.0f, config->Screen.Width,
-			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
-
-	const int l = config->Screen.Width * 0.1f;
-	const int r2 = l * 2.0f;
-	const int r3 = l * 4.0f;
-
-	scoresWin->addElement("highscores", videoManager->RegularText->getObject(
-			"Highscores", l, videoManager->RegularText->getHeight() * 2.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	scoresWin->addElement("headerXp", videoManager->RegularText->getObject(
-			"XP", l, videoManager->RegularText->getHeight() * 4.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-	scoresWin->addElement("headerParams", videoManager->RegularText->getObject(
-			"Str/Agil/Vital", r2,
-			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-	scoresWin->addElement("headerTime", videoManager->RegularText->getObject(
-			"Time", r3, videoManager->RegularText->getHeight() * 4.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	Highscores s(fileUtility);
-	vector<HighscoresEntry*> highscores = s.getData();
-
-	if (!highscores.empty())
-		for (unsigned int i = 0; i < highscores.size(); i++) {
-			char* label;
-			char* line;
-			sprintf(label = new char[30], "xp%i", i);
-			sprintf(line = new char[30], "%i", highscores[i]->Xp);
-			scoresWin->addElement(label, videoManager->RegularText->getObject(
-					line, l, videoManager->RegularText->getHeight()
-							* (5.0f + i), TextManager::LEFT,
-					TextManager::MIDDLE));
-			delete[] label;
-			delete[] line;
-
-			sprintf(label = new char[30], "params%i", i);
-			sprintf(line = new char[30], "%i/%i/%i",
-					(int) (highscores[i]->Strength * 100),
-					(int) (highscores[i]->Agility * 100),
-					(int) (highscores[i]->Vitality * 100));
-			scoresWin->addElement(label, videoManager->RegularText->getObject(
-					line, r2, videoManager->RegularText->getHeight() * (5.0f
-							+ i), TextManager::LEFT, TextManager::MIDDLE));
-			delete[] label;
-			delete[] line;
-
-			const int minutes = highscores[i]->Time / 60000;
-			const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
-
-			sprintf(label = new char[30], "time%i", i);
-			sprintf(line = new char[30], "%im %is", minutes, seconds);
-			scoresWin->addElement(label, videoManager->RegularText->getObject(
-					line, r3, videoManager->RegularText->getHeight() * (5.0f
-							+ i), TextManager::LEFT, TextManager::MIDDLE));
-			delete[] label;
-			delete[] line;
-		}
-
-	scoresWin->addElement("back", videoManager->RegularText->getObject(
-			"Back to main menu", l, videoManager->RegularText->getHeight()
-					* 16.0f, TextManager::LEFT, TextManager::MIDDLE));
-
-	scoresWin->addElement("reset", videoManager->RegularText->getObject(
-			"Reset list", r3, videoManager->RegularText->getHeight() * 16.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	scoresWin->addHandler(Window::hdl_lclick, "back", backFromHighScores);
-
-	scoresWin->addHandler(Window::hdl_lclick, "reset", resetHighScores);
-
-	windows["highscores"] = scoresWin;
-}
+void backFromOptionsAndSave(std::string elementName);
 
 void refreshOptionsWindow() {
 	const int l = config->Screen.Width * 0.1f;
@@ -768,79 +667,79 @@ void refreshOptionsWindow() {
 	w->addElement("+musicvolume", musInd);
 }
 
-void switchAutoReload() {
-	config->AutoReload = !config->AutoReload;
+void switchGameOption(std::string elementName) {
+	if (elementName.compare("autoreload") == 0)
+		config->AutoReload = !config->AutoReload;
+
+	if (elementName.compare("autopickup") == 0)
+		config->AutoWeaponPickup = !config->AutoWeaponPickup;
+
+	if (elementName.compare("friendlyfire") == 0)
+		config->FriendlyFire = !config->FriendlyFire;
+
+	if (elementName.compare("fullscreen") == 0)
+		config->Screen.Full = !config->Screen.Full;
+
 	refreshOptionsWindow();
 }
 
-void switchSoundVolumeDown() {
-	if (config->SoundVolume > 0) {
-		config->SoundVolume--;
-		for (unsigned int a = 1; a <= 8; a++) {
-			Mix_Volume(a, config->SoundVolume * 12);
-		}
-	} else {
-		config->SoundVolume = 10;
-		for (unsigned int a = 1; a <= 8; a++) {
-			Mix_Volume(a, config->SoundVolume * 12);
-		}
-	}
-	refreshOptionsWindow();
-}
-
-void switchSoundVolumeUp() {
-	if (config->SoundVolume <= 9) {
-		config->SoundVolume++;
-		for (unsigned int a = 1; a <= 8; a++) {
-			Mix_Volume(a, config->SoundVolume * 12);
-		}
-	} else {
-		config->SoundVolume = 0;
-		for (unsigned int a = 1; a <= 8; a++) {
-			Mix_Volume(a, 0);
+void switchVolumeDown(std::string elementName) {
+	if (elementName.compare("musicvolume") == 0) {
+		if (config->MusicVolume > 0) {
+			config->MusicVolume--;
+			Mix_Volume(0, config->MusicVolume * 12);
+		} else {
+			config->MusicVolume = 10;
+			Mix_Volume(0, config->MusicVolume * 12);
 		}
 	}
-	refreshOptionsWindow();
-}
 
-void switchMusicVolumeDown() {
-	if (config->MusicVolume > 0) {
-		config->MusicVolume--;
-		Mix_Volume(0, config->MusicVolume * 12);
-	} else {
-		config->MusicVolume = 10;
-		Mix_Volume(0, config->MusicVolume * 12);
+	if (elementName.compare("soundvolume") == 0) {
+		if (config->SoundVolume > 0) {
+			config->SoundVolume--;
+			for (unsigned int a = 1; a <= 8; a++) {
+				Mix_Volume(a, config->SoundVolume * 12);
+			}
+		} else {
+			config->SoundVolume = 10;
+			for (unsigned int a = 1; a <= 8; a++) {
+				Mix_Volume(a, config->SoundVolume * 12);
+			}
+		}
 	}
+
 	refreshOptionsWindow();
 }
 
-void switchMusicVolumeUp() {
-	if (config->MusicVolume <= 9) {
-		config->MusicVolume++;
-		Mix_Volume(0, config->MusicVolume * 12);
-	} else {
-		config->MusicVolume = 0;
-		Mix_Volume(0, 0);
+void switchVolumeUp(std::string elementName) {
+	if (elementName.compare("musicvolume") == 0) {
+		if (config->MusicVolume <= 9) {
+			config->MusicVolume++;
+			Mix_Volume(0, config->MusicVolume * 12);
+		} else {
+			config->MusicVolume = 0;
+			Mix_Volume(0, 0);
+		}
 	}
+
+	if (elementName.compare("soundvolume") == 0) {
+		if (config->SoundVolume <= 9) {
+			config->SoundVolume++;
+			for (unsigned int a = 1; a <= 8; a++) {
+				Mix_Volume(a, config->SoundVolume * 12);
+			}
+		} else {
+			config->SoundVolume = 0;
+			for (unsigned int a = 1; a <= 8; a++) {
+				Mix_Volume(a, 0);
+			}
+		}
+	}
+
 	refreshOptionsWindow();
 }
 
-void switchFriendlyFire() {
-	config->FriendlyFire = !config->FriendlyFire;
-	refreshOptionsWindow();
-}
-
-void switchAutoPickup() {
-	config->AutoWeaponPickup = !config->AutoWeaponPickup;
-	refreshOptionsWindow();
-}
-
-void switchFullScreen() {
-	config->Screen.Full = !config->Screen.Full;
-	refreshOptionsWindow();
-}
-
-void switchResolutionDown() {
+void switchResolutionDown(std::string elementName) {
 	vector < SDL_Rect > modes = videoManager->GetAvailableModes();
 
 	bool set = false;
@@ -861,7 +760,7 @@ void switchResolutionDown() {
 	refreshOptionsWindow();
 }
 
-void switchResolutionUp() {
+void switchResolutionUp(std::string elementName) {
 	vector < SDL_Rect > modes = videoManager->GetAvailableModes();
 
 	bool set = false;
@@ -882,46 +781,95 @@ void switchResolutionUp() {
 	refreshOptionsWindow();
 }
 
-void keyClicked();
+void controlsMenuWindowController(std::string elementName);
 
-void refreshControlsMenu() {
+void refreshControlsMenuWindow() {
 	Window* w = windows.find("controls")->second;
 
-	const int l = config->Screen.Width * 0.1f;
-	const int r = config->Screen.Width * 0.6f;
+	const int col1_l = config->Screen.Width * 0.1f;
+	const int col1_r = config->Screen.Width * 0.45f;
 
-	int i;
-	for (i = 0; i < InputHandler::GameInputEventsCount; i++) {
-		w->addElement(InputHandler::getName(i),
-				videoManager->RegularText->getObject(InputHandler::getName(i),
-						l, videoManager->RegularText->getHeight() * (i + 1.0f),
+	w->addElement("controls", videoManager->RegularText->getObject("Controls",
+			col1_l, videoManager->RegularText->getHeight() * 2.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
+	const int col2_l = config->Screen.Width * 0.55f;
+	const int col2_r = config->Screen.Width * 0.9f;
+
+	int col1_items = InputHandler::GameInputEventsCount / 2;
+	int col2_items = col1_items;
+	if (col1_items + col2_items != InputHandler::GameInputEventsCount)
+		col1_items++;
+
+	for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
+		int l, r, strN;
+		if (i < col1_items) {
+			l = col1_l;
+			r = col1_r;
+			strN = i + 4;
+		} else {
+			l = col2_l;
+			r = col2_r;
+			strN = i - col1_items + 4;
+		}
+
+		w->addElement(InputHandler::getEventName(i),
+				videoManager->RegularText->getObject(
+						InputHandler::getEventName(i), l,
+						videoManager->RegularText->getHeight() * strN,
 						TextManager::LEFT, TextManager::MIDDLE));
+
 		char* skey = (char*) malloc(sizeof(char) * (strlen(
-				InputHandler::getName(i)) + 4));
-		sprintf(skey, "%skey", InputHandler::getName(i));
+				InputHandler::getEventName(i)) + 4));
+		sprintf(skey, "%skey", InputHandler::getEventName(i));
+
 		w->addElement(skey, videoManager->RegularText->getObject(
 				InputHandler::getKeyName(config->PlayerInputBinding[i]), r,
-				videoManager->RegularText->getHeight() * (i + 1.0f),
-				TextManager::LEFT, TextManager::MIDDLE));
+				videoManager->RegularText->getHeight() * strN,
+				TextManager::RIGHT, TextManager::MIDDLE));
 
-		w->addHandler(Window::hdl_lclick, skey, keyClicked);
+		w->addHandler(Window::hdl_lclick, InputHandler::getEventName(i),
+				controlsMenuWindowController);
 	}
 }
 
-void drawWindows();
+void drawWindows() {
+	if (!windows.empty()) {
+		std::map<std::string, Window*>::iterator win, victim;
+		for (win = windows.begin(); win != windows.end(); ++win) {
+			Window* w = win->second;
+			w->draw();
+			w->process(input);
+		}
+		win = windows.begin();
+		while (win != windows.end()) {
+			if (win->second->CloseFlag) {
+				victim = win++;
+				windows.erase(victim);
+			} else {
+				win++;
+			}
+		}
+	}
+}
 
-void keyClicked() {
-	int key = (input->mouseY - videoManager->RegularText->getHeight() / 2)
-			/ videoManager->RegularText->getHeight();
-	videoManager->RegularText->draw("Please press a key...",
-			config->Screen.Width * 0.4f, config->Screen.Height * 0.5f
-					- videoManager->RegularText->getHeight() / 2,
-			TextManager::CENTER, TextManager::MIDDLE);
-	SDL_Event event;
-	videoManager->countFrame(config->FrameDelay);
+void controlsMenuWindowController(std::string elementName) {
+	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
+			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
+
+	w->addElement("pressakey",
+			videoManager->RegularText->getObject("Press a key, please...",
+					config->Screen.Width / 2, config->Screen.Height / 2,
+					TextManager::CENTER, TextManager::MIDDLE));
+
+	windows["pressakey"] = w;
+
 	drawWindows();
-
 	SDL_GL_SwapBuffers();
+
+	int key = InputHandler::getEventNumber(elementName);
+
+	SDL_Event event;
 	while (event.type != SDL_QUIT && event.type != SDL_KEYDOWN && event.type
 			!= SDL_MOUSEBUTTONDOWN) {
 		SDL_WaitEvent(&event);
@@ -939,21 +887,32 @@ void keyClicked() {
 			break;
 		}
 	}
+
+	fprintf(stdout, "Bind action %s to %s.\n", elementName.c_str(),
+			InputHandler::getKeyName(config->PlayerInputBinding[key]));
+
 	config->write();
-	refreshControlsMenu();
+
+	windows["pressakey"]->CloseFlag = true;
+
+	refreshControlsMenuWindow();
 }
 
-void goControlsMenu() {
+void drawWindows();
+void showHighScores(std::string);
+
+void createControlsMenuWindow(std::string elementName) {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
+
 	windows["controls"] = w;
 
-	refreshControlsMenu();
+	refreshControlsMenuWindow();
 
 	windows["options"]->CloseFlag = true;
 }
 
-void resetControls() {
+void resetControls(std::string elementName) {
 	Configuration* config_default = new Configuration(fileUtility);
 	for (int i = 0; i < InputHandler::GameInputEventsCount; i++)
 		config->PlayerInputBinding[i] = config_default->PlayerInputBinding[i];
@@ -1030,17 +989,17 @@ void createOptionsWindow() {
 			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
-	w->addHandler(Window::hdl_lclick, "autoreload", switchAutoReload);
-	w->addHandler(Window::hdl_lclick, "autopickup", switchAutoPickup);
-	w->addHandler(Window::hdl_lclick, "friendlyfire", switchFriendlyFire);
-	w->addHandler(Window::hdl_lclick, "soundvolume", switchSoundVolumeUp);
-	w->addHandler(Window::hdl_rclick, "soundvolume", switchSoundVolumeDown);
-	w->addHandler(Window::hdl_lclick, "musicvolume", switchMusicVolumeUp);
-	w->addHandler(Window::hdl_rclick, "musicvolume", switchMusicVolumeDown);
-	w->addHandler(Window::hdl_lclick, "fullscreen", switchFullScreen);
+	w->addHandler(Window::hdl_lclick, "autoreload", switchGameOption);
+	w->addHandler(Window::hdl_lclick, "autopickup", switchGameOption);
+	w->addHandler(Window::hdl_lclick, "friendlyfire", switchGameOption);
+	w->addHandler(Window::hdl_lclick, "soundvolume", switchVolumeUp);
+	w->addHandler(Window::hdl_rclick, "soundvolume", switchVolumeDown);
+	w->addHandler(Window::hdl_lclick, "musicvolume", switchVolumeUp);
+	w->addHandler(Window::hdl_rclick, "musicvolume", switchVolumeDown);
+	w->addHandler(Window::hdl_lclick, "fullscreen", switchGameOption);
 	w->addHandler(Window::hdl_lclick, "resolution", switchResolutionUp);
 	w->addHandler(Window::hdl_rclick, "resolution", switchResolutionDown);
-	w->addHandler(Window::hdl_lclick, "controlsmenu", goControlsMenu);
+	w->addHandler(Window::hdl_lclick, "controlsmenu", createControlsMenuWindow);
 	w->addHandler(Window::hdl_lclick, "controlsreset", resetControls);
 
 	w->addElement("savereturn", videoManager->RegularText->getObject(
@@ -1053,23 +1012,18 @@ void createOptionsWindow() {
 	refreshOptionsWindow();
 }
 
-void showHighScores() {
-	windows["mainmenu"]->CloseFlag = true;
-	createHighscoresWindow();
-}
-
-void showOptions() {
+void showOptions(std::string elementName) {
 	windows["mainmenu"]->CloseFlag = true;
 	createOptionsWindow();
 }
 
-void resumeGame() {
+void resumeGame(std::string elementName) {
 	Window* w = windows.find("mainmenu")->second;
 	w->CloseFlag = true;
 	switchGamePause();
 }
 
-void endGame() {
+void endGame(std::string elementName) {
 	gameState->Works = false;
 }
 
@@ -1084,6 +1038,103 @@ void createMainMenuWindow() {
 	mainMenu->addHandler(Window::hdl_lclick, "exit", endGame);
 
 	windows["mainmenu"] = mainMenu;
+}
+
+void highScoresWindowController(std::string elementName) {
+	if (elementName.compare("back") == 0) {
+		windows["highscores"]->CloseFlag = true;
+		createMainMenuWindow();
+	}
+
+	if (elementName.compare("reset") == 0) {
+		Highscores s(fileUtility);
+		s.clear();
+		highScoresWindowController("back");
+	}
+}
+
+void createHighscoresWindow() {
+	Window *scoresWin = new Window(0.0f, 0.0f, config->Screen.Width,
+			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
+
+	const int l = config->Screen.Width * 0.1f;
+	const int r2 = l * 2.0f;
+	const int r3 = l * 4.0f;
+
+	scoresWin->addElement("highscores", videoManager->RegularText->getObject(
+			"Highscores", l, videoManager->RegularText->getHeight() * 2.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
+	scoresWin->addElement("headerXp", videoManager->RegularText->getObject(
+			"XP", l, videoManager->RegularText->getHeight() * 4.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+	scoresWin->addElement("headerParams", videoManager->RegularText->getObject(
+			"Str/Agil/Vital", r2,
+			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
+			TextManager::MIDDLE));
+	scoresWin->addElement("headerTime", videoManager->RegularText->getObject(
+			"Time", r3, videoManager->RegularText->getHeight() * 4.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
+	Highscores s(fileUtility);
+	vector<HighscoresEntry*> highscores = s.getData();
+
+	if (!highscores.empty())
+		for (unsigned int i = 0; i < highscores.size(); i++) {
+			char* label;
+			char* line;
+			sprintf(label = new char[30], "xp%i", i);
+			sprintf(line = new char[30], "%i", highscores[i]->Xp);
+			scoresWin->addElement(label, videoManager->RegularText->getObject(
+					line, l, videoManager->RegularText->getHeight()
+							* (5.0f + i), TextManager::LEFT,
+					TextManager::MIDDLE));
+			delete[] label;
+			delete[] line;
+
+			sprintf(label = new char[30], "params%i", i);
+			sprintf(line = new char[30], "%i/%i/%i",
+					(int) (highscores[i]->Strength * 100),
+					(int) (highscores[i]->Agility * 100),
+					(int) (highscores[i]->Vitality * 100));
+			scoresWin->addElement(label, videoManager->RegularText->getObject(
+					line, r2, videoManager->RegularText->getHeight() * (5.0f
+							+ i), TextManager::LEFT, TextManager::MIDDLE));
+			delete[] label;
+			delete[] line;
+
+			const int minutes = highscores[i]->Time / 60000;
+			const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
+
+			sprintf(label = new char[30], "time%i", i);
+			sprintf(line = new char[30], "%im %is", minutes, seconds);
+			scoresWin->addElement(label, videoManager->RegularText->getObject(
+					line, r3, videoManager->RegularText->getHeight() * (5.0f
+							+ i), TextManager::LEFT, TextManager::MIDDLE));
+			delete[] label;
+			delete[] line;
+		}
+
+	scoresWin->addElement("back", videoManager->RegularText->getObject(
+			"Back to main menu", l, videoManager->RegularText->getHeight()
+					* 16.0f, TextManager::LEFT, TextManager::MIDDLE));
+
+	scoresWin->addElement("reset", videoManager->RegularText->getObject(
+			"Reset list", r3, videoManager->RegularText->getHeight() * 16.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
+
+	scoresWin->addHandler(Window::hdl_lclick, "back",
+			highScoresWindowController);
+
+	scoresWin->addHandler(Window::hdl_lclick, "reset",
+			highScoresWindowController);
+
+	windows["highscores"] = scoresWin;
+}
+
+void showHighScores(std::string elementName) {
+	windows["mainmenu"]->CloseFlag = true;
+	createHighscoresWindow();
 }
 
 void unloadResources() {
@@ -1103,7 +1154,7 @@ void unloadResources() {
 	delete config;
 }
 
-void backFromOptionsAndSave() {
+void backFromOptionsAndSave(std::string elementName) {
 	bool changeVideoMode = config->Screen.Width != tempConfig->Screen.Width
 			|| config->Screen.Height != tempConfig->Screen.Height;
 
@@ -1120,19 +1171,9 @@ void backFromOptionsAndSave() {
 #endif //_WIN32
 		videoManager->setMode(config->Screen, cam);
 	}
+
 	windows["options"]->CloseFlag = true;
 	createMainMenuWindow();
-}
-
-void backFromHighScores() {
-	windows["highscores"]->CloseFlag = true;
-	createMainMenuWindow();
-}
-
-void resetHighScores() {
-	Highscores s(fileUtility);
-	s.clear();
-	backFromHighScores();
 }
 
 void createHelpWindow() {
@@ -2201,26 +2242,6 @@ void drawGame() {
 	}
 
 	glEnable(GL_TEXTURE_2D);
-}
-
-void drawWindows() {
-	if (!windows.empty()) {
-		std::map<std::string, Window*>::iterator win, victim;
-		for (win = windows.begin(); win != windows.end(); ++win) {
-			Window* w = win->second;
-			w->draw();
-			w->process(input);
-		}
-		win = windows.begin();
-		while (win != windows.end()) {
-			if (win->second->CloseFlag) {
-				victim = win++;
-				windows.erase(victim);
-			} else {
-				win++;
-			}
-		}
-	}
 }
 
 void runMainLoop() {
