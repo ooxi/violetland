@@ -1495,9 +1495,24 @@ void handlePlayer(LifeForm* lf) {
 	}
 
 	if (player->ActionMode == 1 && input->getPressInput(InputHandler::Fire)) {
-		/* TODO: Add some animation (may be using explosion)
-		 * at point where player has placed before teleportation
-		 */
+		ParticleSystem* partSys = new ParticleSystem();
+
+		for (int i = 0; i < 50; i++) {
+			Particle* spark = new Particle(player->X + (rand() % 200) - 100,
+					player->Y + (rand() % 200) - 100, 128, 128,
+					resources->ExplTex[0]);
+			spark->RMask = spark->GMask = 0.6f;
+			spark->BMask = 1.0f;
+			spark->AMask = (float) (rand() % 40) / 100 + 0.6f;
+			spark->Scale = (float) (rand() % 60) / 300 + 0.05f;
+			spark->XSpeed = -(float) ((rand() % 250) - 125) / 1000;
+			spark->YSpeed = -(float) ((rand() % 250) - 125) / 1000;
+			spark->AMod = -0.0003;
+			partSys->Particles.push_back(spark);
+		}
+
+		particleSystems.push_back(partSys);
+
 		player->teleport();
 		player->ActionMode = PLAYER_ACT_MODE_FIRE;
 		player->setMask(0.0f, 1.0f, 1.0f, 1.0f);
@@ -1769,8 +1784,8 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 	if (bullet->Type == Bullet::standard) {
 		if (((StandardBullet*) bullet)->isExplosive()) {
 			bullet->deactivate();
-			Explosion * expl = new Explosion(bullet->X, bullet->Y, 100.0f,
-					bullet->Damage, resources->ExplTex[0],
+			Explosion * expl = new Explosion(false, bullet->X, bullet->Y,
+					100.0f, bullet->Damage, resources->ExplTex[0],
 					resources->ExplTex[1], resources->ExplSounds[1]);
 			explosions.push_back(expl);
 			bypassDirectDamage = true;
@@ -1814,9 +1829,10 @@ void handleBullets() {
 
 			if (bullets[i]->isReadyToRemove() && bullets[i]->Type
 					== Bullet::grenade) {
-				Explosion* expl = new Explosion(bullets[i]->X, bullets[i]->Y,
-						150.0f, bullets[i]->Damage, resources->ExplTex[0],
-						resources->ExplTex[1], resources->ExplSounds[0]);
+				Explosion* expl = new Explosion(false, bullets[i]->X,
+						bullets[i]->Y, 150.0f, bullets[i]->Damage,
+						resources->ExplTex[0], resources->ExplTex[1],
+						resources->ExplSounds[0]);
 				explosions.push_back(expl);
 			}
 
@@ -1983,9 +1999,9 @@ void handlePowerups() {
 			}
 			case BONUS_NUKE: {
 				hud->addMessage("Boom!");
-				Explosion * expl = new Explosion(player->X, player->Y, 400.0f,
-						12.0f, resources->ExplTex[0], resources->ExplTex[1],
-						resources->ExplSounds[1]);
+				Explosion * expl = new Explosion(true, player->X, player->Y,
+						400.0f, 12.0f, resources->ExplTex[0],
+						resources->ExplTex[1], resources->ExplSounds[1]);
 				explosions.push_back(expl);
 				deletePowerup = true;
 				break;

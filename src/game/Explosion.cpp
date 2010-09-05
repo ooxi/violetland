@@ -1,6 +1,6 @@
 #include "Explosion.h"
 
-Explosion::Explosion(float x, float y, int range, float damage,
+Explosion::Explosion(bool nuclear, float x, float y, int range, float damage,
 		Texture* sparkTex, Texture* gruelTex, Sound* sound) :
 	ParticleSystem() {
 	m_sound = sound;
@@ -45,13 +45,26 @@ Explosion::Explosion(float x, float y, int range, float damage,
 			Particles.push_back(spark);
 		}
 	}
-	Particle* baseSpark = new Particle(x, y, 128, 128, sparkTex);
-	baseSpark->RMask = baseSpark->GMask = 1.0f;
-	baseSpark->BMask = 0.8f;
-	baseSpark->AMask = 0.5f;
-	baseSpark->Scale = range * 0.01f;
-	baseSpark->AMod = -0.0003;
-	Particles.push_back(baseSpark);
+
+	if (nuclear) {
+		Particle* baseSpark = new Particle(x, y, 128, 128, sparkTex);
+		baseSpark->RMask = 0.8f;
+		baseSpark->BMask = 0.6f;
+		baseSpark->GMask = 1.0f;
+		baseSpark->AMask = 0.8f;
+		baseSpark->Scale = range * 0.02f;
+		baseSpark->AMod = -0.0002;
+		baseSpark->ScaleMod = -0.0002;
+		Particles.push_back(baseSpark);
+	} else {
+		Particle* baseSpark = new Particle(x, y, 128, 128, sparkTex);
+		baseSpark->RMask = baseSpark->GMask = 1.0f;
+		baseSpark->BMask = 0.8f;
+		baseSpark->AMask = 0.5f;
+		baseSpark->Scale = range * 0.01f;
+		baseSpark->AMod = -0.0003;
+		Particles.push_back(baseSpark);
+	}
 
 	Active = true;
 	Damage = damage;

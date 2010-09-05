@@ -8,8 +8,8 @@ class Explosion: public ParticleSystem {
 private:
 	Sound* m_sound;
 public:
-	Explosion(float x, float y, int range, float damage, Texture* sparkTex,
-			Texture* gruelTex, Sound* sound);
+	Explosion(bool nuclear, float x, float y, int range, float damage,
+			Texture* sparkTex, Texture* gruelTex, Sound* sound);
 	float calcDamage(Object* objRef);
 	float X, Y;
 	float Damage;
