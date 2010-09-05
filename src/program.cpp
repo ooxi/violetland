@@ -9,6 +9,8 @@
 #include <windows.h>
 #include <winbase.h>
 #include <time.h>
+#else
+#include "pwd.h"
 #endif //_WIN32
 #include "SDL.h"
 #include "SDL_image.h"
@@ -217,8 +219,35 @@ void printVersion() {
 	delete[] pr;
 }
 
+string getDefaultName() {
+#ifdef _WIN32
+	return "Violet";
+#else
+	string name = getenv("USER");
+	if(name.empty()) {
+		struct passwd *p;
+		uid_t uid;
+
+		uid = geteuid();
+		if (!(p = getpwuid(uid))) {
+			printf("whoami: no login associated with uid %u.\n", uid);
+			exit(1);
+		}
+
+		name = p->pw_name;
+		if(name.empty()) {
+			name = "Violet";
+		}
+	}
+	
+	return name;
+#endif
+}
+
 // Creation of system objects and their customization
 void initSystem() {
+	printf("%s\n",getDefaultName().c_str());
+	
 	srand((unsigned) time(NULL));
 
 	TTF_Init();
@@ -316,6 +345,7 @@ void initSystem() {
 	gameState = new GameState();
 }
 
+
 // Operations at destruction of the player:
 // update of the list of the best results,
 // change of a state of objects
@@ -329,7 +359,7 @@ void loseGame(Player* player) {
 	gameState->HighScore = s.isHighscore(highscore);
 
 	if (gameState->HighScore) {
-		gameState->PlayerName = "Violet";
+		gameState->PlayerName = getDefaultName();
 		input->setInputModeText(true, gameState->PlayerName);
 	}
 
