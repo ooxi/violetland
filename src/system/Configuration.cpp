@@ -64,44 +64,10 @@ void Configuration::read() {
 		cFile.readInto(AutoWeaponPickup, "autoWeaponPickup");
 		cFile.readInto(FriendlyFire, "friendlyFire");
 
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MoveLeft],
-				"MoveLeft");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MoveUp],
-				"MoveUp");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MoveRight],
-				"MoveRight");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MoveDown],
-				"MoveDown");
-		ReadPlayerBinding(&cFile,
-				&PlayerInputBinding[InputHandler::ThrowGrenade], "ThrowGrenade");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Fire],
-				"Fire");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Reload],
-				"Reload");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Teleport],
-				"Teleport");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Restart],
-				"Restart");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Menu],
-				"Menu");
-		ReadPlayerBinding(&cFile,
-				&PlayerInputBinding[InputHandler::MenuClickA], "MenuClickA");
-		ReadPlayerBinding(&cFile,
-				&PlayerInputBinding[InputHandler::MenuClickB], "MenuClickB");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Exit],
-				"Exit");
-		ReadPlayerBinding(&cFile,
-				&PlayerInputBinding[InputHandler::ToggleLight], "ToggleLight");
-		ReadPlayerBinding(&cFile,
-				&PlayerInputBinding[InputHandler::ToggleLaser], "ToggleLaser");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Pause],
-				"Pause");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::ShowChar],
-				"ShowChar");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Help],
-				"Help");
-		ReadPlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Pickup],
-				"Pickup");
+		for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
+			ReadPlayerBinding(&cFile, &PlayerInputBinding[i], InputHandler::getEventName(i));
+		}
+		
 	} catch (...) {
 		printf("Can't open config file.\n");
 	}
@@ -146,40 +112,9 @@ void Configuration::write() {
 	cFile.add("autoWeaponPickup", AutoWeaponPickup);
 	cFile.add("friendlyFire", FriendlyFire);
 
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MoveLeft],
-			"MoveLeft");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MoveUp],
-			"MoveUp");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MoveRight],
-			"MoveRight");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MoveDown],
-			"MoveDown");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::ThrowGrenade],
-			"ThrowGrenade");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Fire], "Fire");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Reload],
-			"Reload");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Teleport],
-			"Teleport");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Restart],
-			"Restart");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Menu], "Menu");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MenuClickA],
-			"MenuClickA");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::MenuClickB],
-			"MenuClickB");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Exit], "Exit");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::ToggleLight],
-			"ToggleLight");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::ToggleLaser],
-			"ToggleLaser");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Pause],
-			"Pause");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::ShowChar],
-			"ShowChar");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Help], "Help");
-	WritePlayerBinding(&cFile, &PlayerInputBinding[InputHandler::Pickup],
-			"Pickup");
+	for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
+		WritePlayerBinding(&cFile, &PlayerInputBinding[i], InputHandler::getEventName(i));
+	}
 
 	std::ofstream ofile(
 			m_fileUtility->getFullPath(FileUtility::user, "config").c_str());
