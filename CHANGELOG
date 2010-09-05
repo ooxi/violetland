@@ -3,6 +3,15 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.3.1]
+
+[+] new weapon "SawedOff-Shotgun"
+[+] game controls are changeable from game menu
+[+] new perk "looting"
+[+] support of 1366*768 resolution
+[*] strength affects maximum health
+[*] new HUD animation
+
 [0.3.0]
 
 [+] bonuses timers
