@@ -67,7 +67,7 @@ bool InputHandler::getPressInput(GameInputEvents evnt) {
 	}
 }
 
-void InputHandler::resetMouseButton() {
+void InputHandler::resetMouseButtons() {
 	processEvent(Mouse,false,SDL_BUTTON_LEFT);
 	processEvent(Mouse,false,SDL_BUTTON_RIGHT);
 	processEvent(Mouse,false,SDL_BUTTON_MIDDLE);	

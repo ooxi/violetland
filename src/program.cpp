@@ -52,6 +52,7 @@ using namespace violetland;
 
 const string PROJECT = "violetland";
 const string VERSION = "0.3.1";
+const string DEFAULT_CHAR_NAME = "Violet";
 
 Configuration* config;
 Configuration* tempConfig;
@@ -221,33 +222,33 @@ void printVersion() {
 
 string getDefaultName() {
 #ifdef _WIN32
-	return "Violet";
+	return DEFAULT_CHAR_NAME;
 #else
 	string name = getenv("USER");
-	if(name.empty()) {
+	if (name.empty()) {
 		struct passwd *p;
 		uid_t uid;
 
 		uid = geteuid();
 		if (!(p = getpwuid(uid))) {
 			printf("whoami: no login associated with uid %u.\n", uid);
-			exit(1);
+			return DEFAULT_CHAR_NAME;
 		}
 
 		name = p->pw_name;
-		if(name.empty()) {
-			name = "Violet";
+		if (name.empty()) {
+			return DEFAULT_CHAR_NAME;
 		}
 	}
-	
+
 	return name;
 #endif
 }
 
 // Creation of system objects and their customization
 void initSystem() {
-	printf("%s\n",getDefaultName().c_str());
-	
+	printf("%s\n", getDefaultName().c_str());
+
 	srand((unsigned) time(NULL));
 
 	TTF_Init();
@@ -344,7 +345,6 @@ void initSystem() {
 
 	gameState = new GameState();
 }
-
 
 // Operations at destruction of the player:
 // update of the list of the best results,
@@ -902,7 +902,7 @@ void controlsMenuWindowController(std::string elementName) {
 
 	int key = InputHandler::getEventNumber(elementName);
 
-	input->resetMouseButton();
+	input->resetMouseButtons();
 	SDL_Event event;
 	while (event.type != SDL_QUIT && event.type != SDL_KEYDOWN && event.type
 			!= SDL_MOUSEBUTTONDOWN) {
@@ -915,9 +915,9 @@ void controlsMenuWindowController(std::string elementName) {
 		case SDL_MOUSEBUTTONDOWN:
 			config->PlayerInputBinding[key].Type = InputHandler::Mouse;
 			config->PlayerInputBinding[key].Value = event.button.button;
-		case SDL_QUIT:
-		default:
 			break;
+		case SDL_QUIT:
+			gameState->Works = false;
 		}
 	}
 
