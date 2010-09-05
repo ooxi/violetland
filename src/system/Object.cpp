@@ -40,10 +40,13 @@ void Object::turn(float targetAngle, float angleSpeed, int deltaTime) {
 		arch2 = targetAngle - Angle;
 	}
 
+	if (arch1 < 10 || arch2 < 10)
+		return;
+
 	if (arch1 < arch2)
 		Angle -= deltaTime * angleSpeed;
 
-	if (arch1 >= arch2)
+	if (arch1 > arch2)
 		Angle += deltaTime * angleSpeed;
 
 	Angle = Object::fixAngle(Angle);
@@ -113,8 +116,7 @@ const bool Object::detectCollide(Object *refObj) {
 }
 
 const bool Object::detectCollide(float x, float y) {
-	return calculateDistance(X, Y, x, y) < HitR * Scale
-		* m_width;
+	return calculateDistance(X, Y, x, y) < HitR * Scale * m_width;
 }
 
 const bool Object::detectCollide(float x1, float y1, float x2, float y2) {
@@ -128,19 +130,22 @@ const bool Object::detectCollide(float x1, float y1, float x2, float y2,
 	float b = y1 - k * x1;
 	float r = HitR * Scale * m_width;
 
-	float d = (pow((2 * k * b - 2 * X - 2 * Y * k), 2) - (4 + 4 * pow(k, 2)) * (pow(b ,2) - pow(r, 2) + pow(X, 2) + pow(Y, 2) - 2 * Y * b));
+	float d = (pow((2 * k * b - 2 * X - 2 * Y * k), 2) - (4 + 4 * pow(k, 2))
+			* (pow(b, 2) - pow(r, 2) + pow(X, 2) + pow(Y, 2) - 2 * Y * b));
 
 	if (d < 0) {
 		return false;
 	}
 
-	float resX1 = (-(2 * k * b - 2 * X - 2 * Y * k) - sqrt(d)) / (2 + 2 *  pow(k, 2));
+	float resX1 = (-(2 * k * b - 2 * X - 2 * Y * k) - sqrt(d)) / (2 + 2 * pow(
+			k, 2));
 	//	float resX2 = ((-(2* k * b - 2* targetX - 2* targetY * k) + sqrt(d)) / (2
 	//			+ 2* k * k));
 
 	float resY1 = k * resX1 + b;
 
-	if (std::abs(std::abs(x1 - resX1) + std::abs(x2 - resX1) - std::abs(x2 - x1)) < 1) {
+	if (std::abs(std::abs(x1 - resX1) + std::abs(x2 - resX1)
+			- std::abs(x2 - x1)) < 1) {
 		*ix = resX1;
 		*iy = resY1;
 		return true;
@@ -157,10 +162,9 @@ const bool Object::detectCollide(float x1, float y1, float x2, float y2,
 
 	return false;
 }
-void Object::setMask(float _RMask, float _GMask, float _BMask, float _AMask)
-{
-    RMask = _RMask;
-    GMask = _GMask;
-    BMask = _BMask;
-    AMask = _AMask;
+void Object::setMask(float _RMask, float _GMask, float _BMask, float _AMask) {
+	RMask = _RMask;
+	GMask = _GMask;
+	BMask = _BMask;
+	AMask = _AMask;
 }

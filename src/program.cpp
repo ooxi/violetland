@@ -1213,20 +1213,24 @@ void handleCommonControls() {
 		}
 	}
 
-	if (input->getPressInput(InputHandler::Help)) {
-		if (windows.count("helpscreen") == 0) {
-			clearMap<std::string, Window*> (&windows);
+	/* Currently the help screen is unneeded as it contains only controls tips.
+	 * Controls tips are equivalent to controls menu.
+	 */
 
-			createHelpWindow();
-
-			if (!gameState->Paused)
-				switchGamePause();
-		} else {
-			Window* w = windows.find("helpscreen")->second;
-			w->CloseFlag = true;
-			switchGamePause();
-		}
-	}
+	//	if (input->getPressInput(InputHandler::Help)) {
+	//		if (windows.count("helpscreen") == 0) {
+	//			clearMap<std::string, Window*> (&windows);
+	//
+	//			createHelpWindow();
+	//
+	//			if (!gameState->Paused)
+	//				switchGamePause();
+	//		} else {
+	//			Window* w = windows.find("helpscreen")->second;
+	//			w->CloseFlag = true;
+	//			switchGamePause();
+	//		}
+	//	}
 
 	if (input->getPressInput(InputHandler::Menu)) {
 		if (windows.count("mainmenu") == 0) {
@@ -1394,8 +1398,8 @@ void handleMonster(LifeForm* lf) {
 			enemy->DoNotDisturb = false;
 	}
 
-	if ((rangeToPlayer < 400 || enemy->Angry) && player->State
-			== LIFEFORM_STATE_ALIVE) {
+	if ((rangeToPlayer < 400 || enemy->Angry || player->Speed == 0
+			|| enemy->Speed == 0) && player->State == LIFEFORM_STATE_ALIVE) {
 		enemy->TargetX = player->X;
 		enemy->TargetY = player->Y;
 	} else if (rangeToPlayer < 800 && !gameState->Lost) {
