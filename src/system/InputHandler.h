@@ -52,6 +52,7 @@ public:
 	bool hasBeenValidated();
 	bool getDownInput(GameInputEvents evnt);
 	bool getPressInput(GameInputEvents evnt);
+	void resetMouseButton();
 	int mouseX, mouseY;
 	static const char* getEventName(int eventNumber);
 	static const int getEventNumber(std::string eventName);

@@ -872,13 +872,12 @@ void controlsMenuWindowController(std::string elementName) {
 
 	int key = InputHandler::getEventNumber(elementName);
 
+	input->resetMouseButton();
 	SDL_Event event;
 	while (event.type != SDL_QUIT && event.type != SDL_KEYDOWN && event.type
 			!= SDL_MOUSEBUTTONDOWN) {
 		SDL_WaitEvent(&event);
 		switch (event.type) {
-		case SDL_QUIT:
-			break;
 		case SDL_KEYDOWN:
 			config->PlayerInputBinding[key].Type = InputHandler::Keyboard;
 			config->PlayerInputBinding[key].Value = event.key.keysym.sym;
@@ -886,6 +885,7 @@ void controlsMenuWindowController(std::string elementName) {
 		case SDL_MOUSEBUTTONDOWN:
 			config->PlayerInputBinding[key].Type = InputHandler::Mouse;
 			config->PlayerInputBinding[key].Value = event.button.button;
+		case SDL_QUIT:
 		default:
 			break;
 		}

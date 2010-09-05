@@ -67,6 +67,12 @@ bool InputHandler::getPressInput(GameInputEvents evnt) {
 	}
 }
 
+void InputHandler::resetMouseButton() {
+	processEvent(Mouse,false,SDL_BUTTON_LEFT);
+	processEvent(Mouse,false,SDL_BUTTON_RIGHT);
+	processEvent(Mouse,false,SDL_BUTTON_MIDDLE);	
+}
+
 void InputHandler::processEvent(BindingType type, bool down, int value) {
 	for (int i = 0; i < GameInputEventsCount; i++) {
 		if (m_binding[i].Type == type && m_binding[i].Value == value)
@@ -114,8 +120,7 @@ void InputHandler::process() {
 
 			break;
 		case SDL_KEYUP:
-			if (m_mode == Direct)
-				processEvent(Keyboard, false, event.key.keysym.sym);
+			processEvent(Keyboard, false, event.key.keysym.sym);
 
 			break;
 		case SDL_MOUSEBUTTONDOWN:
