@@ -16,6 +16,13 @@
 #include "SDL_image.h"
 #include "SDL_opengl.h"
 #include "SDL_ttf.h"
+
+//~ Internationalization Dependances
+#include <libintl.h>
+#include <locale.h>
+#define _(STRING)            gettext(STRING)
+#define TRANSLATION_PATH 	"."
+
 #include "system/Configuration.h"
 #include "system/InputHandler.h"
 #ifdef __APPLE__
@@ -230,12 +237,9 @@ string getDefaultName() {
 		uid_t uid;
 
 		uid = geteuid();
-		if (!(p = getpwuid(uid))) {
-			printf("whoami: no login associated with uid %u.\n", uid);
-			return DEFAULT_CHAR_NAME;
-		}
-
-		name = p->pw_name;
+		if (p = getpwuid(uid))
+			name = p->pw_name;
+			
 		if (name.empty()) {
 			return DEFAULT_CHAR_NAME;
 		}
@@ -247,8 +251,21 @@ string getDefaultName() {
 
 // Creation of system objects and their customization
 void initSystem() {
-	printf("%s\n", getDefaultName().c_str());
+	printf(_("Name found : %s\n"), getDefaultName().c_str());
 
+	//~
+    //~ Internationalization Initialization
+    //~
+    
+    //~ i18n: initializes the entire current locale of the program as per environment variables set by the user
+    setlocale( LC_ALL, "" );
+    
+    //~ i18n: Indicate the path of the i18n catalog file
+    bindtextdomain( "violetland", TRANSLATION_PATH );
+    
+    //~ i18n: sets the message domain
+    textdomain( "violetland" );
+    
 	srand((unsigned) time(NULL));
 
 	TTF_Init();
@@ -266,7 +283,7 @@ void initSystem() {
 	cam = new Camera();
 	videoManager->setMode(config->Screen, cam);
 
-	printf("Preparing window...\n");
+	printf(_("Preparing window...\n"));
 
 	char* buf;
 	buf = getProjectTitle();
@@ -289,7 +306,7 @@ void initSystem() {
 
 	glDisable( GL_DEPTH_TEST);
 
-	printf("Drawing splash screen...\n");
+	printf(_("Drawing splash screen...\n"));
 
 	sprintf(buf = new char[100], "splash_%i.png", (rand() % 2));
 	Texture* tex = new Texture(ImageUtility::loadImage(
@@ -313,7 +330,7 @@ void initSystem() {
 
 	SDL_GL_SwapBuffers();
 
-	printf("Preparing sound systems...\n");
+	printf(_("Preparing sound systems...\n"));
 
 	sndManager = new SoundManager(fileUtility, config);
 	musicManager = new MusicManager(fileUtility, sndManager, config);
@@ -352,7 +369,7 @@ void initSystem() {
 void loseGame(Player* player) {
 	gameState->Lost = true;
 
-	hud->addMessage("You are gobbled up.");
+	hud->addMessage(_("You are gobbled up."));
 
 	Highscores s(fileUtility);
 	highscore = new HighscoresEntry(player, gameState->Time);
@@ -383,71 +400,71 @@ void refreshCharStatsWindow() {
 
 	char *buf;
 	//TODO: what is sprintf_s?
-	sprintf(buf = new char[100], "Current player level: %i",
+	sprintf(buf = new char[100], _("Current player level: %i"),
 			(int) ((player->Level)));
 	charStats->addElement("level", videoManager->RegularText->getObject(buf, l,
 			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 	delete[] buf;
 
-	sprintf(buf = new char[100], "Available improvement points: %i",
+	sprintf(buf = new char[100], _("Available improvement points: %i"),
 			(int) ((player->LevelPoints)));
 	charStats->addElement("availpoints", videoManager->RegularText->getObject(
 			buf, l, videoManager->RegularText->getHeight() * 5.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	delete[] buf;
 
-	sprintf(buf = new char[100], "Strength: %i",
+	sprintf(buf = new char[100], _("Strength: %i"),
 			(int) ((player->Strength * 100)));
 	charStats->addElement("strength", videoManager->RegularText->getObject(buf,
 			l, videoManager->RegularText->getHeight() * 7.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	delete[] buf;
-	sprintf(buf = new char[100], "Agility: %i", (int) ((player->Agility * 100)));
+	sprintf(buf = new char[100], _("Agility: %i"), (int) ((player->Agility * 100)));
 	charStats->addElement("agility", videoManager->RegularText->getObject(buf,
 			l, videoManager->RegularText->getHeight() * 8.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	delete[] buf;
-	sprintf(buf = new char[100], "Vitality: %i",
+	sprintf(buf = new char[100], _("Vitality: %i"),
 			(int) ((player->Vitality * 100)));
 	charStats->addElement("vitality", videoManager->RegularText->getObject(buf,
 			l, videoManager->RegularText->getHeight() * 9.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	delete[] buf;
 
-	sprintf(buf = new char[100], "HP: %i / Max HP: %i",
+	sprintf(buf = new char[100], _("HP: %i / Max HP: %i"),
 			(int) ((player->getHealth() * 100)), (int) ((player->MaxHealth()
 					* 100)));
 	charStats->addElement("hp", videoManager->RegularText->getObject(buf, l,
 			videoManager->RegularText->getHeight() * 11.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 	delete[] buf;
-	sprintf(buf = new char[100], "Melee damage: %i", (int) ((player->Damage()
+	sprintf(buf = new char[100], _("Melee damage: %i"), (int) ((player->Damage()
 			* 100)));
 	charStats->addElement("melee", videoManager->RegularText->getObject(buf, l,
 			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 	delete[] buf;
-	sprintf(buf = new char[100], "Chance of block: %i%%",
+	sprintf(buf = new char[100], _("Chance of block: %i%%"),
 			(int) ((player->ChanceToEvade() * 100)));
 	charStats->addElement("chanceblock", videoManager->RegularText->getObject(
 			buf, l, videoManager->RegularText->getHeight() * 13.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	delete[] buf;
-	sprintf(buf = new char[100], "Reloading speed modifier: %i%%",
+	sprintf(buf = new char[100], _("Reloading speed modifier: %i%%"),
 			(int) ((player->ReloadSpeedMod() * 100)));
 	charStats->addElement("reloadingspeed",
 			videoManager->RegularText->getObject(buf, l,
 					videoManager->RegularText->getHeight() * 14.0f,
 					TextManager::LEFT, TextManager::MIDDLE));
 	delete[] buf;
-	sprintf(buf = new char[100], "Accuracy deviation modifier: %i%%",
+	sprintf(buf = new char[100], _("Accuracy deviation modifier: %i%%"),
 			(int) ((player->WeaponRetForceMod() * 100)));
 	charStats->addElement("accuracy", videoManager->RegularText->getObject(buf,
 			l, videoManager->RegularText->getHeight() * 15.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	delete[] buf;
-	sprintf(buf = new char[100], "Health regeneration: %.2f/min",
+	sprintf(buf = new char[100], _("Health regeneration: %.2f/min"),
 			(player->HealthRegen() * 6000000));
 	charStats->addElement("healthregen", videoManager->RegularText->getObject(
 			buf, l, videoManager->RegularText->getHeight() * 16.0f,
@@ -822,7 +839,7 @@ void refreshControlsMenuWindow() {
 	const int col1_l = config->Screen.Width * 0.1f;
 	const int col1_r = config->Screen.Width * 0.45f;
 
-	w->addElement("controls", videoManager->RegularText->getObject("Controls",
+	w->addElement("controls", videoManager->RegularText->getObject(_("Controls"),
 			col1_l, videoManager->RegularText->getHeight() * 2.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
@@ -891,7 +908,7 @@ void controlsMenuWindowController(std::string elementName) {
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
 	w->addElement("pressakey",
-			videoManager->RegularText->getObject("Press a key, please...",
+			videoManager->RegularText->getObject(_("Press a key, please..."),
 					config->Screen.Width / 2, config->Screen.Height / 2,
 					TextManager::CENTER, TextManager::MIDDLE));
 
@@ -921,7 +938,7 @@ void controlsMenuWindowController(std::string elementName) {
 		}
 	}
 
-	fprintf(stdout, "Bind action %s to %s.\n", elementName.c_str(),
+	fprintf(stdout, _("Bind action %s to %s.\n"), elementName.c_str(),
 			InputHandler::getKeyName(config->PlayerInputBinding[key]));
 
 	config->write();
@@ -960,37 +977,37 @@ void createOptionsWindow() {
 	const int l = config->Screen.Width * 0.1f;
 	const int r = config->Screen.Width * 0.6f;
 
-	w->addElement("options", videoManager->RegularText->getObject("Options", l,
+	w->addElement("options", videoManager->RegularText->getObject(_("Options"), l,
 			videoManager->RegularText->getHeight() * 2.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("sectiongame", videoManager->RegularText->getObject(
-			"Gameplay", l, videoManager->RegularText->getHeight() * 4.0f,
+			_("Gameplay"), l, videoManager->RegularText->getHeight() * 4.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("autoreload", videoManager->RegularText->getObject(
-			"Weapon autoreloading", l + videoManager->RegularText->getHeight()
+			_("Weapon autoreloading"), l + videoManager->RegularText->getHeight()
 					* 2.0f, videoManager->RegularText->getHeight() * 6.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	w->addElement("autopickup", videoManager->RegularText->getObject(
-			"Weapon autotaking", l + videoManager->RegularText->getHeight()
+			_("Weapon autotaking"), l + videoManager->RegularText->getHeight()
 					* 2.0f, videoManager->RegularText->getHeight() * 7.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	w->addElement("friendlyfire", videoManager->RegularText->getObject(
-			"Friendly fire", l + videoManager->RegularText->getHeight() * 2.0f,
+			_("Friendly fire"), l + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("sectiongraphics", videoManager->RegularText->getObject(
-			"Graphics", r, videoManager->RegularText->getHeight() * 4.0f,
+			_("Graphics"), r, videoManager->RegularText->getHeight() * 4.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("fullscreen", videoManager->RegularText->getObject(
-			"Fullscreen", r + videoManager->RegularText->getHeight() * 2.0f,
+			_("Fullscreen"), r + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 6.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 	w->addElement("resolution", videoManager->RegularText->getObject(
-			"Resolution", r + videoManager->RegularText->getHeight() * 2.0f,
+			_("Resolution"), r + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
@@ -999,25 +1016,25 @@ void createOptionsWindow() {
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("soundvolume", videoManager->RegularText->getObject(
-			"Sound volume", l + videoManager->RegularText->getHeight() * 2.0f,
+			_("Sound volume"), l + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 	w->addElement("musicvolume", videoManager->RegularText->getObject(
-			"Music volume", l + videoManager->RegularText->getHeight() * 2.0f,
+			_("Music volume"), l + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("controlstitle", videoManager->RegularText->getObject(
-			"Controls", r, videoManager->RegularText->getHeight() * 10.0f,
+			_("Controls"), r, videoManager->RegularText->getHeight() * 10.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("controlsmenu", videoManager->RegularText->getObject(
-			"Edit Controls", r + videoManager->RegularText->getHeight() * 2.0f,
+			_("Edit Controls"), r + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("controlsreset", videoManager->RegularText->getObject(
-			"Reset Controls",
+			_("Reset Controls"),
 			r + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
@@ -1096,21 +1113,21 @@ void createHighscoresWindow() {
 	const int r4 = l * 6.0f;
 
 	scoresWin->addElement("highscores", videoManager->RegularText->getObject(
-			"Highscores", l, videoManager->RegularText->getHeight() * 2.0f,
+			_("Highscores"), l, videoManager->RegularText->getHeight() * 2.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addElement("headerXp", videoManager->RegularText->getObject(
-			"XP", l, videoManager->RegularText->getHeight() * 4.0f,
+			_("XP"), l, videoManager->RegularText->getHeight() * 4.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	scoresWin->addElement("headerParams", videoManager->RegularText->getObject(
-			"Str/Agil/Vital", r2,
+			_("Str/Agil/Vital"), r2,
 			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 	scoresWin->addElement("headerTime", videoManager->RegularText->getObject(
-			"Time", r3, videoManager->RegularText->getHeight() * 4.0f,
+			_("Time"), r3, videoManager->RegularText->getHeight() * 4.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	scoresWin->addElement("headerName", videoManager->RegularText->getObject(
-			"Name", r4, videoManager->RegularText->getHeight() * 4.0f,
+			_("Name"), r4, videoManager->RegularText->getHeight() * 4.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	Highscores s(fileUtility);
@@ -1159,11 +1176,11 @@ void createHighscoresWindow() {
 		}
 
 	scoresWin->addElement("back", videoManager->RegularText->getObject(
-			"Back to main menu", l, videoManager->RegularText->getHeight()
+			_("Back to main menu"), l, videoManager->RegularText->getHeight()
 					* 16.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addElement("reset", videoManager->RegularText->getObject(
-			"Reset list", r3, videoManager->RegularText->getHeight() * 16.0f,
+			_("Reset list"), r3, videoManager->RegularText->getHeight() * 16.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addHandler(Window::hdl_lclick, "back",
@@ -1207,7 +1224,7 @@ void backFromOptionsAndSave(std::string elementName) {
 
 	if (changeVideoMode) {
 #ifdef _WIN32
-		fprintf(stdout,"Hot video mode changing is not supported on windows now. You should restart the game.");
+		fprintf(stdout,_("Hot video mode changing is not supported on windows now. You should restart the game."));
 		unloadResources();
 		shutdownSystem();
 		exit(0);
@@ -1479,7 +1496,7 @@ void levelUp(Player* player) {
 	player->Level += 1;
 	player->LevelPoints += 1;
 
-	hud->addMessage("You have reached new level.");
+	hud->addMessage(_("You have reached new level."));
 
 	player->setHealth(player->MaxHealth());
 }
@@ -1888,6 +1905,8 @@ void setGuiCameraMode() {
 	glLoadIdentity();
 }
 
+#warning translation stop here
+
 void drawHud() {
 	hud->draw(gameState, player);
 
@@ -1900,7 +1919,7 @@ void drawHud() {
 			TextManager::TOP);
 	delete[] buf;
 
-	sprintf(buf = new char[30], "Grenades: %i", player->Grenades);
+	sprintf(buf = new char[30], _("Grenades: %i"), player->Grenades);
 	videoManager->RegularText->draw(buf,
 			videoManager->RegularText->getIndent(),
 			videoManager->RegularText->getIndent()
@@ -1908,7 +1927,7 @@ void drawHud() {
 			TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
 
-	sprintf(buf = new char[30], "Teleports: %i", player->Teleports);
+	sprintf(buf = new char[30], _("Teleports: %i"), player->Teleports);
 	videoManager->RegularText->draw(buf,
 			videoManager->RegularText->getIndent(),
 			videoManager->RegularText->getIndent()
@@ -1924,7 +1943,7 @@ void drawHud() {
 					TextManager::CENTER, TextManager::TOP);
 
 	if (config->ShowFps) {
-		sprintf(buf = new char[30], "FPS: %i", videoManager->getFps());
+		sprintf(buf = new char[30], _("FPS: %i"), videoManager->getFps());
 		videoManager->RegularText->draw(buf, config->Screen.Width
 				- videoManager->RegularText->getIndent(), config->Screen.Height
 				- videoManager->RegularText->getIndent(), TextManager::RIGHT,
@@ -1957,31 +1976,31 @@ void handlePowerups() {
 
 			switch (powerups[i]->Type) {
 			case BONUS_MEDIKIT:
-				player->HudInfo = "a medikit";
+				player->HudInfo = _("a medikit");
 				break;
 			case BONUS_FREEZE:
-				player->HudInfo = "a nitrogen bomb";
+				player->HudInfo = _("a nitrogen bomb");
 				break;
 			case BONUS_NUKE:
-				player->HudInfo = "nuke!";
+				player->HudInfo = _("nuke!");
 				break;
 			case BONUS_GRENADES:
-				player->HudInfo = "a hand grenade";
+				player->HudInfo = _("a hand grenade");
 				break;
 			case BONUS_PENBULLETS:
-				player->HudInfo = "penetration bullets";
+				player->HudInfo = _("penetration bullets");
 				break;
 			case BONUS_VITALITYROIDS:
-				player->HudInfo = "vitality boost";
+				player->HudInfo = _("vitality boost");
 				break;
 			case BONUS_STRENGTHROIDS:
-				player->HudInfo = "strength boost";
+				player->HudInfo = _("strength boost");
 				break;
 			case BONUS_AGILITYROIDS:
-				player->HudInfo = "agility boost";
+				player->HudInfo = _("agility boost");
 				break;
 			case BONUS_TELEPORTS:
-				player->HudInfo = "a teleport";
+				player->HudInfo = _("a teleport");
 				break;
 			case BONUS_WEAPON:
 				char buf[100];
@@ -2007,7 +2026,7 @@ void handlePowerups() {
 			switch (powerups[i]->Type) {
 			case BONUS_MEDIKIT: {
 				if (player->getHealth() < player->MaxHealth()) {
-					hud->addMessage("You have taken a medical kit.");
+					hud->addMessage(_("You have taken a medical kit."));
 					player->setHealth(player->getHealth()
 							+ *(float*) powerups[i]->Object);
 					deletePowerup = true;
@@ -2015,7 +2034,7 @@ void handlePowerups() {
 				break;
 			}
 			case BONUS_FREEZE: {
-				hud->addMessage("All have been frozen around you.");
+				hud->addMessage(_("All have been frozen around you."));
 
 				map<string, LifeForm*>::const_iterator iter;
 				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
@@ -2032,7 +2051,7 @@ void handlePowerups() {
 				break;
 			}
 			case BONUS_NUKE: {
-				hud->addMessage("Boom!");
+				hud->addMessage(_("Boom!"));
 				Explosion * expl = new Explosion(true, player->X, player->Y,
 						400.0f, 12.0f, resources->ExplTex[0],
 						resources->ExplTex[1], resources->ExplSounds[1]);
@@ -2041,41 +2060,41 @@ void handlePowerups() {
 				break;
 			}
 			case BONUS_PENBULLETS: {
-				hud->addMessage("You got powerful penetration bullets.");
+				hud->addMessage(_("You got powerful penetration bullets."));
 				player->bonusTimes[PLAYER_BONUS_PENBULLETS]
 						= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_VITALITYROIDS: {
-				hud->addMessage("You got a vitality boost.");
+				hud->addMessage(_("You got a vitality boost."));
 				player->bonusTimes[PLAYER_BONUS_VITALITYBOOST]
 						+= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_STRENGTHROIDS: {
-				hud->addMessage("You got a strength boost.");
+				hud->addMessage(_("You got a strength boost."));
 				player->bonusTimes[PLAYER_BONUS_STRENGTHBOOST]
 						+= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_AGILITYROIDS: {
-				hud->addMessage("You got a agility boost.");
+				hud->addMessage(_("You got a agility boost."));
 				player->bonusTimes[PLAYER_BONUS_AGILITYBOOST]
 						+= *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_GRENADES: {
-				hud->addMessage("You have taken a grenade.");
+				hud->addMessage(_("You have taken a grenade."));
 				player->Grenades += *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_TELEPORTS: {
-				hud->addMessage("You have taken a teleport.");
+				hud->addMessage(_("You have taken a teleport."));
 				player->Teleports += *(int*) powerups[i]->Object;
 				deletePowerup = true;
 				break;
@@ -2085,7 +2104,7 @@ void handlePowerups() {
 						|| config->AutoWeaponPickup) {
 					player->setWeapon((Weapon*) powerups[i]->Object);
 					char *buf;
-					sprintf(buf = new char[200], "You have taken the %s.",
+					sprintf(buf = new char[200], _("You have taken the %s."),
 							player->getWeapon()->Name.c_str());
 					hud->addMessage(buf);
 					delete[] buf;
