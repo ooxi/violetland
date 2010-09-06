@@ -93,7 +93,7 @@ Terrain* terrain;
 HighscoresEntry* highscore;
 
 bool roulette(float eventProbability) {
-	return (rand() % 1000000) < eventProbability * 1000000;
+	return (float) (rand() % 100000) < eventProbability * 100000.0f;
 }
 
 // Creation of clear squares of an earth surface
@@ -1612,10 +1612,10 @@ void dropPowerup(float x, float y) {
 	// Weapon drop - should be first check
 	if (player->Kills == 0 || roulette(chance * 2.5)) {
 		int weaponIndex;
-		if (true) // TODO: "Allow PM drop" to options. true for allow.
+		if (false) // TODO: "Allow PM drop" to options. true for allow.
 			weaponIndex = (rand() % weaponManager->Weapons.size());
 		else
-			weaponIndex = (rand() % weaponManager->Weapons.size() - 1);
+			weaponIndex = (rand() % (weaponManager->Weapons.size() - 1));
 
 		newPowerup = new Powerup(x, y,
 				weaponManager->Weapons[weaponIndex]->getDroppedTex());

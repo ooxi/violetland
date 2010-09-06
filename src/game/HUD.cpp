@@ -34,12 +34,12 @@ violetland::HUD::HUD(VideoManager* videoManager, Resources* resources) {
 void violetland::HUD::applyEffects(float health, int levelPoints) {
 	m_bounce += m_videoManager->getFrameDeltaTime();
 
-	int lMultiplier = fmin(levelPoints, 4);
-	double hMultiplier = fmin(health, 0.5);
+	int lMultiplier = std::min<int>(levelPoints, 4);
+	double hMultiplier = std::min<float>(health, 0.5);
 
 	//To avoid zero
-	lMultiplier = fmax(lMultiplier, 1);
-	hMultiplier = fmax(hMultiplier, 0.1);
+	lMultiplier = std::max<int>(lMultiplier, 1);
+	hMultiplier = std::max<double>(hMultiplier, 0.1);
 
 	float factorLevel = (float) fabs(cos(m_bounce / (800.0 / lMultiplier))
 			/ 2.0) + 0.5;
