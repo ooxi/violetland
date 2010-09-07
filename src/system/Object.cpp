@@ -40,8 +40,10 @@ void Object::turn(float targetAngle, float angleSpeed, int deltaTime) {
 		arch2 = targetAngle - Angle;
 	}
 
-	if (arch1 < 10 || arch2 < 10)
+	if (arch1 < angleSpeed * deltaTime || arch2 < angleSpeed * deltaTime) {
+		Angle = targetAngle;
 		return;
+	}
 
 	if (arch1 < arch2)
 		Angle -= deltaTime * angleSpeed;

@@ -36,7 +36,7 @@ violetland::Enemy::Enemy(MonsterTemplate* base, int lvl) :
 		Name = "Regular " + Base->Name;
 	}
 
-	setHealth(MaxHealth());
+	setHealth( MaxHealth());
 	Speed = MaxSpeed();
 
 	HitR = 0.3;
@@ -84,10 +84,11 @@ void violetland::Enemy::process(int deltaTime) {
 		m_bleedDelay += deltaTime;
 
 	if (State == LIFEFORM_STATE_DYING) {
-		if (m_body->Frame == m_body->AnimSprite->getFramesCount() - 1)
+		if (m_body->Frame == m_body->AnimSprite->getFramesCount() - 1) {
 			State = LIFEFORM_STATE_DIED;
-
-		m_body->rollFrame(true);
+		} else {
+			m_body->rollFrame(true);
+		}
 	}
 
 	if (State == LIFEFORM_STATE_SMITTEN) {

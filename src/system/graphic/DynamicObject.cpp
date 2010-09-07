@@ -21,12 +21,12 @@ void DynamicObject::rollFrame(bool forward) {
 			Frame--;
 
 		m_lastFrameRollTime = now;
-	}
 
-	if (Frame == AnimSprite->getFramesCount())
-		Frame = 0;
-	if (Frame < 0)
-		Frame = AnimSprite->getFramesCount();
+		if (Frame == AnimSprite->getFramesCount())
+			Frame = 0;
+		if (Frame < 0)
+			Frame = AnimSprite->getFramesCount();
+	}
 }
 
 void DynamicObject::process(int deltaTime) {
@@ -51,7 +51,7 @@ void DynamicObject::draw(float x, float y, float angle, float scale,
 
 	glColor4f(rMask, gMask, bMask, aMask);
 
-	glBegin(GL_QUADS);
+	glBegin( GL_QUADS);
 	glTexCoord2f(0, 0);
 	glVertex3f(m_left, m_top, 0.0f);
 	glTexCoord2f(1, 0);

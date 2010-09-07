@@ -237,9 +237,9 @@ string getDefaultName() {
 		uid_t uid;
 
 		uid = geteuid();
-		if (p = getpwuid(uid))
+		if ((p = getpwuid(uid)))
 			name = p->pw_name;
-			
+
 		if (name.empty()) {
 			return DEFAULT_CHAR_NAME;
 		}
@@ -254,18 +254,18 @@ void initSystem() {
 	printf(_("Name found : %s\n"), getDefaultName().c_str());
 
 	//~
-    //~ Internationalization Initialization
-    //~
-    
-    //~ i18n: initializes the entire current locale of the program as per environment variables set by the user
-    setlocale( LC_ALL, "" );
-    
-    //~ i18n: Indicate the path of the i18n catalog file
-    bindtextdomain( "violetland", TRANSLATION_PATH );
-    
-    //~ i18n: sets the message domain
-    textdomain( "violetland" );
-    
+	//~ Internationalization Initialization
+	//~
+
+	//~ i18n: initializes the entire current locale of the program as per environment variables set by the user
+	setlocale(LC_ALL, "");
+
+	//~ i18n: Indicate the path of the i18n catalog file
+	bindtextdomain("violetland", TRANSLATION_PATH);
+
+	//~ i18n: sets the message domain
+	textdomain("violetland");
+
 	srand((unsigned) time(NULL));
 
 	TTF_Init();
@@ -414,19 +414,20 @@ void refreshCharStatsWindow() {
 			TextManager::LEFT, TextManager::MIDDLE));
 	delete[] buf;
 
-	sprintf(buf = new char[100], _("Strength: %i"),
-			(int) ((player->Strength * 100)));
+	sprintf(buf = new char[100], _("Strength: %i"), (int) ((player->Strength
+			* 100)));
 	charStats->addElement("strength", videoManager->RegularText->getObject(buf,
 			l, videoManager->RegularText->getHeight() * 7.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	delete[] buf;
-	sprintf(buf = new char[100], _("Agility: %i"), (int) ((player->Agility * 100)));
+	sprintf(buf = new char[100], _("Agility: %i"), (int) ((player->Agility
+			* 100)));
 	charStats->addElement("agility", videoManager->RegularText->getObject(buf,
 			l, videoManager->RegularText->getHeight() * 8.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	delete[] buf;
-	sprintf(buf = new char[100], _("Vitality: %i"),
-			(int) ((player->Vitality * 100)));
+	sprintf(buf = new char[100], _("Vitality: %i"), (int) ((player->Vitality
+			* 100)));
 	charStats->addElement("vitality", videoManager->RegularText->getObject(buf,
 			l, videoManager->RegularText->getHeight() * 9.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
@@ -439,8 +440,8 @@ void refreshCharStatsWindow() {
 			videoManager->RegularText->getHeight() * 11.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 	delete[] buf;
-	sprintf(buf = new char[100], _("Melee damage: %i"), (int) ((player->Damage()
-			* 100)));
+	sprintf(buf = new char[100], _("Melee damage: %i"),
+			(int) ((player->Damage() * 100)));
 	charStats->addElement("melee", videoManager->RegularText->getObject(buf, l,
 			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
@@ -839,9 +840,9 @@ void refreshControlsMenuWindow() {
 	const int col1_l = config->Screen.Width * 0.1f;
 	const int col1_r = config->Screen.Width * 0.45f;
 
-	w->addElement("controls", videoManager->RegularText->getObject(_("Controls"),
-			col1_l, videoManager->RegularText->getHeight() * 2.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("controls", videoManager->RegularText->getObject(
+			_("Controls"), col1_l, videoManager->RegularText->getHeight()
+					* 2.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	const int col2_l = config->Screen.Width * 0.55f;
 	const int col2_r = config->Screen.Width * 0.9f;
@@ -977,65 +978,69 @@ void createOptionsWindow() {
 	const int l = config->Screen.Width * 0.1f;
 	const int r = config->Screen.Width * 0.6f;
 
-	w->addElement("options", videoManager->RegularText->getObject(_("Options"), l,
-			videoManager->RegularText->getHeight() * 2.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+	w->addElement("options", videoManager->RegularText->getObject(_("Options"),
+			l, videoManager->RegularText->getHeight() * 2.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("sectiongame", videoManager->RegularText->getObject(
-			_("Gameplay"), l, videoManager->RegularText->getHeight() * 4.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+			_("Gameplay"), l, videoManager->RegularText->getHeight()
+					* 4.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("autoreload", videoManager->RegularText->getObject(
-			_("Weapon autoreloading"), l + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 6.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+			_("Weapon autoreloading"), l
+					+ videoManager->RegularText->getHeight() * 2.0f,
+			videoManager->RegularText->getHeight() * 6.0f, TextManager::LEFT,
+			TextManager::MIDDLE));
 	w->addElement("autopickup", videoManager->RegularText->getObject(
-			_("Weapon autotaking"), l + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 7.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+			_("Weapon autotaking"), l
+					+ videoManager->RegularText->getHeight() * 2.0f,
+			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
+			TextManager::MIDDLE));
 	w->addElement("friendlyfire", videoManager->RegularText->getObject(
-			_("Friendly fire"), l + videoManager->RegularText->getHeight() * 2.0f,
+			_("Friendly fire"), l
+					+ videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("sectiongraphics", videoManager->RegularText->getObject(
-			_("Graphics"), r, videoManager->RegularText->getHeight() * 4.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+			_("Graphics"), r, videoManager->RegularText->getHeight()
+					* 4.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("fullscreen", videoManager->RegularText->getObject(
-			_("Fullscreen"), r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 6.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+			_("Fullscreen"), r + videoManager->RegularText->getHeight()
+					* 2.0f, videoManager->RegularText->getHeight() * 6.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
 	w->addElement("resolution", videoManager->RegularText->getObject(
-			_("Resolution"), r + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+			_("Resolution"), r + videoManager->RegularText->getHeight()
+					* 2.0f, videoManager->RegularText->getHeight() * 7.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("sectionsound", videoManager->RegularText->getObject("Sound",
 			l, videoManager->RegularText->getHeight() * 10.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("soundvolume", videoManager->RegularText->getObject(
-			_("Sound volume"), l + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+			_("Sound volume"), l + videoManager->RegularText->getHeight()
+					* 2.0f, videoManager->RegularText->getHeight() * 12.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
 	w->addElement("musicvolume", videoManager->RegularText->getObject(
-			_("Music volume"), l + videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	w->addElement("controlstitle", videoManager->RegularText->getObject(
-			_("Controls"), r, videoManager->RegularText->getHeight() * 10.0f,
+			_("Music volume"), l + videoManager->RegularText->getHeight()
+					* 2.0f, videoManager->RegularText->getHeight() * 13.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
+	w->addElement("controlstitle", videoManager->RegularText->getObject(
+			_("Controls"), r, videoManager->RegularText->getHeight()
+					* 10.0f, TextManager::LEFT, TextManager::MIDDLE));
+
 	w->addElement("controlsmenu", videoManager->RegularText->getObject(
-			_("Edit Controls"), r + videoManager->RegularText->getHeight() * 2.0f,
+			_("Edit Controls"), r
+					+ videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	w->addElement("controlsreset", videoManager->RegularText->getObject(
-			_("Reset Controls"),
-			r + videoManager->RegularText->getHeight() * 2.0f,
+			_("Reset Controls"), r
+					+ videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
@@ -1113,8 +1118,8 @@ void createHighscoresWindow() {
 	const int r4 = l * 6.0f;
 
 	scoresWin->addElement("highscores", videoManager->RegularText->getObject(
-			_("Highscores"), l, videoManager->RegularText->getHeight() * 2.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+			_("Highscores"), l, videoManager->RegularText->getHeight()
+					* 2.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addElement("headerXp", videoManager->RegularText->getObject(
 			_("XP"), l, videoManager->RegularText->getHeight() * 4.0f,
@@ -1176,12 +1181,13 @@ void createHighscoresWindow() {
 		}
 
 	scoresWin->addElement("back", videoManager->RegularText->getObject(
-			_("Back to main menu"), l, videoManager->RegularText->getHeight()
-					* 16.0f, TextManager::LEFT, TextManager::MIDDLE));
+			_("Back to main menu"), l,
+			videoManager->RegularText->getHeight() * 16.0f, TextManager::LEFT,
+			TextManager::MIDDLE));
 
 	scoresWin->addElement("reset", videoManager->RegularText->getObject(
-			_("Reset list"), r3, videoManager->RegularText->getHeight() * 16.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+			_("Reset list"), r3, videoManager->RegularText->getHeight()
+					* 16.0f, TextManager::LEFT, TextManager::MIDDLE));
 
 	scoresWin->addHandler(Window::hdl_lclick, "back",
 			highScoresWindowController);
@@ -1520,7 +1526,11 @@ void handlePlayer(LifeForm* lf) {
 	if (input->getDownInput(InputHandler::MoveRight))
 		movementX = 1;
 
-	player->move(movementX, movementY, videoManager->getFrameDeltaTime());
+	float movementDirection =
+			Object::calculateAngle(0, 0, movementX, movementY);
+
+	if (movementX != 0 || movementY != 0)
+		player->move(movementDirection, videoManager->getFrameDeltaTime());
 
 	if (lf->X < -config->GameAreaSize)
 		player->setX(-config->GameAreaSize);

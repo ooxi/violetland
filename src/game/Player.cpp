@@ -23,9 +23,10 @@ violetland::Player::Player() :
 	m_weapon = NULL;
 
 	m_light = m_laser = false;
+	m_walking = false;
 
-	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision = Looting
-			= false;
+	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision
+			= Looting = false;
 
 	for (int i = PLAYER_BONUS_FIRST; i < PLAYER_BONUS_COUNT; i++)
 		bonusTimes[i] = 0;
@@ -75,42 +76,14 @@ void violetland::Player::hit(float damage, bool poison, float pX, float pY) {
 	}
 }
 
-void violetland::Player::move(char movementX, char movementY, int deltaTime) {
-	if (movementX != 0 || movementY != 0) {
-		Speed += Acceleration * deltaTime;
-		if (Speed > MaxSpeed())
-			Speed = MaxSpeed();
+void violetland::Player::move(float direction, int deltaTime) {
+	m_walking = true;
 
-		float newAngle = Object::calculateAngle(0, 0, movementX, movementY);
+	Speed += Acceleration * deltaTime;
+	if (Speed > MaxSpeed())
+		Speed = MaxSpeed();
 
-		if (abs(m_body->Angle - newAngle) < MaxSpeed() * deltaTime)
-			m_body->Angle = newAngle;
-		else
-			m_body->turn(newAngle, MaxSpeed(), deltaTime);
-	} else {
-		Speed -= Acceleration * deltaTime;
-		if (Speed < 0)
-			Speed = 0;
-	}
-
-	if (Speed > 0) {
-		m_body->Speed = Speed;
-		m_body->process(deltaTime);
-
-		X = m_arms->X = m_body->X;
-		Y = m_arms->Y = m_body->Y;
-	}
-
-	if (Speed > MaxSpeed() / 4) {
-		m_body->rollFrame(true);
-	} else {
-		if (!(m_body->Frame == 8 || m_body->Frame == 20)) {
-			if ((m_body->Frame > 8 && m_body->Frame < 16) || m_body->Frame > 20)
-				m_body->rollFrame(false);
-			else
-				m_body->rollFrame(true);
-		}
-	}
+	m_body->turn(direction, MaxSpeed(), deltaTime);
 }
 
 std::vector<Bullet*>* violetland::Player::fire() {
@@ -190,13 +163,43 @@ const bool violetland::Player::getLaser() {
 	return m_laser;
 }
 
-void violetland::Player::processState() {
+void violetland::Player::processState(int deltaTime) {
+	if (State == LIFEFORM_STATE_ALIVE) {
+		if (!m_walking) {
+			Speed -= Acceleration * deltaTime;
+			if (Speed < 0)
+				Speed = 0;
+		}
+		m_walking = false;
+
+		if (Speed > 0) {
+			m_body->Speed = Speed;
+			m_body->process(deltaTime);
+
+			X = m_arms->X = m_body->X;
+			Y = m_arms->Y = m_body->Y;
+		}
+
+		if (Speed > MaxSpeed() / 4) {
+			m_body->rollFrame(true);
+		} else {
+			if (!(m_body->Frame == 8 || m_body->Frame == 20)) {
+				if ((m_body->Frame > 8 && m_body->Frame < 16) || m_body->Frame
+						> 20)
+					m_body->rollFrame(false);
+				else
+					m_body->rollFrame(true);
+			}
+		}
+	}
+
 	if (State == LIFEFORM_STATE_DYING) {
 		if (m_body->Frame == m_body->AnimSprite->getFramesCount() - 1)
 			State = LIFEFORM_STATE_DIED;
 
 		m_body->rollFrame(true);
 	}
+
 	if (State == LIFEFORM_STATE_SMITTEN) {
 		const float angle = m_body->Angle;
 		m_body = new DynamicObject(X, Y, m_deathSprite);
@@ -222,7 +225,7 @@ void violetland::Player::process(int deltaTime) {
 	LifeForm::process(deltaTime);
 
 	// State and animation
-	processState();
+	processState(deltaTime);
 
 	// Hit animation
 	fadeColor(deltaTime);

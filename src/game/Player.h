@@ -29,9 +29,10 @@ private:
 	Sound* m_dyingSound;
 	Weapon *m_weapon;
 	bool m_light, m_laser;
+	bool m_walking;
 	int m_hitSndPlaying;
 	void processBonus(int deltaTime);
-	void processState();
+	void processState(int deltaTime);
 	void processArms(int deltaTime);
 public:
 	Player();
@@ -43,7 +44,7 @@ public:
 	virtual void hit(float damage, bool poison, float pX, float pY);
 
 	void hit();
-	void move(char movementX, char movementY, int deltaTime);
+	void move(float direction, int deltaTime);
 	void reload();
 	void toggleLight();
 	void toggleLaser();
