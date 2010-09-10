@@ -17,13 +17,11 @@ violetland::Player::Player() :
 	Grenades = 2;
 	Teleports = 1;
 	Type = LIFEFORM_PLAYER;
-	HudInfo = "";
 	m_hitSndPlaying = 0;
 
 	m_weapon = NULL;
 
 	m_light = m_laser = false;
-	m_walking = false;
 
 	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision
 			= Looting = false;
@@ -74,16 +72,6 @@ void violetland::Player::hit(float damage, bool poison, float pX, float pY) {
 				: getHealth() - 0.01f) / MaxHealth() * m_hitSounds.size();
 		m_hitSounds[m_hitSndPlaying]->play(6, 0, 0);
 	}
-}
-
-void violetland::Player::move(float direction, int deltaTime) {
-	m_walking = true;
-
-	Speed += Acceleration * deltaTime;
-	if (Speed > MaxSpeed())
-		Speed = MaxSpeed();
-
-	m_body->turn(direction, MaxSpeed(), deltaTime);
 }
 
 std::vector<Bullet*>* violetland::Player::fire() {
@@ -165,20 +153,9 @@ const bool violetland::Player::getLaser() {
 
 void violetland::Player::processState(int deltaTime) {
 	if (State == LIFEFORM_STATE_ALIVE) {
-		if (!m_walking) {
-			Speed -= Acceleration * deltaTime;
-			if (Speed < 0)
-				Speed = 0;
-		}
-		m_walking = false;
-
-		if (Speed > 0) {
-			m_body->Speed = Speed;
-			m_body->process(deltaTime);
-
-			X = m_arms->X = m_body->X;
-			Y = m_arms->Y = m_body->Y;
-		}
+		m_arms->X = m_body->X = X;
+		m_arms->Y = m_body->Y = Y;
+		m_body->Angle = Angle;
 
 		if (Speed > MaxSpeed() / 4) {
 			m_body->rollFrame(true);
@@ -259,7 +236,7 @@ void violetland::Player::fadeColor(int deltaTime) {
 }
 
 void violetland::Player::draw() {
-	m_body->draw();
+	m_body->draw(X, Y, Angle, Scale, RMask, GMask, BMask, AMask);
 
 	if (State == LIFEFORM_STATE_ALIVE)
 		m_arms->draw(false, false);

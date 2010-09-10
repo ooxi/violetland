@@ -37,7 +37,6 @@ violetland::Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	}
 
 	setHealth( MaxHealth());
-	Speed = MaxSpeed();
 
 	HitR = 0.3;
 	m_body = new DynamicObject(0, 0, Base->WalkSprite);

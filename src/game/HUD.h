@@ -37,6 +37,8 @@ private:
 	// Draw a bar (rectangle)
 	void drawBar(int x, int y, int width, int height, float value,
 			GLfloat* bcolor, GLfloat* fcolor1, GLfloat* fcolor2);
+	// Game over message, scores and name of player
+	void drawEndGameScreen(GameState* gameState, int xp);
 public:
 	HUD(VideoManager* videoManager, Resources* resources);
 
@@ -49,6 +51,9 @@ public:
 	// Setting the effects for HUD
 	void setHealthBounce(bool value);
 	void setLevelUpBounce(bool value);
+
+	// Custom info string
+	std::string Info;
 
 	// Clear the messages console
 	void reset();

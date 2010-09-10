@@ -9,7 +9,6 @@
 namespace violetland {
 class Enemy: public LifeForm {
 private:
-	DynamicObject* m_body;
 	int m_hitSoundChannel;
 	int m_bleedDelay;
 	int m_bleedCount;

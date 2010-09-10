@@ -935,7 +935,7 @@ void controlsMenuWindowController(std::string elementName) {
 			config->PlayerInputBinding[key].Value = event.button.button;
 			break;
 		case SDL_QUIT:
-			gameState->Works = false;
+			gameState->end();
 		}
 	}
 
@@ -1079,7 +1079,7 @@ void resumeGame(std::string elementName) {
 }
 
 void endGame(std::string elementName) {
-	gameState->Works = false;
+	gameState->end();
 }
 
 void createMainMenuWindow() {
@@ -1301,7 +1301,7 @@ void handleCommonControls() {
 	}
 
 	if (input->getPressInput(InputHandler::Exit)) {
-		gameState->Works = false;
+		gameState->end();
 	}
 }
 
@@ -1417,8 +1417,6 @@ void handleParticles() {
 }
 
 void handleMonster(LifeForm* lf) {
-	float x = lf->X;
-	float y = lf->Y;
 
 	Enemy* enemy = (Enemy*) lf;
 
@@ -1426,7 +1424,7 @@ void handleMonster(LifeForm* lf) {
 			player->TargetY)) {
 		char buf[100];
 		sprintf(buf, "%s (%i)", enemy->Name.c_str(), enemy->Level);
-		player->HudInfo = buf;
+		hud->Info = buf;
 	}
 
 	if (lf->Frozen > 0)
@@ -1468,11 +1466,10 @@ void handleMonster(LifeForm* lf) {
 		enemy->DoNotDisturb = true;
 	}
 
-	float newAngle = Object::calculateAngle(enemy->X, enemy->Y, enemy->TargetX,
-			enemy->TargetY);
-	enemy->turn(newAngle, enemy->MaxSpeed(), videoManager->getFrameDeltaTime());
+	float movementDirection = Object::calculateAngle(enemy->X, enemy->Y,
+			enemy->TargetX, enemy->TargetY);
 
-	enemy->move(videoManager->getFrameDeltaTime());
+	enemy->move(movementDirection, videoManager->getFrameDeltaTime());
 
 	if (player->State == LIFEFORM_STATE_ALIVE && player->detectCollide(enemy)) {
 		if (enemy->Attack()) {
@@ -1483,18 +1480,17 @@ void handleMonster(LifeForm* lf) {
 				player->Speed = 0.0f;
 		}
 
-		if (player->Attack() && rand() % 100 > enemy->ChanceToEvade() * 100)
+		if (player->Attack() && rand() % 100 > enemy->ChanceToEvade() * 100) {
 			enemy->hit(player->Damage(), false, player->X, player->Y);
-
-		enemy->X = x;
-		enemy->Y = y;
+			enemy->Speed = 0.0f;
+		}
 	} else {
 		enemy->rollFrame(true);
 	}
 }
 
 void levelUp(Player* player) {
-	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 2.0f + 10);
+	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 2.0f + 15);
 
 	player->LastLevelXp = player->NextLevelXp;
 	player->NextLevelXp *= 2;
@@ -1754,8 +1750,6 @@ void handleLifeForms() {
 		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 			LifeForm* lifeForm = iter->second;
 
-			lifeForm->process(videoManager->getFrameDeltaTime());
-
 			if (lifeForm->Type == LIFEFORM_PLAYER) {
 				if (!gameState->Lost) {
 					if (lifeForm->State == LIFEFORM_STATE_DIED
@@ -1783,6 +1777,8 @@ void handleLifeForms() {
 				if (lifeForm->State == LIFEFORM_STATE_ALIVE)
 					handleMonster(lifeForm);
 			}
+
+			lifeForm->process(videoManager->getFrameDeltaTime());
 		}
 	}
 }
@@ -1917,51 +1913,6 @@ void setGuiCameraMode() {
 
 #warning translation stop here
 
-void drawHud() {
-	hud->draw(gameState, player);
-
-	char* buf;
-	sprintf(buf = new char[30], "%s: %d/%d", player->getWeapon()->Name.c_str(),
-			player->getWeapon()->Ammo, player->getWeapon()->AmmoClipSize);
-	videoManager->RegularText->draw(buf,
-			videoManager->RegularText->getIndent(),
-			videoManager->RegularText->getIndent(), TextManager::LEFT,
-			TextManager::TOP);
-	delete[] buf;
-
-	sprintf(buf = new char[30], _("Grenades: %i"), player->Grenades);
-	videoManager->RegularText->draw(buf,
-			videoManager->RegularText->getIndent(),
-			videoManager->RegularText->getIndent()
-					+ videoManager->RegularText->getHeight(),
-			TextManager::LEFT, TextManager::TOP);
-	delete[] buf;
-
-	sprintf(buf = new char[30], _("Teleports: %i"), player->Teleports);
-	videoManager->RegularText->draw(buf,
-			videoManager->RegularText->getIndent(),
-			videoManager->RegularText->getIndent()
-					+ videoManager->RegularText->getHeight() * 2,
-			TextManager::LEFT, TextManager::TOP);
-	delete[] buf;
-
-	if (!gameState->Lost)
-		if (player->HudInfo != "")
-			videoManager->RegularText->draw(player->HudInfo.c_str(),
-					config->Screen.Width / 2,
-					videoManager->RegularText->getIndent(),
-					TextManager::CENTER, TextManager::TOP);
-
-	if (config->ShowFps) {
-		sprintf(buf = new char[30], _("FPS: %i"), videoManager->getFps());
-		videoManager->RegularText->draw(buf, config->Screen.Width
-				- videoManager->RegularText->getIndent(), config->Screen.Height
-				- videoManager->RegularText->getIndent(), TextManager::RIGHT,
-				TextManager::BOTTOM);
-		delete[] buf;
-	}
-}
-
 void handlePowerups() {
 	for (int i = powerups.size() - 1; i >= 0; i--) {
 		bool deletePowerup = false;
@@ -1986,37 +1937,34 @@ void handlePowerups() {
 
 			switch (powerups[i]->Type) {
 			case BONUS_MEDIKIT:
-				player->HudInfo = _("a medikit");
+				hud->Info = _("a medikit");
 				break;
 			case BONUS_FREEZE:
-				player->HudInfo = _("a nitrogen bomb");
+				hud->Info = _("a nitrogen bomb");
 				break;
 			case BONUS_NUKE:
-				player->HudInfo = _("nuke!");
+				hud->Info = _("nuke!");
 				break;
 			case BONUS_GRENADES:
-				player->HudInfo = _("a hand grenade");
+				hud->Info = _("a hand grenade");
 				break;
 			case BONUS_PENBULLETS:
-				player->HudInfo = _("penetration bullets");
+				hud->Info = _("penetration bullets");
 				break;
 			case BONUS_VITALITYROIDS:
-				player->HudInfo = _("vitality boost");
+				hud->Info = _("vitality boost");
 				break;
 			case BONUS_STRENGTHROIDS:
-				player->HudInfo = _("strength boost");
+				hud->Info = _("strength boost");
 				break;
 			case BONUS_AGILITYROIDS:
-				player->HudInfo = _("agility boost");
+				hud->Info = _("agility boost");
 				break;
 			case BONUS_TELEPORTS:
-				player->HudInfo = _("a teleport");
+				hud->Info = _("a teleport");
 				break;
 			case BONUS_WEAPON:
-				char buf[100];
-				sprintf(buf, "the %s",
-						((Weapon*) powerups[i]->Object)->Name.c_str());
-				player->HudInfo = buf;
+				hud->Info = ((Weapon*) powerups[i]->Object)->Name;
 				break;
 			}
 
@@ -2054,6 +2002,7 @@ void handlePowerups() {
 							!= LIFEFORM_STATE_ALIVE)
 						continue;
 					lf->Frozen = *(int*) powerups[i]->Object;
+					lf->Speed = 0.0f;
 				}
 				player->bonusTimes[PLAYER_BONUS_FREEZE]
 						= *(int*) powerups[i]->Object;
@@ -2175,7 +2124,7 @@ void processGame() {
 
 	terrain->endDrawOn();
 
-	player->HudInfo = "";
+	hud->Info = "";
 
 	handleLifeForms();
 	handlePowerups();
@@ -2348,6 +2297,16 @@ void drawGame() {
 	glEnable(GL_TEXTURE_2D);
 }
 
+void drawFps() {
+	char* buf;
+	sprintf(buf = new char[30], _("FPS: %i"), videoManager->getFps());
+	videoManager->RegularText->draw(buf, config->Screen.Width
+			- videoManager->RegularText->getIndent(), config->Screen.Height
+			- videoManager->RegularText->getIndent(), TextManager::RIGHT,
+			TextManager::BOTTOM);
+	delete[] buf;
+}
+
 void runMainLoop() {
 	while (gameState->Works) {
 		videoManager->countFrame(config->FrameDelay);
@@ -2366,7 +2325,10 @@ void runMainLoop() {
 
 			setGuiCameraMode();
 
-			drawHud();
+			hud->draw(gameState, player);
+
+			if (config->ShowFps)
+				drawFps();
 		} else {
 			musicManager->play();
 

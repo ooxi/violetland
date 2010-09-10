@@ -22,14 +22,12 @@ enum PlayerBonusType {
 class Player: public LifeForm {
 private:
 	Sprite *m_deathSprite;
-	DynamicObject *m_body;
 	StaticObject *m_arms;
 	std::vector<DynamicObject*> m_shells;
 	std::vector<Sound*> m_hitSounds;
 	Sound* m_dyingSound;
 	Weapon *m_weapon;
 	bool m_light, m_laser;
-	bool m_walking;
 	int m_hitSndPlaying;
 	void processBonus(int deltaTime);
 	void processState(int deltaTime);
@@ -43,8 +41,11 @@ public:
 	virtual void draw();
 	virtual void hit(float damage, bool poison, float pX, float pY);
 
+	virtual float getStrength();
+	virtual float getAgility();
+	virtual float getVitality();
+
 	void hit();
-	void move(float direction, int deltaTime);
 	void reload();
 	void toggleLight();
 	void toggleLaser();
@@ -68,7 +69,6 @@ public:
 	int Kills;
 	int Grenades;
 	int Teleports;
-	std::string HudInfo;
 	bool Unstoppable;
 	bool PoisonBullets;
 	bool BigCalibre;
@@ -76,9 +76,6 @@ public:
 	bool NightVision;
 	bool Looting;
 	int bonusTimes[PLAYER_BONUS_COUNT];
-	float getStrength();
-	float getAgility();
-	float getVitality();
 	void teleport();
 	void fadeColor(int deltaTime);
 	bool Empty;

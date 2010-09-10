@@ -5,6 +5,7 @@
 #include "windows.h"
 #endif //_WIN32W
 #include "../system/graphic/StaticObject.h"
+#include "../system/graphic/DynamicObject.h"
 
 namespace violetland {
 enum LifeFormType {
@@ -23,11 +24,16 @@ class LifeForm: public Object {
 private:
 	int m_lastAttackTime;
 	float m_health;
+protected:
+	DynamicObject *m_body;
+	bool m_walking;
 public:
 	LifeForm(float x, float y, int w, int h);
 	virtual void process(int deltaTime);
 	virtual void draw();
 	virtual void hit(float damage, bool poison, float pX, float pY);
+
+	void move(float direction, int deltaTime);
 
 	std::string Id;
 	std::string Name;

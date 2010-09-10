@@ -27,6 +27,7 @@ violetland::LifeForm::LifeForm(float x, float y, int w, int h) :
 	m_lastAttackTime = SDL_GetTicks();
 	TargetX = TargetY = 0.0f;
 	Poisoned = false;
+	m_walking = false;
 	Frozen = 0;
 	Level = 1;
 	Name = "Unknown lifeform";
@@ -56,7 +57,27 @@ void violetland::LifeForm::process(int deltaTime) {
 
 		if (Poisoned)
 			setHealth(getHealth() - 0.0002 * deltaTime);
+
+		if (!m_walking) {
+			Speed -= Acceleration * deltaTime;
+			if (Speed < 0)
+				Speed = 0;
+		}
+
+		m_walking = false;
+
+		Object::move(deltaTime);
 	}
+}
+
+void violetland::LifeForm::move(float direction, int deltaTime) {
+	m_walking = true;
+
+	Speed += Acceleration * deltaTime;
+	if (Speed > MaxSpeed())
+		Speed = MaxSpeed();
+
+	turn(direction, MaxSpeed(), deltaTime);
 }
 
 StaticObject* violetland::LifeForm::getCorpse() {

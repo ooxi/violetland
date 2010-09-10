@@ -209,6 +209,31 @@ void violetland::HUD::drawTime(GameState* gameState) {
 	delete[] buf;
 }
 
+void violetland::HUD::drawEndGameScreen(GameState* gameState, int xp) {
+	VideoMode screen = m_videoManager->getVideoMode();
+
+	int y = screen.Height / 4;
+	m_videoManager->RegularText->draw("They have overcome...",
+			screen.Width / 2, y, TextManager::CENTER, TextManager::MIDDLE);
+
+	char* buf;
+	sprintf(buf = new char[30], "You have earned %i points.", xp);
+	m_videoManager->RegularText->draw(buf, screen.Width / 2, y
+			+ m_videoManager->RegularText->getHeight(), TextManager::CENTER,
+			TextManager::MIDDLE);
+	delete[] buf;
+
+	if (gameState->HighScore) {
+		m_videoManager->RegularText->draw("Enter your name:", screen.Width / 2,
+				y + m_videoManager->RegularText->getHeight() * 2,
+				TextManager::CENTER, TextManager::MIDDLE);
+		m_videoManager ->RegularText->draw(
+				std::string(gameState->PlayerName).append("_").c_str(),
+				screen.Width / 2, y + m_videoManager->RegularText->getHeight()
+						* 3, TextManager::CENTER, TextManager::MIDDLE);
+	}
+}
+
 void violetland::HUD::draw(GameState* gameState, Player* player) {
 	float health = player->getHealth() / player->MaxHealth();
 	float experience = (float) (player->Xp - player->LastLevelXp)
@@ -229,27 +254,40 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 
 	drawBonusStack(player->bonusTimes);
 
-	if (gameState->Lost && !gameState->Paused) {
-		int y = screen.Height / 4;
-		m_videoManager->RegularText->draw("They have overcome...", screen.Width
-				/ 2, y, TextManager::CENTER, TextManager::MIDDLE);
-		char* buf;
-		sprintf(buf = new char[30], "You have earned %i points.", player->Xp);
-		m_videoManager->RegularText->draw(buf, screen.Width / 2, y
-				+ m_videoManager->RegularText->getHeight(),
-				TextManager::CENTER, TextManager::MIDDLE);
-		delete[] buf;
+	if (gameState->Lost && !gameState->Paused)
+		drawEndGameScreen(gameState, player->Xp);
 
-		if (gameState->HighScore) {
-			m_videoManager->RegularText->draw("Enter your name:", screen.Width
-					/ 2, y + m_videoManager->RegularText->getHeight() * 2,
-					TextManager::CENTER, TextManager::MIDDLE);
-			m_videoManager ->RegularText->draw(std::string(
-					gameState->PlayerName).append("_").c_str(), screen.Width
-					/ 2, y + m_videoManager->RegularText->getHeight() * 3,
-					TextManager::CENTER, TextManager::MIDDLE);
-		}
-	}
+	char* buf;
+	sprintf(buf = new char[30], "%s: %d/%d", player->getWeapon()->Name.c_str(),
+			player->getWeapon()->Ammo, player->getWeapon()->AmmoClipSize);
+	m_videoManager->RegularText->draw(buf,
+			m_videoManager->RegularText->getIndent(),
+			m_videoManager->RegularText->getIndent(), TextManager::LEFT,
+			TextManager::TOP);
+	delete[] buf;
+
+	sprintf(buf = new char[30], "Grenades: %i", player->Grenades);
+	m_videoManager->RegularText->draw(buf,
+			m_videoManager->RegularText->getIndent(),
+			m_videoManager->RegularText->getIndent()
+					+ m_videoManager->RegularText->getHeight(),
+			TextManager::LEFT, TextManager::TOP);
+	delete[] buf;
+
+	sprintf(buf = new char[30], "Teleports: %i", player->Teleports);
+	m_videoManager->RegularText->draw(buf,
+			m_videoManager->RegularText->getIndent(),
+			m_videoManager->RegularText->getIndent()
+					+ m_videoManager->RegularText->getHeight() * 2,
+			TextManager::LEFT, TextManager::TOP);
+	delete[] buf;
+
+	if (!gameState->Lost)
+		if (Info != "")
+			m_videoManager->RegularText->draw(Info.c_str(),
+					m_videoManager->getVideoMode().Width / 2,
+					m_videoManager->RegularText->getIndent(),
+					TextManager::CENTER, TextManager::TOP);
 
 	if (gameState->Paused)
 		m_videoManager->RegularText->draw("PAUSE", screen.Width / 2,
@@ -262,6 +300,7 @@ void violetland::HUD::addMessage(std::string message) {
 }
 
 void violetland::HUD::reset() {
+	Info = "";
 	clearVector<TextObject*> (&m_messages);
 }
 
