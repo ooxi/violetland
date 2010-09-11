@@ -6,6 +6,8 @@
 #include "../game/GameState.h"
 #include "../system/graphic/text/TextManager.h"
 
+using namespace violetland;
+
 class MainMenuWindow: public Window {
 public:
 	MainMenuWindow(Configuration* config, GameState* gameState,

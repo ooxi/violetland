@@ -36,7 +36,7 @@ violetland::Enemy::Enemy(MonsterTemplate* base, int lvl) :
 		Name = "Regular " + Base->Name;
 	}
 
-	setHealth( MaxHealth());
+	setHealth(MaxHealth());
 
 	HitR = 0.3;
 	Acceleration = 0.0004f;
@@ -53,14 +53,14 @@ void violetland::Enemy::rollFrame(bool forward) {
 	m_body->rollFrame(forward);
 }
 
-void violetland::Enemy::hit(float damage, bool poison, float pX, float pY) {
-	LifeForm::hit(damage, poison, pX, pY);
+void violetland::Enemy::hit(float damage, bool poison, Sound* outSound) {
+	LifeForm::hit(damage, poison, outSound);
+
 	if (!Base->HitSounds.empty()) {
 		int s = rand() % (int) Base->HitSounds.size();
-		Base->HitSounds[s]->play(7, 0, 0);
-		Base->HitSounds[s]->setPos(Object::calculateAngle(pX, pY, X, Y),
-				Object::calculateDistance(pX, pY, X, Y));
+		outSound = Base->HitSounds[s];
 	}
+
 	m_bleedCount += damage * 5;
 	Poisoned = poison || Poisoned;
 	Angry = true;

@@ -37,7 +37,8 @@ void violetland::LifeForm::draw() {
 	// nothing
 }
 
-void violetland::LifeForm::hit(float damage, bool poison, float pX, float pY) {
+void violetland::LifeForm::hit(float damage, bool poison, Sound* outSound) {
+	outSound = NULL;
 	setHealth(getHealth() - damage);
 }
 

@@ -6,6 +6,7 @@
 #endif //_WIN32W
 #include "../../system/graphic/StaticObject.h"
 #include "../../system/graphic/DynamicObject.h"
+#include "../../system/sound/Sound.h"
 
 namespace violetland {
 enum LifeFormType {
@@ -31,7 +32,7 @@ public:
 	LifeForm(float x, float y, int w, int h);
 	virtual void process(int deltaTime);
 	virtual void draw();
-	virtual void hit(float damage, bool poison, float pX, float pY);
+	virtual void hit(float damage, bool poison, Sound* outSound);
 
 	void move(float direction, int deltaTime);
 

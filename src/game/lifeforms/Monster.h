@@ -16,7 +16,7 @@ public:
 	Enemy(MonsterTemplate* base, int lvl);
 	virtual void process(int deltaTime);
 	virtual void draw();
-	virtual void hit(float damage, bool poison, float pX, float pY);
+	virtual void hit(float damage, bool poison, Sound* outSound);
 
 	void setAppearance(float scale, float rMask, float gMask, float bMask,
 			float aMask);

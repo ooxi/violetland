@@ -76,19 +76,12 @@ SoundManager* sndManager;
 Resources* resources;
 MusicManager* musicManager;
 WeaponManager* weaponManager;
-
 MonsterFactory* monsterFactory;
-GameState* gameState;
-map<string, LifeForm*> lifeForms;
-Player* player;
-vector<Powerup*> powerups;
-vector<Bullet*> bullets;
 
-vector<StaticObject*> bloodStains;
-vector<Explosion*> explosions;
-vector<ParticleSystem*> particleSystems;
+GameState* gameState;
+string playerId;
+
 map<string, Window*> windows;
-Terrain* terrain;
 
 HighscoresEntry* highscore;
 
@@ -98,8 +91,8 @@ bool roulette(float eventProbability) {
 
 // Creation of clear squares of an earth surface
 void createTerrain() {
-	if (terrain)
-		delete terrain;
+	if (gameState->terrain)
+		delete gameState->terrain;
 
 	printf("Forming terrain...\n");
 
@@ -128,7 +121,8 @@ void createTerrain() {
 		delete[] buf;
 	}
 
-	terrain = new Terrain(terrainSurface, tiles, config->GameAreaSize);
+	gameState->terrain = new Terrain(terrainSurface, tiles,
+			config->GameAreaSize);
 
 	SDL_FreeSurface(terrainSurface);
 	for (int i = 0; i < tilesCount; i++) {
@@ -138,18 +132,16 @@ void createTerrain() {
 }
 
 // Creation of a new monster
-// r - distance from point of 0,0
-// lvl - level of monster
-void spawnEnemy(float r, int lvl) {
+void spawnEnemy(float r, int baseLvl, int lvl) {
 	float spawnAngle = (rand() % 6300) / 1000.0f;
 
-	Enemy* newMonster = monsterFactory->create(player->Level, lvl);
+	Enemy* newMonster = monsterFactory->create(baseLvl, lvl);
 
 	newMonster->X = r * cos(spawnAngle);
 	newMonster->Y = r * sin(spawnAngle);
 
-	lifeForms.insert(map<string, LifeForm*>::value_type(newMonster->Id,
-			newMonster));
+	gameState->lifeForms.insert(map<string, LifeForm*>::value_type(
+			newMonster->Id, newMonster));
 }
 
 // The beginning of new game in a survival mode
@@ -167,22 +159,19 @@ void startSurvival(std::string elementName) {
 
 	SDL_GL_SwapBuffers();
 
-	gameState->start(GameState::Survival);
+	gameState->start(GAMEMODE_SURVIVAL);
 
-	clearMap<std::string, LifeForm*> (&lifeForms);
-	clearVector<Powerup*> (&powerups);
-	clearVector<StaticObject*> (&bloodStains);
-	clearVector<Bullet*> (&bullets);
-	clearVector<Explosion*> (&explosions);
-
-	player = new Player(0, 0, resources->PlayerWalkSprite,
+	Player* player = new Player(0, 0, resources->PlayerWalkSprite,
 			resources->PlayerDeathSprites[(rand()
 					% (int) resources->PlayerDeathSprites.size())],
 			resources->PlayerHitSounds, resources->PlayerDeathSound);
 	player->setWeapon(weaponManager->getWeaponByName("PM"));
 	player->HitR = 0.28f;
 
-	lifeForms.insert(map<string, LifeForm*>::value_type(player->Id, player));
+	gameState->lifeForms.insert(map<string, LifeForm*>::value_type(player->Id,
+			player));
+
+	playerId = player->Id;
 
 	hud->addMessage("Try to survive as long as you can.");
 	hud->addMessage("Shoot monsters to receive experience and other bonuses.");
@@ -192,7 +181,7 @@ void startSurvival(std::string elementName) {
 	SDL_ShowCursor(0);
 
 	for (unsigned int i = 0; i < config->MonstersAtStart; i++) {
-		spawnEnemy((float) cam->getW(), 1);
+		spawnEnemy((float) cam->getW(), 1, 1);
 	}
 
 	windows["mainmenu"]->CloseFlag = true;
@@ -392,6 +381,8 @@ void switchGamePause() {
 }
 
 void refreshCharStatsWindow() {
+	Player* player = (Player*) gameState->getLifeForm(playerId);
+
 	const int l = (int) (config->Screen.Width * 0.1f);
 	const int r = (int) (config->Screen.Width * 0.6f);
 
@@ -508,6 +499,8 @@ void refreshCharStatsWindow() {
 }
 
 void increaseVioletParam(std::string elementName) {
+	Player* player = (Player*) gameState->getLifeForm(playerId);
+
 	if (player->LevelPoints > 0) {
 		if (elementName.compare("strength") == 0)
 			player->Strength += 0.1;
@@ -527,6 +520,8 @@ void increaseVioletParam(std::string elementName) {
 }
 
 void takePerk(std::string elementName) {
+	Player* player = (Player*) gameState->getLifeForm(playerId);
+
 	if (player->LevelPoints > 0) {
 		if (elementName.compare("unstoppable") == 0 && !player->Unstoppable) {
 			player->Unstoppable = true;
@@ -1207,13 +1202,8 @@ void unloadResources() {
 	delete monsterFactory;
 	delete aim;
 	delete hud;
-	delete terrain;
 	delete resources;
-	clearVector<Powerup*> (&powerups);
-	clearVector<StaticObject*> (&bloodStains);
-	clearVector<Bullet*> (&bullets);
-	clearVector<Explosion*> (&explosions);
-	clearMap<std::string, LifeForm*> (&lifeForms);
+
 	clearMap<std::string, Window*> (&windows);
 
 	delete config;
@@ -1318,34 +1308,35 @@ void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 		newBloodStain->GMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
 
 	}
-	bloodStains.push_back(newBloodStain);
+	gameState->bloodStains.push_back(newBloodStain);
 }
 
 void handleExplosions() {
 	unsigned int fxLevel = 10;
 
-	if (!explosions.empty()) {
-		for (int i = explosions.size() - 1; i >= 0; i--) {
-			explosions[i]->process(videoManager->getFrameDeltaTime());
+	if (!gameState->explosions.empty()) {
+		for (int i = gameState->explosions.size() - 1; i >= 0; i--) {
+			gameState->explosions[i]->process(videoManager->getFrameDeltaTime());
 
-			if (explosions[i]->Active && !lifeForms.empty()) {
+			if (gameState->explosions[i]->Active
+					&& !gameState->lifeForms.empty()) {
 				map<string, LifeForm*>::const_iterator iter;
-				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+				for (iter = gameState->lifeForms.begin(); iter
+						!= gameState->lifeForms.end(); ++iter) {
 					LifeForm* lifeForm = iter->second;
 					if (lifeForm->Type == LIFEFORM_PLAYER
 							&& !config->FriendlyFire)
 						continue;
 
-					float d = explosions[i]->calcDamage(lifeForm);
+					float d = gameState->explosions[i]->calcDamage(lifeForm);
 					if (d > 0)
 						lifeForm->setHealth(lifeForm->getHealth() - d);
 					if (lifeForm->getHealth() == 0) {
 						lifeForm->State = LIFEFORM_STATE_BURST;
 
-						float angle =
-								Object::calculateAngle(lifeForm->X,
-										lifeForm->Y, explosions[i]->X,
-										explosions[i]->Y);
+						float angle = Object::calculateAngle(lifeForm->X,
+								lifeForm->Y, gameState->explosions[i]->X,
+								gameState->explosions[i]->Y);
 
 						for (unsigned int k = 0; k < fxLevel / 2; k++) {
 							int angleDev = 90 + (rand() % 90) - 45;
@@ -1387,36 +1378,38 @@ void handleExplosions() {
 							p->AMod = -0.0015 * 1 / p->Scale;
 							partSys->Particles.push_back(p);
 						}
-						particleSystems.push_back(partSys);
+						gameState->particleSystems.push_back(partSys);
 					}
 				}
 			}
 
-			explosions[i]->Active = false;
+			gameState->explosions[i]->Active = false;
 
-			if (explosions[i]->isEmpty()) {
-				delete explosions[i];
-				explosions.erase(explosions.begin() + i);
+			if (gameState->explosions[i]->isEmpty()) {
+				delete gameState->explosions[i];
+				gameState->explosions.erase(gameState->explosions.begin() + i);
 			}
 		}
 	}
 }
 
 void handleParticles() {
-	if (!particleSystems.empty()) {
-		for (int i = particleSystems.size() - 1; i >= 0; i--) {
-			particleSystems[i]->process(videoManager->getFrameDeltaTime());
+	if (!gameState->particleSystems.empty()) {
+		for (int i = gameState->particleSystems.size() - 1; i >= 0; i--) {
+			gameState->particleSystems[i]->process(
+					videoManager->getFrameDeltaTime());
 
-			if (particleSystems[i]->isEmpty()) {
-				delete particleSystems[i];
-				particleSystems.erase(particleSystems.begin() + i);
+			if (gameState->particleSystems[i]->isEmpty()) {
+				delete gameState->particleSystems[i];
+				gameState->particleSystems.erase(
+						gameState->particleSystems.begin() + i);
 			}
 		}
 	}
 }
 
 void handleMonster(LifeForm* lf) {
-
+	Player* player = (Player*) gameState->getLifeForm(playerId);
 	Enemy* enemy = (Enemy*) lf;
 
 	if (!gameState->Lost && enemy->detectCollide(player->TargetX,
@@ -1429,7 +1422,7 @@ void handleMonster(LifeForm* lf) {
 	if (lf->Frozen > 0)
 		return;
 
-	if (enemy->isBleeding() && bloodStains.size() < 12) {
+	if (enemy->isBleeding() && gameState->bloodStains.size() < 12) {
 		addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10) / 50.0f
 				+ 0.1f, enemy->Poisoned);
 	}
@@ -1472,17 +1465,25 @@ void handleMonster(LifeForm* lf) {
 
 	if (player->State == LIFEFORM_STATE_ALIVE && player->detectCollide(enemy)) {
 		if (enemy->Attack()) {
-			if (rand() % 100 > player->ChanceToEvade() * 100)
-				player->hit(enemy->Damage(), false, 0, 0);
+			if (rand() % 100 > player->ChanceToEvade() * 100) {
+				Sound* hitSound = NULL;
+				player->hit(enemy->Damage(), false, hitSound);
+				if (hitSound != NULL)
+					hitSound->play(6, 0, 0);
 
-			if (!player->Unstoppable)
-				player->Speed = 0.0f;
+				if (!player->Unstoppable)
+					player->Speed = 0.0f;
+			}
 		}
 
 		if (player->Attack()) {
 			if ((rand() % 100) > enemy->ChanceToEvade() * 100) {
-				enemy->hit(player->Damage(), false, player->X, player->Y);
+				Sound* hitSound = NULL;
+				enemy->hit(player->Damage(), false, hitSound);
 				enemy->Speed = 0.0f;
+
+				if (hitSound != NULL)
+					hitSound->play(7, 0, 0);
 			}
 		}
 	}
@@ -1493,7 +1494,8 @@ void handleMonster(LifeForm* lf) {
 }
 
 void levelUp(Player* player) {
-	spawnEnemy(config->GameAreaSize * 1.5f, player->Level * 2.0f + 15);
+	spawnEnemy(config->GameAreaSize * 1.5f, player->Level, player->Level * 2.0f
+			+ 15);
 
 	player->LastLevelXp = player->NextLevelXp;
 	player->NextLevelXp *= 2;
@@ -1546,8 +1548,8 @@ void handlePlayer(LifeForm* lf) {
 	if (player->ActionMode == 0 && input->getDownInput(InputHandler::Fire)) {
 		std::vector<Bullet*> *newBullets = player->fire();
 		if (!newBullets->empty()) {
-			bullets.insert(bullets.end(), newBullets->begin(),
-					newBullets->end());
+			gameState->bullets.insert(gameState->bullets.end(),
+					newBullets->begin(), newBullets->end());
 			delete newBullets;
 		}
 		if (player->getWeapon()->Ammo == 0 && config->AutoReload)
@@ -1571,7 +1573,7 @@ void handlePlayer(LifeForm* lf) {
 			partSys->Particles.push_back(spark);
 		}
 
-		particleSystems.push_back(partSys);
+		gameState->particleSystems.push_back(partSys);
 
 		player->teleport();
 		player->ActionMode = PLAYER_ACT_MODE_FIRE;
@@ -1603,23 +1605,18 @@ void handlePlayer(LifeForm* lf) {
 
 	if (input->getPressInput(InputHandler::ThrowGrenade) && player->Grenades
 			> 0) {
-		bullets.push_back(player->throwGrenade(resources->GrenadeSprite));
+		gameState->bullets.push_back(player->throwGrenade(
+				resources->GrenadeSprite));
 	}
 }
 
 //Choice and creation of bonus
-void dropPowerup(float x, float y) {
-	float chance = player->Looting ? 0.01 : 0.02;
-
+void dropPowerup(float x, float y, float chance) {
 	bool powerupDropped = false;
 	Powerup *newPowerup;
 
-	// The PM will increase chance of bonus drop
-	if (player->getWeapon()->Name == "PM")
-		chance *= 2;
-
 	// Weapon drop - should be first check
-	if (player->Kills == 0 || roulette(chance * 2.5)) {
+	if (roulette(chance * 2.5)) {
 		int weaponIndex;
 		if (false) // TODO: "Allow PM drop" to options. true for allow.
 			weaponIndex = (rand() % weaponManager->Weapons.size());
@@ -1732,10 +1729,12 @@ void dropPowerup(float x, float y) {
 	}
 
 	if (powerupDropped)
-		powerups.push_back(newPowerup);
+		gameState->powerups.push_back(newPowerup);
 }
 
 void handleLifeForms() {
+	Player* player = (Player*) gameState->getLifeForm(playerId);
+
 	if (!gameState->Lost) {
 		for (int i = 0; i < videoManager->getFrameDeltaTime(); i++) {
 			if (rand() % 10000 > gameState->Hardness) {
@@ -1743,14 +1742,15 @@ void handleLifeForms() {
 						% 100) / 125.0f, 2);
 				if (lvl < 1)
 					lvl = 1;
-				spawnEnemy(config->GameAreaSize * 1.5, lvl);
+				spawnEnemy(config->GameAreaSize * 1.5, player->Level, lvl);
 			}
 		}
 	}
 
-	if (!lifeForms.empty()) {
+	if (!gameState->lifeForms.empty()) {
 		map<string, LifeForm*>::const_iterator iter;
-		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+		for (iter = gameState->lifeForms.begin(); iter
+				!= gameState->lifeForms.end(); ++iter) {
 			LifeForm* lifeForm = iter->second;
 
 			if (lifeForm->Type == LIFEFORM_PLAYER) {
@@ -1789,7 +1789,7 @@ void handleLifeForms() {
 void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 	unsigned int fxLevel = 10;
 
-	if (bloodStains.size() < fxLevel) {
+	if (gameState->bloodStains.size() < fxLevel) {
 		for (unsigned int k = 0; k < fxLevel / 3; k++) {
 			int angleDev = 90 + (rand() % 60) - 30;
 			float distance = (rand() % 100);
@@ -1817,7 +1817,7 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 			p->AMod = -0.002;
 			partSys->Particles.push_back(p);
 		}
-		particleSystems.push_back(partSys);
+		gameState->particleSystems.push_back(partSys);
 	} else {
 		ParticleSystem* partSys = new ParticleSystem();
 		for (unsigned int k = 0; k < fxLevel * 3; k++) {
@@ -1837,7 +1837,7 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 			p->AMod = -0.004;
 			partSys->Particles.push_back(p);
 		}
-		particleSystems.push_back(partSys);
+		gameState->particleSystems.push_back(partSys);
 	}
 
 	bool bypassDirectDamage = false;
@@ -1847,14 +1847,22 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 			Explosion * expl = new Explosion(false, bullet->X, bullet->Y,
 					100.0f, bullet->Damage, resources->ExplTex[0],
 					resources->ExplTex[1], resources->ExplSounds[1]);
-			explosions.push_back(expl);
+			gameState->explosions.push_back(expl);
 			bypassDirectDamage = true;
 		}
 	}
 
 	if (!bypassDirectDamage) {
 		float damageLoss = enemy->getHealth();
-		enemy->hit(bullet->Damage, bullet->Poisoned, player->X, player->Y);
+		Sound* hitSound = NULL;
+		enemy->hit(bullet->Damage, bullet->Poisoned, hitSound);
+		if (hitSound != NULL) {
+			Player* player = (Player*) gameState->getLifeForm(playerId);
+			hitSound->play(7, 0, 0);
+			hitSound->setPos(Object::calculateAngle(enemy->X, enemy->Y,
+					player->X, player->Y), Object::calculateDistance(enemy->X,
+					enemy->Y, player->X, player->Y));
+		}
 
 		if (bullet->BigCalibre && !bullet->Penetrating) {
 			bullet->Damage -= damageLoss;
@@ -1863,16 +1871,38 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 			}
 		}
 	}
+
+	if (enemy->getHealth() <= 0) {
+		Player* player = (Player*) gameState->getLifeForm(bullet->OwnerId);
+
+		float dropPowerupChance = 0.01;
+		if (player->Looting)
+			dropPowerupChance *= 2;
+
+		// The PM will increase chance of bonus drop
+		if (player->getWeapon()->Name == "PM")
+			dropPowerupChance *= 4;
+
+		dropPowerup(enemy->X, enemy->Y, dropPowerupChance);
+		if (player->State == LIFEFORM_STATE_ALIVE) {
+			player->Kills++;
+			player->Xp += (int) ((1.5 - gameState->TimeOfDay * -0.5)
+					* (enemy->getStrength() + enemy->getAgility()
+							+ enemy->getVitality()) * 3);
+		}
+	}
 }
 
 void handleBullets() {
-	if (!bullets.empty()) {
-		for (int i = bullets.size() - 1; i >= 0; i--) {
-			bullets[i]->process(videoManager->getFrameDeltaTime());
+	if (!gameState->bullets.empty()) {
+		for (int i = gameState->bullets.size() - 1; i >= 0; i--) {
+			gameState->bullets[i]->process(videoManager->getFrameDeltaTime());
 
-			if (bullets[i]->isActive() && !lifeForms.empty()) {
+			if (gameState->bullets[i]->isActive()
+					&& !gameState->lifeForms.empty()) {
 				map<string, LifeForm*>::const_iterator iter;
-				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+				for (iter = gameState->lifeForms.begin(); iter
+						!= gameState->lifeForms.end(); ++iter) {
 					LifeForm* lf = iter->second;
 
 					if (lf->Type == LIFEFORM_PLAYER || lf->State
@@ -1881,24 +1911,25 @@ void handleBullets() {
 
 					Enemy* enemy = (Enemy*) lf;
 
-					if (bullets[i]->checkHit(enemy)) {
-						collideBulletAndEnemy(bullets[i], enemy);
+					if (gameState->bullets[i]->checkHit(enemy)) {
+						collideBulletAndEnemy(gameState->bullets[i], enemy);
 					}
 				}
 			}
 
-			if (bullets[i]->isReadyToRemove() && bullets[i]->Type
-					== Bullet::grenade) {
-				Explosion* expl = new Explosion(false, bullets[i]->X,
-						bullets[i]->Y, 150.0f, bullets[i]->Damage,
+			if (gameState->bullets[i]->isReadyToRemove()
+					&& gameState->bullets[i]->Type == Bullet::grenade) {
+				Explosion* expl = new Explosion(false,
+						gameState->bullets[i]->X, gameState->bullets[i]->Y,
+						150.0f, gameState->bullets[i]->Damage,
 						resources->ExplTex[0], resources->ExplTex[1],
 						resources->ExplSounds[0]);
-				explosions.push_back(expl);
+				gameState->explosions.push_back(expl);
 			}
 
-			if (bullets[i]->isReadyToRemove()) {
-				delete bullets[i];
-				bullets.erase(bullets.begin() + i);
+			if (gameState->bullets[i]->isReadyToRemove()) {
+				delete gameState->bullets[i];
+				gameState->bullets.erase(gameState->bullets.begin() + i);
 			}
 		}
 	}
@@ -1917,28 +1948,32 @@ void setGuiCameraMode() {
 #warning translation stop here
 
 void handlePowerups() {
-	for (int i = powerups.size() - 1; i >= 0; i--) {
+	Player* player = (Player*) gameState->getLifeForm(playerId);
+
+	for (int i = gameState->powerups.size() - 1; i >= 0; i--) {
 		bool deletePowerup = false;
-		powerups[i]->Time -= videoManager->getFrameDeltaTime();
-		powerups[i]->AMask = powerups[i]->Time / 15000.0;
-		if (powerups[i]->Type != BONUS_WEAPON) {
-			powerups[i]->Angle += videoManager->getFrameDeltaTime() * 0.05f
-					* powerups[i]->Dir;
+		gameState->powerups[i]->Time -= videoManager->getFrameDeltaTime();
+		gameState->powerups[i]->AMask = gameState->powerups[i]->Time / 15000.0;
+		if (gameState->powerups[i]->Type != BONUS_WEAPON) {
+			gameState->powerups[i]->Angle += videoManager->getFrameDeltaTime()
+					* 0.05f * gameState->powerups[i]->Dir;
 
-			if (powerups[i]->Angle > 45 && powerups[i]->Dir > 0)
-				powerups[i]->Dir = -1;
+			if (gameState->powerups[i]->Angle > 45
+					&& gameState->powerups[i]->Dir > 0)
+				gameState->powerups[i]->Dir = -1;
 
-			if (powerups[i]->Angle < -45 && powerups[i]->Dir < 0)
-				powerups[i]->Dir = 1;
+			if (gameState->powerups[i]->Angle < -45
+					&& gameState->powerups[i]->Dir < 0)
+				gameState->powerups[i]->Dir = 1;
 		}
 
-		if (powerups[i]->Time <= 0)
+		if (gameState->powerups[i]->Time <= 0)
 			deletePowerup = true;
 
-		if (!gameState->Lost && powerups[i]->detectCollide(player->TargetX,
-				player->TargetY)) {
+		if (!gameState->Lost && gameState->powerups[i]->detectCollide(
+				player->TargetX, player->TargetY)) {
 
-			switch (powerups[i]->Type) {
+			switch (gameState->powerups[i]->Type) {
 			case BONUS_MEDIKIT:
 				hud->Info = _("a medikit");
 				break;
@@ -1967,29 +2002,29 @@ void handlePowerups() {
 				hud->Info = _("a teleport");
 				break;
 			case BONUS_WEAPON:
-				hud->Info = ((Weapon*) powerups[i]->Object)->Name;
+				hud->Info = ((Weapon*) gameState->powerups[i]->Object)->Name;
 				break;
 			}
 
 			if (player->Telekinesis) {
-				float a = Object::calculateAngle(powerups[i]->X,
-						powerups[i]->Y, player->X, player->Y);
-				powerups[i]->X -= cos((a + 90) * M_PI / 180)
+				float a = Object::calculateAngle(gameState->powerups[i]->X,
+						gameState->powerups[i]->Y, player->X, player->Y);
+				gameState->powerups[i]->X -= cos((a + 90) * M_PI / 180)
 						* videoManager->getFrameDeltaTime()
 						* player->MaxSpeed() * 2;
-				powerups[i]->Y -= sin((a + 90) * M_PI / 180)
+				gameState->powerups[i]->Y -= sin((a + 90) * M_PI / 180)
 						* videoManager->getFrameDeltaTime()
 						* player->MaxSpeed() * 2;
 			}
 		}
 
-		if (!gameState->Lost && (powerups[i]->detectCollide(player))) {
-			switch (powerups[i]->Type) {
+		if (!gameState->Lost && (gameState->powerups[i]->detectCollide(player))) {
+			switch (gameState->powerups[i]->Type) {
 			case BONUS_MEDIKIT: {
 				if (player->getHealth() < player->MaxHealth()) {
 					hud->addMessage(_("You have taken a medical kit."));
 					player->setHealth(player->getHealth()
-							+ *(float*) powerups[i]->Object);
+							+ *(float*) gameState->powerups[i]->Object);
 					deletePowerup = true;
 				}
 				break;
@@ -1998,17 +2033,18 @@ void handlePowerups() {
 				hud->addMessage(_("All have been frozen around you."));
 
 				map<string, LifeForm*>::const_iterator iter;
-				for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+				for (iter = gameState->lifeForms.begin(); iter
+						!= gameState->lifeForms.end(); ++iter) {
 					LifeForm* lf = iter->second;
 
 					if (lf->Type == LIFEFORM_PLAYER || lf->State
 							!= LIFEFORM_STATE_ALIVE)
 						continue;
-					lf->Frozen = *(int*) powerups[i]->Object;
+					lf->Frozen = *(int*) gameState->powerups[i]->Object;
 					lf->Speed = 0.0f;
 				}
 				player->bonusTimes[PLAYER_BONUS_FREEZE]
-						= *(int*) powerups[i]->Object;
+						= *(int*) gameState->powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
@@ -2017,54 +2053,54 @@ void handlePowerups() {
 				Explosion * expl = new Explosion(true, player->X, player->Y,
 						400.0f, 12.0f, resources->ExplTex[0],
 						resources->ExplTex[1], resources->ExplSounds[1]);
-				explosions.push_back(expl);
+				gameState->explosions.push_back(expl);
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_PENBULLETS: {
 				hud->addMessage(_("You got powerful penetration bullets."));
 				player->bonusTimes[PLAYER_BONUS_PENBULLETS]
-						= *(int*) powerups[i]->Object;
+						= *(int*) gameState->powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_VITALITYROIDS: {
 				hud->addMessage(_("You got a vitality boost."));
 				player->bonusTimes[PLAYER_BONUS_VITALITYBOOST]
-						+= *(int*) powerups[i]->Object;
+						+= *(int*) gameState->powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_STRENGTHROIDS: {
 				hud->addMessage(_("You got a strength boost."));
 				player->bonusTimes[PLAYER_BONUS_STRENGTHBOOST]
-						+= *(int*) powerups[i]->Object;
+						+= *(int*) gameState->powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_AGILITYROIDS: {
 				hud->addMessage(_("You got a agility boost."));
 				player->bonusTimes[PLAYER_BONUS_AGILITYBOOST]
-						+= *(int*) powerups[i]->Object;
+						+= *(int*) gameState->powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_GRENADES: {
 				hud->addMessage(_("You have taken a grenade."));
-				player->Grenades += *(int*) powerups[i]->Object;
+				player->Grenades += *(int*) gameState->powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_TELEPORTS: {
 				hud->addMessage(_("You have taken a teleport."));
-				player->Teleports += *(int*) powerups[i]->Object;
+				player->Teleports += *(int*) gameState->powerups[i]->Object;
 				deletePowerup = true;
 				break;
 			}
 			case BONUS_WEAPON: {
 				if (input->getDownInput(InputHandler::Pickup)
 						|| config->AutoWeaponPickup) {
-					player->setWeapon((Weapon*) powerups[i]->Object);
+					player->setWeapon((Weapon*) gameState->powerups[i]->Object);
 					char *buf;
 					sprintf(buf = new char[200], _("You have taken the %s."),
 							player->getWeapon()->Name.c_str());
@@ -2078,54 +2114,15 @@ void handlePowerups() {
 		}
 
 		if (deletePowerup) {
-			delete powerups[i];
-			powerups.erase(powerups.begin() + i);
+			delete gameState->powerups[i];
+			gameState->powerups.erase(gameState->powerups.begin() + i);
 			continue;
 		}
 	}
 }
 
 void processGame() {
-	if (!gameState->Lost) {
-		gameState->Hardness -= videoManager->getFrameDeltaTime() * 0.00012;
-		gameState->Time += videoManager->getFrameDeltaTime();
-	}
-
-	terrain->beginDrawOn();
-	{
-		for (unsigned int i = 0; i < bloodStains.size(); i++) {
-			terrain->drawOn(bloodStains[i]);
-		}
-
-		clearVector<StaticObject*> (&bloodStains);
-
-		map<string, LifeForm*>::const_iterator iter;
-		for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
-			LifeForm* lf = iter->second;
-
-			if (lf->State == LIFEFORM_STATE_DIED)
-				terrain ->drawOn(lf->getCorpse());
-
-			if (lf->State == LIFEFORM_STATE_DIED || lf->State
-					== LIFEFORM_STATE_BURST) {
-
-				if (lf->Type == LIFEFORM_MONSTER) {
-					dropPowerup(lf->X, lf->Y);
-					if (player->State == LIFEFORM_STATE_ALIVE) {
-						player->Kills++;
-						player->Xp
-								+= (int) ((1.5 - gameState->TimeOfDay * -0.5)
-										* (lf->getStrength() + lf->getAgility()
-												+ lf->getVitality()) * 3);
-					}
-					delete lf;
-					lifeForms.erase(iter->first);
-				}
-			}
-		}
-	}
-
-	terrain->endDrawOn();
+	gameState->process(videoManager->getFrameDeltaTime());
 
 	hud->Info = "";
 
@@ -2137,6 +2134,8 @@ void processGame() {
 }
 
 void drawGame() {
+	Player* player = (Player*) gameState->getLifeForm(playerId);
+
 	cam->X = player->X;
 	cam->Y = player->Y;
 
@@ -2191,14 +2190,15 @@ void drawGame() {
 		}
 	}
 
-	terrain->draw(cam);
+	gameState->terrain->draw(cam);
 
-	for (unsigned int i = 0; i < powerups.size(); i++) {
-		powerups[i]->draw(false, false);
+	for (unsigned int i = 0; i < gameState->powerups.size(); i++) {
+		gameState->powerups[i]->draw(false, false);
 	}
 
 	map<string, LifeForm*>::const_iterator iter;
-	for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
+	for (iter = gameState->lifeForms.begin(); iter
+			!= gameState->lifeForms.end(); ++iter) {
 		LifeForm* lifeForm = iter->second;
 
 		if (lifeForm->getLeft() < cam->X + cam->getHalfW()
@@ -2220,8 +2220,8 @@ void drawGame() {
 		}
 	}
 
-	for (unsigned int i = 0; i < particleSystems.size(); i++) {
-		particleSystems[i]->draw();
+	for (unsigned int i = 0; i < gameState->particleSystems.size(); i++) {
+		gameState->particleSystems[i]->draw();
 	}
 
 	if (!gameState->Lost) {
@@ -2233,8 +2233,8 @@ void drawGame() {
 
 	glDisable(GL_LIGHTING);
 
-	for (unsigned int i = 0; i < bullets.size(); i++) {
-		bullets[i]->draw();
+	for (unsigned int i = 0; i < gameState->bullets.size(); i++) {
+		gameState->bullets[i]->draw();
 	}
 
 	glDisable(GL_TEXTURE_2D);
@@ -2282,8 +2282,8 @@ void drawGame() {
 
 	glEnable(GL_TEXTURE_2D);
 
-	for (unsigned int i = 0; i < explosions.size(); i++) {
-		explosions[i]->draw();
+	for (unsigned int i = 0; i < gameState->explosions.size(); i++) {
+		gameState->explosions[i]->draw();
 	}
 
 	glDisable(GL_TEXTURE_2D);
@@ -2319,6 +2319,8 @@ void runMainLoop() {
 		handleCommonControls();
 
 		if (gameState->Begun) {
+			Player* player = (Player*) gameState->getLifeForm(playerId);
+
 			musicManager->process(player, gameState);
 
 			if (!gameState->Paused)

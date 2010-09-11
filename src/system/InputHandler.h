@@ -3,7 +3,6 @@
 
 #include <string>
 #include "SDL.h"
-#include <string>
 
 class InputHandler {
 public:
