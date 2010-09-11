@@ -37,6 +37,7 @@
 #include "system/graphic/Particle.h"
 #include "system/graphic/Window.h"
 #include "system/graphic/VideoManager.h"
+#include "system/graphic/Explosion.h"
 #include "system/sound/SoundManager.h"
 #include "game/GameState.h"
 #include "game/Resources.h"
@@ -48,7 +49,6 @@
 #include "game/MusicManager.h"
 #include "game/WeaponManager.h"
 #include "game/Highscores.h"
-#include "game/Explosion.h"
 #include "game/HUD.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/HelpWindow.h"
@@ -78,6 +78,10 @@ MusicManager* musicManager;
 WeaponManager* weaponManager;
 MonsterFactory* monsterFactory;
 
+vector<ParticleSystem*> particleSystems;
+vector<StaticObject*> bloodStains;
+Terrain* terrain;
+
 GameState* gameState;
 string playerId;
 
@@ -91,8 +95,8 @@ bool roulette(float eventProbability) {
 
 // Creation of clear squares of an earth surface
 void createTerrain() {
-	if (gameState->terrain)
-		delete gameState->terrain;
+	if (terrain)
+		delete terrain;
 
 	printf("Forming terrain...\n");
 
@@ -121,8 +125,7 @@ void createTerrain() {
 		delete[] buf;
 	}
 
-	gameState->terrain = new Terrain(terrainSurface, tiles,
-			config->GameAreaSize);
+	terrain = new Terrain(terrainSurface, tiles, config->GameAreaSize);
 
 	SDL_FreeSurface(terrainSurface);
 	for (int i = 0; i < tilesCount; i++) {
@@ -135,7 +138,7 @@ void createTerrain() {
 void spawnEnemy(float r, int baseLvl, int lvl) {
 	float spawnAngle = (rand() % 6300) / 1000.0f;
 
-	Enemy* newMonster = monsterFactory->create(baseLvl, lvl);
+	Monster* newMonster = monsterFactory->create(baseLvl, lvl);
 
 	newMonster->X = r * cos(spawnAngle);
 	newMonster->Y = r * sin(spawnAngle);
@@ -160,6 +163,9 @@ void startSurvival(std::string elementName) {
 	SDL_GL_SwapBuffers();
 
 	gameState->start(GAMEMODE_SURVIVAL);
+
+	clearVector<StaticObject*> (&bloodStains);
+	clearVector<ParticleSystem*> (&particleSystems);
 
 	Player* player = new Player(0, 0, resources->PlayerWalkSprite,
 			resources->PlayerDeathSprites[(rand()
@@ -640,6 +646,10 @@ void createCharStatWindow() {
 }
 
 void shutdownSystem() {
+	clearVector<ParticleSystem*> (&particleSystems);
+	clearVector<StaticObject*> (&bloodStains);
+
+	delete terrain;
 	delete videoManager;
 	delete gameState;
 	delete musicManager;
@@ -1308,101 +1318,65 @@ void addBloodStain(float x, float y, float angle, float scale, bool poisoned) {
 		newBloodStain->GMask = newBloodStain->BMask = (rand() % 200) / 1000.0f;
 
 	}
-	gameState->bloodStains.push_back(newBloodStain);
+
+	bloodStains.push_back(newBloodStain);
 }
 
-void handleExplosions() {
-	unsigned int fxLevel = 10;
+void addExplosion(float x, float y, float damage, float range) {
+	vector<Blood> vBlood = gameState->processExplosion(x, y, damage, range,
+			config->FriendlyFire);
 
-	if (!gameState->explosions.empty()) {
-		for (int i = gameState->explosions.size() - 1; i >= 0; i--) {
-			gameState->explosions[i]->process(videoManager->getFrameDeltaTime());
-
-			if (gameState->explosions[i]->Active
-					&& !gameState->lifeForms.empty()) {
-				map<string, LifeForm*>::const_iterator iter;
-				for (iter = gameState->lifeForms.begin(); iter
-						!= gameState->lifeForms.end(); ++iter) {
-					LifeForm* lifeForm = iter->second;
-					if (lifeForm->Type == LIFEFORM_PLAYER
-							&& !config->FriendlyFire)
-						continue;
-
-					float d = gameState->explosions[i]->calcDamage(lifeForm);
-					if (d > 0)
-						lifeForm->setHealth(lifeForm->getHealth() - d);
-					if (lifeForm->getHealth() == 0) {
-						lifeForm->State = LIFEFORM_STATE_BURST;
-
-						float angle = Object::calculateAngle(lifeForm->X,
-								lifeForm->Y, gameState->explosions[i]->X,
-								gameState->explosions[i]->Y);
-
-						for (unsigned int k = 0; k < fxLevel / 2; k++) {
-							int angleDev = 90 + (rand() % 90) - 45;
-							float distance = (rand() % 200);
-							float bX = lifeForm->X + distance * -cos((angle
-									- angleDev) * M_PI / 180.0f);
-							float bY = lifeForm->Y + distance * -sin((angle
-									- angleDev) * M_PI / 180.0f);
-
-							addBloodStain(bX, bY, (rand() % 6300) / 1000.0f,
-									lifeForm->Scale, lifeForm->Poisoned);
-						}
-
-						ParticleSystem* partSys = new ParticleSystem();
-						for (unsigned int k = 0; k < fxLevel; k++) {
-							Particle * p = new Particle(lifeForm->X,
-									lifeForm->Y, 128, 128,
-									resources->BloodTex[(rand() % 299) / 100]);
-							p->setMask(0.0f, 0.0f, 0.0f, 1.0f);
-							if (lifeForm->Poisoned)
-								p->GMask = 1.0f - (rand() % 200) / 1000.0f;
-							else
-								p->RMask = 1.0f - (rand() % 200) / 1000.0f;
-
-							p->Scale = (rand() % 150) / 100.0f
-									* lifeForm->Scale;
-
-							p->Angle = (rand() % 6300) / 1000.0f;
-
-							int angleDev = 90 + (rand() % 90) - 45;
-
-							p->XSpeed
-									= -cos((angle - angleDev) * M_PI / 180.0f)
-											* 1 / p->Scale * 0.2;
-							p->YSpeed
-									= -sin((angle - angleDev) * M_PI / 180.0f)
-											* 1 / p->Scale * 0.2;
-
-							p->AMod = -0.0015 * 1 / p->Scale;
-							partSys->Particles.push_back(p);
-						}
-						gameState->particleSystems.push_back(partSys);
-					}
-				}
+	if (!vBlood.empty()) {
+		for (unsigned int i = 0; i < vBlood.size(); i++) {
+			for (unsigned int k = 0; k < 6; k++) {
+				int angleDev = 90 + (rand() % 90) - 45;
+				float distance = (rand() % 200);
+				float x = vBlood[i].x + distance * -cos((vBlood[i].angle
+						- angleDev) * M_PI / 180.0f);
+				float y = vBlood[i].y + distance * -sin((vBlood[i].angle
+						- angleDev) * M_PI / 180.0f);
+				addBloodStain(x, y, (rand() % 6300) / 1000.0f, vBlood[i].scale,
+						vBlood[i].poisoned);
 			}
 
-			gameState->explosions[i]->Active = false;
+			ParticleSystem* partSys = new ParticleSystem();
+			for (unsigned int k = 0; k < 12; k++) {
+				Particle * p = new Particle(vBlood[i].x, vBlood[i].y, 128, 128,
+						resources->BloodTex[(rand() % 299) / 100]);
+				p->setMask(0.0f, 0.0f, 0.0f, 1.0f);
+				if (vBlood[i].poisoned)
+					p->GMask = 1.0f - (rand() % 200) / 1000.0f;
+				else
+					p->RMask = 1.0f - (rand() % 200) / 1000.0f;
 
-			if (gameState->explosions[i]->isEmpty()) {
-				delete gameState->explosions[i];
-				gameState->explosions.erase(gameState->explosions.begin() + i);
+				p->Scale = (rand() % 150) / 100.0f * vBlood[i].scale;
+
+				p->Angle = (rand() % 6300) / 1000.0f;
+
+				int angleDev = 90 + (rand() % 90) - 45;
+
+				p->XSpeed = -cos((vBlood[i].angle - angleDev) * M_PI / 180.0f)
+						* 1 / p->Scale * 0.2;
+				p->YSpeed = -sin((vBlood[i].angle - angleDev) * M_PI / 180.0f)
+						* 1 / p->Scale * 0.2;
+
+				p->AMod = -0.0015 * 1 / p->Scale;
+				partSys->Particles.push_back(p);
 			}
+
+			particleSystems.push_back(partSys);
 		}
 	}
 }
 
 void handleParticles() {
-	if (!gameState->particleSystems.empty()) {
-		for (int i = gameState->particleSystems.size() - 1; i >= 0; i--) {
-			gameState->particleSystems[i]->process(
-					videoManager->getFrameDeltaTime());
+	if (!particleSystems.empty()) {
+		for (int i = particleSystems.size() - 1; i >= 0; i--) {
+			particleSystems[i]->process(videoManager->getFrameDeltaTime());
 
-			if (gameState->particleSystems[i]->isEmpty()) {
-				delete gameState->particleSystems[i];
-				gameState->particleSystems.erase(
-						gameState->particleSystems.begin() + i);
+			if (particleSystems[i]->isEmpty()) {
+				delete particleSystems[i];
+				particleSystems.erase(particleSystems.begin() + i);
 			}
 		}
 	}
@@ -1410,7 +1384,7 @@ void handleParticles() {
 
 void handleMonster(LifeForm* lf) {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
-	Enemy* enemy = (Enemy*) lf;
+	Monster* enemy = (Monster*) lf;
 
 	if (!gameState->Lost && enemy->detectCollide(player->TargetX,
 			player->TargetY)) {
@@ -1422,7 +1396,7 @@ void handleMonster(LifeForm* lf) {
 	if (lf->Frozen > 0)
 		return;
 
-	if (enemy->isBleeding() && gameState->bloodStains.size() < 12) {
+	if (enemy->isBleeding() && bloodStains.size() < 12) {
 		addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10) / 50.0f
 				+ 0.1f, enemy->Poisoned);
 	}
@@ -1466,8 +1440,7 @@ void handleMonster(LifeForm* lf) {
 	if (player->State == LIFEFORM_STATE_ALIVE && player->detectCollide(enemy)) {
 		if (enemy->Attack()) {
 			if (rand() % 100 > player->ChanceToEvade() * 100) {
-				Sound* hitSound = NULL;
-				player->hit(enemy->Damage(), false, hitSound);
+				Sound* hitSound = player->hit(enemy->Damage(), false);
 				if (hitSound != NULL)
 					hitSound->play(6, 0, 0);
 
@@ -1478,10 +1451,9 @@ void handleMonster(LifeForm* lf) {
 
 		if (player->Attack()) {
 			if ((rand() % 100) > enemy->ChanceToEvade() * 100) {
-				Sound* hitSound = NULL;
-				enemy->hit(player->Damage(), false, hitSound);
 				enemy->Speed = 0.0f;
 
+				Sound* hitSound = enemy->hit(player->Damage(), false);
 				if (hitSound != NULL)
 					hitSound->play(7, 0, 0);
 			}
@@ -1573,7 +1545,7 @@ void handlePlayer(LifeForm* lf) {
 			partSys->Particles.push_back(spark);
 		}
 
-		gameState->particleSystems.push_back(partSys);
+		particleSystems.push_back(partSys);
 
 		player->teleport();
 		player->ActionMode = PLAYER_ACT_MODE_FIRE;
@@ -1782,15 +1754,27 @@ void handleLifeForms() {
 			}
 
 			lifeForm->process(videoManager->getFrameDeltaTime());
+
+			if (lifeForm->State == LIFEFORM_STATE_DIED)
+				bloodStains.push_back(lifeForm->getCorpse());
+
+			if (lifeForm->State == LIFEFORM_STATE_DIED || lifeForm->State
+					== LIFEFORM_STATE_BURST) {
+
+				if (lifeForm->Type == LIFEFORM_MONSTER) {
+					delete lifeForm;
+					gameState->lifeForms.erase(iter->first);
+				}
+			}
 		}
 	}
 }
 
-void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
-	unsigned int fxLevel = 10;
+void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
+	Player* player = (Player*) gameState->getLifeForm(bullet->OwnerId);
 
-	if (gameState->bloodStains.size() < fxLevel) {
-		for (unsigned int k = 0; k < fxLevel / 3; k++) {
+	if (bloodStains.size() < 10) {
+		for (unsigned int k = 0; k < 10 / 3; k++) {
 			int angleDev = 90 + (rand() % 60) - 30;
 			float distance = (rand() % 100);
 			float bX = enemy->X - cos((bullet->Angle + angleDev) * M_PI
@@ -1805,7 +1789,7 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 
 	if (enemy->Frozen > 0) {
 		ParticleSystem* partSys = new ParticleSystem();
-		for (unsigned int k = 0; k < fxLevel / 2; k++) {
+		for (unsigned int k = 0; k < 5; k++) {
 			Particle * p = new Particle(enemy->X + (rand() % 50) - 25, enemy->Y
 					+ (rand() % 50) - 25, 128, 128,
 					resources->Crystal->getTexture());
@@ -1817,10 +1801,11 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 			p->AMod = -0.002;
 			partSys->Particles.push_back(p);
 		}
-		gameState->particleSystems.push_back(partSys);
+
+		particleSystems.push_back(partSys);
 	} else {
 		ParticleSystem* partSys = new ParticleSystem();
-		for (unsigned int k = 0; k < fxLevel * 3; k++) {
+		for (unsigned int k = 0; k < 15; k++) {
 			Particle * p = new Particle(enemy->X + (rand() % 50) - 25, enemy->Y
 					+ (rand() % 50) - 25, 128, 128, resources->BloodTex[(rand()
 					% 299) / 100]);
@@ -1837,27 +1822,29 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 			p->AMod = -0.004;
 			partSys->Particles.push_back(p);
 		}
-		gameState->particleSystems.push_back(partSys);
+
+		particleSystems.push_back(partSys);
 	}
 
 	bool bypassDirectDamage = false;
 	if (bullet->Type == Bullet::standard) {
 		if (((StandardBullet*) bullet)->isExplosive()) {
 			bullet->deactivate();
-			Explosion * expl = new Explosion(false, bullet->X, bullet->Y,
-					100.0f, bullet->Damage, resources->ExplTex[0],
-					resources->ExplTex[1], resources->ExplSounds[1]);
-			gameState->explosions.push_back(expl);
+			addExplosion(bullet->X, bullet->Y, bullet->Damage, 100.0f);
 			bypassDirectDamage = true;
+
+			resources->ExplSounds[1]->play(8, 0, 0);
+
+			Explosion * expl = new Explosion(false, bullet->X, bullet->Y,
+					100.0f, resources->ExplTex[0], resources->ExplTex[1]);
+			particleSystems.push_back(expl);
 		}
 	}
 
 	if (!bypassDirectDamage) {
 		float damageLoss = enemy->getHealth();
-		Sound* hitSound = NULL;
-		enemy->hit(bullet->Damage, bullet->Poisoned, hitSound);
+		Sound* hitSound = enemy->hit(bullet->Damage, bullet->Poisoned);
 		if (hitSound != NULL) {
-			Player* player = (Player*) gameState->getLifeForm(playerId);
 			hitSound->play(7, 0, 0);
 			hitSound->setPos(Object::calculateAngle(enemy->X, enemy->Y,
 					player->X, player->Y), Object::calculateDistance(enemy->X,
@@ -1873,8 +1860,6 @@ void collideBulletAndEnemy(Bullet* bullet, Enemy* enemy) {
 	}
 
 	if (enemy->getHealth() <= 0) {
-		Player* player = (Player*) gameState->getLifeForm(bullet->OwnerId);
-
 		float dropPowerupChance = 0.01;
 		if (player->Looting)
 			dropPowerupChance *= 2;
@@ -1909,7 +1894,7 @@ void handleBullets() {
 							!= LIFEFORM_STATE_ALIVE)
 						continue;
 
-					Enemy* enemy = (Enemy*) lf;
+					Monster* enemy = (Monster*) lf;
 
 					if (gameState->bullets[i]->checkHit(enemy)) {
 						collideBulletAndEnemy(gameState->bullets[i], enemy);
@@ -1919,12 +1904,16 @@ void handleBullets() {
 
 			if (gameState->bullets[i]->isReadyToRemove()
 					&& gameState->bullets[i]->Type == Bullet::grenade) {
+				addExplosion(gameState->bullets[i]->X,
+						gameState->bullets[i]->Y,
+						gameState->bullets[i]->Damage, 150.0f);
+
+				resources->ExplSounds[0]->play(8, 0, 0);
+
 				Explosion* expl = new Explosion(false,
 						gameState->bullets[i]->X, gameState->bullets[i]->Y,
-						150.0f, gameState->bullets[i]->Damage,
-						resources->ExplTex[0], resources->ExplTex[1],
-						resources->ExplSounds[0]);
-				gameState->explosions.push_back(expl);
+						150.0f, resources->ExplTex[0], resources->ExplTex[1]);
+				particleSystems.push_back(expl);
 			}
 
 			if (gameState->bullets[i]->isReadyToRemove()) {
@@ -2050,10 +2039,14 @@ void handlePowerups() {
 			}
 			case BONUS_NUKE: {
 				hud->addMessage(_("Boom!"));
+				addExplosion(player->X, player->Y, 12.0f, 400.0f);
+
+				resources->ExplSounds[1]->play(8, 0, 0);
+
 				Explosion * expl = new Explosion(true, player->X, player->Y,
-						400.0f, 12.0f, resources->ExplTex[0],
-						resources->ExplTex[1], resources->ExplSounds[1]);
-				gameState->explosions.push_back(expl);
+						400.0f, resources->ExplTex[0], resources->ExplTex[1]);
+				particleSystems.push_back(expl);
+
 				deletePowerup = true;
 				break;
 			}
@@ -2121,6 +2114,19 @@ void handlePowerups() {
 	}
 }
 
+void processTerrain() {
+	terrain->beginDrawOn();
+	{
+		for (unsigned int i = 0; i < bloodStains.size(); i++) {
+			terrain->drawOn(bloodStains[i]);
+		}
+
+		clearVector<StaticObject*> (&bloodStains);
+	}
+
+	terrain->endDrawOn();
+}
+
 void processGame() {
 	gameState->process(videoManager->getFrameDeltaTime());
 
@@ -2129,7 +2135,6 @@ void processGame() {
 	handleLifeForms();
 	handlePowerups();
 	handleBullets();
-	handleExplosions();
 	handleParticles();
 }
 
@@ -2190,7 +2195,7 @@ void drawGame() {
 		}
 	}
 
-	gameState->terrain->draw(cam);
+	terrain->draw(cam);
 
 	for (unsigned int i = 0; i < gameState->powerups.size(); i++) {
 		gameState->powerups[i]->draw(false, false);
@@ -2220,10 +2225,6 @@ void drawGame() {
 		}
 	}
 
-	for (unsigned int i = 0; i < gameState->particleSystems.size(); i++) {
-		gameState->particleSystems[i]->draw();
-	}
-
 	if (!gameState->Lost) {
 		if (player->getLight())
 			glDisable(GL_LIGHT0);
@@ -2235,6 +2236,10 @@ void drawGame() {
 
 	for (unsigned int i = 0; i < gameState->bullets.size(); i++) {
 		gameState->bullets[i]->draw();
+	}
+
+	for (unsigned int i = 0; i < particleSystems.size(); i++) {
+		particleSystems[i]->draw();
 	}
 
 	glDisable(GL_TEXTURE_2D);
@@ -2280,14 +2285,6 @@ void drawGame() {
 		}
 	}
 
-	glEnable(GL_TEXTURE_2D);
-
-	for (unsigned int i = 0; i < gameState->explosions.size(); i++) {
-		gameState->explosions[i]->draw();
-	}
-
-	glDisable(GL_TEXTURE_2D);
-
 	if (!gameState->Lost && !gameState->Paused) {
 		aim->draw(player->TargetX, player->TargetY, 1.0f + tan(
 				player->AccuracyDeviation * M_PI / 180)
@@ -2323,8 +2320,10 @@ void runMainLoop() {
 
 			musicManager->process(player, gameState);
 
-			if (!gameState->Paused)
+			if (!gameState->Paused) {
 				processGame();
+				processTerrain();
+			}
 
 			drawGame();
 

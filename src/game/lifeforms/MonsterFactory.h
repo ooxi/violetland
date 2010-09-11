@@ -16,7 +16,7 @@ private:
 	void fillMonsterStats(MonsterTemplate* t, std::string name);
 public:
 	MonsterFactory(FileUtility* fileUtility, SoundManager* sndManager);
-	Enemy* create(int baseLvl, int lvl);
+	Monster* create(int baseLvl, int lvl);
 	~MonsterFactory();
 };
 }

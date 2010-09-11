@@ -7,16 +7,16 @@
 #include "MonsterTemplate.h"
 
 namespace violetland {
-class Enemy: public LifeForm {
+class Monster: public LifeForm {
 private:
 	int m_hitSoundChannel;
 	int m_bleedDelay;
 	int m_bleedCount;
 public:
-	Enemy(MonsterTemplate* base, int lvl);
+	Monster(MonsterTemplate* base, int lvl);
 	virtual void process(int deltaTime);
 	virtual void draw();
-	virtual void hit(float damage, bool poison, Sound* outSound);
+	virtual Sound* hit(float damage, bool poison);
 
 	void setAppearance(float scale, float rMask, float gMask, float bMask,
 			float aMask);
@@ -24,7 +24,7 @@ public:
 	bool isBleeding();
 	virtual StaticObject* getCorpse();
 	void destroy();
-	~Enemy();
+	~Monster();
 	bool DoNotDisturb;
 	bool Angry;
 	MonsterTemplate* Base;

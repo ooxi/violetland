@@ -1,11 +1,8 @@
 #include "Explosion.h"
 
-Explosion::Explosion(bool nuclear, float x, float y, int range, float damage,
-		Texture* sparkTex, Texture* gruelTex, Sound* sound) :
+Explosion::Explosion(bool nuclear, float x, float y, int range,
+		Texture* sparkTex, Texture* gruelTex) :
 	ParticleSystem() {
-	m_sound = sound;
-	X = x;
-	Y = y;
 
 	if (range < 100)
 		range = 100;
@@ -64,21 +61,5 @@ Explosion::Explosion(bool nuclear, float x, float y, int range, float damage,
 		baseSpark->Scale = range * 0.01f;
 		baseSpark->AMod = -0.0003;
 		Particles.push_back(baseSpark);
-	}
-
-	Active = true;
-	Damage = damage;
-	Range = range;
-
-	sound->play(8, 0, 0);
-}
-
-float Explosion::calcDamage(Object* refObj) {
-	float d = Object::calculateDistance(X, Y, refObj->X, refObj->Y)
-			- refObj->HitR * refObj->Scale * refObj->getWidth();
-	if (d < Range) {
-		return (Range - d) / Range * Damage;
-	} else {
-		return 0.0f;
 	}
 }

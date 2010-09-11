@@ -32,7 +32,7 @@ public:
 	LifeForm(float x, float y, int w, int h);
 	virtual void process(int deltaTime);
 	virtual void draw();
-	virtual void hit(float damage, bool poison, Sound* outSound);
+	virtual Sound* hit(float damage, bool poison);
 
 	void move(float direction, int deltaTime);
 

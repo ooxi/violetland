@@ -3,7 +3,7 @@
 #endif //_WIN32W
 #include "Monster.h"
 
-violetland::Enemy::Enemy(MonsterTemplate* base, int lvl) :
+violetland::Monster::Monster(MonsterTemplate* base, int lvl) :
 	LifeForm(0, 0, 128, 128) {
 	Id = "10-" + Id;
 
@@ -49,25 +49,27 @@ violetland::Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	Type = LIFEFORM_MONSTER;
 }
 
-void violetland::Enemy::rollFrame(bool forward) {
+void violetland::Monster::rollFrame(bool forward) {
 	m_body->rollFrame(forward);
 }
 
-void violetland::Enemy::hit(float damage, bool poison, Sound* outSound) {
-	LifeForm::hit(damage, poison, outSound);
-
-	if (!Base->HitSounds.empty()) {
-		int s = rand() % (int) Base->HitSounds.size();
-		outSound = Base->HitSounds[s];
-	}
+Sound* violetland::Monster::hit(float damage, bool poison) {
+	LifeForm::hit(damage, poison);
 
 	m_bleedCount += damage * 5;
 	Poisoned = poison || Poisoned;
 	Angry = true;
 	Angle += ((rand() % 50) - 25) * damage;
+
+	if (!Base->HitSounds.empty()) {
+		int s = rand() % (int) Base->HitSounds.size();
+		return Base->HitSounds[s];
+	}
+
+	return NULL;
 }
 
-bool violetland::Enemy::isBleeding() {
+bool violetland::Monster::isBleeding() {
 	if (m_bleedCount > 0 && m_bleedDelay > 600) {
 		m_bleedDelay = 0;
 		m_bleedCount--;
@@ -77,7 +79,7 @@ bool violetland::Enemy::isBleeding() {
 	}
 }
 
-void violetland::Enemy::process(int deltaTime) {
+void violetland::Monster::process(int deltaTime) {
 	LifeForm::process(deltaTime);
 
 	if (m_bleedCount > 0)
@@ -97,7 +99,7 @@ void violetland::Enemy::process(int deltaTime) {
 	}
 }
 
-StaticObject* violetland::Enemy::getCorpse() {
+StaticObject* violetland::Monster::getCorpse() {
 	StaticObject * corpse = new StaticObject(X, Y, m_width, m_height,
 			m_body->getFrame(), false);
 	corpse->Scale = Scale;
@@ -106,10 +108,10 @@ StaticObject* violetland::Enemy::getCorpse() {
 	return corpse;
 }
 
-void violetland::Enemy::draw() {
+void violetland::Monster::draw() {
 	m_body->draw(X, Y, Angle, Scale, RMask, GMask, BMask, AMask);
 }
 
-violetland::Enemy::~Enemy() {
+violetland::Monster::~Monster() {
 	delete m_body;
 }

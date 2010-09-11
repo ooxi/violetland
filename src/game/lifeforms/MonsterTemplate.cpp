@@ -1,6 +1,7 @@
 #include "MonsterTemplate.h"
 
-MonsterTemplate::MonsterTemplate(Sprite* walkSprite, Sprite* deathSprite) {
+violetland::MonsterTemplate::MonsterTemplate(Sprite* walkSprite,
+		Sprite* deathSprite) {
 	WalkSprite = walkSprite;
 	DeathSprite = deathSprite;
 	Strength = 1.0f;
@@ -8,7 +9,7 @@ MonsterTemplate::MonsterTemplate(Sprite* walkSprite, Sprite* deathSprite) {
 	Vitality = 1.0f;
 }
 
-MonsterTemplate::~MonsterTemplate() {
+violetland::MonsterTemplate::~MonsterTemplate() {
 	delete WalkSprite;
 	delete DeathSprite;
 	for (unsigned int i = 0; i < HitSounds.size(); i++) {

@@ -32,7 +32,6 @@ set(srcFileList
 	${srcGameDir}/Terrain.cpp
 	${srcGameDir}/MusicManager.cpp
 	${srcGameDir}/Highscores.cpp
-	${srcGameDir}/Explosion.cpp
 	${srcGameDir}/Resources.cpp
 	${srcGameDir}/GameState.cpp
 	${srcGameDir}/HUD.cpp
@@ -60,6 +59,7 @@ set(srcFileList
 	${srcGraphicDir}/Window.cpp
 	${srcGraphicDir}/Particle.cpp
 	${srcGraphicDir}/ParticleSystem.cpp
+	${srcGraphicDir}/Explosion.cpp
 	${srcGraphicDir}/VideoManager.cpp
 	${srcTextDir}/TextManager.cpp 
 	${srcTextDir}/TextObject.cpp 

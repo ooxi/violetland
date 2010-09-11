@@ -96,10 +96,10 @@ void violetland::MonsterFactory::fillMonsterStats(MonsterTemplate* t,
 	in.close();
 }
 
-violetland::Enemy* violetland::MonsterFactory::create(int baseLvl, int lvl) {
+violetland::Monster* violetland::MonsterFactory::create(int baseLvl, int lvl) {
 	int monsterIndex = (rand() % m_monsters.size());
 
-	Enemy *newMonster = new Enemy(m_monsters[monsterIndex], lvl);
+	Monster *newMonster = new Monster(m_monsters[monsterIndex], lvl);
 
 	newMonster->Scale = pow((float) lvl / baseLvl, 0.2f);
 

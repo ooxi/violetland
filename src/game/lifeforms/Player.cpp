@@ -65,16 +65,18 @@ float violetland::Player::getVitality() {
 			: 1.0f);
 }
 
-void violetland::Player::hit(float damage, bool poison, Sound* outSound) {
-	LifeForm::hit(damage, poison, outSound);
+Sound* violetland::Player::hit(float damage, bool poison) {
+	LifeForm::hit(damage, poison);
 
 	setMask(1.0f, 0.0f, 0.0f, 1.0f);
 
 	if (!m_hitSounds[m_hitSndPlaying]->isPlaying()) {
 		m_hitSndPlaying = (getHealth() < MaxHealth() ? getHealth()
 				: getHealth() - 0.01f) / MaxHealth() * m_hitSounds.size();
-		outSound = m_hitSounds[m_hitSndPlaying];
+		return m_hitSounds[m_hitSndPlaying];
 	}
+
+	return NULL;
 }
 
 std::vector<Bullet*>* violetland::Player::fire() {

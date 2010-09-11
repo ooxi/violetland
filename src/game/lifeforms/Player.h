@@ -39,7 +39,7 @@ public:
 
 	virtual void process(int deltaTime);
 	virtual void draw();
-	virtual void hit(float damage, bool poison, Sound* outSound);
+	virtual Sound* hit(float damage, bool poison);
 
 	virtual float getStrength();
 	virtual float getAgility();

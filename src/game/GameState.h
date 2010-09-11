@@ -8,11 +8,16 @@
 #include "Terrain.h"
 #include "lifeforms/Player.h"
 #include "Powerup.h"
-#include "Explosion.h"
+#include "../system/graphic/Explosion.h"
 
 using namespace std;
 
 namespace violetland {
+struct Blood {
+	float x, y, angle, scale;
+	bool poisoned;
+};
+
 enum GameMode {
 	GAMEMODE_SURVIVAL = 0, GAMEMODE_SCENARIO
 };
@@ -22,6 +27,9 @@ public:
 	GameState();
 	void start(GameMode mode);
 	void end();
+	vector<violetland::Blood> processExplosion(float x, float y, float damage,
+			float range, bool affectPlayer);
+	void reset();
 	void process(int deltaTime);
 	LifeForm* getLifeForm(string id);
 	~GameState();
@@ -40,11 +48,6 @@ public:
 	map<string, LifeForm*> lifeForms;
 	vector<Powerup*> powerups;
 	vector<Bullet*> bullets;
-
-	vector<StaticObject*> bloodStains;
-	vector<Explosion*> explosions;
-	vector<ParticleSystem*> particleSystems;
-	Terrain* terrain;
 };
 }
 
