@@ -1,7 +1,7 @@
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
 #endif //_WIN32W
-#include "Enemy.h"
+#include "Monster.h"
 
 violetland::Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	LifeForm(0, 0, 128, 128) {
@@ -39,6 +39,7 @@ violetland::Enemy::Enemy(MonsterTemplate* base, int lvl) :
 	setHealth( MaxHealth());
 
 	HitR = 0.3;
+	Acceleration = 0.0004f;
 	m_body = new DynamicObject(0, 0, Base->WalkSprite);
 	m_hitSoundChannel = 0;
 	m_bleedDelay = 0;

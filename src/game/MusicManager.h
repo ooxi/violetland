@@ -3,7 +3,7 @@
 
 #include "../system/sound/SoundManager.h"
 #include "GameState.h"
-#include "Player.h"
+#include "lifeforms/Player.h"
 
 namespace violetland {
 class MusicManager {

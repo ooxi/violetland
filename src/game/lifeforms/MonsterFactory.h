@@ -1,8 +1,8 @@
 #ifndef MONSTERFACTORY_H_
 #define MONSTERFACTORY_H_
 
-#include "../system/sound/SoundManager.h"
-#include "Enemy.h"
+#include "../../system/sound/SoundManager.h"
+#include "Monster.h"
 
 namespace violetland {
 class MonsterFactory {

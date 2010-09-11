@@ -16,6 +16,7 @@ violetland::Player::Player() :
 	AccuracyDeviation = 0.0f;
 	Grenades = 2;
 	Teleports = 1;
+	Acceleration = 0.0004f;
 	Type = LIFEFORM_PLAYER;
 	m_hitSndPlaying = 0;
 

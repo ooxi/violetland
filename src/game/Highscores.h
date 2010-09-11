@@ -2,7 +2,7 @@
 #define HIGHSCORES_H_
 
 #include "../system/utility/FileUtility.h"
-#include "Player.h"
+#include "lifeforms/Player.h"
 
 //class Player;
 

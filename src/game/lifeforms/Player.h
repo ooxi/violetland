@@ -2,7 +2,7 @@
 #define PLAYER_H_
 
 #include "LifeForm.h"
-#include "Weapon.h"
+#include "../Weapon.h"
 
 namespace violetland {
 enum PlayerActionMode {

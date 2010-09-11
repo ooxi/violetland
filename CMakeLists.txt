@@ -17,6 +17,7 @@ set(srcDir src)
 set(srcWindowsDir ${srcDir}/windows)
 set(srcGameDir ${srcDir}/game)
 set(srcBulletsDir ${srcGameDir}/bullets)
+set(srcLifeFormsDir ${srcGameDir}/lifeforms)
 set(srcSystemDir ${srcDir}/system)
 set(srcGraphicDir ${srcSystemDir}/graphic)
 set(srcTextDir ${srcGraphicDir}/text)
@@ -28,18 +29,18 @@ set(srcFileList
 	${srcGameDir}/Weapon.cpp 
 	${srcGameDir}/WeaponManager.cpp
 	${srcGameDir}/Powerup.cpp 
-	${srcGameDir}/Player.cpp 
-	${srcGameDir}/Enemy.cpp 
 	${srcGameDir}/Terrain.cpp
 	${srcGameDir}/MusicManager.cpp
-	${srcGameDir}/LifeForm.cpp
 	${srcGameDir}/Highscores.cpp
 	${srcGameDir}/Explosion.cpp
-	${srcGameDir}/MonsterFactory.cpp
-	${srcGameDir}/MonsterTemplate.cpp
 	${srcGameDir}/Resources.cpp
 	${srcGameDir}/GameState.cpp
 	${srcGameDir}/HUD.cpp
+	${srcLifeFormsDir}/LifeForm.cpp
+	${srcLifeFormsDir}/Player.cpp 
+	${srcLifeFormsDir}/Monster.cpp
+	${srcLifeFormsDir}/MonsterFactory.cpp
+	${srcLifeFormsDir}/MonsterTemplate.cpp
 	${srcBulletsDir}/Bullet.cpp
 	${srcBulletsDir}/StandardBullet.cpp
 	${srcBulletsDir}/LaserBullet.cpp

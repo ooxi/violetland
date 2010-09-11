@@ -1,8 +1,8 @@
 #ifndef MONSTERTEMPLATE_H_
 #define MONSTERTEMPLATE_H_
 
-#include "../system/graphic/Sprite.h"
-#include "../system/sound/Sound.h"
+#include "../../system/graphic/Sprite.h"
+#include "../../system/sound/Sound.h"
 
 class MonsterTemplate {
 public:

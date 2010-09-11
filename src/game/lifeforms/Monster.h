@@ -1,9 +1,9 @@
 #ifndef ENEMY_H_
 #define ENEMY_H_
 
-#include "../system/graphic/DynamicObject.h"
+#include "../../system/graphic/DynamicObject.h"
+#include "../bullets/Bullet.h"
 #include "LifeForm.h"
-#include "bullets/Bullet.h"
 #include "MonsterTemplate.h"
 
 namespace violetland {

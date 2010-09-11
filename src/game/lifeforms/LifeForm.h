@@ -4,8 +4,8 @@
 #ifdef _WIN32
 #include "windows.h"
 #endif //_WIN32W
-#include "../system/graphic/StaticObject.h"
-#include "../system/graphic/DynamicObject.h"
+#include "../../system/graphic/StaticObject.h"
+#include "../../system/graphic/DynamicObject.h"
 
 namespace violetland {
 enum LifeFormType {

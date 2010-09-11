@@ -4,7 +4,7 @@
 #include "../system/graphic/VideoManager.h"
 #include "GameState.h"
 #include "Resources.h"
-#include "Player.h"
+#include "lifeforms/Player.h"
 
 namespace violetland {
 class HUD {
