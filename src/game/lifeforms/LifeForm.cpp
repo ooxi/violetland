@@ -39,6 +39,11 @@ void violetland::LifeForm::draw() {
 
 Sound* violetland::LifeForm::hit(float damage, bool poison) {
 	setHealth(getHealth() - damage);
+
+	if (getHealth() == 0 && State == LIFEFORM_STATE_ALIVE) {
+		State = LIFEFORM_STATE_SMITTEN;
+	}
+
 	return NULL;
 }
 
@@ -47,10 +52,6 @@ void violetland::LifeForm::process(int deltaTime) {
 		Frozen -= deltaTime;
 		if (Frozen < 0)
 			Frozen = 0;
-	}
-
-	if (getHealth() == 0 && State == LIFEFORM_STATE_ALIVE) {
-		State = LIFEFORM_STATE_SMITTEN;
 	}
 
 	if (State == LIFEFORM_STATE_ALIVE && Frozen == 0) {

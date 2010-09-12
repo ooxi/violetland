@@ -70,6 +70,9 @@ Sound* violetland::Player::hit(float damage, bool poison) {
 
 	setMask(1.0f, 0.0f, 0.0f, 1.0f);
 
+	if (!Unstoppable)
+		Speed = 0.0f;
+
 	if (!m_hitSounds[m_hitSndPlaying]->isPlaying()) {
 		m_hitSndPlaying = (getHealth() < MaxHealth() ? getHealth()
 				: getHealth() - 0.01f) / MaxHealth() * m_hitSounds.size();

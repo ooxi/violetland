@@ -142,6 +142,10 @@ void spawnEnemy(float r, int baseLvl, int lvl) {
 
 	newMonster->X = r * cos(spawnAngle);
 	newMonster->Y = r * sin(spawnAngle);
+	newMonster->TargetX = (rand() % (config->GameAreaSize * 2))
+			- config->GameAreaSize;
+	newMonster->TargetY = (rand() % (config->GameAreaSize * 2))
+			- config->GameAreaSize;
 
 	gameState->lifeForms.insert(map<string, LifeForm*>::value_type(
 			newMonster->Id, newMonster));
@@ -1386,6 +1390,7 @@ void handleMonster(LifeForm* lf) {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
 	Monster* enemy = (Monster*) lf;
 
+	// HUD related
 	if (!gameState->Lost && enemy->detectCollide(player->TargetX,
 			player->TargetY)) {
 		char buf[100];
@@ -1393,76 +1398,121 @@ void handleMonster(LifeForm* lf) {
 		hud->Info = buf;
 	}
 
-	if (lf->Frozen > 0)
-		return;
-
-	if (enemy->isBleeding() && bloodStains.size() < 12) {
-		addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10) / 50.0f
-				+ 0.1f, enemy->Poisoned);
-	}
-
-	float rangeToPlayer = sqrt(pow(-enemy->X + player->X, 2) + pow(enemy->Y
-			- player->Y, 2));
-
-	if (enemy->DoNotDisturb) {
-		bool reach = true;
-		if (enemy->X < enemy->TargetX - enemy->Speed * 60 || enemy->X
-				> enemy->TargetX + enemy->Speed * 60 || enemy->Y
-				< enemy->TargetY - enemy->Speed * 60 || enemy->Y
-				> enemy->TargetY + enemy->Speed * 60)
-			reach = false;
-		if (reach)
-			enemy->DoNotDisturb = false;
-	}
-
-	if ((rangeToPlayer < 400 || enemy->Angry || player->Speed == 0
-			|| enemy->Speed == 0) && player->State == LIFEFORM_STATE_ALIVE) {
-		enemy->TargetX = player->X;
-		enemy->TargetY = player->Y;
-	} else if (rangeToPlayer < 800 && !gameState->Lost) {
-		enemy->TargetX = player->X - cos((player->getLegsAngle() + 90) * M_PI
-				/ 180) * rangeToPlayer / 2.0f / enemy->Speed * player->Speed;
-		enemy->TargetY = player->Y - sin((player->getLegsAngle() + 90) * M_PI
-				/ 180) * rangeToPlayer / 2.0f / enemy->Speed * player->Speed;
-	} else if (!enemy->DoNotDisturb) {
-		enemy->TargetX = (rand() % (config->GameAreaSize * 2))
-				- config->GameAreaSize;
-		enemy->TargetY = (rand() % (config->GameAreaSize * 2))
-				- config->GameAreaSize;
-		enemy->DoNotDisturb = true;
-	}
-
-	float movementDirection = Object::calculateAngle(enemy->X, enemy->Y,
-			enemy->TargetX, enemy->TargetY);
-
-	if (rangeToPlayer > enemy->getWidth() * enemy->Scale * enemy->HitR)
-		enemy->move(movementDirection, videoManager->getFrameDeltaTime());
-
-	if (player->State == LIFEFORM_STATE_ALIVE && player->detectCollide(enemy)) {
-		if (enemy->Attack()) {
-			if (rand() % 100 > player->ChanceToEvade() * 100) {
-				Sound* hitSound = player->hit(enemy->Damage(), false);
-				if (hitSound != NULL)
-					hitSound->play(6, 0, 0);
-
-				if (!player->Unstoppable)
-					player->Speed = 0.0f;
-			}
+	// Visual related
+	if (lf->Frozen <= 0) {
+		if (enemy->isBleeding() && bloodStains.size() < 12) {
+			addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
+					/ 50.0f + 0.1f, enemy->Poisoned);
 		}
+	}
 
-		if (player->Attack()) {
-			if ((rand() % 100) > enemy->ChanceToEvade() * 100) {
-				enemy->Speed = 0.0f;
+	// AI
 
-				Sound* hitSound = enemy->hit(player->Damage(), false);
-				if (hitSound != NULL)
-					hitSound->play(7, 0, 0);
+	// Check if current target exist and is in range
+	if (enemy->targetId.compare("ambient") != 0) {
+		LifeForm* targetLifeForm = gameState->getLifeForm(enemy->targetId);
+
+		if (targetLifeForm == NULL)
+			enemy->targetId = "ambient";
+		else if (targetLifeForm->State != LIFEFORM_STATE_ALIVE)
+			enemy->targetId = "ambient";
+		else {
+			float range = sqrt(pow(-enemy->X + targetLifeForm->X, 2) + pow(
+					enemy->Y - targetLifeForm->Y, 2));
+
+			if (range > 800)
+				enemy->targetId = "ambient";
+		}
+	}
+
+	// Check for new targets in range
+	if (enemy->targetId.compare("ambient") == 0) {
+		if (!gameState->lifeForms.empty()) {
+			map<string, LifeForm*>::const_iterator iter;
+			for (iter = gameState->lifeForms.begin(); iter
+					!= gameState->lifeForms.end(); ++iter) {
+				LifeForm* lifeForm = iter->second;
+
+				float range = sqrt(pow(-enemy->X + lifeForm->X, 2) + pow(
+						enemy->Y - lifeForm->Y, 2));
+
+				if (range < 800 && lifeForm->State == LIFEFORM_STATE_ALIVE
+						&& lifeForm->Type == LIFEFORM_PLAYER) {
+					enemy->targetId = lifeForm->Id;
+					break;
+				}
 			}
 		}
 	}
 
-	if (enemy->Speed > enemy->MaxSpeed() / 4) {
-		enemy->rollFrame(true);
+	if (enemy->targetId.compare("ambient") == 0) {
+		// Hang around
+
+		float range = sqrt(pow(-enemy->X + enemy->TargetX, 2) + pow(enemy->Y
+				- enemy->TargetY, 2));
+
+		if (range < enemy->getWidth() * enemy->Scale * enemy->HitR * 5) {
+			enemy->TargetX = (rand() % (config->GameAreaSize * 2))
+					- config->GameAreaSize;
+			enemy->TargetY = (rand() % (config->GameAreaSize * 2))
+					- config->GameAreaSize;
+		}
+	} else {
+		// Attack target
+
+		LifeForm* targetLifeForm = gameState->getLifeForm(enemy->targetId);
+
+		float range = sqrt(pow(-enemy->X + targetLifeForm->X, 2) + pow(enemy->Y
+				- targetLifeForm->Y, 2));
+
+		if (range < 400 || targetLifeForm->Speed == 0 || enemy->Speed == 0) {
+			enemy->TargetX = targetLifeForm->X;
+			enemy->TargetY = targetLifeForm->Y;
+		} else {
+			enemy->TargetX = targetLifeForm->X - cos((targetLifeForm->Angle
+					+ 90) * M_PI / 180) * range / 2.0f / enemy->Speed
+					* targetLifeForm->Speed;
+			enemy->TargetY = targetLifeForm->Y - sin((targetLifeForm->Angle
+					+ 90) * M_PI / 180) * range / 2.0f / enemy->Speed
+					* targetLifeForm->Speed;
+		}
+
+		if (enemy->detectCollide(targetLifeForm)) {
+			if (enemy->Frozen == 0 && enemy->Attack()) {
+				if (rand() % 100 > targetLifeForm->ChanceToEvade() * 100) {
+					Sound* hitSound = targetLifeForm->hit(enemy->Damage(),
+							false);
+					if (hitSound != NULL)
+						//TODO: There should be more channels for shouts
+						hitSound->play(6, 0, 0);
+				}
+			}
+
+			if (targetLifeForm->Frozen == 0 && targetLifeForm->Attack()) {
+				if ((rand() % 100) > enemy->ChanceToEvade() * 100) {
+					Sound* hitSound = enemy->hit(targetLifeForm->Damage(),
+							false);
+					if (hitSound != NULL)
+						//TODO: There should be more channels for shouts
+						hitSound->play(7, 0, 0);
+				}
+			}
+
+			enemy->Speed = 0.0f;
+
+			return;
+		}
+	}
+
+	if (enemy->Frozen == 0) {
+		float direction = Object::calculateAngle(enemy->X, enemy->Y,
+				enemy->TargetX, enemy->TargetY);
+
+		enemy->move(direction, videoManager->getFrameDeltaTime());
+
+		if (enemy->Speed > enemy->MaxSpeed() / 4)
+			enemy->rollFrame(true);
+
 	}
 }
 

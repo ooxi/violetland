@@ -31,7 +31,10 @@ void violetland::GameState::end() {
 }
 
 violetland::LifeForm* violetland::GameState::getLifeForm(string id) {
-	return lifeForms.at(id);
+	if (lifeForms.count(id) > 0)
+		return lifeForms.at(id);
+	else
+		return NULL;
 }
 
 vector<violetland::Blood> violetland::GameState::processExplosion(float x,

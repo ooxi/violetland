@@ -44,8 +44,8 @@ violetland::Monster::Monster(MonsterTemplate* base, int lvl) :
 	m_hitSoundChannel = 0;
 	m_bleedDelay = 0;
 	m_bleedCount = 0;
-	DoNotDisturb = false;
 	Angry = false;
+	targetId = "ambient";
 	Type = LIFEFORM_MONSTER;
 }
 
@@ -58,7 +58,7 @@ Sound* violetland::Monster::hit(float damage, bool poison) {
 
 	m_bleedCount += damage * 5;
 	Poisoned = poison || Poisoned;
-	Angry = true;
+	Speed = 0.0f;
 	Angle += ((rand() % 50) - 25) * damage;
 
 	if (!Base->HitSounds.empty()) {

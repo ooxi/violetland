@@ -6,6 +6,8 @@
 #include "LifeForm.h"
 #include "MonsterTemplate.h"
 
+using namespace std;
+
 namespace violetland {
 class Monster: public LifeForm {
 private:
@@ -25,8 +27,8 @@ public:
 	virtual StaticObject* getCorpse();
 	void destroy();
 	~Monster();
-	bool DoNotDisturb;
 	bool Angry;
+	string targetId;
 	MonsterTemplate* Base;
 };
 }
