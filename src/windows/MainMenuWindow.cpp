@@ -11,8 +11,8 @@ MainMenuWindow::MainMenuWindow(Configuration* config, GameState* gameState,
 				* 7.0f, TextManager::LEFT, TextManager::MIDDLE));
 	}
 
-	addElement("survival", text->getObject("New survival", l, text->getHeight()
-			* 8.0f, TextManager::LEFT, TextManager::MIDDLE));
+	addElement("start", text->getObject("Start", l, text->getHeight() * 8.0f,
+			TextManager::LEFT, TextManager::MIDDLE));
 
 	addElement("options", text->getObject("Options", l, text->getHeight()
 			* 9.0f, TextManager::LEFT, TextManager::MIDDLE));

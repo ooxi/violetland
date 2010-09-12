@@ -8,6 +8,7 @@ violetland::GameState::GameState() {
 	Time = 0;
 	HighScore = false;
 	PlayerName = "";
+	Mode = GAMEMODE_SURVIVAL;
 }
 
 void violetland::GameState::start(GameMode mode) {

@@ -89,6 +89,8 @@ map<string, Window*> windows;
 
 HighscoresEntry* highscore;
 
+GameMode gameMode;
+
 bool roulette(float eventProbability) {
 	return (float) (rand() % 100000) < eventProbability * 100000.0f;
 }
@@ -158,7 +160,7 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 }
 
 // The beginning of new game in a survival mode
-void startSurvival(std::string elementName) {
+void startGame(std::string elementName) {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;
@@ -172,8 +174,7 @@ void startSurvival(std::string elementName) {
 
 	SDL_GL_SwapBuffers();
 
-	// gameState->start(GAMEMODE_SURVIVAL);
-	gameState->start(GAMEMODE_WAVES);
+	gameState->start(gameMode);
 
 	clearVector<StaticObject*> (&bloodStains);
 	clearVector<ParticleSystem*> (&particleSystems);
@@ -1097,17 +1098,55 @@ void endGame(std::string elementName) {
 	gameState->end();
 }
 
+void refreshMainMenuWindow() {
+	Window* w = windows.find("mainmenu")->second;
+
+	const int r = config->Screen.Width * 0.3f;
+
+	string strGameMode = "Unknown";
+	switch (gameMode) {
+	case GAMEMODE_SURVIVAL:
+		strGameMode = "Violetland Survival";
+		break;
+	case GAMEMODE_WAVES:
+		strGameMode = "Attack waves";
+		break;
+	}
+
+	w->addElement("gamemode", videoManager->RegularText->getObject(
+			strGameMode.c_str(), r, videoManager->RegularText->getHeight()
+					* 8.0f, TextManager::LEFT, TextManager::MIDDLE));
+}
+
+void switchGameMode(std::string elementName) {
+	switch (gameMode) {
+	case GAMEMODE_SURVIVAL:
+		gameMode = GAMEMODE_WAVES;
+		break;
+	case GAMEMODE_WAVES:
+		gameMode = GAMEMODE_SURVIVAL;
+		break;
+	}
+
+	refreshMainMenuWindow();
+}
+
 void createMainMenuWindow() {
+	gameMode = gameState->Mode;
+
 	Window *mainMenu = new MainMenuWindow(config, gameState,
 			videoManager->RegularText);
 
 	mainMenu->addHandler(Window::hdl_lclick, "resume", resumeGame);
-	mainMenu->addHandler(Window::hdl_lclick, "survival", startSurvival);
+	mainMenu->addHandler(Window::hdl_lclick, "start", startGame);
+	mainMenu->addHandler(Window::hdl_lclick, "gamemode", switchGameMode);
 	mainMenu->addHandler(Window::hdl_lclick, "options", showOptions);
 	mainMenu->addHandler(Window::hdl_lclick, "highscores", showHighScores);
 	mainMenu->addHandler(Window::hdl_lclick, "exit", endGame);
 
 	windows["mainmenu"] = mainMenu;
+
+	refreshMainMenuWindow();
 }
 
 void highScoresWindowController(std::string elementName) {
