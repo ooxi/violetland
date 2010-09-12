@@ -1435,7 +1435,8 @@ void handleMonster(LifeForm* lf) {
 	float movementDirection = Object::calculateAngle(enemy->X, enemy->Y,
 			enemy->TargetX, enemy->TargetY);
 
-	enemy->move(movementDirection, videoManager->getFrameDeltaTime());
+	if (rangeToPlayer > enemy->getWidth() * enemy->Scale * enemy->HitR)
+		enemy->move(movementDirection, videoManager->getFrameDeltaTime());
 
 	if (player->State == LIFEFORM_STATE_ALIVE && player->detectCollide(enemy)) {
 		if (enemy->Attack()) {
@@ -1583,12 +1584,12 @@ void handlePlayer(LifeForm* lf) {
 }
 
 //Choice and creation of bonus
-void dropPowerup(float x, float y, float chance) {
+void dropPowerup(float x, float y, float chance, bool forceWeapon) {
 	bool powerupDropped = false;
 	Powerup *newPowerup;
 
 	// Weapon drop - should be first check
-	if (roulette(chance * 2.5)) {
+	if (forceWeapon || roulette(chance * 2.5)) {
 		int weaponIndex;
 		if (false) // TODO: "Allow PM drop" to options. true for allow.
 			weaponIndex = (rand() % weaponManager->Weapons.size());
@@ -1734,18 +1735,6 @@ void handleLifeForms() {
 					if (lifeForm->State == LIFEFORM_STATE_ALIVE)
 						handlePlayer(lifeForm);
 				}
-
-				if (gameState->HighScore) {
-					if (input->hasBeenValidated()) {
-						highscore->Name = new string(gameState->PlayerName);
-						input->setInputMode(InputHandler::Direct);
-						Highscores s(fileUtility);
-						s.add(highscore);
-						gameState->HighScore = false;
-					} else {
-						gameState->PlayerName = input->getTextToShow();
-					}
-				}
 			}
 
 			if (lifeForm->Type == LIFEFORM_MONSTER) {
@@ -1868,7 +1857,7 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 		if (player->getWeapon()->Name == "PM")
 			dropPowerupChance *= 4;
 
-		dropPowerup(enemy->X, enemy->Y, dropPowerupChance);
+		dropPowerup(enemy->X, enemy->Y, dropPowerupChance, player->Kills == 0);
 		if (player->State == LIFEFORM_STATE_ALIVE) {
 			player->Kills++;
 			player->Xp += (int) ((1.5 - gameState->TimeOfDay * -0.5)
@@ -2131,6 +2120,18 @@ void processGame() {
 	gameState->process(videoManager->getFrameDeltaTime());
 
 	hud->Info = "";
+
+	if (gameState->HighScore) {
+		if (input->hasBeenValidated()) {
+			highscore->Name = new string(gameState->PlayerName);
+			input->setInputMode(InputHandler::Direct);
+			Highscores s(fileUtility);
+			s.add(highscore);
+			gameState->HighScore = false;
+		} else {
+			gameState->PlayerName = input->getTextToShow();
+		}
+	}
 
 	handleLifeForms();
 	handlePowerups();
