@@ -13,7 +13,7 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	AutoReload = true;
 	SoundVolume = 4;
 	MusicVolume = 4;
-	MonstersAtStart = 8;
+	MonstersAtStart = 12;
 	AimColorA = 0x000000;
 	AimColorB = 0xFFFFFF;
 	AutoWeaponPickup = true;
@@ -65,9 +65,10 @@ void Configuration::read() {
 		cFile.readInto(FriendlyFire, "friendlyFire");
 
 		for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
-			ReadPlayerBinding(&cFile, &PlayerInputBinding[i], InputHandler::getEventName(i));
+			ReadPlayerBinding(&cFile, &PlayerInputBinding[i],
+					InputHandler::getEventName(i));
 		}
-		
+
 	} catch (...) {
 		printf("Can't open config file.\n");
 	}
@@ -113,7 +114,8 @@ void Configuration::write() {
 	cFile.add("friendlyFire", FriendlyFire);
 
 	for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
-		WritePlayerBinding(&cFile, &PlayerInputBinding[i], InputHandler::getEventName(i));
+		WritePlayerBinding(&cFile, &PlayerInputBinding[i],
+				InputHandler::getEventName(i));
 	}
 
 	std::ofstream ofile(

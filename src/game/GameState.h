@@ -19,7 +19,7 @@ struct Blood {
 };
 
 enum GameMode {
-	GAMEMODE_SURVIVAL = 0, GAMEMODE_SCENARIO
+	GAMEMODE_SURVIVAL = 0, GAMEMODE_WAVES
 };
 
 class GameState {

@@ -135,17 +135,23 @@ void createTerrain() {
 }
 
 // Creation of a new monster
-void spawnEnemy(float r, int baseLvl, int lvl) {
+void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 	float spawnAngle = (rand() % 6300) / 1000.0f;
 
 	Monster* newMonster = monsterFactory->create(baseLvl, lvl);
 
-	newMonster->X = r * cos(spawnAngle);
-	newMonster->Y = r * sin(spawnAngle);
-	newMonster->TargetX = (rand() % (config->GameAreaSize * 2))
-			- config->GameAreaSize;
-	newMonster->TargetY = (rand() % (config->GameAreaSize * 2))
-			- config->GameAreaSize;
+	newMonster->X = x + r * cos(spawnAngle);
+	newMonster->Y = y + r * sin(spawnAngle);
+
+	switch (gameState->Mode) {
+	case GAMEMODE_SURVIVAL:
+	case GAMEMODE_WAVES:
+		Player* player = (Player*) gameState->getLifeForm(playerId);
+
+		newMonster->TargetX = player->X;
+		newMonster->TargetY = player->Y;
+		break;
+	}
 
 	gameState->lifeForms.insert(map<string, LifeForm*>::value_type(
 			newMonster->Id, newMonster));
@@ -166,7 +172,8 @@ void startSurvival(std::string elementName) {
 
 	SDL_GL_SwapBuffers();
 
-	gameState->start(GAMEMODE_SURVIVAL);
+	// gameState->start(GAMEMODE_SURVIVAL);
+	gameState->start(GAMEMODE_WAVES);
 
 	clearVector<StaticObject*> (&bloodStains);
 	clearVector<ParticleSystem*> (&particleSystems);
@@ -191,7 +198,7 @@ void startSurvival(std::string elementName) {
 	SDL_ShowCursor(0);
 
 	for (unsigned int i = 0; i < config->MonstersAtStart; i++) {
-		spawnEnemy((float) cam->getW(), 1, 1);
+		spawnEnemy(0, 0, (float) cam->getW(), 1, 1);
 	}
 
 	windows["mainmenu"]->CloseFlag = true;
@@ -1517,8 +1524,9 @@ void handleMonster(LifeForm* lf) {
 }
 
 void levelUp(Player* player) {
-	spawnEnemy(config->GameAreaSize * 1.5f, player->Level, player->Level * 2.0f
-			+ 15);
+	if (gameState->Mode == GAMEMODE_SURVIVAL)
+		spawnEnemy(0, 0, config->GameAreaSize * 1.5f, player->Level,
+				player->Level * 2.0f + 15);
 
 	player->LastLevelXp = player->NextLevelXp;
 	player->NextLevelXp *= 2;
@@ -1759,14 +1767,33 @@ void handleLifeForms() {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
 
 	if (!gameState->Lost) {
-		for (int i = 0; i < videoManager->getFrameDeltaTime(); i++) {
-			if (rand() % 10000 > gameState->Hardness) {
-				int lvl = player->Level * 0.5f + player->Level * pow((rand()
-						% 100) / 125.0f, 2);
-				if (lvl < 1)
-					lvl = 1;
-				spawnEnemy(config->GameAreaSize * 1.5, player->Level, lvl);
+		switch (gameState->Mode) {
+		case GAMEMODE_SURVIVAL:
+			for (int i = 0; i < videoManager->getFrameDeltaTime(); i++) {
+				if (rand() % 10000 > gameState->Hardness) {
+					int lvl = player->Level * 0.5f + player->Level * pow(
+							(rand() % 100) / 125.0f, 2);
+					if (lvl < 1)
+						lvl = 1;
+					spawnEnemy(0, 0, config->GameAreaSize * 1.5, player->Level,
+							lvl);
+				}
 			}
+			break;
+		case GAMEMODE_WAVES:
+			if (gameState->lifeForms.size() < 5) {
+				hud->addMessage("Get ready to new wave!");
+				for (unsigned int i = 0; i < (10000 - gameState->Hardness) * 5; i++) {
+					int lvl = player->Level * 0.5f + player->Level * pow(
+							(rand() % 100) / 125.0f, 2);
+					if (lvl < 1)
+						lvl = 1;
+
+					spawnEnemy(player->X, player->Y, (float) cam->getW(),
+							player->Level, 1);
+				}
+			}
+			break;
 		}
 	}
 

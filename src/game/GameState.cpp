@@ -13,15 +13,16 @@ violetland::GameState::GameState() {
 void violetland::GameState::start(GameMode mode) {
 	reset();
 
+	Mode = mode;
+
 	switch (mode) {
 	case GAMEMODE_SURVIVAL:
+	case GAMEMODE_WAVES:
 		Hardness = 9995.0;
 		Lost = false;
 		Paused = false;
 		Begun = true;
 		Time = 0;
-		break;
-	case GAMEMODE_SCENARIO:
 		break;
 	}
 }
