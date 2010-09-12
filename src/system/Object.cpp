@@ -48,7 +48,7 @@ void Object::turn(float targetAngle, float angleSpeed, int deltaTime) {
 	if (arch1 < arch2)
 		Angle -= deltaTime * angleSpeed;
 
-	if (arch1 > arch2)
+	if (arch1 >= arch2)
 		Angle += deltaTime * angleSpeed;
 
 	Angle = Object::fixAngle(Angle);

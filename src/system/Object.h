@@ -4,7 +4,6 @@
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
 #endif //_WIN32W
-
 #include <cmath>
 
 class Object {
