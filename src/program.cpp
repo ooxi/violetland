@@ -1821,7 +1821,7 @@ void handleLifeForms() {
 			break;
 		case GAMEMODE_WAVES:
 			if (gameState->lifeForms.size() < 5) {
-				hud->addMessage("Get ready to new wave!");
+				hud->addMessage(_("Get ready to new wave!"));
 				for (unsigned int i = 0; i < (10000 - gameState->Hardness) * 5; i++) {
 					int lvl = player->Level * 0.5f + player->Level * pow(
 							(rand() % 100) / 125.0f, 2);
@@ -2038,8 +2038,6 @@ void setGuiCameraMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
-
-#warning translation stop here
 
 void handlePowerups() {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
