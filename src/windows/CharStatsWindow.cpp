@@ -1,4 +1,7 @@
 #include "CharStatsWindow.h"
+#include <libintl.h>
+#include <locale.h>
+#define _(STRING)            gettext(STRING)
 
 CharStatsWindow::CharStatsWindow(Configuration* config,
 		VideoManager* videoManager) :
@@ -6,43 +9,43 @@ CharStatsWindow::CharStatsWindow(Configuration* config,
 			0.0f, 0.5f) {
 	const float r = config->Screen.Width * 0.6f;
 
-	addElement("perks", videoManager->RegularText->getObject("Perks:", r,
+	addElement("perks", videoManager->RegularText->getObject(_("Perks:"), r,
 			videoManager->RegularText->getHeight() * 2.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	addElement("unstoppable", videoManager->RegularText->getObject(
-			"Unstoppable", r + videoManager->RegularText->getHeight() * 2.0f,
+			_("Unstoppable"), r + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	addElement("poisonbullets", videoManager->RegularText->getObject(
-			"Poison bullets",
+			_("Poison bullets"),
 			r + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 5.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	addElement("bigcalibre", videoManager->RegularText->getObject(
-			"Big calibre", r + videoManager->RegularText->getHeight() * 2.0f,
+			_("Big calibre"), r + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 6.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	addElement("telekinesis", videoManager->RegularText->getObject(
-			"Telekinesis", r + videoManager->RegularText->getHeight() * 2.0f,
+			_("Telekinesis"), r + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	addElement("nightvision", videoManager->RegularText->getObject(
-			"Night vision", r + videoManager->RegularText->getHeight() * 2.0f,
+			_("Night vision"), r + videoManager->RegularText->getHeight() * 2.0f,
 			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	addElement("looting", videoManager->RegularText->getObject(
-			"Looting", r + videoManager->RegularText->getHeight() *2.0f,
+			_("Looting"), r + videoManager->RegularText->getHeight() *2.0f,
 			videoManager->RegularText->getHeight() * 9.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
 
 	addElement("explantation", videoManager->SmallText->getObject(
-			"Move mouse over text to get explantation...", config->Screen.Width
+			_("Move mouse over text to get explantation..."), config->Screen.Width
 					/ 2, videoManager->RegularText->getHeight() * 1.0f,
 			TextManager::CENTER, TextManager::MIDDLE));
 }

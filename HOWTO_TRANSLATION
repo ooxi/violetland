@@ -1,7 +1,12 @@
 To translate violetland in your language:
 
-xgettext -d cat_violetland -s -o violetland.pot ./src/program.cpp --keyword="_"
+xgettext -d cat_violetland -s -o violetland.pot ./src/program.cpp ./src/windows/*.cpp --keyword="_"
+
+If the translation file does not exist:
 msginit -l fr -o french.po -i violetland.pot )> replace "fr" by your locale and "french" by the english name of your language
+If it exist you just need to update it:
+msgmerge -U french.po violetland.pot
+
 Then, edit french.po with a text editor, or with an editor of po file.
 For example:
 poedit french.po

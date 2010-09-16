@@ -169,7 +169,7 @@ void startGame(std::string elementName) {
 
 	splash->draw(false, false);
 
-	videoManager->RegularText->draw("Please wait...", 0, 0,
+	videoManager->RegularText->draw(_("Please wait..."), 0, 0,
 			TextManager::CENTER, TextManager::MIDDLE);
 
 	SDL_GL_SwapBuffers();
@@ -191,8 +191,8 @@ void startGame(std::string elementName) {
 
 	playerId = player->Id;
 
-	hud->addMessage("Try to survive as long as you can.");
-	hud->addMessage("Shoot monsters to receive experience and other bonuses.");
+	hud->addMessage(_("Try to survive as long as you can."));
+	hud->addMessage(_("Shoot monsters to receive experience and other bonuses."));
 
 	createTerrain();
 
@@ -331,7 +331,7 @@ void initSystem() {
 
 	splash->draw(false, false);
 
-	videoManager->RegularText->draw("Please wait...", 0, 0,
+	videoManager->RegularText->draw(_("Please wait..."), 0, 0,
 			TextManager::CENTER, TextManager::MIDDLE);
 
 	SDL_GL_SwapBuffers();
@@ -580,7 +580,7 @@ void showPerkDetails(std::string elementName) {
 		windows["charstats"]->addElement(
 				"explantation",
 				videoManager->SmallText->getObject(
-						"Unstoppable: enemies can't block your movement any more, but they still can hurt you.",
+						_("Unstoppable: enemies can't block your movement any more, but they still can hurt you."),
 						config->Screen.Width / 2,
 						videoManager->RegularText->getHeight() * 1.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
@@ -590,7 +590,7 @@ void showPerkDetails(std::string elementName) {
 		windows["charstats"]->addElement(
 				"explantation",
 				videoManager->SmallText->getObject(
-						"Poison bullets: after getting hit by your bullet, enemies slowly lose health until they die.",
+						_("Poison bullets: after getting hit by your bullet, enemies slowly lose health until they die."),
 						config->Screen.Width / 2,
 						videoManager->RegularText->getHeight() * 1.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
@@ -600,7 +600,7 @@ void showPerkDetails(std::string elementName) {
 		windows["charstats"]->addElement(
 				"explantation",
 				videoManager->SmallText->getObject(
-						"Big calibre: your bullets can wound a few monsters in a row.",
+						_("Big calibre: your bullets can wound a few monsters in a row."),
 						config->Screen.Width / 2,
 						videoManager->RegularText->getHeight() * 1.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
@@ -609,7 +609,7 @@ void showPerkDetails(std::string elementName) {
 	if (elementName.compare("telekinesis") == 0) {
 		windows["charstats"]->addElement("explantation",
 				videoManager->SmallText->getObject(
-						"Telekinesis: useful things slowly move towards you.",
+						_("Telekinesis: useful things slowly move towards you."),
 						config->Screen.Width / 2,
 						videoManager->RegularText->getHeight() * 1.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
@@ -618,7 +618,7 @@ void showPerkDetails(std::string elementName) {
 	if (elementName.compare("nightvision") == 0) {
 		windows["charstats"]->addElement("explantation",
 				videoManager->SmallText->getObject(
-						"Night vision: you can see in the dark.",
+						_("Night vision: you can see in the dark."),
 						config->Screen.Width / 2,
 						videoManager->RegularText->getHeight() * 1.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
@@ -627,7 +627,7 @@ void showPerkDetails(std::string elementName) {
 	if (elementName.compare("looting") == 0) {
 		windows["charstats"]->addElement("explantation",
 				videoManager->SmallText->getObject(
-						"Looting: Monsters will drop more bonuses.",
+						_("Looting: Monsters will drop more bonuses."),
 						config->Screen.Width / 2,
 						videoManager->RegularText->getHeight() * 1.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
@@ -1031,7 +1031,7 @@ void createOptionsWindow() {
 					* 2.0f, videoManager->RegularText->getHeight() * 7.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
-	w->addElement("sectionsound", videoManager->RegularText->getObject("Sound",
+	w->addElement("sectionsound", videoManager->RegularText->getObject(_("Sound"),
 			l, videoManager->RegularText->getHeight() * 10.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
@@ -1074,7 +1074,7 @@ void createOptionsWindow() {
 	w->addHandler(Window::hdl_lclick, "controlsreset", resetControls);
 
 	w->addElement("savereturn", videoManager->RegularText->getObject(
-			"Save and return", l, videoManager->RegularText->getHeight()
+			_("Save and return"), l, videoManager->RegularText->getHeight()
 					* 16.0f, TextManager::LEFT, TextManager::MIDDLE));
 	w->addHandler(Window::hdl_lclick, "savereturn", backFromOptionsAndSave);
 
@@ -1103,13 +1103,13 @@ void refreshMainMenuWindow() {
 
 	const int r = config->Screen.Width * 0.3f;
 
-	string strGameMode = "Unknown";
+	string strGameMode = _("Unknown");
 	switch (gameMode) {
 	case GAMEMODE_SURVIVAL:
-		strGameMode = "Violetland Survival";
+		strGameMode = _("Violetland Survival");
 		break;
 	case GAMEMODE_WAVES:
-		strGameMode = "Attack waves";
+		strGameMode = _("Attack waves");
 		break;
 	}
 

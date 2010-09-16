@@ -1,4 +1,7 @@
 #include "MainMenuWindow.h"
+#include <libintl.h>
+#include <locale.h>
+#define _(STRING)            gettext(STRING)
 
 MainMenuWindow::MainMenuWindow(Configuration* config, GameState* gameState,
 		TextManager* text) :
@@ -7,20 +10,20 @@ MainMenuWindow::MainMenuWindow(Configuration* config, GameState* gameState,
 	const int l = config->Screen.Width * 0.1f;
 
 	if (gameState->Begun && !gameState->Lost) {
-		addElement("resume", text->getObject("Resume", l, text->getHeight()
+		addElement("resume", text->getObject(_("Resume"), l, text->getHeight()
 				* 7.0f, TextManager::LEFT, TextManager::MIDDLE));
 	}
 
-	addElement("start", text->getObject("Start", l, text->getHeight() * 8.0f,
+	addElement("start", text->getObject(_("Start"), l, text->getHeight() * 8.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
-	addElement("options", text->getObject("Options", l, text->getHeight()
+	addElement("options", text->getObject(_("Options"), l, text->getHeight()
 			* 9.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	addElement("highscores", text->getObject("High scores", l,
+	addElement("highscores", text->getObject(_("High scores"), l,
 			text->getHeight() * 10.0f, TextManager::LEFT, TextManager::MIDDLE));
 
-	addElement("exit", text->getObject("Exit", l, text->getHeight() * 11.0f,
+	addElement("exit", text->getObject(_("Exit"), l, text->getHeight() * 11.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 }
 
