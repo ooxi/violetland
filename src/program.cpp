@@ -1,3 +1,4 @@
+// MS Windows compatibility
 #ifdef _WIN32
 #pragma comment(lib, "SDL")
 #pragma comment(lib, "SDLmain")
@@ -5,13 +6,21 @@
 #pragma comment(lib, "SDL_ttf")
 #pragma comment(lib, "SDL_mixer")
 #pragma comment(lib, "opengl32")
+#pragma comment(lib, "libintl")
 #define _USE_MATH_DEFINES
 #include <windows.h>
 #include <winbase.h>
 #include <time.h>
 #else
 #include "pwd.h"
-#endif //_WIN32
+#endif
+
+// Apple Mac OS X compatibility
+#ifdef __APPLE__
+#include "system/utility/macBundlePath.h"
+#endif
+
+// SDL
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_opengl.h"
@@ -23,11 +32,9 @@
 #define _(STRING)            gettext(STRING)
 #define TRANSLATION_PATH 	"."
 
+// The Game
 #include "system/Configuration.h"
 #include "system/InputHandler.h"
-#ifdef __APPLE__
-#include "system/utility/macBundlePath.h"
-#endif
 #include "system/utility/ImageUtility.h"
 #include "system/utility/FileUtility.h"
 #include "system/graphic/text/TextManager.h"
@@ -192,7 +199,8 @@ void startGame(std::string elementName) {
 	playerId = player->Id;
 
 	hud->addMessage(_("Try to survive as long as you can."));
-	hud->addMessage(_("Shoot monsters to receive experience and other bonuses."));
+	hud->addMessage(
+			_("Shoot monsters to receive experience and other bonuses."));
 
 	createTerrain();
 
@@ -607,7 +615,8 @@ void showPerkDetails(std::string elementName) {
 	}
 
 	if (elementName.compare("telekinesis") == 0) {
-		windows["charstats"]->addElement("explantation",
+		windows["charstats"]->addElement(
+				"explantation",
 				videoManager->SmallText->getObject(
 						_("Telekinesis: useful things slowly move towards you."),
 						config->Screen.Width / 2,
@@ -1031,9 +1040,10 @@ void createOptionsWindow() {
 					* 2.0f, videoManager->RegularText->getHeight() * 7.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
-	w->addElement("sectionsound", videoManager->RegularText->getObject(_("Sound"),
-			l, videoManager->RegularText->getHeight() * 10.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("sectionsound", videoManager->RegularText->getObject(
+			_("Sound"), l,
+			videoManager->RegularText->getHeight() * 10.0f, TextManager::LEFT,
+			TextManager::MIDDLE));
 
 	w->addElement("soundvolume", videoManager->RegularText->getObject(
 			_("Sound volume"), l + videoManager->RegularText->getHeight()
@@ -1074,8 +1084,9 @@ void createOptionsWindow() {
 	w->addHandler(Window::hdl_lclick, "controlsreset", resetControls);
 
 	w->addElement("savereturn", videoManager->RegularText->getObject(
-			_("Save and return"), l, videoManager->RegularText->getHeight()
-					* 16.0f, TextManager::LEFT, TextManager::MIDDLE));
+			_("Save and return"), l,
+			videoManager->RegularText->getHeight() * 16.0f, TextManager::LEFT,
+			TextManager::MIDDLE));
 	w->addHandler(Window::hdl_lclick, "savereturn", backFromOptionsAndSave);
 
 	windows["options"] = w;
