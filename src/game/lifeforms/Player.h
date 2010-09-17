@@ -75,6 +75,7 @@ public:
 	bool Telekinesis;
 	bool NightVision;
 	bool Looting;
+	bool WideSight;
 	int bonusTimes[PLAYER_BONUS_COUNT];
 	void teleport();
 	void fadeColor(int deltaTime);

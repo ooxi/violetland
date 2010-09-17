@@ -579,6 +579,11 @@ void takePerk(std::string elementName) {
 			player->LevelPoints--;
 		}
 
+		if (elementName.compare("widesight") == 0 && !player->WideSight) {
+			player->WideSight = true;
+			player->LevelPoints--;
+		}
+
 		refreshCharStatsWindow();
 	}
 }
@@ -641,6 +646,16 @@ void showPerkDetails(std::string elementName) {
 						videoManager->RegularText->getHeight() * 1.0f,
 						TextManager::CENTER, TextManager::MIDDLE));
 	}
+
+	if (elementName.compare("widesight") == 0) {
+		windows["charstats"]->addElement(
+				"explantation",
+				videoManager->SmallText->getObject(
+						_("Wide sight: accessible area for action is much more."),
+						config->Screen.Width / 2,
+						videoManager->RegularText->getHeight() * 1.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
+	}
 }
 
 void createCharStatWindow() {
@@ -662,6 +677,8 @@ void createCharStatWindow() {
 	charStats->addHandler(Window::hdl_move, "nightvision", showPerkDetails);
 	charStats->addHandler(Window::hdl_lclick, "looting", takePerk);
 	charStats->addHandler(Window::hdl_move, "looting", showPerkDetails);
+	charStats->addHandler(Window::hdl_lclick, "widesight", takePerk);
+	charStats->addHandler(Window::hdl_move, "widesight", showPerkDetails);
 
 	windows["charstats"] = charStats;
 }
@@ -1623,8 +1640,26 @@ void handlePlayer(LifeForm* lf) {
 	if (lf->Y > config->GameAreaSize)
 		player->setY(config->GameAreaSize);
 
-	lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW() + cam->X;
-	lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH() + cam->Y;
+	if (player->WideSight) {
+		lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW()
+				+ player->X;
+		lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH()
+				+ player->Y;
+	} else {
+		lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW()
+				+ cam->X;
+		lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH()
+				+ cam->Y;
+	}
+
+	if (lf->TargetX < -config->GameAreaSize)
+		player->TargetX = -config->GameAreaSize;
+	if (lf->TargetX > config->GameAreaSize)
+		player->TargetX = config->GameAreaSize;
+	if (lf->TargetY < -config->GameAreaSize)
+		player->TargetY = -config->GameAreaSize;
+	if (lf->TargetY > config->GameAreaSize)
+		player->TargetY = config->GameAreaSize;
 
 	if (player->ActionMode == 0 && input->getDownInput(InputHandler::Fire)) {
 		std::vector<Bullet*> *newBullets = player->fire();
@@ -2267,8 +2302,13 @@ void processGame() {
 void drawGame() {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
 
-	cam->X = player->X;
-	cam->Y = player->Y;
+	if (player->WideSight) {
+		cam->X = player->TargetX;
+		cam->Y = player->TargetY;
+	} else {
+		cam->X = player->X;
+		cam->Y = player->Y;
+	}
 
 	if (cam->X < -config->GameAreaSize + cam->getHalfW())
 		cam->X = -config->GameAreaSize + cam->getHalfW();
