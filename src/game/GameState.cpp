@@ -34,7 +34,7 @@ void violetland::GameState::end() {
 
 violetland::LifeForm* violetland::GameState::getLifeForm(string id) {
 	if (lifeForms.count(id) > 0)
-		return lifeForms.at(id);
+		return lifeForms.find(id)->second;
 	else
 		return NULL;
 }
