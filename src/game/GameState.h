@@ -44,6 +44,7 @@ public:
 	std::string PlayerName;
 	float TimeOfDay;
 	int Time;
+	int GameAreaSize;
 
 	map<string, LifeForm*> lifeForms;
 	vector<Powerup*> powerups;

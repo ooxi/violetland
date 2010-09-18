@@ -41,7 +41,11 @@ violetland::Monster::Monster(MonsterTemplate* base, int lvl) :
 	HitR = 0.3;
 	Acceleration = 0.0004f;
 
-	m_walkTime = Base->WalkTime;
+	if (Base->WalkTime > 0)
+		m_walkTime = (rand() % Base->WalkTime);
+	else
+		m_walkTime = 0;
+
 	m_walkDelay = 0;
 
 	m_body = new DynamicObject(0, 0, Base->WalkSprite);

@@ -18,7 +18,6 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	AimColorB = 0xFFFFFF;
 	AutoWeaponPickup = true;
 	FriendlyFire = false;
-	GameAreaSize = 2048;
 
 	PlayerInputBinding[InputHandler::Teleport].Value = SDLK_q;
 	PlayerInputBinding[InputHandler::MoveLeft].Value = SDLK_a;

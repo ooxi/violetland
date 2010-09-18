@@ -134,7 +134,7 @@ void createTerrain() {
 		delete[] buf;
 	}
 
-	terrain = new Terrain(terrainSurface, tiles, config->GameAreaSize);
+	terrain = new Terrain(terrainSurface, tiles, gameState->GameAreaSize);
 
 	SDL_FreeSurface(terrainSurface);
 	for (int i = 0; i < tilesCount; i++) {
@@ -1530,10 +1530,10 @@ void handleMonster(LifeForm* lf) {
 				- enemy->TargetY, 2));
 
 		if (range < enemy->getWidth() * enemy->Scale * enemy->HitR * 5) {
-			enemy->TargetX = (rand() % (config->GameAreaSize * 2))
-					- config->GameAreaSize;
-			enemy->TargetY = (rand() % (config->GameAreaSize * 2))
-					- config->GameAreaSize;
+			enemy->TargetX = (rand() % (gameState->GameAreaSize * 2))
+					- gameState->GameAreaSize;
+			enemy->TargetY = (rand() % (gameState->GameAreaSize * 2))
+					- gameState->GameAreaSize;
 		}
 	} else {
 		// Attack target
@@ -1596,7 +1596,7 @@ void handleMonster(LifeForm* lf) {
 
 void levelUp(Player* player) {
 	if (gameState->Mode == GAMEMODE_SURVIVAL)
-		spawnEnemy(0, 0, config->GameAreaSize * 1.5f, player->Level,
+		spawnEnemy(0, 0, gameState->GameAreaSize * 1.5f, player->Level,
 				player->Level * 2.0f + 15);
 
 	player->LastLevelXp = player->NextLevelXp;
@@ -1635,14 +1635,14 @@ void handlePlayer(LifeForm* lf) {
 	if (movementX != 0 || movementY != 0)
 		player->move(movementDirection, videoManager->getFrameDeltaTime());
 
-	if (lf->X < -config->GameAreaSize)
-		player->setX(-config->GameAreaSize);
-	if (lf->X > config->GameAreaSize)
-		player->setX(config->GameAreaSize);
-	if (lf->Y < -config->GameAreaSize)
-		player->setY(-config->GameAreaSize);
-	if (lf->Y > config->GameAreaSize)
-		player->setY(config->GameAreaSize);
+	if (lf->X < -gameState->GameAreaSize)
+		player->setX(-gameState->GameAreaSize);
+	if (lf->X > gameState->GameAreaSize)
+		player->setX(gameState->GameAreaSize);
+	if (lf->Y < -gameState->GameAreaSize)
+		player->setY(-gameState->GameAreaSize);
+	if (lf->Y > gameState->GameAreaSize)
+		player->setY(gameState->GameAreaSize);
 
 	if (player->WideSight) {
 		lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW()
@@ -1656,14 +1656,14 @@ void handlePlayer(LifeForm* lf) {
 				+ cam->Y;
 	}
 
-	if (lf->TargetX < -config->GameAreaSize)
-		player->TargetX = -config->GameAreaSize;
-	if (lf->TargetX > config->GameAreaSize)
-		player->TargetX = config->GameAreaSize;
-	if (lf->TargetY < -config->GameAreaSize)
-		player->TargetY = -config->GameAreaSize;
-	if (lf->TargetY > config->GameAreaSize)
-		player->TargetY = config->GameAreaSize;
+	if (lf->TargetX < -gameState->GameAreaSize)
+		player->TargetX = -gameState->GameAreaSize;
+	if (lf->TargetX > gameState->GameAreaSize)
+		player->TargetX = gameState->GameAreaSize;
+	if (lf->TargetY < -gameState->GameAreaSize)
+		player->TargetY = -gameState->GameAreaSize;
+	if (lf->TargetY > gameState->GameAreaSize)
+		player->TargetY = gameState->GameAreaSize;
 
 	if (player->ActionMode == 0 && input->getDownInput(InputHandler::Fire)) {
 		std::vector<Bullet*> *newBullets = player->fire();
@@ -1864,8 +1864,8 @@ void handleLifeForms() {
 							(rand() % 100) / 125.0f, 2);
 					if (lvl < 1)
 						lvl = 1;
-					spawnEnemy(0, 0, config->GameAreaSize * 1.5, player->Level,
-							lvl);
+					spawnEnemy(0, 0, gameState->GameAreaSize * 1.5,
+							player->Level, lvl);
 				}
 			}
 			break;
@@ -2314,14 +2314,14 @@ void drawGame() {
 		cam->Y = player->Y;
 	}
 
-	if (cam->X < -config->GameAreaSize + cam->getHalfW())
-		cam->X = -config->GameAreaSize + cam->getHalfW();
-	if (cam->X > config->GameAreaSize - cam->getHalfW())
-		cam->X = config->GameAreaSize - cam->getHalfW();
-	if (cam->Y < -config->GameAreaSize + cam->getHalfH())
-		cam->Y = -config->GameAreaSize + cam->getHalfH();
-	if (cam->Y > config->GameAreaSize - cam->getHalfH())
-		cam->Y = config->GameAreaSize - cam->getHalfH();
+	if (cam->X < -gameState->GameAreaSize + cam->getHalfW())
+		cam->X = -gameState->GameAreaSize + cam->getHalfW();
+	if (cam->X > gameState->GameAreaSize - cam->getHalfW())
+		cam->X = gameState->GameAreaSize - cam->getHalfW();
+	if (cam->Y < -gameState->GameAreaSize + cam->getHalfH())
+		cam->Y = -gameState->GameAreaSize + cam->getHalfH();
+	if (cam->Y > gameState->GameAreaSize - cam->getHalfH())
+		cam->Y = gameState->GameAreaSize - cam->getHalfH();
 
 	cam->applyGLOrtho();
 

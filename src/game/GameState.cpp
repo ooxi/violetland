@@ -18,12 +18,20 @@ void violetland::GameState::start(GameMode mode) {
 
 	switch (mode) {
 	case GAMEMODE_SURVIVAL:
+		Hardness = 9995.0;
+		Lost = false;
+		Paused = false;
+		Begun = true;
+		Time = 0;
+		GameAreaSize = 2048;
+		break;
 	case GAMEMODE_WAVES:
 		Hardness = 9995.0;
 		Lost = false;
 		Paused = false;
 		Begun = true;
 		Time = 0;
+		GameAreaSize = 1024;
 		break;
 	}
 }

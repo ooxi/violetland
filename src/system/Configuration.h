@@ -31,7 +31,6 @@ public:
 	int AimColorA, AimColorB;
 	bool AutoWeaponPickup;
 	bool FriendlyFire;
-	int GameAreaSize;
 	InputHandler::Binding
 			PlayerInputBinding[InputHandler::GameInputEventsCount];
 	void ReadPlayerBinding(ConfigFile* cFile, InputHandler::Binding* binding,
