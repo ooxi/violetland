@@ -28,6 +28,8 @@ private:
 protected:
 	DynamicObject *m_body;
 	bool m_walking;
+	int m_walkTime;
+	int m_walkDelay;
 public:
 	LifeForm(float x, float y, int w, int h);
 	virtual void process(int deltaTime);

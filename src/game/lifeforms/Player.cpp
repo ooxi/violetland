@@ -19,6 +19,8 @@ violetland::Player::Player() :
 	Acceleration = 0.0004f;
 	Type = LIFEFORM_PLAYER;
 	m_hitSndPlaying = 0;
+	m_walkTime = 0;
+	m_walkDelay = 0;
 
 	m_weapon = NULL;
 

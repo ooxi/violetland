@@ -16,6 +16,8 @@ public:
 	float Strength;
 	float Agility;
 	float Vitality;
+	int WalkTime;
+	int WalkDelay;
 };
 }
 

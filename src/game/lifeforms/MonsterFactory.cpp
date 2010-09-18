@@ -92,6 +92,8 @@ void violetland::MonsterFactory::fillMonsterStats(MonsterTemplate* t,
 		in >> t->Strength;
 		in >> t->Agility;
 		in >> t->Vitality;
+		in >> t->WalkTime;
+		in >> t->WalkDelay;
 	}
 	in.close();
 }

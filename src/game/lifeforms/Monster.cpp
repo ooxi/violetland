@@ -40,6 +40,10 @@ violetland::Monster::Monster(MonsterTemplate* base, int lvl) :
 
 	HitR = 0.3;
 	Acceleration = 0.0004f;
+
+	m_walkTime = Base->WalkTime;
+	m_walkDelay = 0;
+
 	m_body = new DynamicObject(0, 0, Base->WalkSprite);
 	m_hitSoundChannel = 0;
 	m_bleedDelay = 0;
@@ -81,6 +85,22 @@ bool violetland::Monster::isBleeding() {
 
 void violetland::Monster::process(int deltaTime) {
 	LifeForm::process(deltaTime);
+
+	if (m_walkTime > 0) {
+		m_walkTime -= deltaTime;
+		if (m_walkTime <= 0) {
+			m_walkTime = 0;
+			m_walkDelay = Base->WalkDelay;
+		}
+	}
+
+	if (m_walkDelay > 0) {
+		m_walkDelay -= deltaTime;
+		if (m_walkDelay <= 0) {
+			m_walkTime = Base->WalkTime;
+			m_walkDelay = 0;
+		}
+	}
 
 	if (m_bleedCount > 0)
 		m_bleedDelay += deltaTime;

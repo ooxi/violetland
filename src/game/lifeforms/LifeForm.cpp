@@ -73,6 +73,9 @@ void violetland::LifeForm::process(int deltaTime) {
 }
 
 void violetland::LifeForm::move(float direction, int deltaTime) {
+	if (m_walkDelay > 0)
+		return;
+
 	m_walking = true;
 
 	Speed += Acceleration * deltaTime;

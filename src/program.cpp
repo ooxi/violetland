@@ -168,6 +168,10 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 
 // The beginning of new game in a survival mode
 void startGame(std::string elementName) {
+	if (aim)
+		delete aim;
+	aim = new Aim(config);
+
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	cam->X = cam->Y = 0.0f;

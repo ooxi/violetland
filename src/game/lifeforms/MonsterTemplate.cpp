@@ -7,6 +7,8 @@ violetland::MonsterTemplate::MonsterTemplate(Sprite* walkSprite,
 	Strength = 1.0f;
 	Agility = 1.0f;
 	Vitality = 1.0f;
+	WalkTime = 0;
+	WalkDelay = 0;
 }
 
 violetland::MonsterTemplate::~MonsterTemplate() {
