@@ -166,7 +166,7 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 			newMonster->Id, newMonster));
 }
 
-// The beginning of new game in a survival mode
+// The beginning of new game in selected mode
 void startGame(std::string elementName) {
 	if (aim)
 		delete aim;
@@ -526,6 +526,12 @@ void refreshCharStatsWindow() {
 		charStats->addElement("+looting", videoManager->RegularText->getObject(
 				"+", r, videoManager->RegularText->getHeight() * 9.0f,
 				TextManager::CENTER, TextManager::MIDDLE));
+
+	if (player->WideSight)
+		charStats->addElement("+widesight",
+				videoManager->RegularText->getObject("+", r,
+						videoManager->RegularText->getHeight() * 10.0f,
+						TextManager::CENTER, TextManager::MIDDLE));
 }
 
 void increaseVioletParam(std::string elementName) {
@@ -1698,6 +1704,12 @@ void handlePlayer(LifeForm* lf) {
 		player->teleport();
 		player->ActionMode = PLAYER_ACT_MODE_FIRE;
 		player->setMask(0.0f, 1.0f, 1.0f, 1.0f);
+
+		if (player->WideSight) {
+			player->TargetX = player->X;
+			player->TargetY = player->Y;
+		}
+
 		delete aim;
 		aim = new Aim(config);
 	}

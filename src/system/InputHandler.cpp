@@ -38,9 +38,9 @@ void InputHandler::setInputModeText(bool mandatory, std::string text) {
 		return;
 
 	if (mandatory)
-		setInputMode( TextMandatory);
+		setInputMode(TextMandatory);
 	else
-		setInputMode( Text);
+		setInputMode(Text);
 
 	m_textContent = text;
 	m_curTextPos = strlen(m_textContent.c_str());
@@ -68,9 +68,9 @@ bool InputHandler::getPressInput(GameInputEvents evnt) {
 }
 
 void InputHandler::resetMouseButtons() {
-	processEvent(Mouse,false,SDL_BUTTON_LEFT);
-	processEvent(Mouse,false,SDL_BUTTON_RIGHT);
-	processEvent(Mouse,false,SDL_BUTTON_MIDDLE);	
+	processEvent(Mouse, false, SDL_BUTTON_LEFT);
+	processEvent(Mouse, false, SDL_BUTTON_RIGHT);
+	processEvent(Mouse, false, SDL_BUTTON_MIDDLE);
 }
 
 void InputHandler::processEvent(BindingType type, bool down, int value) {
@@ -83,7 +83,7 @@ void InputHandler::processEvent(BindingType type, bool down, int value) {
 void InputHandler::processTextInput(SDL_Event event) {
 	switch (event.key.keysym.sym) {
 	case SDLK_ESCAPE:
-		setInputMode( Direct);
+		setInputMode(Direct);
 		break;
 	case SDLK_BACKSPACE:
 		if (m_curTextPos > 0)
