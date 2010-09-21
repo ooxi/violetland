@@ -1,0 +1,353 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Adrián Chaves Fernández <adriyetichaves@gmail.com>, 2010.
+# Adrian Chaves Fernandez (Gallaecio) <adriyetichaves@gmail.com>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-09-21 16:05+0200\n"
+"PO-Revision-Date: 2010-09-20 23:29+0200\n"
+"Last-Translator: Adrian Chaves Fernandez (Gallaecio) <adriyetichaves@gmail."
+"com>\n"
+"Language-Team: Galician <kde-i18n-doc@kde.org>\n"
+"Language: gl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../src/program.cpp:183 ../src/program.cpp:346
+msgid "Please wait..."
+msgstr "Agarda..."
+
+#: ../src/program.cpp:205
+msgid "Try to survive as long as you can."
+msgstr "Sobrevive o que poidas."
+
+#: ../src/program.cpp:207
+msgid "Shoot monsters to receive experience and other bonuses."
+msgstr "Mata os monstros para obter experiencia e outras bonificacións."
+
+#: ../src/program.cpp:272
+#, c-format
+msgid "Name found : %s\n"
+msgstr "Atopouse un nome: «%s».\n"
+
+#: ../src/program.cpp:304
+#, c-format
+msgid "Preparing window...\n"
+msgstr "Preparando a fiestra...\n"
+
+#: ../src/program.cpp:327
+#, c-format
+msgid "Drawing splash screen...\n"
+msgstr "Imprimindo a imaxe de inicio...\n"
+
+#: ../src/program.cpp:351
+#, c-format
+msgid "Preparing sound systems...\n"
+msgstr "Preparando o sistema de son...\n"
+
+#: ../src/program.cpp:390
+msgid "You are gobbled up."
+msgstr "Tragáronte."
+
+#: ../src/program.cpp:423
+#, c-format
+msgid "Current player level: %i"
+msgstr "Nivel actual: %i"
+
+#: ../src/program.cpp:430
+#, c-format
+msgid "Available improvement points: %i"
+msgstr "Puntos de mellora dispoñibles: %i"
+
+#: ../src/program.cpp:437
+#, c-format
+msgid "Strength: %i"
+msgstr "Forza: %i"
+
+#: ../src/program.cpp:443
+#, c-format
+msgid "Agility: %i"
+msgstr "Axilidade: %i"
+
+#: ../src/program.cpp:449
+#, c-format
+msgid "Vitality: %i"
+msgstr "Vitalidade: %i"
+
+#: ../src/program.cpp:456
+#, c-format
+msgid "HP: %i / Max HP: %i"
+msgstr "Vida actual: %i / Máxima: %i"
+
+#: ../src/program.cpp:463
+#, c-format
+msgid "Melee damage: %i"
+msgstr "Dano corpo a corpo: %i"
+
+#: ../src/program.cpp:469
+#, c-format
+msgid "Chance of block: %i%%"
+msgstr "Probabilidade de esquivar: %i%%"
+
+#: ../src/program.cpp:475
+#, c-format
+msgid "Reloading speed modifier: %i%%"
+msgstr "Tempo para recargar: %i%%"
+
+#: ../src/program.cpp:482
+#, c-format
+msgid "Accuracy deviation modifier: %i%%"
+msgstr "Desvío ao apuntar: %i%%"
+
+#: ../src/program.cpp:488
+#, c-format
+msgid "Health regeneration: %.2f/min"
+msgstr "Recuperación de vida: %.2f por minuto"
+
+#: ../src/program.cpp:606
+msgid ""
+"Unstoppable: enemies can't block your movement any more, but they still can "
+"hurt you."
+msgstr "Imparable: os inimigos non poden deterte (pero si atacarte)."
+
+#: ../src/program.cpp:616
+msgid ""
+"Poison bullets: after getting hit by your bullet, enemies slowly lose health "
+"until they die."
+msgstr ""
+"Balas envelenadas: as balas envelenan os inimigos, que perden lentamente "
+"vida ata morrer."
+
+#: ../src/program.cpp:626
+msgid "Big calibre: your bullets can wound a few monsters in a row."
+msgstr ""
+"Calibre alto: as balas poden atravesar os inimigos se os matan, seguindo así "
+"a súa traxectoria (e ao mellor atinando a outro inimigo)."
+
+#: ../src/program.cpp:636
+msgid "Telekinesis: useful things slowly move towards you."
+msgstr "Telecinesia: podes achegar os obxectos do mapa a ti apuntándoos."
+
+#: ../src/program.cpp:645
+msgid "Night vision: you can see in the dark."
+msgstr "Visión nocturna: podes ver na escuridade."
+
+#: ../src/program.cpp:654
+msgid "Looting: Monsters will drop more bonuses."
+msgstr "Saqueo: os monstros soltaran máis bonificacións ao morrer."
+
+#: ../src/program.cpp:664
+msgid "Wide sight: accessible area for action is much more."
+msgstr "Visión global: amplía a área de visión."
+
+#: ../src/program.cpp:896 ../src/program.cpp:1085
+msgid "Controls"
+msgstr "Controis"
+
+#: ../src/program.cpp:964
+msgid "Press a key, please..."
+msgstr "Prema unha tecla..."
+
+#: ../src/program.cpp:994
+#, c-format
+msgid "Bind action %s to %s.\n"
+msgstr "Adxudicar a acción «%s» á tecla «%s».\n"
+
+#: ../src/program.cpp:1033
+msgid "Options"
+msgstr "Opcións"
+
+#: ../src/program.cpp:1038
+msgid "Gameplay"
+msgstr "Xogo"
+
+#: ../src/program.cpp:1042
+msgid "Weapon autoreloading"
+msgstr "Recargar automaticamente"
+
+#: ../src/program.cpp:1047
+msgid "Weapon autotaking"
+msgstr "Recoller armas automaticamente"
+
+#: ../src/program.cpp:1052
+msgid "Friendly fire"
+msgstr "Fogo amigo"
+
+#: ../src/program.cpp:1058
+msgid "Graphics"
+msgstr "Gráficos"
+
+#: ../src/program.cpp:1062
+msgid "Fullscreen"
+msgstr "Pantalla completa"
+
+#: ../src/program.cpp:1066
+msgid "Resolution"
+msgstr "Resolución"
+
+#: ../src/program.cpp:1071
+msgid "Sound"
+msgstr "Son"
+
+#: ../src/program.cpp:1076
+msgid "Sound volume"
+msgstr "Volume dos sons"
+
+#: ../src/program.cpp:1080
+msgid "Music volume"
+msgstr "Volume da música"
+
+#: ../src/program.cpp:1089
+msgid "Edit Controls"
+msgstr "Cambiar os controis"
+
+#: ../src/program.cpp:1095
+msgid "Reset Controls"
+msgstr "Restaurar os controis"
+
+#: ../src/program.cpp:1114
+msgid "Save and return"
+msgstr "Gardar e volver"
+
+#: ../src/program.cpp:1144
+msgid "Unknown"
+msgstr "Descoñecido"
+
+#: ../src/program.cpp:1147
+msgid "Violetland Survival"
+msgstr "Supervivencia"
+
+#: ../src/program.cpp:1150
+msgid "Attack waves"
+msgstr "Supervivencia por roldas"
+
+#: ../src/program.cpp:1213
+msgid "Highscores"
+msgstr "Récords"
+
+#: ../src/program.cpp:1217
+msgid "XP"
+msgstr "Experiencia"
+
+#: ../src/program.cpp:1220
+msgid "Str/Agil/Vital"
+msgstr "Forza/Axilidade/Vitalidade"
+
+#: ../src/program.cpp:1224
+msgid "Time"
+msgstr "Tempo"
+
+#: ../src/program.cpp:1227
+msgid "Name"
+msgstr "Nome"
+
+#: ../src/program.cpp:1276
+msgid "Back to main menu"
+msgstr "Volver ao menú principal"
+
+#: ../src/program.cpp:1281
+msgid "Reset list"
+msgstr "Borrar a lista"
+
+#: ../src/program.cpp:1320
+#, c-format
+msgid ""
+"Hot video mode changing is not supported on windows now. You should restart "
+"the game."
+msgstr "Reinicie o xogo para que os cambios xurdan efecto."
+
+#: ../src/program.cpp:1614
+msgid "You have reached new level."
+msgstr "Subiches de nivel."
+
+#: ../src/program.cpp:1886
+msgid "Get ready to new wave!"
+msgstr "Prepárate para a seguinte rolda!"
+
+#: ../src/program.cpp:2132
+msgid "a medikit"
+msgstr "Equipo médico"
+
+#: ../src/program.cpp:2135
+msgid "a nitrogen bomb"
+msgstr "Bomba de nitróxeno"
+
+#: ../src/program.cpp:2138
+msgid "nuke!"
+msgstr "Armas nucleares!"
+
+#: ../src/program.cpp:2141
+msgid "a hand grenade"
+msgstr "Granada de man"
+
+#: ../src/program.cpp:2144
+msgid "penetration bullets"
+msgstr "Balas de perforación"
+
+#: ../src/program.cpp:2147
+msgid "vitality boost"
+msgstr "Aumento da vitalidade"
+
+#: ../src/program.cpp:2150
+msgid "strength boost"
+msgstr "Aumento da forza"
+
+#: ../src/program.cpp:2153
+msgid "agility boost"
+msgstr "Aumento da axilidade"
+
+#: ../src/program.cpp:2156
+msgid "a teleport"
+msgstr "Teleportación"
+
+#: ../src/program.cpp:2179
+msgid "You have taken a medical kit."
+msgstr "Recolliches un equipo médico."
+
+#: ../src/program.cpp:2187
+msgid "All have been frozen around you."
+msgstr "Todos os monstros quedaron conxelados."
+
+#: ../src/program.cpp:2206
+msgid "Boom!"
+msgstr "Bum!"
+
+#: ../src/program.cpp:2219
+msgid "You got powerful penetration bullets."
+msgstr "Recolliches unhas balas de perforación."
+
+#: ../src/program.cpp:2226
+msgid "You got a vitality boost."
+msgstr "A túa vida total aumentou temporalmente."
+
+#: ../src/program.cpp:2233
+msgid "You got a strength boost."
+msgstr "A túa forza aumentou temporalmente."
+
+#: ../src/program.cpp:2240
+msgid "You got a agility boost."
+msgstr "A túa axilidade aumentou temporalmente."
+
+#: ../src/program.cpp:2247
+msgid "You have taken a grenade."
+msgstr "Recolliches unha granada."
+
+#: ../src/program.cpp:2253
+msgid "You have taken a teleport."
+msgstr "Recolliches unha teleportación."
+
+#: ../src/program.cpp:2263
+#, c-format
+msgid "You have taken the %s."
+msgstr "Colliches o %s."
+
+#: ../src/program.cpp:2484
+#, c-format
+msgid "FPS: %i"
+msgstr "FPS: %i"

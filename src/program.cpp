@@ -30,7 +30,7 @@
 #include <libintl.h>
 #include <locale.h>
 #define _(STRING)            gettext(STRING)
-#define TRANSLATION_PATH 	"."
+#define TRANSLATION_PATH 	"./po"
 
 // The Game
 #include "system/Configuration.h"
