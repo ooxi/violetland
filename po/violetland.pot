@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-21 16:05+0200\n"
+"POT-Creation-Date: 2010-09-22 01:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -153,7 +153,7 @@ msgstr ""
 msgid "Bind action %s to %s.\n"
 msgstr ""
 
-#: ../src/program.cpp:1033
+#: ../src/program.cpp:1033 ../src/windows/MainMenuWindow.cpp:20
 msgid "Options"
 msgstr ""
 
@@ -344,4 +344,159 @@ msgstr ""
 #: ../src/program.cpp:2484
 #, c-format
 msgid "FPS: %i"
+msgstr ""
+
+#: ../src/game/HUD.cpp:219
+msgid "They have overcome..."
+msgstr ""
+
+#: ../src/game/HUD.cpp:223
+#, c-format
+msgid "You have earned %i points."
+msgstr ""
+
+#: ../src/game/HUD.cpp:230
+msgid "Enter your name:"
+msgstr ""
+
+#: ../src/game/HUD.cpp:272
+#, c-format
+msgid "Grenades: %i"
+msgstr ""
+
+#: ../src/game/HUD.cpp:280
+#, c-format
+msgid "Teleports: %i"
+msgstr ""
+
+#: ../src/game/HUD.cpp:296
+msgid "PAUSE"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:148
+msgid "Restart"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:151 ../src/windows/MainMenuWindow.cpp:26
+msgid "Exit"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:154
+msgid "Menu"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:157
+msgid "MenuClickA"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:160
+msgid "MenuClickB"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:163
+msgid "Toggle Light"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:166
+msgid "Toggle Laser"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:169
+msgid "Show Char"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:172
+msgid "Pause"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:175
+msgid "Move Left"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:178
+msgid "Move Right"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:181
+msgid "Move Up"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:184
+msgid "Move Down"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:187
+msgid "Help"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:190
+msgid "Pick Up"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:193
+msgid "Throw Grenade"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:196
+msgid "Fire"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:199
+msgid "Reload"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:202
+msgid "Teleport"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:208
+msgid "Unknown event"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:12
+msgid "Perks:"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:17
+msgid "Unstoppable"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:22
+msgid "Poison bullets"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:28
+msgid "Big calibre"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:33
+msgid "Telekinesis"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:38
+msgid "Night vision"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:42
+msgid "Looting"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:48
+msgid "Wide sight"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:53
+msgid "Move mouse over text to get explantation..."
+msgstr ""
+
+#: ../src/windows/MainMenuWindow.cpp:13
+msgid "Resume"
+msgstr ""
+
+#: ../src/windows/MainMenuWindow.cpp:17
+msgid "Start"
+msgstr ""
+
+#: ../src/windows/MainMenuWindow.cpp:23
+msgid "High scores"
 msgstr ""

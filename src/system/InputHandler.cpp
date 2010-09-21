@@ -1,4 +1,7 @@
 #include "InputHandler.h"
+#include <libintl.h>
+#include <locale.h>
+#define _(STRING)            gettext(STRING)
 #define MAX_CHARACTERS 20
 using namespace std;
 
@@ -92,7 +95,6 @@ void InputHandler::processTextInput(SDL_Event event) {
 	case SDLK_RETURN:
 		if ((m_mode == TextMandatory && m_textContent.size() >= 1) || m_mode
 				== Text) {
-			printf("User input: %s\n", m_textContent.c_str());
 			m_textValidated = true;
 		}
 		break;
@@ -143,67 +145,67 @@ void InputHandler::process() {
 const char* InputHandler::getEventName(int eventNumber) {
 	switch (eventNumber) {
 	case Restart:
-		return "Restart";
+		return _("Restart");
 		break;
 	case Exit:
-		return "Exit";
+		return _("Exit");
 		break;
 	case Menu:
-		return "Menu";
+		return _("Menu");
 		break;
 	case MenuClickA:
-		return "MenuClickA";
+		return _("MenuClickA");
 		break;
 	case MenuClickB:
-		return "MenuClickB";
+		return _("MenuClickB");
 		break;
 	case ToggleLight:
-		return "Toggle Light";
+		return _("Toggle Light");
 		break;
 	case ToggleLaser:
-		return "Toggle Laser";
+		return _("Toggle Laser");
 		break;
 	case ShowChar:
-		return "Show Char";
+		return _("Show Char");
 		break;
 	case Pause:
-		return "Pause";
+		return _("Pause");
 		break;
 	case MoveLeft:
-		return "Move Left";
+		return _("Move Left");
 		break;
 	case MoveRight:
-		return "Move Right";
+		return _("Move Right");
 		break;
 	case MoveUp:
-		return "Move Up";
+		return _("Move Up");
 		break;
 	case MoveDown:
-		return "Move Down";
+		return _("Move Down");
 		break;
 	case Help:
-		return "Help";
+		return _("Help");
 		break;
 	case Pickup:
-		return "Pick Up";
+		return _("Pick Up");
 		break;
 	case ThrowGrenade:
-		return "Throw Grenade";
+		return _("Throw Grenade");
 		break;
 	case Fire:
-		return "Fire";
+		return _("Fire");
 		break;
 	case Reload:
-		return "Reload";
+		return _("Reload");
 		break;
 	case Teleport:
-		return "Teleport";
+		return _("Teleport");
 		break;
 	case GameInputEventsCount:
 		return "GameInputEventsCount";
 		break;
 	default:
-		return "Unknown event";
+		return _("Unknown event");
 		break;
 	}
 }

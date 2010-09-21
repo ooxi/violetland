@@ -1,4 +1,7 @@
 #include "HUD.h"
+#include <libintl.h>
+#include <locale.h>
+#define _(STRING)            gettext(STRING)
 
 violetland::HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
@@ -213,18 +216,18 @@ void violetland::HUD::drawEndGameScreen(GameState* gameState, int xp) {
 	VideoMode screen = m_videoManager->getVideoMode();
 
 	int y = screen.Height / 4;
-	m_videoManager->RegularText->draw("They have overcome...",
+	m_videoManager->RegularText->draw(_("They have overcome..."),
 			screen.Width / 2, y, TextManager::CENTER, TextManager::MIDDLE);
 
 	char* buf;
-	sprintf(buf = new char[30], "You have earned %i points.", xp);
+	sprintf(buf = new char[30], _("You have earned %i points."), xp);
 	m_videoManager->RegularText->draw(buf, screen.Width / 2, y
 			+ m_videoManager->RegularText->getHeight(), TextManager::CENTER,
 			TextManager::MIDDLE);
 	delete[] buf;
 
 	if (gameState->HighScore) {
-		m_videoManager->RegularText->draw("Enter your name:", screen.Width / 2,
+		m_videoManager->RegularText->draw(_("Enter your name:"), screen.Width / 2,
 				y + m_videoManager->RegularText->getHeight() * 2,
 				TextManager::CENTER, TextManager::MIDDLE);
 		m_videoManager ->RegularText->draw(
@@ -266,7 +269,7 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 			TextManager::TOP);
 	delete[] buf;
 
-	sprintf(buf = new char[30], "Grenades: %i", player->Grenades);
+	sprintf(buf = new char[30], _("Grenades: %i"), player->Grenades);
 	m_videoManager->RegularText->draw(buf,
 			m_videoManager->RegularText->getIndent(),
 			m_videoManager->RegularText->getIndent()
@@ -274,7 +277,7 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 			TextManager::LEFT, TextManager::TOP);
 	delete[] buf;
 
-	sprintf(buf = new char[30], "Teleports: %i", player->Teleports);
+	sprintf(buf = new char[30], _("Teleports: %i"), player->Teleports);
 	m_videoManager->RegularText->draw(buf,
 			m_videoManager->RegularText->getIndent(),
 			m_videoManager->RegularText->getIndent()
@@ -290,7 +293,7 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 					TextManager::CENTER, TextManager::TOP);
 
 	if (gameState->Paused)
-		m_videoManager->RegularText->draw("PAUSE", screen.Width / 2,
+		m_videoManager->RegularText->draw(_("PAUSE"), screen.Width / 2,
 				screen.Height / 2, TextManager::CENTER, TextManager::MIDDLE);
 }
 

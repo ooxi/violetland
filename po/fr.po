@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: violetland 3.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-21 16:05+0200\n"
-"PO-Revision-Date: 2010-09-16 17:39+0100\n"
+"POT-Creation-Date: 2010-09-22 01:13+0200\n"
+"PO-Revision-Date: 2010-09-22 01:10+0100\n"
 "Last-Translator: BERNIGAUD Côme <come.bernigaud@laposte.net>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -23,11 +23,11 @@ msgstr "Veuillez patienter..."
 
 #: ../src/program.cpp:205
 msgid "Try to survive as long as you can."
-msgstr ""
+msgstr "Essayez de survive le plus longtemps possible."
 
 #: ../src/program.cpp:207
 msgid "Shoot monsters to receive experience and other bonuses."
-msgstr ""
+msgstr "Tues les monstres pour recevoir de l'expérience et autres bonus."
 
 #: ../src/program.cpp:272
 #, c-format
@@ -113,12 +113,16 @@ msgid ""
 "Unstoppable: enemies can't block your movement any more, but they still can "
 "hurt you."
 msgstr ""
+"Instoppable : les énemis ne peuvent plus vous bloquer, mais ils peuvent "
+"encore vous blesser."
 
 #: ../src/program.cpp:616
 msgid ""
 "Poison bullets: after getting hit by your bullet, enemies slowly lose health "
 "until they die."
 msgstr ""
+"Balles empoisonnées : après avoir été blessés par vos balles, les énemis "
+"perdent lentement de la vie jusqu'à en mourir."
 
 #: ../src/program.cpp:626
 msgid "Big calibre: your bullets can wound a few monsters in a row."
@@ -153,7 +157,7 @@ msgstr "Veuillez appuyer sur une touche..."
 msgid "Bind action %s to %s.\n"
 msgstr "Assigner l'action %s à %s.\n"
 
-#: ../src/program.cpp:1033
+#: ../src/program.cpp:1033 ../src/windows/MainMenuWindow.cpp:20
 msgid "Options"
 msgstr "Options"
 
@@ -314,7 +318,7 @@ msgstr "Boom!"
 
 #: ../src/program.cpp:2219
 msgid "You got powerful penetration bullets."
-msgstr ""
+msgstr "Vous avez pris de puissantes balles pénétrantes."
 
 #: ../src/program.cpp:2226
 msgid "You got a vitality boost."
@@ -339,36 +343,165 @@ msgstr "Vous avez ramassé un téléporteur."
 #: ../src/program.cpp:2263
 #, c-format
 msgid "You have taken the %s."
-msgstr ""
+msgstr "Vous avez ramassé le %s."
 
 #: ../src/program.cpp:2484
 #, c-format
 msgid "FPS: %i"
 msgstr "IPS : %i"
 
-#~ msgid "Big calibre"
-#~ msgstr "Gros calibre"
+#: ../src/game/HUD.cpp:219
+msgid "They have overcome..."
+msgstr ""
 
-#~ msgid "Exit"
-#~ msgstr "Quitter"
+#: ../src/game/HUD.cpp:223
+#, fuzzy, c-format
+msgid "You have earned %i points."
+msgstr "Vous avez ramassé un kit médical."
 
-#~ msgid "High scores"
-#~ msgstr "Meilleurs scores"
+#: ../src/game/HUD.cpp:230
+msgid "Enter your name:"
+msgstr "Entrez votre nom :"
 
-#~ msgid "Night vision"
-#~ msgstr "Vision nocturne"
+#: ../src/game/HUD.cpp:272
+#, c-format
+msgid "Grenades: %i"
+msgstr "Grenades: %i"
 
-#~ msgid "Poison bullets"
-#~ msgstr "Balles empoisonnées"
+#: ../src/game/HUD.cpp:280
+#, c-format
+msgid "Teleports: %i"
+msgstr "Téléporteurs : %i"
 
-#~ msgid "Resume"
-#~ msgstr "Reprendre"
+#: ../src/game/HUD.cpp:296
+msgid "PAUSE"
+msgstr "PAUSE"
 
-#~ msgid "Start"
-#~ msgstr "Commencer"
+#: ../src/system/InputHandler.cpp:148
+msgid "Restart"
+msgstr "Recommencer"
 
-#~ msgid "Telekinesis"
-#~ msgstr "Télékinésie"
+#: ../src/system/InputHandler.cpp:151 ../src/windows/MainMenuWindow.cpp:26
+msgid "Exit"
+msgstr "Quitter"
 
-#~ msgid "Unstoppable"
-#~ msgstr "Instoppable"
+#: ../src/system/InputHandler.cpp:154
+msgid "Menu"
+msgstr "Menu"
+
+#: ../src/system/InputHandler.cpp:157
+msgid "MenuClickA"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:160
+msgid "MenuClickB"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:163
+msgid "Toggle Light"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:166
+msgid "Toggle Laser"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:169
+msgid "Show Char"
+msgstr ""
+
+#: ../src/system/InputHandler.cpp:172
+msgid "Pause"
+msgstr "Pause"
+
+#: ../src/system/InputHandler.cpp:175
+msgid "Move Left"
+msgstr "Aller à gauche"
+
+#: ../src/system/InputHandler.cpp:178
+msgid "Move Right"
+msgstr "Aller à droite"
+
+#: ../src/system/InputHandler.cpp:181
+msgid "Move Up"
+msgstr "Aller en haut"
+
+#: ../src/system/InputHandler.cpp:184
+msgid "Move Down"
+msgstr "Aller en bas"
+
+#: ../src/system/InputHandler.cpp:187
+msgid "Help"
+msgstr "Aide"
+
+#: ../src/system/InputHandler.cpp:190
+msgid "Pick Up"
+msgstr "Ramasser"
+
+#: ../src/system/InputHandler.cpp:193
+msgid "Throw Grenade"
+msgstr "Jeter une grenade"
+
+#: ../src/system/InputHandler.cpp:196
+msgid "Fire"
+msgstr "Tirer"
+
+#: ../src/system/InputHandler.cpp:199
+msgid "Reload"
+msgstr "Recharger"
+
+#: ../src/system/InputHandler.cpp:202
+#, fuzzy
+msgid "Teleport"
+msgstr "un téléporteur"
+
+#: ../src/system/InputHandler.cpp:208
+msgid "Unknown event"
+msgstr "Évènement inconnu"
+
+#: ../src/windows/CharStatsWindow.cpp:12
+msgid "Perks:"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:17
+msgid "Unstoppable"
+msgstr "Instoppable"
+
+#: ../src/windows/CharStatsWindow.cpp:22
+msgid "Poison bullets"
+msgstr "Balles empoisonnées"
+
+#: ../src/windows/CharStatsWindow.cpp:28
+msgid "Big calibre"
+msgstr "Gros calibre"
+
+#: ../src/windows/CharStatsWindow.cpp:33
+msgid "Telekinesis"
+msgstr "Télékinésie"
+
+#: ../src/windows/CharStatsWindow.cpp:38
+msgid "Night vision"
+msgstr "Vision nocturne"
+
+#: ../src/windows/CharStatsWindow.cpp:42
+msgid "Looting"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:48
+msgid "Wide sight"
+msgstr ""
+
+#: ../src/windows/CharStatsWindow.cpp:53
+msgid "Move mouse over text to get explantation..."
+msgstr "Placez la souris sur un item pour obtenir une explication..."
+
+#: ../src/windows/MainMenuWindow.cpp:13
+msgid "Resume"
+msgstr "Reprendre"
+
+#: ../src/windows/MainMenuWindow.cpp:17
+msgid "Start"
+msgstr "Commencer"
+
+#: ../src/windows/MainMenuWindow.cpp:23
+msgid "High scores"
+msgstr "Meilleurs scores"
