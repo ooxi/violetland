@@ -69,6 +69,9 @@ Sound* violetland::Monster::hit(float damage, bool poison) {
 	Speed = 0.0f;
 	Angle += ((rand() % 50) - 25) * damage;
 
+	if (m_walkDelay > 0)
+		m_walkDelay = 1;
+
 	if (!Base->HitSounds.empty()) {
 		int s = rand() % (int) Base->HitSounds.size();
 		return Base->HitSounds[s];
