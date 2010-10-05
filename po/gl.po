@@ -1,17 +1,17 @@
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Copyright © 2010 Violetland Project
+# This file is distributed under the same license as the Violetland package.
 #
-# Adrián Chaves Fernández <adriyetichaves@gmail.com>, 2010.
-# Adrian Chaves Fernandez (Gallaecio) <adriyetichaves@gmail.com>, 2010.
+# Adrián Chaves Fernández (Gallaecio) <adriyetichaves@gmail.com>, 2010.
+
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-22 01:13+0200\n"
-"PO-Revision-Date: 2010-09-20 23:29+0200\n"
+"PO-Revision-Date: 2010-10-02 14:58+0200\n"
 "Last-Translator: Adrian Chaves Fernandez (Gallaecio) <adriyetichaves@gmail."
 "com>\n"
-"Language-Team: Galician <kde-i18n-doc@kde.org>\n"
+"Language-Team: Galician <proxecto@trasno.net>\n"
 "Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -354,159 +354,156 @@ msgstr "FPS: %i"
 
 #: ../src/game/HUD.cpp:219
 msgid "They have overcome..."
-msgstr ""
+msgstr "Puideron contigo..."
 
 #: ../src/game/HUD.cpp:223
-#, fuzzy, c-format
+#, c-format
 msgid "You have earned %i points."
-msgstr "Colliches o %s."
+msgstr "Conseguiches %i puntos."
 
 #: ../src/game/HUD.cpp:230
 msgid "Enter your name:"
-msgstr ""
+msgstr "Introduce o teu nome:"
 
 #: ../src/game/HUD.cpp:272
 #, c-format
 msgid "Grenades: %i"
-msgstr ""
+msgstr "Granadas: %i"
 
 #: ../src/game/HUD.cpp:280
-#, fuzzy, c-format
+#, c-format
 msgid "Teleports: %i"
-msgstr "Teleportación"
+msgstr "Teleportes: %i"
 
 #: ../src/game/HUD.cpp:296
 msgid "PAUSE"
-msgstr ""
+msgstr "PAUSA"
 
 #: ../src/system/InputHandler.cpp:148
 msgid "Restart"
-msgstr ""
+msgstr "Reiniciar"
 
 #: ../src/system/InputHandler.cpp:151 ../src/windows/MainMenuWindow.cpp:26
 msgid "Exit"
-msgstr ""
+msgstr "Saír"
 
 #: ../src/system/InputHandler.cpp:154
 msgid "Menu"
-msgstr ""
+msgstr "Menú"
 
 #: ../src/system/InputHandler.cpp:157
 msgid "MenuClickA"
-msgstr ""
+msgstr "Botón 1"
 
 #: ../src/system/InputHandler.cpp:160
 msgid "MenuClickB"
-msgstr ""
+msgstr "Botón 2"
 
 #: ../src/system/InputHandler.cpp:163
 msgid "Toggle Light"
-msgstr ""
+msgstr "Lanterna"
 
 #: ../src/system/InputHandler.cpp:166
 msgid "Toggle Laser"
-msgstr ""
+msgstr "Mira láser"
 
 #: ../src/system/InputHandler.cpp:169
 msgid "Show Char"
-msgstr ""
+msgstr "Perfil"
 
 #: ../src/system/InputHandler.cpp:172
 msgid "Pause"
-msgstr ""
+msgstr "Facer unha pausa"
 
 #: ../src/system/InputHandler.cpp:175
 msgid "Move Left"
-msgstr ""
+msgstr "Ir á esquerda"
 
 #: ../src/system/InputHandler.cpp:178
 msgid "Move Right"
-msgstr ""
+msgstr "Ir á dereita"
 
 #: ../src/system/InputHandler.cpp:181
 msgid "Move Up"
-msgstr ""
+msgstr "Ir arriba"
 
 #: ../src/system/InputHandler.cpp:184
 msgid "Move Down"
-msgstr ""
+msgstr "Ir abaixo"
 
 #: ../src/system/InputHandler.cpp:187
 msgid "Help"
-msgstr ""
+msgstr "Axuda"
 
 #: ../src/system/InputHandler.cpp:190
 msgid "Pick Up"
-msgstr ""
+msgstr "Recoller unha arma"
 
 #: ../src/system/InputHandler.cpp:193
 msgid "Throw Grenade"
-msgstr ""
+msgstr "Lanzar unha granada"
 
 #: ../src/system/InputHandler.cpp:196
 msgid "Fire"
-msgstr ""
+msgstr "Disparar"
 
 #: ../src/system/InputHandler.cpp:199
 msgid "Reload"
-msgstr ""
+msgstr "Recargar"
 
 #: ../src/system/InputHandler.cpp:202
-#, fuzzy
 msgid "Teleport"
-msgstr "Teleportación"
+msgstr "Teleportarse"
 
 #: ../src/system/InputHandler.cpp:208
-#, fuzzy
 msgid "Unknown event"
-msgstr "Descoñecido"
+msgstr "Evento descoñecido"
 
 #: ../src/windows/CharStatsWindow.cpp:12
 msgid "Perks:"
-msgstr ""
+msgstr "Vantaxes:"
 
 #: ../src/windows/CharStatsWindow.cpp:17
 msgid "Unstoppable"
-msgstr ""
+msgstr "Imparable"
 
 #: ../src/windows/CharStatsWindow.cpp:22
-#, fuzzy
 msgid "Poison bullets"
-msgstr "Balas de perforación"
+msgstr "Balas envelenadas"
 
 #: ../src/windows/CharStatsWindow.cpp:28
 msgid "Big calibre"
-msgstr ""
+msgstr "Calibre alto"
 
 #: ../src/windows/CharStatsWindow.cpp:33
 msgid "Telekinesis"
-msgstr ""
+msgstr "Telecinesia"
 
 #: ../src/windows/CharStatsWindow.cpp:38
 msgid "Night vision"
-msgstr ""
+msgstr "Visión nocturna"
 
 #: ../src/windows/CharStatsWindow.cpp:42
 msgid "Looting"
-msgstr ""
+msgstr "Saqueo"
 
 #: ../src/windows/CharStatsWindow.cpp:48
 msgid "Wide sight"
-msgstr ""
+msgstr "Visión global"
 
 #: ../src/windows/CharStatsWindow.cpp:53
 msgid "Move mouse over text to get explantation..."
-msgstr ""
+msgstr "Pon o cursor sobre unha vantaxe para ler a súa descrición..."
 
 #: ../src/windows/MainMenuWindow.cpp:13
 msgid "Resume"
-msgstr ""
+msgstr "Continuar"
 
 #: ../src/windows/MainMenuWindow.cpp:17
 msgid "Start"
-msgstr ""
+msgstr "Iniciar"
 
 #: ../src/windows/MainMenuWindow.cpp:23
-#, fuzzy
 msgid "High scores"
 msgstr "Récords"
+
