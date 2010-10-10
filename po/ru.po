@@ -1,501 +1,498 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-10 03:16+0400\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2010-10-10 03:13+0400\n"
+"PO-Revision-Date: 2010-10-02 14:58+0200\n"
+"Last-Translator: Nikita M. Makarov <5253450@gmail.com\n"
+"Language-Team: Nikita M. Makarov <5253450@gmail.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: gl\n"
+"X-Generator: Lokalize 1.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/program.cpp:183 ../src/program.cpp:346
 msgid "Please wait..."
-msgstr ""
+msgstr "Ожидай..."
 
 #: ../src/program.cpp:205
 msgid "Try to survive as long as you can."
-msgstr ""
+msgstr "Попробуй продержаться подольше!"
 
 #: ../src/program.cpp:207
 msgid "Shoot monsters to receive experience and other bonuses."
-msgstr ""
+msgstr "Убивай монстров, чтобы получить очки опыта и другие ништяки."
 
 #: ../src/program.cpp:272
 #, c-format
 msgid "Name found : %s\n"
-msgstr ""
+msgstr "Игрок: %s\n"
 
 #: ../src/program.cpp:304
 #, c-format
 msgid "Preparing window...\n"
-msgstr ""
+msgstr "Подготовка окна...\n"
 
 #: ../src/program.cpp:327
 #, c-format
 msgid "Drawing splash screen...\n"
-msgstr ""
+msgstr "Отображение экрана ожидания...\n"
 
 #: ../src/program.cpp:351
 #, c-format
 msgid "Preparing sound systems...\n"
-msgstr ""
+msgstr "Подготовка звуковой системы...\n"
 
 #: ../src/program.cpp:390
 msgid "You are gobbled up."
-msgstr ""
+msgstr "Тебя сожрали!"
 
 #: ../src/program.cpp:423
 #, c-format
 msgid "Current player level: %i"
-msgstr ""
+msgstr "Текущий уровень игрока: %i"
 
 #: ../src/program.cpp:430
 #, c-format
 msgid "Available improvement points: %i"
-msgstr ""
+msgstr "Доступные очки улучшения: %i"
 
 #: ../src/program.cpp:437
 #, c-format
 msgid "Strength: %i"
-msgstr ""
+msgstr "Сила: %i"
 
 #: ../src/program.cpp:443
 #, c-format
 msgid "Agility: %i"
-msgstr ""
+msgstr "Подвижность: %i"
 
 #: ../src/program.cpp:449
 #, c-format
 msgid "Vitality: %i"
-msgstr ""
+msgstr "Живучесть: %i"
 
 #: ../src/program.cpp:456
 #, c-format
 msgid "HP: %i / Max HP: %i"
-msgstr ""
+msgstr "Жизни: %i из %i"
 
 #: ../src/program.cpp:463
 #, c-format
 msgid "Melee damage: %i"
-msgstr ""
+msgstr "Урон в рукопашной: %i"
 
 #: ../src/program.cpp:469
 #, c-format
 msgid "Chance of block: %i%%"
-msgstr ""
+msgstr "Шанс блока удара: %i%%"
 
 #: ../src/program.cpp:475
 #, c-format
 msgid "Reloading speed modifier: %i%%"
-msgstr ""
+msgstr "Модификатор скорости перезарядки: %i%%"
 
 #: ../src/program.cpp:482
 #, c-format
 msgid "Accuracy deviation modifier: %i%%"
-msgstr ""
+msgstr "Модификатор отдачи оружия: %i%%"
 
 #: ../src/program.cpp:488
 #, c-format
 msgid "Health regeneration: %.2f/min"
-msgstr ""
+msgstr "Восстановление жизней: %.2f/мин"
 
 #: ../src/program.cpp:606
 msgid ""
 "Unstoppable: enemies can't block your movement any more, but they still can "
 "hurt you."
-msgstr ""
+msgstr "Неудержимый: монстры не могут остановить тебя, но все еще могут причинить боль."
 
 #: ../src/program.cpp:616
 msgid ""
 "Poison bullets: after getting hit by your bullet, enemies slowly lose health "
 "until they die."
-msgstr ""
+msgstr "Отравленные пули: при попадании в монстра он будет заражен и рано или поздно умрет."
 
 #: ../src/program.cpp:626
 msgid "Big calibre: your bullets can wound a few monsters in a row."
-msgstr ""
+msgstr "Большой калибр: пули могут пробивать монстров насквозь."
 
 #: ../src/program.cpp:636
 msgid "Telekinesis: useful things slowly move towards you."
-msgstr ""
+msgstr "Телекинез: можешь перемещать полезные вещи к себе взглядом."
 
 #: ../src/program.cpp:645
 msgid "Night vision: you can see in the dark."
-msgstr ""
+msgstr "Ночное видение: можешь видеть в темноте."
 
 #: ../src/program.cpp:654
 msgid "Looting: Monsters will drop more bonuses."
-msgstr ""
+msgstr "Марадер: из монстров выпадает больше полезных вещей."
 
 #: ../src/program.cpp:664
 msgid "Wide sight: accessible area for action is much more."
-msgstr ""
+msgstr "Широкий взгляд: область видимости больше в разы."
 
 #: ../src/program.cpp:896 ../src/program.cpp:1085
 msgid "Controls"
-msgstr ""
+msgstr "Управление"
 
 #: ../src/program.cpp:964
 msgid "Press a key, please..."
-msgstr ""
+msgstr "Нажми кнопку..."
 
 #: ../src/program.cpp:994
 #, c-format
 msgid "Bind action %s to %s.\n"
-msgstr ""
+msgstr "Действие %s выполняется по %s.\n"
 
 #: ../src/program.cpp:1033 ../src/windows/MainMenuWindow.cpp:20
 msgid "Options"
-msgstr ""
+msgstr "Настройки"
 
 #: ../src/program.cpp:1038
 msgid "Gameplay"
-msgstr ""
+msgstr "Игровые опции"
 
 #: ../src/program.cpp:1042
 msgid "Weapon autoreloading"
-msgstr ""
+msgstr "Автоперезарядка оружия"
 
 #: ../src/program.cpp:1047
 msgid "Weapon autotaking"
-msgstr ""
+msgstr "Автоподбор оружия"
 
 #: ../src/program.cpp:1052
 msgid "Friendly fire"
-msgstr ""
+msgstr "Дружественный огонь"
 
 #: ../src/program.cpp:1058
 msgid "Graphics"
-msgstr ""
+msgstr "Графика"
 
 #: ../src/program.cpp:1062
 msgid "Fullscreen"
-msgstr ""
+msgstr "Полный экран"
 
 #: ../src/program.cpp:1066
 msgid "Resolution"
-msgstr ""
+msgstr "Разрешение"
 
 #: ../src/program.cpp:1071
 msgid "Sound"
-msgstr ""
+msgstr "Звук"
 
 #: ../src/program.cpp:1076
 msgid "Sound volume"
-msgstr ""
+msgstr "Громкость звука"
 
 #: ../src/program.cpp:1080
 msgid "Music volume"
-msgstr ""
+msgstr "Громкость музыки"
 
 #: ../src/program.cpp:1089
 msgid "Edit Controls"
-msgstr ""
+msgstr "Изменить управление"
 
 #: ../src/program.cpp:1095
 msgid "Reset Controls"
-msgstr ""
+msgstr "Сбросить управление"
 
 #: ../src/program.cpp:1114
 msgid "Save and return"
-msgstr ""
+msgstr "Сохранить и назад"
 
 #: ../src/program.cpp:1144
 msgid "Unknown"
-msgstr ""
+msgstr "Неизвестно"
 
 #: ../src/program.cpp:1147
 msgid "Violetland Survival"
-msgstr ""
+msgstr "Оригинальное выживание"
 
 #: ../src/program.cpp:1150
 msgid "Attack waves"
-msgstr ""
+msgstr "Нападение волнами"
 
 #: ../src/program.cpp:1213
 msgid "Highscores"
-msgstr ""
+msgstr "Лучшие результаты"
 
 #: ../src/program.cpp:1217
 msgid "XP"
-msgstr ""
+msgstr "Опыт"
 
 #: ../src/program.cpp:1220
 msgid "Str/Agil/Vital"
-msgstr ""
+msgstr "Сила/Подв./Жив."
 
 #: ../src/program.cpp:1224
 msgid "Time"
-msgstr ""
+msgstr "Время"
 
 #: ../src/program.cpp:1227
 msgid "Name"
-msgstr ""
+msgstr "Имя"
 
 #: ../src/program.cpp:1276
 msgid "Back to main menu"
-msgstr ""
+msgstr "Назад"
 
 #: ../src/program.cpp:1281
 msgid "Reset list"
-msgstr ""
+msgstr "Сброс"
 
 #: ../src/program.cpp:1320
 #, c-format
 msgid ""
 "Hot video mode changing is not supported on windows now. You should restart "
 "the game."
-msgstr ""
+msgstr "Горячее переключение видеорежима не поддерживается в ОС Windows. Необходимо перезапустить программу."
 
 #: ../src/program.cpp:1614
 msgid "You have reached new level."
-msgstr ""
+msgstr "Ты получил новый уровень!"
 
 #: ../src/program.cpp:1886
 msgid "Get ready to new wave!"
-msgstr ""
+msgstr "Готовься к новой волне!"
 
 #: ../src/program.cpp:2132
 msgid "a medikit"
-msgstr ""
+msgstr "аптечка"
 
 #: ../src/program.cpp:2135
 msgid "a nitrogen bomb"
-msgstr ""
+msgstr "заморозка"
 
 #: ../src/program.cpp:2138
 msgid "nuke!"
-msgstr ""
+msgstr "бомба"
 
 #: ../src/program.cpp:2141
 msgid "a hand grenade"
-msgstr ""
+msgstr "граната"
 
 #: ../src/program.cpp:2144
 msgid "penetration bullets"
-msgstr ""
+msgstr "проникающие пули"
 
 #: ../src/program.cpp:2147
 msgid "vitality boost"
-msgstr ""
+msgstr "таблетка живучести"
 
 #: ../src/program.cpp:2150
 msgid "strength boost"
-msgstr ""
+msgstr "таблетка силы"
 
 #: ../src/program.cpp:2153
 msgid "agility boost"
-msgstr ""
+msgstr "таблетка подвижности"
 
 #: ../src/program.cpp:2156
 msgid "a teleport"
-msgstr ""
+msgstr "телепорт"
 
 #: ../src/program.cpp:2179
 msgid "You have taken a medical kit."
-msgstr ""
+msgstr "Ты взял аптечку."
 
 #: ../src/program.cpp:2187
 msgid "All have been frozen around you."
-msgstr ""
+msgstr "Все монстры заморозились."
 
 #: ../src/program.cpp:2206
 msgid "Boom!"
-msgstr ""
+msgstr "Бум!"
 
 #: ../src/program.cpp:2219
 msgid "You got powerful penetration bullets."
-msgstr ""
+msgstr "Теперь ты стреляешь жутко мощными пулями."
 
 #: ../src/program.cpp:2226
 msgid "You got a vitality boost."
-msgstr ""
+msgstr "Ты съел таблетку живучести."
 
 #: ../src/program.cpp:2233
 msgid "You got a strength boost."
-msgstr ""
+msgstr "Ты съел таблетку силы."
 
 #: ../src/program.cpp:2240
 msgid "You got a agility boost."
-msgstr ""
+msgstr "Ты съел таблетку подвижности."
 
 #: ../src/program.cpp:2247
 msgid "You have taken a grenade."
-msgstr ""
+msgstr "Ты взял гранату."
 
 #: ../src/program.cpp:2253
 msgid "You have taken a teleport."
-msgstr ""
+msgstr "Ты взял телепорт."
 
 #: ../src/program.cpp:2263
 #, c-format
 msgid "You have taken the %s."
-msgstr ""
+msgstr "Ты поднял %s."
 
 #: ../src/program.cpp:2484
 #, c-format
 msgid "FPS: %i"
-msgstr ""
+msgstr "Кадров/с: %i"
 
 #: ../src/game/HUD.cpp:219
 msgid "They have overcome..."
-msgstr ""
+msgstr "Они тебя одолели..."
 
 #: ../src/game/HUD.cpp:223
 #, c-format
 msgid "You have earned %i points."
-msgstr ""
+msgstr "Ты набрал %i очков."
 
 #: ../src/game/HUD.cpp:230
 msgid "Enter your name:"
-msgstr ""
+msgstr "Пиши свое имя:"
 
 #: ../src/game/HUD.cpp:272
 #, c-format
 msgid "Grenades: %i"
-msgstr ""
+msgstr "Гранат: %i"
 
 #: ../src/game/HUD.cpp:280
 #, c-format
 msgid "Teleports: %i"
-msgstr ""
+msgstr "Телепортов: %i"
 
 #: ../src/game/HUD.cpp:296
 msgid "PAUSE"
-msgstr ""
+msgstr "ПАУЗА"
 
 #: ../src/system/InputHandler.cpp:148
 msgid "Restart"
-msgstr ""
+msgstr "Перезапуск"
 
 #: ../src/system/InputHandler.cpp:151 ../src/windows/MainMenuWindow.cpp:26
 msgid "Exit"
-msgstr ""
+msgstr "Выход"
 
 #: ../src/system/InputHandler.cpp:154
 msgid "Menu"
-msgstr ""
+msgstr "Меню"
 
 #: ../src/system/InputHandler.cpp:157
 msgid "MenuClickA"
-msgstr ""
+msgstr "ДейсвтиеМеню1"
 
 #: ../src/system/InputHandler.cpp:160
 msgid "MenuClickB"
-msgstr ""
+msgstr "ДействиеМеню2"
 
 #: ../src/system/InputHandler.cpp:163
 msgid "Toggle Light"
-msgstr ""
+msgstr "Переключить фонарик"
 
 #: ../src/system/InputHandler.cpp:166
 msgid "Toggle Laser"
-msgstr ""
+msgstr "Переключить лазерный прицел"
 
 #: ../src/system/InputHandler.cpp:169
 msgid "Show Char"
-msgstr ""
+msgstr "Показать экран персонажа"
 
 #: ../src/system/InputHandler.cpp:172
 msgid "Pause"
-msgstr ""
+msgstr "Пауза"
 
 #: ../src/system/InputHandler.cpp:175
 msgid "Move Left"
-msgstr ""
+msgstr "Бежать влево"
 
 #: ../src/system/InputHandler.cpp:178
 msgid "Move Right"
-msgstr ""
+msgstr "Бежать вправо"
 
 #: ../src/system/InputHandler.cpp:181
 msgid "Move Up"
-msgstr ""
+msgstr "Бежать вверх"
 
 #: ../src/system/InputHandler.cpp:184
 msgid "Move Down"
-msgstr ""
+msgstr "Бежать вниз"
 
 #: ../src/system/InputHandler.cpp:187
 msgid "Help"
-msgstr ""
+msgstr "Помощь"
 
 #: ../src/system/InputHandler.cpp:190
 msgid "Pick Up"
-msgstr ""
+msgstr "Взять"
 
 #: ../src/system/InputHandler.cpp:193
 msgid "Throw Grenade"
-msgstr ""
+msgstr "Метнуть гранату"
 
 #: ../src/system/InputHandler.cpp:196
 msgid "Fire"
-msgstr ""
+msgstr "Стрелять"
 
 #: ../src/system/InputHandler.cpp:199
 msgid "Reload"
-msgstr ""
+msgstr "Перезарядить"
 
 #: ../src/system/InputHandler.cpp:202
 msgid "Teleport"
-msgstr ""
+msgstr "Телепорт"
 
 #: ../src/system/InputHandler.cpp:208
 msgid "Unknown event"
-msgstr ""
+msgstr "Неизв. событие"
 
 #: ../src/windows/CharStatsWindow.cpp:12
 msgid "Perks:"
-msgstr ""
+msgstr "Умения:"
 
 #: ../src/windows/CharStatsWindow.cpp:17
 msgid "Unstoppable"
-msgstr ""
+msgstr "Неудержимый"
 
 #: ../src/windows/CharStatsWindow.cpp:22
 msgid "Poison bullets"
-msgstr ""
+msgstr "Отравленные пули"
 
 #: ../src/windows/CharStatsWindow.cpp:28
 msgid "Big calibre"
-msgstr ""
+msgstr "Большой калибр"
 
 #: ../src/windows/CharStatsWindow.cpp:33
 msgid "Telekinesis"
-msgstr ""
+msgstr "Телекинез"
 
 #: ../src/windows/CharStatsWindow.cpp:38
 msgid "Night vision"
-msgstr ""
+msgstr "Ночное видение"
 
 #: ../src/windows/CharStatsWindow.cpp:42
 msgid "Looting"
-msgstr ""
+msgstr "Марадер"
 
 #: ../src/windows/CharStatsWindow.cpp:48
 msgid "Wide sight"
-msgstr ""
+msgstr "Широкий взгляд"
 
 #: ../src/windows/CharStatsWindow.cpp:53
 msgid "Move mouse over text to get explantation..."
-msgstr ""
+msgstr "Наведи курсор на текст для получения пояснений..."
 
 #: ../src/windows/MainMenuWindow.cpp:13
 msgid "Resume"
-msgstr ""
+msgstr "Продолжить"
 
 #: ../src/windows/MainMenuWindow.cpp:17
 msgid "Start"
-msgstr ""
+msgstr "Начать"
 
 #: ../src/windows/MainMenuWindow.cpp:23
 msgid "High scores"
-msgstr ""
+msgstr "Лучшие результаты"

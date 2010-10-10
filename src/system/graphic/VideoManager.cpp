@@ -66,7 +66,7 @@ std::vector<SDL_Rect> VideoManager::GetAvailableModes() {
 			1080, 1200 };
 
 	// If the mode is supported, it will be added to the return list
-	std::vector < SDL_Rect > modes;
+	std::vector<SDL_Rect> modes;
 	for (unsigned int i = 0; i < getStructSize(wL); i++) {
 		if (isModeAvailable(wL[i], hL[i], 16, true, NULL)) {
 			SDL_Rect r;
@@ -116,10 +116,10 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 	printf("Preparing fonts...\n");
 
 	RegularText = new TextManager(m_fileUtility->getFullPath(
-			FileUtility::common, "fonts/harabara.ttf"), 46 * WK);
+			FileUtility::common, "fonts/archangelsk.ttf"), 46 * WK);
 
 	SmallText = new TextManager(m_fileUtility->getFullPath(FileUtility::common,
-			"fonts/harabara.ttf"), 24 * WK);
+			"fonts/archangelsk.ttf"), 24 * WK);
 }
 
 VideoManager::~VideoManager() {
