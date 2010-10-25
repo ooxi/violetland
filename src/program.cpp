@@ -1589,7 +1589,7 @@ void handleMonster(LifeForm* lf) {
 	}
 
 	if (enemy->Frozen == 0) {
-		float direction = Object::calculateAngle(enemy->X, enemy->Y,
+		float direction = Object::calc_angle(enemy->X, enemy->Y,
 				enemy->TargetX, enemy->TargetY);
 
 		enemy->move(direction, videoManager->getFrameDeltaTime());
@@ -1636,7 +1636,7 @@ void handlePlayer(LifeForm* lf) {
 		movementX = 1;
 
 	float movementDirection =
-			Object::calculateAngle(0, 0, movementX, movementY);
+			Object::calc_angle(0, 0, movementX, movementY);
 
 	if (movementX != 0 || movementY != 0)
 		player->move(movementDirection, videoManager->getFrameDeltaTime());
@@ -2013,8 +2013,8 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 		Sound* hitSound = enemy->hit(bullet->Damage, bullet->Poisoned);
 		if (hitSound != NULL) {
 			hitSound->play(7, 0, 0);
-			hitSound->setPos(Object::calculateAngle(enemy->X, enemy->Y,
-					player->X, player->Y), Object::calculateDistance(enemy->X,
+			hitSound->setPos(Object::calc_angle(enemy->X, enemy->Y,
+					player->X, player->Y), Object::calc_dist(enemy->X,
 					enemy->Y, player->X, player->Y));
 		}
 
@@ -2161,7 +2161,7 @@ void handlePowerups() {
 			}
 
 			if (player->Telekinesis) {
-				float a = Object::calculateAngle(gameState->powerups[i]->X,
+				float a = Object::calc_angle(gameState->powerups[i]->X,
 						gameState->powerups[i]->Y, player->X, player->Y);
 				gameState->powerups[i]->X -= cos((a + 90) * M_PI / 180)
 						* videoManager->getFrameDeltaTime()
@@ -2452,7 +2452,7 @@ void drawGame() {
 			glColor4f(1.0f, 1.0f, 1.0f, flash);
 			glVertex3f(wpnX, wpnY, 0.0f);
 
-			const float len = Object::calculateDistance(player->X, player->Y,
+			const float len = Object::calc_dist(player->X, player->Y,
 					player->TargetX, player->TargetY);
 			float width = 0.75 - len / cam->getW();
 			if (width < 0.25)
@@ -2470,7 +2470,7 @@ void drawGame() {
 	if (!gameState->Lost && !gameState->Paused) {
 		aim->draw(player->TargetX, player->TargetY, 1.0f + tan(
 				player->AccuracyDeviation * M_PI / 180)
-				* Object::calculateDistance(player->X, player->Y,
+				* Object::calc_dist(player->X, player->Y,
 						player->TargetX, player->TargetY) / 25.0f,
 				player->getWeapon()->getReloadState() > 0 ? 1.2f
 						- player->getWeapon()->getReloadState() : 0.2f);

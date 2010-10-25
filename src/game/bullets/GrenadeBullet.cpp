@@ -5,16 +5,16 @@ GrenadeBullet::GrenadeBullet(float x, float y, float targetX, float targetY,
 	Bullet(x, y, x, y, Bullet::grenade) {
 	m_targetX = targetX;
 	m_targetY = targetY;
-	m_distance = Object::calculateDistance(X, Y, m_targetX, m_targetY);
+	m_distance = Object::calc_dist(X, Y, m_targetX, m_targetY);
 	m_image = new DynamicObject(x, y, sprite);
 }
 
 void GrenadeBullet::process(int deltaTime) {
-	float d = Object::calculateDistance(X, Y, m_targetX, m_targetY);
+	float d = Object::calc_dist(X, Y, m_targetX, m_targetY);
 	float dp = d / m_distance;
 	float k = 0.75f - fabs(0.5f - dp);
 
-	float a = Object::calculateAngle(X, Y, m_targetX, m_targetY);
+	float a = Object::calc_angle(X, Y, m_targetX, m_targetY);
 
 	X -= cos((a + 90) * M_PI / 180) * deltaTime * Speed * k;
 	Y -= sin((a + 90) * M_PI / 180) * deltaTime * Speed * k;

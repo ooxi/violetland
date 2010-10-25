@@ -13,8 +13,8 @@ protected:
 public:
 	void move(int deltaTime);
 	static float fixAngle(float angle);
-	static float calculateAngle(float x1, float y1, float x2, float y2);
-	static float calculateDistance(float x1, float y1, float x2, float y2);
+	static float calc_angle(float x1, float y1, float x2, float y2);
+	static float calc_dist(float x1, float y1, float x2, float y2);
 	Object(float x, float y, int width, int height);
 	void turn(float targetAngle, float angleSpeed, int deltaTime);
 	const float getWidth();

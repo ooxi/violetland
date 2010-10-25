@@ -200,7 +200,7 @@ void violetland::Player::processState(int deltaTime) {
 }
 
 void violetland::Player::processArms(int deltaTime) {
-	m_arms->Angle = Object::calculateAngle(X, Y, TargetX, TargetY);
+	m_arms->Angle = Object::calc_angle(X, Y, TargetX, TargetY);
 	m_weapon->process(deltaTime);
 	AccuracyDeviation -= deltaTime * 0.01;
 	if (AccuracyDeviation < 0)

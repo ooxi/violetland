@@ -54,26 +54,8 @@ void Object::turn(float targetAngle, float angleSpeed, int deltaTime) {
 	Angle = Object::fixAngle(Angle);
 }
 
-float Object::calculateAngle(float x1, float y1, float x2, float y2) {
-	float a = x2 - x1;
-	float b = -y2 + y1;
-
-	float angle = 0;
-
-	if (a != 0 && b != 0)
-		angle = acos(b / sqrt(pow(a, 2) + pow(b, 2)));
-
-	if (b == 0 && a != 0) {
-		angle = 90;
-	} else if (a == 0 && b < 0)
-		angle = 180;
-	else if (angle != 0)
-		angle = 180.0f / M_PI * angle;
-
-	if (a < 0)
-		angle = 360 - angle;
-
-	return angle;
+float Object::calc_angle(float x1, float y1, float x2, float y2) {
+	return 180.0f / M_PI * atan2(x2 - x1, -y2 + y1);
 }
 
 const float Object::getWidth() {
@@ -84,11 +66,8 @@ const float Object::getHeight() {
 	return m_width;
 }
 
-float Object::calculateDistance(float x1, float y1, float x2, float y2) {
-	float a = x2 - x1;
-	float b = -y2 + y1;
-
-	return sqrt(pow(a, 2) + pow(b, 2));
+float Object::calc_dist(float x1, float y1, float x2, float y2) {
+	return hypot(x2 - x1, -y2 + y1);
 }
 
 void Object::move(int deltaTime) {
@@ -113,12 +92,12 @@ const float Object::getBottom() {
 }
 
 const bool Object::detectCollide(Object *refObj) {
-	return calculateDistance(X, Y, refObj->X, refObj->Y) < HitR * Scale
-			* m_width + refObj->HitR * refObj->Scale * refObj->getWidth();
+	return calc_dist(X, Y, refObj->X, refObj->Y) < HitR * Scale * m_width
+			+ refObj->HitR * refObj->Scale * refObj->getWidth();
 }
 
 const bool Object::detectCollide(float x, float y) {
-	return calculateDistance(X, Y, x, y) < HitR * Scale * m_width;
+	return calc_dist(X, Y, x, y) < HitR * Scale * m_width;
 }
 
 const bool Object::detectCollide(float x1, float y1, float x2, float y2) {
