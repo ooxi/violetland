@@ -2377,15 +2377,19 @@ void drawGame() {
 		gameState->powerups[i]->draw(false, false);
 	}
 
+	float left = cam->X + cam->getHalfW();
+	float right = cam->X - cam->getHalfW();
+	float top = cam->Y + cam->getHalfH();
+	float bottom = cam->Y - cam->getHalfH();
 	map<string, LifeForm*>::const_iterator iter;
 	for (iter = gameState->lifeForms.begin(); iter
 			!= gameState->lifeForms.end(); ++iter) {
 		LifeForm* lifeForm = iter->second;
 
-		if (lifeForm->getLeft() < cam->X + cam->getHalfW()
-				&& lifeForm->getRight() > cam->X - cam->getHalfW()
-				&& lifeForm->getTop() < cam->Y + cam->getHalfH()
-				&& lifeForm->getBottom() > cam->Y - cam->getHalfH())
+		if (lifeForm->getLeft() < left
+				&& lifeForm->getRight() > right
+				&& lifeForm->getTop() < top
+				&& lifeForm->getBottom() > bottom)
 
 			if (lifeForm->Type == LIFEFORM_PLAYER && (lifeForm->State
 					== LIFEFORM_STATE_DIED || lifeForm->State

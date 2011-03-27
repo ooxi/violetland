@@ -97,11 +97,15 @@ void Terrain::endDrawOn() {
 }
 
 void Terrain::draw(Camera* cam) {
+	float left = cam->X + cam->getHalfW();
+	float right = cam->X - cam->getHalfW();
+	float top = cam->Y + cam->getHalfH();
+	float bottom = cam->Y - cam->getHalfH();
 	for (unsigned int i = 0; i < m_tiles.size(); i++) {
-		if (m_tiles[i]->getLeft() < cam->X + cam->getHalfW()
-				&& m_tiles[i]->getRight() > cam->X - cam->getHalfW()
-				&& m_tiles[i]->getTop() < cam->Y + cam->getHalfH()
-				&& m_tiles[i]->getBottom() > cam->Y - cam->getHalfH())
+		if (m_tiles[i]->getLeft() < left
+				&& m_tiles[i]->getRight() > right
+				&& m_tiles[i]->getTop() < top
+				&& m_tiles[i]->getBottom() > bottom)
 			m_tiles[i]->draw(m_tileDList);
 	}
 }
