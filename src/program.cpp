@@ -1501,8 +1501,9 @@ void handleMonster(LifeForm* lf) {
 		else if (targetLifeForm->State != LIFEFORM_STATE_ALIVE)
 			enemy->targetId = "ambient";
 		else {
-			float range = sqrt(pow(-enemy->X + targetLifeForm->X, 2) + pow(
-					enemy->Y - targetLifeForm->Y, 2));
+			float range = Object::calc_dist(enemy->X, enemy->Y, 
+                                            targetLifeForm->X, 
+                                            targetLifeForm->Y);
 
 			if (range > 800)
 				enemy->targetId = "ambient";
@@ -1517,8 +1518,9 @@ void handleMonster(LifeForm* lf) {
 					!= gameState->lifeForms.end(); ++iter) {
 				LifeForm* lifeForm = iter->second;
 
-				float range = sqrt(pow(-enemy->X + lifeForm->X, 2) + pow(
-						enemy->Y - lifeForm->Y, 2));
+				float range = Object::calc_dist(enemy->X, enemy->Y, 
+                                                lifeForm->X, 
+                                                lifeForm->Y);
 
 				if (range < 800 && lifeForm->State == LIFEFORM_STATE_ALIVE
 						&& lifeForm->Type == LIFEFORM_PLAYER) {
@@ -1532,8 +1534,8 @@ void handleMonster(LifeForm* lf) {
 	if (enemy->targetId.compare("ambient") == 0) {
 		// Hang around
 
-		float range = sqrt(pow(-enemy->X + enemy->TargetX, 2) + pow(enemy->Y
-				- enemy->TargetY, 2));
+		float range = Object::calc_dist(enemy->X, enemy->Y, 
+                                        enemy->TargetX, enemy->TargetY);
 
 		if (range < enemy->getWidth() * enemy->Scale * enemy->HitR * 5) {
 			enemy->TargetX = (rand() % (gameState->GameAreaSize * 2))
@@ -1546,8 +1548,9 @@ void handleMonster(LifeForm* lf) {
 
 		LifeForm* targetLifeForm = gameState->getLifeForm(enemy->targetId);
 
-		float range = sqrt(pow(-enemy->X + targetLifeForm->X, 2) + pow(enemy->Y
-				- targetLifeForm->Y, 2));
+		float range = Object::calc_dist(enemy->X, enemy->Y, 
+                                        targetLifeForm->X, 
+                                        targetLifeForm->Y);
 
 		if (range < 400 || targetLifeForm->Speed == 0 || enemy->Speed == 0) {
 			enemy->TargetX = targetLifeForm->X;
