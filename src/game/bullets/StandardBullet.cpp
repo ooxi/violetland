@@ -25,9 +25,16 @@ void StandardBullet::process(int deltaTime) {
 	}
 
 	m_range += Speed * deltaTime;
-	Alpha = (MaxRange - m_range) / MaxRange;
-	m_active = m_active && m_range < MaxRange;
-	m_readyToRemove = !m_active && Alpha == 0;
+	Alpha = MaxRange - m_range;
+	if (Alpha <= 0) {
+	    Alpha = 0;
+	    m_active = 0;
+	    m_readyToRemove = 1;
+	}
+	else {
+	    Alpha /= MaxRange;
+	    m_readyToRemove = 0;
+	}
 }
 
 void StandardBullet::draw() {
