@@ -20,38 +20,36 @@ Object::Object(float x, float y, int width, int height) {
 float Object::fixAngle(float angle) {
 	if (angle < 0)
 		angle += 360;
-	if (angle > 360)
+	else if (angle > 360)
 		angle -= 360;
 
 	return angle;
 }
 
 void Object::turn(float targetAngle, float angleSpeed, int deltaTime) {
-	float arch1 = 0.0;
-	float arch2 = 0.0;
+	float arch1;
+	float arch2;
 
 	if (Angle > targetAngle) {
 		arch1 = Angle - targetAngle;
-		arch2 = 360 + targetAngle - Angle;
+		arch2 = 360 - arch1;
 	}
-
-	if (Angle < targetAngle) {
-		arch1 = 360 + Angle - targetAngle;
+	else {
 		arch2 = targetAngle - Angle;
+		arch1 = 360 - arch2;
 	}
 
-	if (arch1 < angleSpeed * deltaTime || arch2 < angleSpeed * deltaTime) {
-		Angle = targetAngle;
-		return;
-	}
-
+    float delta = deltaTime * angleSpeed;
 	if (arch1 < arch2)
-		Angle -= deltaTime * angleSpeed;
-
-	if (arch1 >= arch2)
-		Angle += deltaTime * angleSpeed;
-
-	Angle = Object::fixAngle(Angle);
+		if(arch1 < delta)
+			Angle = targetAngle;
+		else
+			Angle -= delta;
+	else
+		if(arch2 < delta)
+			Angle = targetAngle;
+		else
+			Angle += delta;
 }
 
 float Object::calc_angle(float x1, float y1, float x2, float y2) {
