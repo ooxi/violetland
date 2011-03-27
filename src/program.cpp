@@ -1512,22 +1512,13 @@ void handleMonster(LifeForm* lf) {
 
 	// Check for new targets in range
 	if (enemy->targetId.compare("ambient") == 0) {
-		if (!gameState->lifeForms.empty()) {
-			map<string, LifeForm*>::const_iterator iter;
-			for (iter = gameState->lifeForms.begin(); iter
-					!= gameState->lifeForms.end(); ++iter) {
-				LifeForm* lifeForm = iter->second;
+		LifeForm* lifeForm = gameState->getLifeForm(playerId);
 
-				float range = Object::calc_dist(enemy->X, enemy->Y, 
-                                                lifeForm->X, 
-                                                lifeForm->Y);
-
-				if (range < 800 && lifeForm->State == LIFEFORM_STATE_ALIVE
-						&& lifeForm->Type == LIFEFORM_PLAYER) {
-					enemy->targetId = lifeForm->Id;
-					break;
-				}
-			}
+		if (lifeForm->State == LIFEFORM_STATE_ALIVE) {
+			float range = Object::calc_dist(enemy->X, enemy->Y, 
+                                            lifeForm->X, lifeForm->Y);
+			if (range < 800)
+				enemy->targetId = lifeForm->Id;
 		}
 	}
 
