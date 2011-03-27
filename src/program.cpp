@@ -747,7 +747,7 @@ void refreshOptionsWindow() {
 	sprintf(buf = new char[15], "%ix%i", tempConfig->Screen.Width,
 			tempConfig->Screen.Height);
 	TextObject* resInfo = videoManager->RegularText->getObject(buf, r
-			+ videoManager->RegularText->getHeight() * 6.0f,
+			+ videoManager->RegularText->getHeight() * 7.0f,
 			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
 	delete[] buf;
@@ -1074,11 +1074,11 @@ void createOptionsWindow() {
 
 	w->addElement("soundvolume", videoManager->RegularText->getObject(
 			_("Sound volume"), l + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 12.0f,
+					* 3.0f, videoManager->RegularText->getHeight() * 12.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 	w->addElement("musicvolume", videoManager->RegularText->getObject(
 			_("Music volume"), l + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 13.0f,
+					* 3.0f, videoManager->RegularText->getHeight() * 13.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
 	w->addElement("controlstitle", videoManager->RegularText->getObject(
