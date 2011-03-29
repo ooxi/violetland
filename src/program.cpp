@@ -747,7 +747,7 @@ void refreshOptionsWindow() {
 	sprintf(buf = new char[15], "%ix%i", tempConfig->Screen.Width,
 			tempConfig->Screen.Height);
 	TextObject* resInfo = videoManager->RegularText->getObject(buf, r
-			+ videoManager->RegularText->getHeight() * 7.0f,
+			+ videoManager->RegularText->getHeight() * 8.0f,
 			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
 	delete[] buf;
@@ -1206,8 +1206,8 @@ void createHighscoresWindow() {
 
 	const int l = config->Screen.Width * 0.1f;
 	const int r2 = l * 2.0f;
-	const int r3 = l * 4.0f;
-	const int r4 = l * 6.0f;
+	const int r3 = l * 5.0f;
+	const int r4 = l * 7.0f;
 
 	scoresWin->addElement("highscores", videoManager->RegularText->getObject(
 			_("Highscores"), l, videoManager->RegularText->getHeight()
