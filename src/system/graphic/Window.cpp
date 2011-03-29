@@ -19,9 +19,10 @@ void Window::addElement(std::string name, TextObject* element) {
 }
 
 void Window::removeElement(std::string name, bool remainHandler) {
-	if (m_elements.count(name) > 0) {
-		delete m_elements.find(name)->second;
-		m_elements.erase(name);
+	std::map<std::string, TextObject*>::iterator it = m_elements.find(name);
+	if (it != m_elements.end()) {
+		delete it->second;
+		m_elements.erase(it);
 	}
 	if (!remainHandler)
 		removeHandler(hdl_click, name);
@@ -39,17 +40,20 @@ void Window::addHandler(HandlerType hdl, std::string elementName, void(*func)(
 }
 
 void Window::removeHandler(HandlerType hdl, std::string elementName) {
-	if ((hdl == hdl_all || hdl == hdl_click || hdl == hdl_lclick)
-			&& m_lcHandlers.count(elementName) > 0) {
-		m_lcHandlers.erase(elementName);
+	if (hdl == hdl_all || hdl == hdl_click || hdl == hdl_lclick) {
+		std::map<std::string, void(*)(std::string elementName)>::iterator it = m_lcHandlers.find(elementName);
+		if (it != m_lcHandlers.end())
+			m_lcHandlers.erase(elementName);
 	}
-	if ((hdl == hdl_all || hdl == hdl_click || hdl == hdl_rclick)
-			&& m_rcHandlers.count(elementName) > 0) {
-		m_rcHandlers.erase(elementName);
+	if (hdl == hdl_all || hdl == hdl_click || hdl == hdl_rclick) {
+		std::map<std::string, void(*)(std::string elementName)>::iterator it = m_rcHandlers.find(elementName);
+		if (it != m_rcHandlers.end())
+			m_rcHandlers.erase(elementName);
 	}
-	if ((hdl == hdl_all || hdl == hdl_move) && m_mvHandlers.count(elementName)
-			> 0) {
-		m_mvHandlers.erase(elementName);
+	if (hdl == hdl_all || hdl == hdl_move) {
+		std::map<std::string, void(*)(std::string elementName)>::iterator it = m_mvHandlers.find(elementName);
+		if (it != m_mvHandlers.end())
+			m_mvHandlers.erase(elementName);
 	}
 }
 
@@ -90,8 +94,9 @@ void Window::process(InputHandler* input) {
 
 	std::map<std::string, void(*)(std::string)>::const_iterator iter;
 	for (iter = m_mvHandlers.begin(); iter != m_mvHandlers.end(); ++iter) {
-		if (m_elements.count(iter->first) > 0) {
-			TextObject* o = m_elements.find(iter->first)->second;
+		std::map<std::string, TextObject*>::iterator it = m_elements.find(iter->first);
+		if (it != m_elements.end()) {
+			TextObject* o = it->second;
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
 				iter->second(iter->first);
@@ -101,8 +106,9 @@ void Window::process(InputHandler* input) {
 
 	//TODO: refactor next two copypasted cycles
 	for (iter = m_lcHandlers.begin(); iter != m_lcHandlers.end(); ++iter) {
-		if (m_elements.count(iter->first) > 0) {
-			TextObject* o = m_elements.find(iter->first)->second;
+		std::map<std::string, TextObject*>::iterator it = m_elements.find(iter->first);
+		if (it != m_elements.end()) {
+			TextObject* o = it->second;
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
 				o->GMask = 0.3f;
@@ -116,8 +122,9 @@ void Window::process(InputHandler* input) {
 	}
 
 	for (iter = m_rcHandlers.begin(); iter != m_rcHandlers.end(); ++iter) {
-		if (m_elements.count(iter->first) > 0) {
-			TextObject* o = m_elements.find(iter->first)->second;
+		std::map<std::string, TextObject*>::iterator it = m_elements.find(iter->first);
+		if (it != m_elements.end()) {
+			TextObject* o = it->second;
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
 				o->RMask = 0.3f;

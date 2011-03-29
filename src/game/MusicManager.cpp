@@ -52,10 +52,14 @@ void violetland::MusicManager::play(int chan, std::string name, bool now) {
 				m_music[m_currentPlaying]->stop(3000);
 			}
 		}
-		if (m_currentPlaying != name && m_music.count(name) > 0) {
-			m_music[name]->play(chan, 3000, -1);
-			m_music[name]->setVol(m_config->MusicVolume * 12);
-			m_currentPlaying = name;
+		
+		if (m_currentPlaying != name) {
+			std::map<std::string, Sound*>::iterator it = m_music.find(name);
+			if (it != m_music.end()) {
+				it->second->play(chan, 3000, -1);
+				it->second->setVol(m_config->MusicVolume * 12);
+				m_currentPlaying = name;
+			}
 		}
 	}
 }

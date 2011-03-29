@@ -1336,7 +1336,8 @@ void createHelpWindow() {
 
 void handleCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
-		if (windows.count("charstats") == 0) {
+		map<string, Window*>::iterator it = windows.find("charstats");
+		if (it == windows.end()) {
 			if (gameState->Begun && !gameState->Lost) { // it is possible to remove second check to show charstats window after player death
 				clearMap<std::string, Window*> (&windows);
 
@@ -1347,7 +1348,7 @@ void handleCommonControls() {
 					switchGamePause();
 			}
 		} else {
-			Window* w = windows.find("charstats")->second;
+			Window* w = it->second;
 			w->CloseFlag = true;
 			switchGamePause();
 		}
@@ -1358,7 +1359,8 @@ void handleCommonControls() {
 	 */
 
 	//	if (input->getPressInput(InputHandler::Help)) {
-	//		if (windows.count("helpscreen") == 0) {
+	//		map<string, Window*>::iterator it = windows.find("helpscreen");
+	//		if (it == windows.end()) {
 	//			clearMap<std::string, Window*> (&windows);
 	//
 	//			createHelpWindow();
@@ -1366,14 +1368,15 @@ void handleCommonControls() {
 	//			if (!gameState->Paused)
 	//				switchGamePause();
 	//		} else {
-	//			Window* w = windows.find("helpscreen")->second;
+	//			Window* w = it->second;
 	//			w->CloseFlag = true;
 	//			switchGamePause();
 	//		}
 	//	}
 
 	if (input->getPressInput(InputHandler::Menu)) {
-		if (windows.count("mainmenu") == 0) {
+		map<string, Window*>::iterator it = windows.find("mainmenu");
+		if (it == windows.end()) {
 			clearMap<std::string, Window*> (&windows);
 
 			createMainMenuWindow();
@@ -1381,7 +1384,7 @@ void handleCommonControls() {
 			if (!gameState->Paused)
 				switchGamePause();
 		} else if (gameState->Begun) {
-			Window* w = windows.find("mainmenu")->second;
+			Window* w = it->second;
 			w->CloseFlag = true;
 			switchGamePause();
 		}
