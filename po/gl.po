@@ -1,22 +1,21 @@
 # Copyright © 2010 Violetland Project
 # This file is distributed under the same license as the Violetland package.
 #
-# Adrián Chaves Fernández (Gallaecio) <adriyetichaves@gmail.com>, 2010.
-
+# Adrián Chaves Fernández (Gallaecio) <adriyetichaves@gmail.com>, 2010, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-22 01:13+0200\n"
-"PO-Revision-Date: 2010-10-02 14:58+0200\n"
-"Last-Translator: Adrian Chaves Fernandez (Gallaecio) <adriyetichaves@gmail."
+"POT-Creation-Date: 2011-03-29 22:06+0200\n"
+"PO-Revision-Date: 2011-03-29 22:21+0200\n"
+"Last-Translator: Adrián Chaves Fernández (Gallaecio) <adriyetichaves@gmail."
 "com>\n"
-"Language-Team: Galician <proxecto@trasno.net>\n"
-"Language: gl\n"
+"Language-Team: Proxecto Trasno <proxecto@trasno.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.1\n"
+"Language: gl\n"
+"X-Generator: Lokalize 1.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/program.cpp:183 ../src/program.cpp:346
@@ -39,7 +38,7 @@ msgstr "Atopouse un nome: «%s».\n"
 #: ../src/program.cpp:304
 #, c-format
 msgid "Preparing window...\n"
-msgstr "Preparando a fiestra...\n"
+msgstr "Preparando a xanela...\n"
 
 #: ../src/program.cpp:327
 #, c-format
@@ -63,7 +62,7 @@ msgstr "Nivel actual: %i"
 #: ../src/program.cpp:430
 #, c-format
 msgid "Available improvement points: %i"
-msgstr "Puntos de mellora dispoñibles: %i"
+msgstr "Puntos de mellora dispoñíbeis: %i"
 
 #: ../src/program.cpp:437
 #, c-format
@@ -114,7 +113,7 @@ msgstr "Recuperación de vida: %.2f por minuto"
 msgid ""
 "Unstoppable: enemies can't block your movement any more, but they still can "
 "hurt you."
-msgstr "Imparable: os inimigos non poden deterte (pero si atacarte)."
+msgstr "Imparábel: os inimigos non poden deterte (pero si atacarte)."
 
 #: ../src/program.cpp:616
 msgid ""
@@ -140,7 +139,7 @@ msgstr "Visión nocturna: podes ver na escuridade."
 
 #: ../src/program.cpp:654
 msgid "Looting: Monsters will drop more bonuses."
-msgstr "Saqueo: os monstros soltaran máis bonificacións ao morrer."
+msgstr "Saqueo: os monstros soltarán máis bonificacións ao morrer."
 
 #: ../src/program.cpp:664
 msgid "Wide sight: accessible area for action is much more."
@@ -209,7 +208,7 @@ msgstr "Cambiar os controis"
 
 #: ../src/program.cpp:1095
 msgid "Reset Controls"
-msgstr "Restaurar os controis"
+msgstr "Restablecer os controis"
 
 #: ../src/program.cpp:1114
 msgid "Save and return"
@@ -260,94 +259,94 @@ msgstr "Borrar a lista"
 msgid ""
 "Hot video mode changing is not supported on windows now. You should restart "
 "the game."
-msgstr "Reinicie o xogo para que os cambios xurdan efecto."
+msgstr "Reinicia o xogo para que os cambios xurdan efecto."
 
-#: ../src/program.cpp:1614
+#: ../src/program.cpp:1611
 msgid "You have reached new level."
 msgstr "Subiches de nivel."
 
-#: ../src/program.cpp:1886
+#: ../src/program.cpp:1883
 msgid "Get ready to new wave!"
 msgstr "Prepárate para a seguinte rolda!"
 
-#: ../src/program.cpp:2132
+#: ../src/program.cpp:2129
 msgid "a medikit"
 msgstr "Equipo médico"
 
-#: ../src/program.cpp:2135
+#: ../src/program.cpp:2132
 msgid "a nitrogen bomb"
 msgstr "Bomba de nitróxeno"
 
-#: ../src/program.cpp:2138
+#: ../src/program.cpp:2135
 msgid "nuke!"
 msgstr "Armas nucleares!"
 
-#: ../src/program.cpp:2141
+#: ../src/program.cpp:2138
 msgid "a hand grenade"
 msgstr "Granada de man"
 
-#: ../src/program.cpp:2144
+#: ../src/program.cpp:2141
 msgid "penetration bullets"
 msgstr "Balas de perforación"
 
-#: ../src/program.cpp:2147
+#: ../src/program.cpp:2144
 msgid "vitality boost"
 msgstr "Aumento da vitalidade"
 
-#: ../src/program.cpp:2150
+#: ../src/program.cpp:2147
 msgid "strength boost"
 msgstr "Aumento da forza"
 
-#: ../src/program.cpp:2153
+#: ../src/program.cpp:2150
 msgid "agility boost"
 msgstr "Aumento da axilidade"
 
-#: ../src/program.cpp:2156
+#: ../src/program.cpp:2153
 msgid "a teleport"
 msgstr "Teleportación"
 
-#: ../src/program.cpp:2179
+#: ../src/program.cpp:2176
 msgid "You have taken a medical kit."
 msgstr "Recolliches un equipo médico."
 
-#: ../src/program.cpp:2187
+#: ../src/program.cpp:2184
 msgid "All have been frozen around you."
 msgstr "Todos os monstros quedaron conxelados."
 
-#: ../src/program.cpp:2206
+#: ../src/program.cpp:2203
 msgid "Boom!"
 msgstr "Bum!"
 
-#: ../src/program.cpp:2219
+#: ../src/program.cpp:2216
 msgid "You got powerful penetration bullets."
 msgstr "Recolliches unhas balas de perforación."
 
-#: ../src/program.cpp:2226
+#: ../src/program.cpp:2223
 msgid "You got a vitality boost."
 msgstr "A túa vida total aumentou temporalmente."
 
-#: ../src/program.cpp:2233
+#: ../src/program.cpp:2230
 msgid "You got a strength boost."
 msgstr "A túa forza aumentou temporalmente."
 
-#: ../src/program.cpp:2240
+#: ../src/program.cpp:2237
 msgid "You got a agility boost."
 msgstr "A túa axilidade aumentou temporalmente."
 
-#: ../src/program.cpp:2247
+#: ../src/program.cpp:2244
 msgid "You have taken a grenade."
 msgstr "Recolliches unha granada."
 
-#: ../src/program.cpp:2253
+#: ../src/program.cpp:2250
 msgid "You have taken a teleport."
 msgstr "Recolliches unha teleportación."
 
-#: ../src/program.cpp:2263
+#: ../src/program.cpp:2260
 #, c-format
 msgid "You have taken the %s."
 msgstr "Colliches o %s."
 
-#: ../src/program.cpp:2484
+#: ../src/program.cpp:2485
 #, c-format
 msgid "FPS: %i"
 msgstr "FPS: %i"
@@ -363,7 +362,7 @@ msgstr "Conseguiches %i puntos."
 
 #: ../src/game/HUD.cpp:230
 msgid "Enter your name:"
-msgstr "Introduce o teu nome:"
+msgstr "Escribe o teu nome:"
 
 #: ../src/game/HUD.cpp:272
 #, c-format
@@ -465,7 +464,7 @@ msgstr "Vantaxes:"
 
 #: ../src/windows/CharStatsWindow.cpp:17
 msgid "Unstoppable"
-msgstr "Imparable"
+msgstr "Imparábel"
 
 #: ../src/windows/CharStatsWindow.cpp:22
 msgid "Poison bullets"

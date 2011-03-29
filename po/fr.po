@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: violetland 3.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-22 01:13+0200\n"
+"POT-Creation-Date: 2011-03-29 22:06+0200\n"
 "PO-Revision-Date: 2010-09-22 01:10+0100\n"
 "Last-Translator: BERNIGAUD Côme <come.bernigaud@laposte.net>\n"
 "Language-Team: French\n"
-"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: ../src/program.cpp:183 ../src/program.cpp:346
@@ -260,92 +260,92 @@ msgid ""
 "the game."
 msgstr ""
 
-#: ../src/program.cpp:1614
+#: ../src/program.cpp:1611
 msgid "You have reached new level."
 msgstr "Vous avez atteint un nouveau niveau."
 
-#: ../src/program.cpp:1886
+#: ../src/program.cpp:1883
 msgid "Get ready to new wave!"
 msgstr "Tiens toi prêt pour une nouvelle vague!"
 
-#: ../src/program.cpp:2132
+#: ../src/program.cpp:2129
 msgid "a medikit"
 msgstr "un kit médical"
 
-#: ../src/program.cpp:2135
+#: ../src/program.cpp:2132
 msgid "a nitrogen bomb"
 msgstr ""
 
-#: ../src/program.cpp:2138
+#: ../src/program.cpp:2135
 msgid "nuke!"
 msgstr ""
 
-#: ../src/program.cpp:2141
+#: ../src/program.cpp:2138
 msgid "a hand grenade"
 msgstr "une grenade"
 
-#: ../src/program.cpp:2144
+#: ../src/program.cpp:2141
 msgid "penetration bullets"
 msgstr "balles pénétrantes"
 
-#: ../src/program.cpp:2147
+#: ../src/program.cpp:2144
 msgid "vitality boost"
 msgstr "Bonus de vitalité"
 
-#: ../src/program.cpp:2150
+#: ../src/program.cpp:2147
 msgid "strength boost"
 msgstr "Bonus de force"
 
-#: ../src/program.cpp:2153
+#: ../src/program.cpp:2150
 msgid "agility boost"
 msgstr "Bonus d'agilité"
 
-#: ../src/program.cpp:2156
+#: ../src/program.cpp:2153
 msgid "a teleport"
 msgstr "un téléporteur"
 
-#: ../src/program.cpp:2179
+#: ../src/program.cpp:2176
 msgid "You have taken a medical kit."
 msgstr "Vous avez ramassé un kit médical."
 
-#: ../src/program.cpp:2187
+#: ../src/program.cpp:2184
 msgid "All have been frozen around you."
 msgstr "Tout a été gelé aux alentours."
 
-#: ../src/program.cpp:2206
+#: ../src/program.cpp:2203
 msgid "Boom!"
 msgstr "Boom!"
 
-#: ../src/program.cpp:2219
+#: ../src/program.cpp:2216
 msgid "You got powerful penetration bullets."
 msgstr "Vous avez pris de puissantes balles pénétrantes."
 
-#: ../src/program.cpp:2226
+#: ../src/program.cpp:2223
 msgid "You got a vitality boost."
 msgstr "Vous avez pris un bonus de vitalité."
 
-#: ../src/program.cpp:2233
+#: ../src/program.cpp:2230
 msgid "You got a strength boost."
 msgstr "Vous avez pris un bonus de force."
 
-#: ../src/program.cpp:2240
+#: ../src/program.cpp:2237
 msgid "You got a agility boost."
 msgstr "Vous avez pris un bonus d'agilité."
 
-#: ../src/program.cpp:2247
+#: ../src/program.cpp:2244
 msgid "You have taken a grenade."
 msgstr "Vous avez ramassé une grenade."
 
-#: ../src/program.cpp:2253
+#: ../src/program.cpp:2250
 msgid "You have taken a teleport."
 msgstr "Vous avez ramassé un téléporteur."
 
-#: ../src/program.cpp:2263
+#: ../src/program.cpp:2260
 #, c-format
 msgid "You have taken the %s."
 msgstr "Vous avez ramassé le %s."
 
-#: ../src/program.cpp:2484
+#: ../src/program.cpp:2485
 #, c-format
 msgid "FPS: %i"
 msgstr "IPS : %i"

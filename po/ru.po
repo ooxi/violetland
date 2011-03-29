@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-10 03:13+0400\n"
+"POT-Creation-Date: 2011-03-29 22:06+0200\n"
 "PO-Revision-Date: 2010-10-02 14:58+0200\n"
 "Last-Translator: Nikita M. Makarov <5253450@gmail.com\n"
 "Language-Team: Nikita M. Makarov <5253450@gmail.com>\n"
@@ -108,13 +108,17 @@ msgstr "Восстановление жизней: %.2f/мин"
 msgid ""
 "Unstoppable: enemies can't block your movement any more, but they still can "
 "hurt you."
-msgstr "Неудержимый: монстры не могут остановить тебя, но все еще могут причинить боль."
+msgstr ""
+"Неудержимый: монстры не могут остановить тебя, но все еще могут причинить "
+"боль."
 
 #: ../src/program.cpp:616
 msgid ""
 "Poison bullets: after getting hit by your bullet, enemies slowly lose health "
 "until they die."
-msgstr "Отравленные пули: при попадании в монстра он будет заражен и рано или поздно умрет."
+msgstr ""
+"Отравленные пули: при попадании в монстра он будет заражен и рано или поздно "
+"умрет."
 
 #: ../src/program.cpp:626
 msgid "Big calibre: your bullets can wound a few monsters in a row."
@@ -250,94 +254,96 @@ msgstr "Сброс"
 msgid ""
 "Hot video mode changing is not supported on windows now. You should restart "
 "the game."
-msgstr "Горячее переключение видеорежима не поддерживается в ОС Windows. Необходимо перезапустить программу."
+msgstr ""
+"Горячее переключение видеорежима не поддерживается в ОС Windows. Необходимо "
+"перезапустить программу."
 
-#: ../src/program.cpp:1614
+#: ../src/program.cpp:1611
 msgid "You have reached new level."
 msgstr "Ты получил новый уровень!"
 
-#: ../src/program.cpp:1886
+#: ../src/program.cpp:1883
 msgid "Get ready to new wave!"
 msgstr "Готовься к новой волне!"
 
-#: ../src/program.cpp:2132
+#: ../src/program.cpp:2129
 msgid "a medikit"
 msgstr "аптечка"
 
-#: ../src/program.cpp:2135
+#: ../src/program.cpp:2132
 msgid "a nitrogen bomb"
 msgstr "заморозка"
 
-#: ../src/program.cpp:2138
+#: ../src/program.cpp:2135
 msgid "nuke!"
 msgstr "бомба"
 
-#: ../src/program.cpp:2141
+#: ../src/program.cpp:2138
 msgid "a hand grenade"
 msgstr "граната"
 
-#: ../src/program.cpp:2144
+#: ../src/program.cpp:2141
 msgid "penetration bullets"
 msgstr "проникающие пули"
 
-#: ../src/program.cpp:2147
+#: ../src/program.cpp:2144
 msgid "vitality boost"
 msgstr "таблетка живучести"
 
-#: ../src/program.cpp:2150
+#: ../src/program.cpp:2147
 msgid "strength boost"
 msgstr "таблетка силы"
 
-#: ../src/program.cpp:2153
+#: ../src/program.cpp:2150
 msgid "agility boost"
 msgstr "таблетка подвижности"
 
-#: ../src/program.cpp:2156
+#: ../src/program.cpp:2153
 msgid "a teleport"
 msgstr "телепорт"
 
-#: ../src/program.cpp:2179
+#: ../src/program.cpp:2176
 msgid "You have taken a medical kit."
 msgstr "Ты взял аптечку."
 
-#: ../src/program.cpp:2187
+#: ../src/program.cpp:2184
 msgid "All have been frozen around you."
 msgstr "Все монстры заморозились."
 
-#: ../src/program.cpp:2206
+#: ../src/program.cpp:2203
 msgid "Boom!"
 msgstr "Бум!"
 
-#: ../src/program.cpp:2219
+#: ../src/program.cpp:2216
 msgid "You got powerful penetration bullets."
 msgstr "Теперь ты стреляешь жутко мощными пулями."
 
-#: ../src/program.cpp:2226
+#: ../src/program.cpp:2223
 msgid "You got a vitality boost."
 msgstr "Ты съел таблетку живучести."
 
-#: ../src/program.cpp:2233
+#: ../src/program.cpp:2230
 msgid "You got a strength boost."
 msgstr "Ты съел таблетку силы."
 
-#: ../src/program.cpp:2240
+#: ../src/program.cpp:2237
 msgid "You got a agility boost."
 msgstr "Ты съел таблетку подвижности."
 
-#: ../src/program.cpp:2247
+#: ../src/program.cpp:2244
 msgid "You have taken a grenade."
 msgstr "Ты взял гранату."
 
-#: ../src/program.cpp:2253
+#: ../src/program.cpp:2250
 msgid "You have taken a teleport."
 msgstr "Ты взял телепорт."
 
-#: ../src/program.cpp:2263
+#: ../src/program.cpp:2260
 #, c-format
 msgid "You have taken the %s."
 msgstr "Ты поднял %s."
 
-#: ../src/program.cpp:2484
+#: ../src/program.cpp:2485
 #, c-format
 msgid "FPS: %i"
 msgstr "Кадров/с: %i"
