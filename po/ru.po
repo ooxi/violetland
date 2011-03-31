@@ -9,9 +9,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: gl\n"
+"Language: ru\n"
 "X-Generator: Lokalize 1.1\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: ../src/program.cpp:183 ../src/program.cpp:346
 msgid "Please wait..."
@@ -134,7 +135,7 @@ msgstr "Ночное видение: можешь видеть в темноте
 
 #: ../src/program.cpp:654
 msgid "Looting: Monsters will drop more bonuses."
-msgstr "Марадер: из монстров выпадает больше полезных вещей."
+msgstr "Мародёр: из монстров выпадает больше полезных вещей."
 
 #: ../src/program.cpp:664
 msgid "Wide sight: accessible area for action is much more."
@@ -481,7 +482,7 @@ msgstr "Ночное видение"
 
 #: ../src/windows/CharStatsWindow.cpp:42
 msgid "Looting"
-msgstr "Марадер"
+msgstr "Мародёр"
 
 #: ../src/windows/CharStatsWindow.cpp:48
 msgid "Wide sight"
