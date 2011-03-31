@@ -1504,9 +1504,8 @@ void handleMonster(LifeForm* lf) {
 		else if (targetLifeForm->State != LIFEFORM_STATE_ALIVE)
 			enemy->targetId = "ambient";
 		else {
-			float range = Object::calc_dist(enemy->X, enemy->Y, 
-                                            targetLifeForm->X, 
-                                            targetLifeForm->Y);
+			float range = Object::calc_dist(enemy->X, enemy->Y,
+					targetLifeForm->X, targetLifeForm->Y);
 
 			if (range > 800)
 				enemy->targetId = "ambient";
@@ -1518,8 +1517,8 @@ void handleMonster(LifeForm* lf) {
 		LifeForm* lifeForm = gameState->getLifeForm(playerId);
 
 		if (lifeForm->State == LIFEFORM_STATE_ALIVE) {
-			float range = Object::calc_dist(enemy->X, enemy->Y, 
-                                            lifeForm->X, lifeForm->Y);
+			float range = Object::calc_dist(enemy->X, enemy->Y, lifeForm->X,
+					lifeForm->Y);
 			if (range < 800)
 				enemy->targetId = lifeForm->Id;
 		}
@@ -1528,8 +1527,8 @@ void handleMonster(LifeForm* lf) {
 	if (enemy->targetId.compare("ambient") == 0) {
 		// Hang around
 
-		float range = Object::calc_dist(enemy->X, enemy->Y, 
-                                        enemy->TargetX, enemy->TargetY);
+		float range = Object::calc_dist(enemy->X, enemy->Y, enemy->TargetX,
+				enemy->TargetY);
 
 		if (range < enemy->getWidth() * enemy->Scale * enemy->HitR * 5) {
 			enemy->TargetX = (rand() % (gameState->GameAreaSize * 2))
@@ -1542,9 +1541,8 @@ void handleMonster(LifeForm* lf) {
 
 		LifeForm* targetLifeForm = gameState->getLifeForm(enemy->targetId);
 
-		float range = Object::calc_dist(enemy->X, enemy->Y, 
-                                        targetLifeForm->X, 
-                                        targetLifeForm->Y);
+		float range = Object::calc_dist(enemy->X, enemy->Y, targetLifeForm->X,
+				targetLifeForm->Y);
 
 		if (range < 400 || targetLifeForm->Speed == 0 || enemy->Speed == 0) {
 			enemy->TargetX = targetLifeForm->X;
@@ -1632,8 +1630,7 @@ void handlePlayer(LifeForm* lf) {
 	if (input->getDownInput(InputHandler::MoveRight))
 		movementX = 1;
 
-	float movementDirection =
-			Object::calc_angle(0, 0, movementX, movementY);
+	float movementDirection = Object::calc_angle(0, 0, movementX, movementY);
 
 	if (movementX != 0 || movementY != 0)
 		player->move(movementDirection, videoManager->getFrameDeltaTime());
@@ -2010,9 +2007,9 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 		Sound* hitSound = enemy->hit(bullet->Damage, bullet->Poisoned);
 		if (hitSound != NULL) {
 			hitSound->play(7, 0, 0);
-			hitSound->setPos(Object::calc_angle(enemy->X, enemy->Y,
-					player->X, player->Y), Object::calc_dist(enemy->X,
-					enemy->Y, player->X, player->Y));
+			hitSound->setPos(Object::calc_angle(enemy->X, enemy->Y, player->X,
+					player->Y), Object::calc_dist(enemy->X, enemy->Y,
+					player->X, player->Y));
 		}
 
 		if (bullet->BigCalibre && !bullet->Penetrating) {
@@ -2316,8 +2313,8 @@ void drawGame() {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
 
 	if (player->WideSight) {
-		cam->X = player->TargetX;
-		cam->Y = player->TargetY;
+		cam->X = (player->TargetX + player->X) / 2;
+		cam->Y = (player->TargetY + player->Y) / 2;
 	} else {
 		cam->X = player->X;
 		cam->Y = player->Y;
@@ -2389,10 +2386,8 @@ void drawGame() {
 			!= gameState->lifeForms.end(); ++iter) {
 		LifeForm* lifeForm = iter->second;
 
-		if (lifeForm->getLeft() < left
-				&& lifeForm->getRight() > right
-				&& lifeForm->getTop() < top
-				&& lifeForm->getBottom() > bottom)
+		if (lifeForm->getLeft() < left && lifeForm->getRight() > right
+				&& lifeForm->getTop() < top && lifeForm->getBottom() > bottom)
 
 			if (lifeForm->Type == LIFEFORM_PLAYER && (lifeForm->State
 					== LIFEFORM_STATE_DIED || lifeForm->State
@@ -2469,10 +2464,10 @@ void drawGame() {
 	}
 
 	if (!gameState->Lost && !gameState->Paused) {
-		aim->draw(player->TargetX, player->TargetY, 1.0f + tan(
-				player->AccuracyDeviation * M_PI / 180)
-				* Object::calc_dist(player->X, player->Y,
-						player->TargetX, player->TargetY) / 25.0f,
+		aim->draw(player->TargetX, player->TargetY,
+				1.0f + tan(player->AccuracyDeviation * M_PI / 180)
+						* Object::calc_dist(player->X, player->Y,
+								player->TargetX, player->TargetY) / 25.0f,
 				player->getWeapon()->getReloadState() > 0 ? 1.2f
 						- player->getWeapon()->getReloadState() : 0.2f);
 	}

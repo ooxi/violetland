@@ -33,13 +33,13 @@ const int Camera::getHalfH() {
 }
 
 void Camera::applyGLOrtho() {
-	glMatrixMode(GL_PROJECTION);
+	glMatrixMode( GL_PROJECTION);
 	glLoadIdentity();
 
 	glOrtho(X - m_halfW, X + m_halfW, Y + m_halfH, Y - m_halfH, -1.0f, 1.0f);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	glMatrixMode( GL_MODELVIEW);
+	//glLoadIdentity();
 }
 
 Camera::~Camera() {
