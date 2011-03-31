@@ -50,6 +50,7 @@ set(srcFileList
 	${srcSystemDir}/Configuration.cpp
 	${srcUtilityDir}/FileUtility.cpp
 	${srcUtilityDir}/ImageUtility.cpp
+	${srcUtilityDir}/UidGenerator.cpp
 	${srcGraphicDir}/Texture.cpp
 	${srcGraphicDir}/Sprite.cpp 
 	${srcGraphicDir}/StaticObject.cpp

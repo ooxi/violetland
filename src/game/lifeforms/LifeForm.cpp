@@ -17,7 +17,7 @@ violetland::LifeForm::LifeForm(float x, float y, int w, int h) :
 	t = static_cast<unsigned long> (time(NULL));
 #endif  //linux || __FreeBSD__ || __APPLE__
 	char buf[30];
-	sprintf(buf, "%09i-%09li", (rand() % 999999999), t);
+	sprintf(buf, "%li", UidGenerator::getInstance()->getId());
 	Id = buf;
 	Strength = 1.0f;
 	Agility = 1.0f;
