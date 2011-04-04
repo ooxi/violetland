@@ -295,12 +295,14 @@ void violetland::Player::teleport() {
 	setY(TargetY);
 }
 void violetland::Player::setWeapon(Weapon *value) {
+	float Angle = getArmsAngle();
 	if (m_weapon) {
 		delete m_arms;
 		delete m_weapon;
 	}
 	m_weapon = new Weapon(*value);
 	m_arms = new StaticObject(X, Y, 128, 128, m_weapon->getPlayerTex(), false);
+	m_arms->Angle = Angle;
 	AccuracyDeviation = 0;
 }
 
