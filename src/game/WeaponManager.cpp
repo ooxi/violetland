@@ -3,7 +3,7 @@
 #include "WeaponManager.h"
 
 WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager) {
-	printf("Loading weapons...\n");
+	std::cout << "Loading weapons..." << std::endl;
 
 	m_fileUtility = fileUtility;
 	m_sndManager = sndManager;
@@ -11,10 +11,10 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 	std::vector<std::string> weapons = m_fileUtility->getSubDirsFromDir(
 			m_fileUtility->getFullPath(FileUtility::weapon, "."));
 
-	fprintf(stdout, "Total weapons found: %i\n", (int) weapons.size());
+	std::cout << "Total weapons found: " << weapons.size() << std::endl;
 
 	if (weapons.size() == 0) {
-		printf("Couldn't load weapons, the program won't run!\n");
+		std::cout << "Couldn't load weapons, the program won't run!" << std::endl;
 		exit(6);
 	}
 
@@ -22,44 +22,32 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 		if (weapons.at(i).compare("PM") == 0) {
 			weapons.at(i) = weapons.back();
 			weapons.back() = "PM";
-			fprintf(stdout, "EDIT: Putting PM to the end of list!\n");
+			std::cout << "EDIT: Putting PM to the end of list!" << std::endl;
 			break;
 		}
 	}
 
 	for (unsigned int j = 0; j < weapons.size(); j++) {
-		std::string buf;
-		
-		/*imagePath += "/image.png";
-		shotSoundPath += "/shot.png";
-		reloadSoundPath += "/reload.png";
-		playerPath += "/player.png";
-		statsPath += "/stats";*/
-
-		buf = weapons[j];
 		Texture* wImage = new Texture(ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::weapon, buf += "/image.png")),
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j] + "/image.png")),
 				GL_TEXTURE_2D, GL_LINEAR, true);
 				
-		buf = weapons[j];		
 		Texture* pImage = new Texture(ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::weapon, buf += "/player.png")),
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j] + "/player.png")),
 				GL_TEXTURE_2D, GL_LINEAR, true);
 				
-		buf = weapons[j];
 		Weapon *weapon = new Weapon(wImage, pImage, sndManager->create(
-				fileUtility->getFullPath(FileUtility::weapon, buf += "/shot.ogg")),
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j] + "/shot.ogg")),
 				sndManager->create(fileUtility->getFullPath(
-						FileUtility::weapon, std::string(buf) += "/reload.ogg")));
+						FileUtility::weapon, weapons[j] + "/reload.ogg")));
 
 		weapon->Name = weapons[j];
 
-		buf = weapons[j];
 		std::ifstream in;
-		in.open(m_fileUtility->getFullPath(FileUtility::weapon, buf += "/stats").c_str());
+		in.open(m_fileUtility->getFullPath(FileUtility::weapon, weapons[j] + "/stats").c_str());
 		if (!in) {
-			fprintf(stderr, "Couldn't load stats of weapon %s.\n",
-					weapons[j].c_str());
+			std::cerr << "Couldn't load stats of weapon " << 
+				weapons[j] << '.' << std::endl;
 			exit(4);
 		}
 
@@ -87,21 +75,20 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		std::vector<SDL_Surface*> animSurfaces;
 
-		buf = "shells/";
+		std::string shellDir = "shells/" + shellName;
 		unsigned int framesCount = fileUtility->getFilesCountFromDir(
-				fileUtility->getFullPath(FileUtility::anima, buf += shellName));
+				fileUtility->getFullPath(FileUtility::anima, shellDir));
 
-		fprintf(stdout, "Shell animation of %s - %s, frames count: %i.\n",
-				weapons[j].c_str(), shellName.c_str(), framesCount);
+		std::cout << "Shell animation of " << weapons[j] << " - " << 
+			shellName <<", frames count: " << framesCount << '.' << std::endl;
 		
-		buf += '/';
+		shellDir += '/';
 		for (unsigned i = 0; i < framesCount; i++) {
-			std::ostringstream oss;
-			oss << i << ".png";
-			std::string tmp = buf;
+			std::ostringstream filename;
+			filename << i << ".png";
 
 			SDL_Surface *surface = ImageUtility::loadImage(
-					fileUtility->getFullPath(FileUtility::anima, tmp += oss.str()));
+					fileUtility->getFullPath(FileUtility::anima, shellDir + filename.str()));
 
 			animSurfaces.push_back(surface);
 		}
@@ -110,7 +97,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 		Weapons.push_back(weapon);
 	}
 
-	fprintf(stdout, "Loading of weapons is completed.\n");
+	std::cout << "Loading of weapons is completed." << std::endl;
 }
 
 Weapon* WeaponManager::getWeaponByName(std::string name) {

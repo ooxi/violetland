@@ -1,8 +1,9 @@
 #include "MonsterFactory.h"
+#include <sstream>
 
 violetland::MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 		SoundManager* sndManager) {
-	printf("Loading monsters...\n");
+	std::cout << "Loading monsters..." << std::endl;
 
 	m_fileUtility = fileUtility;
 	m_sndManager = sndManager;
@@ -10,10 +11,10 @@ violetland::MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 	std::vector<std::string> monsters = m_fileUtility->getSubDirsFromDir(
 			m_fileUtility->getFullPath(FileUtility::monsters, "."));
 
-	fprintf(stdout, "Total monsters found: %i\n", (int) monsters.size());
+	std::cout << "Total monsters found: " << monsters.size() << std::endl;
 
 	if (monsters.size() == 0) {
-		printf("Couldn't load monsters, program won't run!\n");
+		std::cout << "Couldn't load monsters, program won't run!" << std::endl;
 		exit(5);
 	}
 
@@ -21,11 +22,10 @@ violetland::MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 		MonsterTemplate* mt = new MonsterTemplate(loadMonsterSprite(
 				monsters[j], "walk"), loadMonsterSprite(monsters[j], "death"));
 
-		char *buf;
-		sprintf(buf = new char[100], "%s/sounds/hit/", monsters[j].c_str());
-		std::vector<std::string> hitSounds = m_fileUtility->getFilesFromDir(
-				m_fileUtility->getFullPath(FileUtility::monsters, buf));
-		delete[] buf;
+		std::vector<std::string> hitSounds = 
+			m_fileUtility->getFilesFromDir(
+			m_fileUtility->getFullPath(	FileUtility::monsters, 
+										monsters[j] + "/sounds/hit/"));
 
 		for (unsigned int i = 0; i < hitSounds.size(); i++) {
 			mt->HitSounds.push_back(loadMonsterSound("hit", monsters[j],
@@ -37,29 +37,27 @@ violetland::MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 		m_monsters.push_back(mt);
 	}
 
-	fprintf(stdout, "Loading of monsters is completed.\n");
+	std::cout << "Loading of monsters is completed." << std::endl;
 }
 
 Sprite* violetland::MonsterFactory::loadMonsterSprite(std::string name,
 		std::string animType) {
 	std::vector<SDL_Surface*> animSurfaces;
+	
+	unsigned int framesCount = 
+		m_fileUtility->getFilesCountFromDir(
+		m_fileUtility->getFullPath(	FileUtility::monsters, 
+									name + '/' + animType + '/' ));
 
-	char *buf;
-	sprintf(buf = new char[100], "%s/%s/", name.c_str(), animType.c_str());
-	unsigned int framesCount = m_fileUtility->getFilesCountFromDir(
-			m_fileUtility->getFullPath(FileUtility::monsters, buf));
-	delete[] buf;
-
-	fprintf(stdout, "Monster %s, animation of %s, frames count: %i.\n",
-			name.c_str(), animType.c_str(), framesCount);
+	std::cout << "Monster " << name << ", animation of " << animType << 
+		", frames count: " << framesCount << '.' << std::endl;
 
 	for (unsigned i = 0; i < framesCount; i++) {
-		sprintf(buf = new char[100], "%s/%s/%i.png", name.c_str(),
-				animType.c_str(), i);
+		ostringstream oss;
+		oss << name << '/' << animType << '/' << i << ".png";
 		SDL_Surface *surface = ImageUtility::loadImage(
-				m_fileUtility->getFullPath(FileUtility::monsters, buf));
+				m_fileUtility->getFullPath(FileUtility::monsters, oss.str()));
 		animSurfaces.push_back(surface);
-		delete[] buf;
 	}
 
 	Sprite *monsterSprite = new Sprite(animSurfaces);
@@ -68,24 +66,19 @@ Sprite* violetland::MonsterFactory::loadMonsterSprite(std::string name,
 
 Sound* violetland::MonsterFactory::loadMonsterSound(std::string soundType,
 		std::string monsterName, std::string soundName) {
-	char *buf;
-	sprintf(buf = new char[100], "%s/sounds/%s/%s", monsterName.c_str(),
-			soundType.c_str(), soundName.c_str());
+	string buf = monsterName + "/sounds/" + soundType + '/' + soundName;
 	Sound* snd = m_sndManager->create(m_fileUtility->getFullPath(
 			FileUtility::monsters, buf));
-	delete[] buf;
 	return snd;
 }
 
 void violetland::MonsterFactory::fillMonsterStats(MonsterTemplate* t,
 		std::string name) {
 	std::ifstream in;
-	char *buf;
-	sprintf(buf = new char[100], "%s/stats", name.c_str());
+	string buf = name + "/stats";
 	in.open(m_fileUtility->getFullPath(FileUtility::monsters, buf).c_str());
-	delete[] buf;
 	if (!in) {
-		fprintf(stderr, "Couldn't load monster stats.\n");
+		std::cout << "Couldn't load monster stats." << std::endl;
 		exit(4);
 	}
 	while (in) {

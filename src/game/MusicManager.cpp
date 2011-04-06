@@ -4,7 +4,7 @@ const std::string DEFAULT = "04.ogg";
 
 violetland::MusicManager::MusicManager(FileUtility* fileUtility,
 		SoundManager* soundManager, Configuration* config) {
-	printf("MusicManager...\n");
+	std::cout << "MusicManager..." << std::endl;
 	m_fileUtility = fileUtility;
 	m_soundManager = soundManager;
 	m_config = config;
@@ -19,7 +19,7 @@ violetland::MusicManager::MusicManager(FileUtility* fileUtility,
 				snd));
 	}
 
-	fprintf(stdout, "\tloaded %i tracks\n", (int) musicFiles.size());
+	std::cout << "\tloaded " << musicFiles.size() << " tracks" << std::endl;
 
 	m_currentPlaying = "null";
 }

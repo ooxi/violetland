@@ -1,3 +1,5 @@
+#include <sstream>
+#include <iomanip>
 #include "HUD.h"
 #include <libintl.h>
 #include <locale.h>
@@ -205,11 +207,10 @@ void violetland::HUD::drawTime(GameState* gameState) {
 	const int minutes = gameState->Time / 60000;
 	const int seconds = (gameState->Time - minutes * 60000) / 1000;
 
-	char *buf;
-	sprintf(buf = new char[20], "%02d:%02d", minutes, seconds);
-	m_videoManager->RegularText->draw(buf, m_videoManager->getVideoMode().Width
-			/ 2, bottomBasePoint, TextManager::CENTER, TextManager::MIDDLE);
-	delete[] buf;
+	ostringstream oss;
+	oss << setfill('0') << setw(2) << minutes << ':' << setfill('0') << setw(2) << seconds;
+	m_videoManager->RegularText->draw(oss.str(), m_videoManager->getVideoMode().Width / 2, 
+			bottomBasePoint, TextManager::CENTER, TextManager::MIDDLE);
 }
 
 void violetland::HUD::drawEndGameScreen(GameState* gameState, int xp) {
@@ -260,15 +261,15 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 	if (gameState->Lost && !gameState->Paused)
 		drawEndGameScreen(gameState, player->Xp);
 
-	char* buf;
-	sprintf(buf = new char[30], "%s: %d/%d", player->getWeapon()->Name.c_str(),
-			player->getWeapon()->Ammo, player->getWeapon()->AmmoClipSize);
-	m_videoManager->RegularText->draw(buf,
+	ostringstream oss;
+	oss << player->getWeapon()->Name << ": " << player->getWeapon()->Ammo 
+		<< '/' << player->getWeapon()->AmmoClipSize;
+	m_videoManager->RegularText->draw(oss.str(),
 			m_videoManager->RegularText->getIndent(),
 			m_videoManager->RegularText->getIndent(), TextManager::LEFT,
 			TextManager::TOP);
-	delete[] buf;
 
+	char* buf;
 	sprintf(buf = new char[30], _("Grenades: %i"), player->Grenades);
 	m_videoManager->RegularText->draw(buf,
 			m_videoManager->RegularText->getIndent(),

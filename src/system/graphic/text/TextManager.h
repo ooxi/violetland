@@ -15,7 +15,7 @@ public:
 		TOP, MIDDLE, BOTTOM
 	};
 	TextManager(std::string fontPath, int fontSize);
-	void draw(const char *textBuf, float x, float y, TextHAlignFlag halign,
+	void draw(const std::string& textBuf, float x, float y, TextHAlignFlag halign,
 			TextVAlignFlag valign);
 	const int getHeight();
 	const int getIndent();

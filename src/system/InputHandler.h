@@ -53,7 +53,7 @@ public:
 	bool getPressInput(GameInputEvents evnt);
 	void resetMouseButtons();
 	int mouseX, mouseY;
-	static const char* getEventName(int eventNumber);
+	static std::string getEventName(int eventNumber);
 	static const int getEventNumber(std::string eventName);
 	static const char* getKeyName(Binding bind);
 private:

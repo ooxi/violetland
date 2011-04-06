@@ -109,7 +109,7 @@ void createTerrain() {
 	if (terrain)
 		delete terrain;
 
-	printf("Forming terrain...\n");
+	cout << "Forming terrain..." << endl;
 
 	int baseTexCount = fileUtility->getFilesCountFromDir(
 			fileUtility->getFullPath(FileUtility::image, "terrain"));
@@ -122,18 +122,18 @@ void createTerrain() {
 	int tilesCount = fileUtility->getFilesCountFromDir(buf);
 	delete[] buf;
 
-	sprintf(buf = new char[100], "terrain/base_%i.png", baseTex);
+	ostringstream oss;
+	oss << "terrain/base_" << baseTex << ".png";
 	SDL_Surface *terrainSurface = ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, buf), 1);
-	delete[] buf;
+			fileUtility->getFullPath(FileUtility::image, oss.str()), 1);
 
 	vector<SDL_Surface*> tiles;
 	for (int i = 0; i < tilesCount; i++) {
-		sprintf(buf = new char[100], "terrain/%i/%i.png", baseTex, i);
+		oss.str("");
+		oss << "terrain/" << baseTex << '/' << i << ".png";
 		SDL_Surface *tile = ImageUtility::loadImage(fileUtility->getFullPath(
-				FileUtility::image, buf), 1);
+				FileUtility::image, oss.str()), 1);
 		tiles.push_back(tile);
-		delete[] buf;
 	}
 
 	terrain = new Terrain(terrainSurface, tiles, gameState->GameAreaSize);
@@ -220,16 +220,12 @@ void startGame(std::string elementName) {
 }
 
 // Creation of a string for the window title
-char *getProjectTitle() {
-	char *buf;
-	sprintf(buf = new char[PROJECT.size() + VERSION.size() + 4], "%s v%s",
-			PROJECT.c_str(), VERSION.c_str());
-	return buf;
+inline string getProjectTitle() {
+	return PROJECT + " v" + VERSION;
 }
 
 // Outputs the information on the program and the runtime environment
 void printVersion() {
-	char* pr = getProjectTitle();
 	string env = "UNKNOWN";
 #ifdef _WIN32
 	env = "WINDOWS";
@@ -243,8 +239,7 @@ void printVersion() {
 #ifdef __APPLE__
 	env = "MAC";
 #endif //__APPLE__
-	fprintf(stdout, "%s @ %s\n", pr, env.c_str());
-	delete[] pr;
+	cout << getProjectTitle() << " @ " << env << endl;
 }
 
 string getDefaultName() {
@@ -292,9 +287,9 @@ void initSystem() {
 	atexit(TTF_Quit);
 	atexit(SDL_Quit);
 
-	printf("SDL_Init...\n");
+	cout << "SDL_Init..." << endl;
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		cerr << "Couldn't initialize SDL: " << SDL_GetError() << endl;
 		exit(1);
 	}
 
@@ -303,12 +298,9 @@ void initSystem() {
 	cam = new Camera();
 	videoManager->setMode(config->Screen, cam);
 
-	printf(_("Preparing window...\n"));
+	cout << _("Preparing window...") << endl;
 
-	char* buf;
-	buf = getProjectTitle();
-	SDL_WM_SetCaption(buf, NULL);
-	delete[] buf;
+	SDL_WM_SetCaption(getProjectTitle().c_str(), NULL);
 
 	SDL_Surface* icon = ImageUtility::loadImage(fileUtility->getFullPath(
 			FileUtility::common, "icon-light.png"), 1.0f);
@@ -326,13 +318,13 @@ void initSystem() {
 
 	glDisable(GL_DEPTH_TEST);
 
-	printf(_("Drawing splash screen...\n"));
+	cout << _("Drawing splash screen...") << endl;
 
-	sprintf(buf = new char[100], "splash_%i.png", (rand() % 2));
+	ostringstream oss;
+	oss << "splash_" << rand() % 2 << ".png";
 	Texture* tex = new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, buf)), GL_TEXTURE_2D,
+			fileUtility->getFullPath(FileUtility::image, oss.str())), GL_TEXTURE_2D,
 			GL_LINEAR, true);
-	delete[] buf;
 
 	splash = new StaticObject(0, 0, tex->getWidth(), tex->getHeight(), tex,
 			true);
@@ -350,7 +342,7 @@ void initSystem() {
 
 	SDL_GL_SwapBuffers();
 
-	printf(_("Preparing sound systems...\n"));
+	cout << _("Preparing sound systems...") << endl;
 
 	sndManager = new SoundManager(fileUtility, config);
 	musicManager = new MusicManager(fileUtility, sndManager, config);
@@ -745,30 +737,26 @@ void refreshOptionsWindow() {
 	else
 		w->removeElement("+fullscreen", false);
 
-	char *buf;
-	sprintf(buf = new char[15], "%ix%i", tempConfig->Screen.Width,
-			tempConfig->Screen.Height);
-	TextObject* resInfo = videoManager->RegularText->getObject(buf, r
+	ostringstream oss;
+	oss << tempConfig->Screen.Width << 'x' << tempConfig->Screen.Height;
+	TextObject* resInfo = videoManager->RegularText->getObject(oss.str(), r
 			+ videoManager->RegularText->getHeight() * 8.0f,
 			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
-	delete[] buf;
 	w->addElement("+resolution", resInfo);
 
-	float snd = (float) config->SoundVolume * 10;
-	sprintf(buf = new char[30], "%.0f%%", snd);
-	TextObject* sndInd = videoManager->RegularText->getObject(buf, l,
+	oss.str("");
+	oss << config->SoundVolume * 10 << '%';
+	TextObject* sndInd = videoManager->RegularText->getObject(oss.str(), l,
 			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
-	delete[] buf;
 	w->addElement("+soundvolume", sndInd);
 
-	float mus = (float) config->MusicVolume * 10;
-	sprintf(buf = new char[30], "%.0f%%", mus);
-	TextObject * musInd = videoManager->RegularText->getObject(buf, l,
+	oss.str("");
+	oss << config->MusicVolume * 10 << '%';
+	TextObject * musInd = videoManager->RegularText->getObject(oss.str(), l,
 			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
-	delete[] buf;
 	w->addElement("+musicvolume", musInd);
 }
 
@@ -924,10 +912,7 @@ void refreshControlsMenuWindow() {
 						videoManager->RegularText->getHeight() * strN,
 						TextManager::LEFT, TextManager::MIDDLE));
 
-		char* skey = (char*) malloc(sizeof(char) * (strlen(
-				InputHandler::getEventName(i)) + 4));
-		sprintf(skey, "%skey", InputHandler::getEventName(i));
-
+		string skey = InputHandler::getEventName(i) + "key";
 		w->addElement(skey, videoManager->RegularText->getObject(
 				InputHandler::getKeyName(config->PlayerInputBinding[i]), r,
 				videoManager->RegularText->getHeight() * strN,
@@ -1321,7 +1306,7 @@ void backFromOptionsAndSave(std::string elementName) {
 
 	if (changeVideoMode) {
 #ifdef _WIN32
-		fprintf(stdout,_("Hot video mode changing is not supported on windows now. You should restart the game."));
+		cout << _("Hot video mode changing is not supported on windows now. You should restart the game.");
 		unloadResources();
 		shutdownSystem();
 		exit(0);
@@ -1484,9 +1469,9 @@ void handleMonster(LifeForm* lf) {
 	// HUD related
 	if (!gameState->Lost && enemy->detectCollide(player->TargetX,
 			player->TargetY)) {
-		char buf[100];
-		sprintf(buf, "%s (%i)", enemy->Name.c_str(), enemy->Level);
-		hud->Info = buf;
+		ostringstream oss;
+		oss << enemy->Name << " (" << enemy->Level << ')';
+		hud->Info = oss.str();
 	}
 
 	// Visual related
@@ -2555,23 +2540,22 @@ void parsePreferences(int argc, char *argv[]) {
 
 		if (arg.compare("--help") == 0) {
 			printVersion();
-			printf("\nArguments:\n");
-			printf("\t--help\t\t\t\tPrint help (this message) and exit\n");
-			printf(
-					"\t-w <screen_width>\t\tSet screen width to <screen_width>\n");
-			printf(
-					"\t-h <screen_height>\t\tSet screen height to <screen_height>\n");
-			printf("\t-f\t\t\t\tGo to fullscreen at start\n");
-			printf("\t-i\t\t\t\tForce windowed mode\n");
-			printf("\t--fps <fps_count>\t\tLimit game fps by <fps_count>\n");
-			printf("\t\t\t\t\tDefault value of <fps_count> is 100\n");
-			printf("\t\t\t\t\tSeting <fps_count> to 0 will disable\n");
-			printf("\t\t\t\t\trestriction\n");
-			printf("\t--showfps\t\t\tShow fps in game\n");
-			printf("\t--monsters <count>\t\tImmediately spawn\n");
-			printf("\t\t\t\t\t<count> monsters at start\n");
-			printf(
-					"\n\nThese and other parametres can be adjusted in a configuration file\n");
+			cout << endl << "Arguments:" << endl;
+			cout << "\t--help\t\t\t\tPrint help (this message) and exit" << endl;
+			cout << "\t-w <screen_width>\t\tSet screen width to <screen_width>" << endl;
+			cout << "\t-h <screen_height>\t\tSet screen height to <screen_height>" << endl;
+			cout << "\t-f\t\t\t\tGo to fullscreen at start" << endl;
+			cout << "\t-i\t\t\t\tForce windowed mode" << endl;
+			cout << "\t--fps <fps_count>\t\tLimit game fps by <fps_count>" << endl;
+			cout << "\t\t\t\t\tDefault value of <fps_count> is 100" << endl;
+			cout << "\t\t\t\t\tSeting <fps_count> to 0 will disable" << endl;
+			cout << "\t\t\t\t\trestriction" << endl;
+			cout << "\t--showfps\t\t\tShow fps in game" << endl;
+			cout << "\t--monsters <count>\t\tImmediately spawn" << endl;
+			cout << "\t\t\t\t\t<count> monsters at start" << endl;
+			cout << endl << endl << 
+				"These and other parametres can be adjusted in a configuration file" << endl;
+
 			exit(0);
 		}
 
@@ -2608,7 +2592,7 @@ void parsePreferences(int argc, char *argv[]) {
 			if (n >= 0)
 				config->MonstersAtStart = n;
 			else
-				printf("Number of monsters must be positive.\n");
+				cout << "Number of monsters must be positive." << endl;
 		}
 	}
 }

@@ -142,7 +142,7 @@ void InputHandler::process() {
 	}
 }
 
-const char* InputHandler::getEventName(int eventNumber) {
+string InputHandler::getEventName(int eventNumber) {
 	switch (eventNumber) {
 	case Restart:
 		return _("Restart");

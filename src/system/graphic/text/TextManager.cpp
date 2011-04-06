@@ -12,9 +12,9 @@ TextManager::TextManager(std::string fontPath, int fontSize) {
 	m_ident = (int) (m_height * 0.5);
 }
 
-void TextManager::draw(const char *textBuf, float x, float y,
+void TextManager::draw(const std::string& textBuf, float x, float y,
 		TextHAlignFlag halign, TextVAlignFlag valign) {
-	if (strlen(textBuf) == 0)
+	if (textBuf.size() == 0)
 		return;
 
 	TextObject *textObject = TextManager::getObject(textBuf, x, y, halign,

@@ -57,7 +57,7 @@ void Highscores::read() {
 		}
 		ifile.close();
 	} else {
-		printf("Can't open file with scores.\n");
+		std::cout << "Can't open file with scores." << std::endl;
 	}
 }
 
@@ -123,9 +123,9 @@ bool Highscores::add(HighscoresEntry* entry) {
 
 		remove(hsTempFile.c_str());
 
-		printf("Scores was updated.\n");
+		std::cout << "Scores was updated." << std::endl;
 	} else {
-		printf("Can't write scores to file.\n");
+		std::cout << "Can't write scores to file." << std::endl;
 	}
 
 	for (unsigned int i = 0; i < m_data.size(); i++) {
