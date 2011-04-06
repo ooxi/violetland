@@ -61,6 +61,8 @@
 #include "windows/HelpWindow.h"
 #include "windows/CharStatsWindow.h"
 
+#include <sstream>
+
 using namespace std;
 using namespace violetland;
 
@@ -1182,6 +1184,10 @@ void createMainMenuWindow() {
 	mainMenu->addHandler(Window::hdl_lclick, "highscores", showHighScores);
 	mainMenu->addHandler(Window::hdl_lclick, "exit", endGame);
 
+
+	std::map<std::string,Window*>::iterator it = windows.find("mainmenu");
+	if(it != windows.end())
+		delete it->second;
 	windows["mainmenu"] = mainMenu;
 
 	refreshMainMenuWindow();
@@ -1232,44 +1238,42 @@ void createHighscoresWindow() {
 
 	if (!highscores.empty())
 		for (unsigned int i = 0; i < highscores.size(); i++) {
-			char* label;
-			char* line;
-			sprintf(label = new char[30], "xp%i", i);
-			sprintf(line = new char[30], "%i", highscores[i]->Xp);
-			scoresWin->addElement(label, videoManager->RegularText->getObject(
-					line, l, videoManager->RegularText->getHeight()
+			ostringstream oss1, oss2;
+            
+			oss1 << "xp" << i;
+			oss2 << highscores[i]->Xp;
+			scoresWin->addElement(oss1.str(), videoManager->RegularText->getObject(
+					oss2.str(), l, videoManager->RegularText->getHeight()
 							* (5.0f + i), TextManager::LEFT,
 					TextManager::MIDDLE));
-			delete[] label;
-			delete[] line;
-
-			sprintf(label = new char[30], "params%i", i);
-			sprintf(line = new char[30], "%i/%i/%i",
-					(int) (highscores[i]->Strength * 100),
-					(int) (highscores[i]->Agility * 100),
-					(int) (highscores[i]->Vitality * 100));
-			scoresWin->addElement(label, videoManager->RegularText->getObject(
-					line, r2, videoManager->RegularText->getHeight() * (5.0f
+            
+			oss1.str("");
+			oss2.str("");
+			oss1 << "params" << i;
+			oss2 << (int) (highscores[i]->Strength * 100) << '/' << 
+					(int) (highscores[i]->Agility * 100) << '/' << 
+					(int) (highscores[i]->Vitality * 100);
+			scoresWin->addElement(oss1.str(), videoManager->RegularText->getObject(
+					oss2.str(), r2, videoManager->RegularText->getHeight() * (5.0f
 							+ i), TextManager::LEFT, TextManager::MIDDLE));
-			delete[] label;
-			delete[] line;
 
 			const int minutes = highscores[i]->Time / 60000;
 			const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
 
-			sprintf(label = new char[30], "time%i", i);
-			sprintf(line = new char[30], "%im %is", minutes, seconds);
-			scoresWin->addElement(label, videoManager->RegularText->getObject(
-					line, r3, videoManager->RegularText->getHeight() * (5.0f
+			oss1.str("");
+			oss2.str("");
+			oss1 << "time" << i;
+			oss2 << minutes << "m " << seconds << 's';
+			scoresWin->addElement(oss1.str(), videoManager->RegularText->getObject(
+					oss2.str(), r3, videoManager->RegularText->getHeight() * (5.0f
 							+ i), TextManager::LEFT, TextManager::MIDDLE));
 
-			delete[] label;
-			sprintf(label = new char[30], "name%i", i);
-			scoresWin->addElement(label, videoManager->RegularText->getObject(
+			oss1.str("");
+			oss1 << "name" << i;
+			scoresWin->addElement(oss1.str(), videoManager->RegularText->getObject(
 					highscores[i]->Name->c_str(), r4,
 					videoManager->RegularText->getHeight() * (5.0f + i),
 					TextManager::LEFT, TextManager::MIDDLE));
-			delete[] label;
 		}
 
 	scoresWin->addElement("back", videoManager->RegularText->getObject(

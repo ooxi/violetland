@@ -1,6 +1,9 @@
 #ifndef TEMPLATES_H_
 #define TEMPLATES_H_
 
+#include <map>
+#include <vector>
+
 template<typename T1, typename T2> void clearMap(std::map<T1, T2>* map) {
 	typename std::map<T1, T2>::const_iterator i;
 	for (i = map->begin(); i != map->end(); ++i) {

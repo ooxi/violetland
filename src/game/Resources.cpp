@@ -84,7 +84,9 @@ violetland::Resources::~Resources() {
 	delete PlayerWalkSprite;
 	delete GrenadeSprite;
 
+	clearVector<Texture*> (&ExplTex);
 	clearVector<Texture*> (&BloodTex);
+	clearVector<Sound*> (&ExplSounds);
 	clearVector<Sound*> (&PlayerHitSounds);
 	clearVector<Sprite*> (&PlayerDeathSprites);
 	clearMap<BonusType, Texture*> (&PowerupTex);

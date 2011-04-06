@@ -9,6 +9,7 @@
 class HighscoresEntry {
 public:
 	HighscoresEntry();
+	~HighscoresEntry();
 	HighscoresEntry(violetland::Player* player, int Time);
 	std::string *Name;
 	float Strength;

@@ -1,6 +1,6 @@
 #include "ImageUtility.h"
 
-SDL_Surface *ImageUtility::loadImage(std::string fileName, float prescale) {
+SDL_Surface *ImageUtility::loadImage(const std::string& fileName, float prescale) {
 	SDL_Surface *image = IMG_Load(fileName.c_str());
 	if (image == NULL) {
 		fprintf(stderr, "Couldn't load %s: %s\n", fileName.c_str(),

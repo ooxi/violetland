@@ -19,7 +19,7 @@ public:
 			TextVAlignFlag valign);
 	const int getHeight();
 	const int getIndent();
-	TextObject* getObject(const char *textBuf, float x, float y,
+	TextObject* getObject(const std::string& textBuf, float x, float y,
 			TextHAlignFlag halign, TextVAlignFlag valign);
 	virtual ~TextManager();
 };

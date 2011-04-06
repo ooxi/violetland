@@ -20,6 +20,7 @@ enum BonusType {
 class Powerup: public StaticObject {
 public:
 	Powerup(float x, float y, Texture *tex);
+	~Powerup();
 	void *Object;
 	BonusType Type;
 	int Time;

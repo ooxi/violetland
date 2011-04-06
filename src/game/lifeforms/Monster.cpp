@@ -121,6 +121,7 @@ void violetland::Monster::process(int deltaTime) {
 	}
 
 	if (State == LIFEFORM_STATE_SMITTEN) {
+		delete m_body;
 		m_body = new DynamicObject(X, Y, Base->DeathSprite);
 		State = LIFEFORM_STATE_DYING;
 	}

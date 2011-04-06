@@ -1,4 +1,5 @@
 #include "Highscores.h"
+#include "../system/utility/Templates.h"
 
 using namespace violetland;
 using namespace std;
@@ -19,6 +20,10 @@ HighscoresEntry::HighscoresEntry(Player* player, int Time) {
 	this->Time = Time;
 	this->Xp = player->Xp;
 	this->Name = new string();
+}
+
+HighscoresEntry::~HighscoresEntry() {
+	delete Name;
 }
 
 Highscores::Highscores(FileUtility* fileUtility) {
@@ -43,6 +48,7 @@ void Highscores::read() {
 				break;
 			char* name = (char*) malloc((size + 1) * sizeof(char));
 			ifile.read(reinterpret_cast<char*> (name), size);
+			delete p->Name;
 			p->Name = new string(name);
 			free(name);
 			if (ifile.eof())
@@ -138,8 +144,5 @@ vector<HighscoresEntry*> Highscores::getData() {
 }
 
 Highscores::~Highscores() {
-	for (unsigned int i = 0; i < m_data.size(); i++) {
-		delete m_data[i];
-	}
-	m_data.clear();
+	clearVector<HighscoresEntry*>(&m_data);
 }

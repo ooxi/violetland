@@ -1,4 +1,5 @@
 #include "Sprite.h"
+#include "../utility/Templates.h"
 
 Sprite::Sprite(std::vector<SDL_Surface*> surfaces) {
 	for (unsigned int i = 0; i < surfaces.size(); i++) {
@@ -17,8 +18,5 @@ const int Sprite::getFramesCount() {
 }
 
 Sprite::~Sprite() {
-	for (unsigned int i = 0; i < m_frames.size(); i++) {
-		m_frames.erase(m_frames.begin() + i);
-	}
-	m_frames.clear();
+	clearVector(&m_frames);
 }

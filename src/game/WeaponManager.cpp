@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "WeaponManager.h"
 
 WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager) {
@@ -26,37 +28,35 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 	}
 
 	for (unsigned int j = 0; j < weapons.size(); j++) {
-		char *imagePath;
-		char *shotSoundPath;
-		char *reloadSoundPath;
-		char *playerPath;
-		sprintf(imagePath = new char[1000], "%s/image.png", weapons[j].c_str());
-		sprintf(playerPath = new char[1000], "%s/player.png",
-				weapons[j].c_str());
-		sprintf(shotSoundPath = new char[1000], "%s/shot.ogg",
-				weapons[j].c_str());
-		sprintf(reloadSoundPath = new char[1000], "%s/reload.ogg",
-				weapons[j].c_str());
+		std::string buf;
+		
+		/*imagePath += "/image.png";
+		shotSoundPath += "/shot.png";
+		reloadSoundPath += "/reload.png";
+		playerPath += "/player.png";
+		statsPath += "/stats";*/
 
+		buf = weapons[j];
 		Texture* wImage = new Texture(ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::weapon, imagePath)),
+				fileUtility->getFullPath(FileUtility::weapon, buf += "/image.png")),
 				GL_TEXTURE_2D, GL_LINEAR, true);
+				
+		buf = weapons[j];		
 		Texture* pImage = new Texture(ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::weapon, playerPath)),
+				fileUtility->getFullPath(FileUtility::weapon, buf += "/player.png")),
 				GL_TEXTURE_2D, GL_LINEAR, true);
-
+				
+		buf = weapons[j];
 		Weapon *weapon = new Weapon(wImage, pImage, sndManager->create(
-				fileUtility->getFullPath(FileUtility::weapon, shotSoundPath)),
+				fileUtility->getFullPath(FileUtility::weapon, buf += "/shot.ogg")),
 				sndManager->create(fileUtility->getFullPath(
-						FileUtility::weapon, reloadSoundPath)));
+						FileUtility::weapon, std::string(buf) += "/reload.ogg")));
 
 		weapon->Name = weapons[j];
 
+		buf = weapons[j];
 		std::ifstream in;
-		char *buf;
-		sprintf(buf = new char[100], "%s/stats", weapons[j].c_str());
-		in.open(m_fileUtility->getFullPath(FileUtility::weapon, buf).c_str());
-		delete[] buf;
+		in.open(m_fileUtility->getFullPath(FileUtility::weapon, buf += "/stats").c_str());
 		if (!in) {
 			fprintf(stderr, "Couldn't load stats of weapon %s.\n",
 					weapons[j].c_str());
@@ -87,23 +87,23 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		std::vector<SDL_Surface*> animSurfaces;
 
-		sprintf(buf = new char[100], "shells/%s", shellName.c_str());
+		buf = "shells/";
 		unsigned int framesCount = fileUtility->getFilesCountFromDir(
-				fileUtility->getFullPath(FileUtility::anima, buf));
-		delete[] buf;
+				fileUtility->getFullPath(FileUtility::anima, buf += shellName));
 
 		fprintf(stdout, "Shell animation of %s - %s, frames count: %i.\n",
 				weapons[j].c_str(), shellName.c_str(), framesCount);
-
+		
+		buf += '/';
 		for (unsigned i = 0; i < framesCount; i++) {
-			sprintf(buf = new char[100], "shells/%s/%i.png", shellName.c_str(),
-					i);
+			std::ostringstream oss;
+			oss << i << ".png";
+			std::string tmp = buf;
 
 			SDL_Surface *surface = ImageUtility::loadImage(
-					fileUtility->getFullPath(FileUtility::anima, buf));
+					fileUtility->getFullPath(FileUtility::anima, tmp += oss.str()));
 
 			animSurfaces.push_back(surface);
-			delete[] buf;
 		}
 		weapon->ShellSprite = new Sprite(animSurfaces);
 

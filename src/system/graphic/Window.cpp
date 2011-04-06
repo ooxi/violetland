@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "../utility/Templates.h"
 
 Window::Window(float x, float y, int w, int h, float r, float g, float b,
 		float a) {
@@ -139,11 +140,7 @@ void Window::process(InputHandler* input) {
 }
 
 Window::~Window() {
-	std::map<std::string, TextObject*>::const_iterator iter;
-	for (iter = m_elements.begin(); iter != m_elements.end(); ++iter) {
-		delete iter->second;
-	}
-	m_elements.clear();
+	clearMap(&m_elements);
 	m_lcHandlers.clear();
 	m_rcHandlers.clear();
 }

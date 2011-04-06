@@ -2,6 +2,7 @@
 #define _USE_MATH_DEFINES
 #endif //_WIN32W
 #include "Player.h"
+#include "../../system/utility/Templates.h"
 
 violetland::Player::Player() :
 	LifeForm(0, 0, 128, 128) {
@@ -189,6 +190,7 @@ void violetland::Player::processState(int deltaTime) {
 
 	if (State == LIFEFORM_STATE_SMITTEN) {
 		const float angle = m_body->Angle;
+		delete m_body;
 		m_body = new DynamicObject(X, Y, m_deathSprite);
 		m_body->Angle = angle;
 		State = LIFEFORM_STATE_DYING;
@@ -313,8 +315,5 @@ violetland::Player::~Player() {
 		delete m_arms;
 		delete m_weapon;
 	}
-	for (unsigned int i = 0; i < m_shells.size(); i++) {
-		delete m_shells[i];
-	}
-	m_shells.clear();
+	clearVector<DynamicObject*>(&m_shells);
 }

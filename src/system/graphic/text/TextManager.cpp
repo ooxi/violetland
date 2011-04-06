@@ -1,5 +1,7 @@
 #include "TextManager.h"
 
+#include <iostream>
+
 TextManager::TextManager(std::string fontPath, int fontSize) {
 	m_font = TTF_OpenFont(fontPath.c_str(), fontSize);
 	if (!m_font) {
@@ -30,8 +32,9 @@ const int TextManager::getIndent() {
 	return m_ident;
 }
 
-TextObject* TextManager::getObject(const char *textBuf, float x, float y,
+TextObject* TextManager::getObject(const std::string& textBuf, float x, float y,
 		TextHAlignFlag halign, TextVAlignFlag valign) {
+
 	SDL_Surface *textImage = ImageUtility::createImage(m_font, 255, 255, 255,
 			255, 0, 0, 0, 255, textBuf, ImageUtility::blended);
 
