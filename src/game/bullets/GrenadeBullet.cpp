@@ -1,8 +1,10 @@
 #include "GrenadeBullet.h"
 
+namespace violetland {
+
 GrenadeBullet::GrenadeBullet(float x, float y, float targetX, float targetY,
 		Sprite* sprite) :
-	Bullet(x, y, x, y, Bullet::grenade) {
+	Bullet(x, y, x, y, BULLET_GRENADE) {
 	m_targetX = targetX;
 	m_targetY = targetY;
 	m_distance = Object::calc_dist(X, Y, m_targetX, m_targetY);
@@ -33,4 +35,6 @@ void GrenadeBullet::draw() {
 
 GrenadeBullet::~GrenadeBullet() {
 	delete m_image;
+}
+
 }

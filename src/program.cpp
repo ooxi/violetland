@@ -323,8 +323,8 @@ void initSystem() {
 	ostringstream oss;
 	oss << "splash_" << rand() % 2 << ".png";
 	Texture* tex = new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, oss.str())), GL_TEXTURE_2D,
-			GL_LINEAR, true);
+			fileUtility->getFullPath(FileUtility::image, oss.str())),
+			GL_TEXTURE_2D, GL_LINEAR, true);
 
 	splash = new StaticObject(0, 0, tex->getWidth(), tex->getHeight(), tex,
 			true);
@@ -1169,9 +1169,8 @@ void createMainMenuWindow() {
 	mainMenu->addHandler(Window::hdl_lclick, "highscores", showHighScores);
 	mainMenu->addHandler(Window::hdl_lclick, "exit", endGame);
 
-
-	std::map<std::string,Window*>::iterator it = windows.find("mainmenu");
-	if(it != windows.end())
+	std::map<std::string, Window*>::iterator it = windows.find("mainmenu");
+	if (it != windows.end())
 		delete it->second;
 	windows["mainmenu"] = mainMenu;
 
@@ -1224,23 +1223,30 @@ void createHighscoresWindow() {
 	if (!highscores.empty())
 		for (unsigned int i = 0; i < highscores.size(); i++) {
 			ostringstream oss1, oss2;
-            
+
 			oss1 << "xp" << i;
 			oss2 << highscores[i]->Xp;
-			scoresWin->addElement(oss1.str(), videoManager->RegularText->getObject(
-					oss2.str(), l, videoManager->RegularText->getHeight()
-							* (5.0f + i), TextManager::LEFT,
-					TextManager::MIDDLE));
-            
+			scoresWin->addElement(
+					oss1.str(),
+					videoManager->RegularText->getObject(
+							oss2.str(),
+							l,
+							videoManager->RegularText->getHeight() * (5.0f + i),
+							TextManager::LEFT, TextManager::MIDDLE));
+
 			oss1.str("");
 			oss2.str("");
 			oss1 << "params" << i;
-			oss2 << (int) (highscores[i]->Strength * 100) << '/' << 
-					(int) (highscores[i]->Agility * 100) << '/' << 
-					(int) (highscores[i]->Vitality * 100);
-			scoresWin->addElement(oss1.str(), videoManager->RegularText->getObject(
-					oss2.str(), r2, videoManager->RegularText->getHeight() * (5.0f
-							+ i), TextManager::LEFT, TextManager::MIDDLE));
+			oss2 << (int) (highscores[i]->Strength * 100) << '/'
+					<< (int) (highscores[i]->Agility * 100) << '/'
+					<< (int) (highscores[i]->Vitality * 100);
+			scoresWin->addElement(
+					oss1.str(),
+					videoManager->RegularText->getObject(
+							oss2.str(),
+							r2,
+							videoManager->RegularText->getHeight() * (5.0f + i),
+							TextManager::LEFT, TextManager::MIDDLE));
 
 			const int minutes = highscores[i]->Time / 60000;
 			const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
@@ -1249,16 +1255,23 @@ void createHighscoresWindow() {
 			oss2.str("");
 			oss1 << "time" << i;
 			oss2 << minutes << "m " << seconds << 's';
-			scoresWin->addElement(oss1.str(), videoManager->RegularText->getObject(
-					oss2.str(), r3, videoManager->RegularText->getHeight() * (5.0f
-							+ i), TextManager::LEFT, TextManager::MIDDLE));
+			scoresWin->addElement(
+					oss1.str(),
+					videoManager->RegularText->getObject(
+							oss2.str(),
+							r3,
+							videoManager->RegularText->getHeight() * (5.0f + i),
+							TextManager::LEFT, TextManager::MIDDLE));
 
 			oss1.str("");
 			oss1 << "name" << i;
-			scoresWin->addElement(oss1.str(), videoManager->RegularText->getObject(
-					highscores[i]->Name->c_str(), r4,
-					videoManager->RegularText->getHeight() * (5.0f + i),
-					TextManager::LEFT, TextManager::MIDDLE));
+			scoresWin->addElement(
+					oss1.str(),
+					videoManager->RegularText->getObject(
+							highscores[i]->Name->c_str(),
+							r4,
+							videoManager->RegularText->getHeight() * (5.0f + i),
+							TextManager::LEFT, TextManager::MIDDLE));
 		}
 
 	scoresWin->addElement("back", videoManager->RegularText->getObject(
@@ -1977,7 +1990,7 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 	}
 
 	bool bypassDirectDamage = false;
-	if (bullet->Type == Bullet::standard) {
+	if (bullet->Type == BULLET_STANDARD) {
 		if (((StandardBullet*) bullet)->isExplosive()) {
 			bullet->deactivate();
 			addExplosion(bullet->X, bullet->Y, bullet->Damage, 100.0f);
@@ -2053,7 +2066,7 @@ void handleBullets() {
 			}
 
 			if (gameState->bullets[i]->isReadyToRemove()
-					&& gameState->bullets[i]->Type == Bullet::grenade) {
+					&& gameState->bullets[i]->Type == BULLET_GRENADE) {
 				addExplosion(gameState->bullets[i]->X,
 						gameState->bullets[i]->Y,
 						gameState->bullets[i]->Damage, 150.0f);
@@ -2541,20 +2554,26 @@ void parsePreferences(int argc, char *argv[]) {
 		if (arg.compare("--help") == 0) {
 			printVersion();
 			cout << endl << "Arguments:" << endl;
-			cout << "\t--help\t\t\t\tPrint help (this message) and exit" << endl;
-			cout << "\t-w <screen_width>\t\tSet screen width to <screen_width>" << endl;
-			cout << "\t-h <screen_height>\t\tSet screen height to <screen_height>" << endl;
+			cout << "\t--help\t\t\t\tPrint help (this message) and exit"
+					<< endl;
+			cout << "\t-w <screen_width>\t\tSet screen width to <screen_width>"
+					<< endl;
+			cout
+					<< "\t-h <screen_height>\t\tSet screen height to <screen_height>"
+					<< endl;
 			cout << "\t-f\t\t\t\tGo to fullscreen at start" << endl;
 			cout << "\t-i\t\t\t\tForce windowed mode" << endl;
-			cout << "\t--fps <fps_count>\t\tLimit game fps by <fps_count>" << endl;
+			cout << "\t--fps <fps_count>\t\tLimit game fps by <fps_count>"
+					<< endl;
 			cout << "\t\t\t\t\tDefault value of <fps_count> is 100" << endl;
 			cout << "\t\t\t\t\tSeting <fps_count> to 0 will disable" << endl;
 			cout << "\t\t\t\t\trestriction" << endl;
 			cout << "\t--showfps\t\t\tShow fps in game" << endl;
 			cout << "\t--monsters <count>\t\tImmediately spawn" << endl;
 			cout << "\t\t\t\t\t<count> monsters at start" << endl;
-			cout << endl << endl << 
-				"These and other parametres can be adjusted in a configuration file" << endl;
+			cout << endl << endl
+					<< "These and other parametres can be adjusted in a configuration file"
+					<< endl;
 
 			exit(0);
 		}

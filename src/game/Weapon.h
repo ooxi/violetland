@@ -5,6 +5,9 @@
 #include "bullets/StandardBullet.h"
 #include "bullets/LaserBullet.h"
 #include "bullets/GrenadeBullet.h"
+#include "bullets/Flame.h"
+
+namespace violetland {
 
 class Weapon {
 private:
@@ -30,7 +33,7 @@ public:
 	Texture *getPlayerTex();
 	~Weapon();
 	Sprite* ShellSprite;
-	Bullet::BulletType Type;
+	BulletType Type;
 	std::string Name;
 	int FireDelayTime;
 	int ReloadTime;
@@ -46,5 +49,7 @@ public:
 
 	bool Poisoned;
 };
+
+}
 
 #endif /* WEAPON_H_ */

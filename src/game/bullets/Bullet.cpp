@@ -1,6 +1,8 @@
 #include "Bullet.h"
 
-Bullet::Bullet(float x, float y, float dX, float dY, Bullet::BulletType type) :
+namespace violetland {
+
+Bullet::Bullet(float x, float y, float dX, float dY, BulletType type) :
 	Object(x, y, 1, 1) {
 	startX = x;
 	startY = y;
@@ -41,4 +43,6 @@ void Bullet::deactivate() {
 
 Bullet::~Bullet() {
 	//nothing
+}
+
 }

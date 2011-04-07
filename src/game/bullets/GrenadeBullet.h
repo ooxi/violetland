@@ -7,6 +7,8 @@
 #include "../../system/graphic/DynamicObject.h"
 #include "Bullet.h"
 
+namespace violetland {
+
 class GrenadeBullet: public Bullet {
 private:
 	float m_targetX, m_targetY;
@@ -18,7 +20,9 @@ public:
 			Sprite* sprite);
 	virtual void process(int deltaTime);
 	virtual void draw();
-	~GrenadeBullet();
+	virtual ~GrenadeBullet();
 };
+
+}
 
 #endif /* GRENADEBULLET_H_ */

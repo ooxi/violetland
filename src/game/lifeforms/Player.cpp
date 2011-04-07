@@ -4,7 +4,9 @@
 #include "Player.h"
 #include "../../system/utility/Templates.h"
 
-violetland::Player::Player() :
+namespace violetland {
+
+Player::Player() :
 	LifeForm(0, 0, 128, 128) {
 	Id = "20-" + Id;
 	Empty = true;
@@ -27,15 +29,15 @@ violetland::Player::Player() :
 
 	m_light = m_laser = false;
 
-	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = 
-			NightVision = Looting = WideSight = false;
+	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision
+			= Looting = WideSight = false;
 
 	for (int i = PLAYER_BONUS_FIRST; i < PLAYER_BONUS_COUNT; i++)
 		bonusTimes[i] = 0;
 }
 
-violetland::Player::Player(float x, float y, Sprite *legsSprite,
-		Sprite *deathSprite, std::vector<Sound*> hitSounds, Sound* dyingSound) :
+Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
+		std::vector<Sound*> hitSounds, Sound* dyingSound) :
 	LifeForm(x, y, 128, 128) {
 	*this = Player();
 
@@ -53,22 +55,22 @@ violetland::Player::Player(float x, float y, Sprite *legsSprite,
 	Empty = false;
 }
 
-float violetland::Player::getStrength() {
+float Player::getStrength() {
 	return Strength * ((bonusTimes[PLAYER_BONUS_STRENGTHBOOST] > 0) ? 1.2f
 			: 1.0f);
 }
 
-float violetland::Player::getAgility() {
+float Player::getAgility() {
 	return Agility
 			* ((bonusTimes[PLAYER_BONUS_AGILITYBOOST] > 0) ? 1.2f : 1.0f);
 }
 
-float violetland::Player::getVitality() {
+float Player::getVitality() {
 	return Vitality * ((bonusTimes[PLAYER_BONUS_VITALITYBOOST] > 0) ? 1.2f
 			: 1.0f);
 }
 
-Sound* violetland::Player::hit(float damage, bool poison) {
+Sound* Player::hit(float damage, bool poison) {
 	LifeForm::hit(damage, poison);
 
 	setMask(1.0f, 0.0f, 0.0f, 1.0f);
@@ -85,7 +87,7 @@ Sound* violetland::Player::hit(float damage, bool poison) {
 	return NULL;
 }
 
-std::vector<Bullet*>* violetland::Player::fire() {
+std::vector<Bullet*>* Player::fire() {
 	const float rad = (getArmsAngle() - 90) * M_PI / 180;
 	std::vector<Bullet*> *newBullets = m_weapon->fire(m_arms->X, m_arms->Y,
 			m_arms->X + m_weapon->XDiff * cos(rad) + m_weapon->YDiff
@@ -102,14 +104,14 @@ std::vector<Bullet*>* violetland::Player::fire() {
 
 		for (it = newBullets->begin(); it != (newBullets->end()); it++) {
 			Bullet* bullet = *(it);
-			bullet->Poisoned = m_weapon->Type == Bullet::standard
+			bullet->Poisoned = m_weapon->Type == BULLET_STANDARD
 					&& PoisonBullets;
-			bullet->BigCalibre = m_weapon->Type == Bullet::standard
+			bullet->BigCalibre = m_weapon->Type == BULLET_STANDARD
 					&& BigCalibre;
 			if (BigCalibre) {
 				bullet->Damage *= 1.1;
 			}
-			bullet->Penetrating = m_weapon->Type == Bullet::standard
+			bullet->Penetrating = m_weapon->Type == BULLET_STANDARD
 					&& bonusTimes[PLAYER_BONUS_PENBULLETS] > 0;
 			bullet->Angle = AccuracyDeviation < 1 ? m_arms->Angle
 					: m_arms->Angle + (rand() % (int) (AccuracyDeviation * 2))
@@ -128,7 +130,7 @@ std::vector<Bullet*>* violetland::Player::fire() {
 	return newBullets;
 }
 
-Bullet* violetland::Player::throwGrenade(Sprite* grenadeSprite) {
+Bullet* Player::throwGrenade(Sprite* grenadeSprite) {
 	Bullet* newBullet =
 			new GrenadeBullet(X, Y, TargetX, TargetY, grenadeSprite);
 
@@ -141,28 +143,28 @@ Bullet* violetland::Player::throwGrenade(Sprite* grenadeSprite) {
 	return newBullet;
 }
 
-void violetland::Player::reload() {
+void Player::reload() {
 	if (m_weapon->reload(ReloadSpeedMod()))
 		AccuracyDeviation = 0;
 }
 
-void violetland::Player::toggleLight() {
+void Player::toggleLight() {
 	m_light = !m_light;
 }
 
-void violetland::Player::toggleLaser() {
+void Player::toggleLaser() {
 	m_laser = !m_laser;
 }
 
-const bool violetland::Player::getLight() {
+const bool Player::getLight() {
 	return m_light;
 }
 
-const bool violetland::Player::getLaser() {
+const bool Player::getLaser() {
 	return m_laser;
 }
 
-void violetland::Player::processState(int deltaTime) {
+void Player::processState(int deltaTime) {
 	if (State == LIFEFORM_STATE_ALIVE) {
 		m_arms->X = m_body->X = X;
 		m_arms->Y = m_body->Y = Y;
@@ -201,7 +203,7 @@ void violetland::Player::processState(int deltaTime) {
 	}
 }
 
-void violetland::Player::processArms(int deltaTime) {
+void Player::processArms(int deltaTime) {
 	m_arms->Angle = Object::calc_angle(X, Y, TargetX, TargetY);
 	m_weapon->process(deltaTime);
 	AccuracyDeviation -= deltaTime * 0.01;
@@ -209,7 +211,7 @@ void violetland::Player::processArms(int deltaTime) {
 		AccuracyDeviation = 0;
 
 }
-void violetland::Player::process(int deltaTime) {
+void Player::process(int deltaTime) {
 	// Base processing
 	LifeForm::process(deltaTime);
 
@@ -226,7 +228,7 @@ void violetland::Player::process(int deltaTime) {
 	processBonus(deltaTime);
 }
 
-void violetland::Player::processBonus(int deltaTime) {
+void Player::processBonus(int deltaTime) {
 	for (int i = PLAYER_BONUS_FIRST; i <= PLAYER_BONUS_COUNT; i++) {
 		bonusTimes[i] -= deltaTime;
 		if (bonusTimes[i] < 0)
@@ -234,7 +236,7 @@ void violetland::Player::processBonus(int deltaTime) {
 	}
 }
 
-void violetland::Player::fadeColor(int deltaTime) {
+void Player::fadeColor(int deltaTime) {
 	m_arms->setMask(RMask, GMask, BMask, AMask);
 	m_body->setMask(RMask, GMask, BMask, AMask);
 	if (RMask < 1.0f)
@@ -247,7 +249,7 @@ void violetland::Player::fadeColor(int deltaTime) {
 		AMask += 0.01f;
 }
 
-void violetland::Player::draw() {
+void Player::draw() {
 	m_body->draw(X, Y, Angle, Scale, RMask, GMask, BMask, AMask);
 
 	if (State == LIFEFORM_STATE_ALIVE)
@@ -264,7 +266,7 @@ void violetland::Player::draw() {
 	}
 }
 
-StaticObject* violetland::Player::getCorpse() {
+StaticObject* Player::getCorpse() {
 	StaticObject * corpse = new StaticObject(X, Y, m_width, m_height,
 			m_body->getFrame(), false);
 	corpse->Scale = m_body->Scale;
@@ -272,31 +274,33 @@ StaticObject* violetland::Player::getCorpse() {
 	return corpse;
 }
 
-const float violetland::Player::getLegsAngle() {
+const float Player::getLegsAngle() {
 	return m_body->Angle;
 }
 
-const float violetland::Player::getArmsAngle() {
+const float Player::getArmsAngle() {
 	return m_arms->Angle;
 }
 
-void violetland::Player::setX(float value) {
+void Player::setX(float value) {
 	X = m_arms->X = m_body->X = value;
 }
 
-void violetland::Player::setY(float value) {
+void Player::setY(float value) {
 	Y = m_arms->Y = m_body->Y = value;
 }
 
-Weapon* violetland::Player::getWeapon() {
+Weapon* Player::getWeapon() {
 	return m_weapon;
 }
-void violetland::Player::teleport() {
+
+void Player::teleport() {
 	Teleports--;
 	setX(TargetX);
 	setY(TargetY);
 }
-void violetland::Player::setWeapon(Weapon *value) {
+
+void Player::setWeapon(Weapon *value) {
 	float Angle = 0;
 	if (m_weapon) {
 		delete m_arms;
@@ -309,11 +313,13 @@ void violetland::Player::setWeapon(Weapon *value) {
 	AccuracyDeviation = 0;
 }
 
-violetland::Player::~Player() {
+Player::~Player() {
 	if (!Empty) {
 		delete m_body;
 		delete m_arms;
 		delete m_weapon;
 	}
-	clearVector<DynamicObject*>(&m_shells);
+	clearVector<DynamicObject*> (&m_shells);
+}
+
 }

@@ -1,7 +1,9 @@
 #include "LaserBullet.h"
 
+namespace violetland {
+
 LaserBullet::LaserBullet(float x, float y, float dX, float dY) :
-	Bullet(x, y, dX, dY, Bullet::laser) {
+	Bullet(x, y, dX, dY, BULLET_LASER) {
 	Speed = 3;
 	Damage = 1;
 	MaxRange = 1000;
@@ -40,4 +42,6 @@ bool LaserBullet::checkHit(Object* objRef) {
 	bool hit = m_active && objRef->detectCollide(startX, startY, X, Y);
 	m_hit = m_hit || hit;
 	return hit;
+}
+
 }

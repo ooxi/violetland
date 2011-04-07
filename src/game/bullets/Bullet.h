@@ -4,6 +4,12 @@
 #include <string>
 #include "../../system/Object.h"
 
+namespace violetland {
+
+enum BulletType {
+	BULLET_STANDARD = 0, BULLET_LASER, BULLET_GRENADE, BULLET_FLAME
+};
+
 class Bullet: public Object {
 protected:
 	bool m_active, m_readyToRemove;
@@ -11,9 +17,6 @@ protected:
 	float dStartX, dStartY;
 	float m_range;
 public:
-	enum BulletType {
-		standard = 0, laser, grenade
-	};
 	Bullet(float x, float y, float dX, float dY, BulletType type);
 	virtual void process(int deltaTime);
 	virtual void draw();
@@ -23,7 +26,7 @@ public:
 	void deactivate();
 	float Damage;
 	float MaxRange;
-	Bullet::BulletType Type;
+	BulletType Type;
 	std::string OwnerId;
 
 	bool Poisoned;
@@ -32,5 +35,7 @@ public:
 
 	virtual ~Bullet();
 };
+
+}
 
 #endif /* BULLET_H_ */

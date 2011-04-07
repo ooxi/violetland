@@ -1,5 +1,7 @@
 #include "Weapon.h"
 
+namespace violetland {
+
 Weapon::Weapon(Texture* droppedTex, Texture* playerTex, Sound* shotSound,
 		Sound* reloadSound) {
 	m_playerTex = playerTex;
@@ -54,15 +56,17 @@ std::vector<Bullet*> *Weapon::fire(float x, float y, float dX, float dY) {
 	for (int i = 0; i < BulletsAtOnce; i++) {
 		Bullet* newBullet;
 		switch (Type) {
-		case Bullet::standard:
+		case BULLET_STANDARD:
 			newBullet = new StandardBullet(x, y, dX, dY, false);
 			break;
-		case Bullet::laser:
+		case BULLET_LASER:
 			newBullet = new LaserBullet(x, y, dX, dY);
 			break;
-		case Bullet::grenade:
+		case BULLET_GRENADE:
 			newBullet = new StandardBullet(x, y, dX, dY, true);
 			break;
+		case BULLET_FLAME:
+			newBullet = new Flame(x, y, dX, dY, m_droppedTex);
 		}
 		newBullet->Damage = Damage;
 		newBullet->Speed = BulletSpeed;
@@ -108,4 +112,6 @@ Weapon::~Weapon() {
 	if (m_reloadSndCh != -1 && Mix_Playing(m_reloadSndCh) != 0) {
 		Mix_HaltChannel(m_reloadSndCh);
 	}
+}
+
 }

@@ -2,6 +2,8 @@
 
 #include "WeaponManager.h"
 
+namespace violetland {
+
 WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager) {
 	std::cout << "Loading weapons..." << std::endl;
 
@@ -14,7 +16,8 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 	std::cout << "Total weapons found: " << weapons.size() << std::endl;
 
 	if (weapons.size() == 0) {
-		std::cout << "Couldn't load weapons, the program won't run!" << std::endl;
+		std::cout << "Couldn't load weapons, the program won't run!"
+				<< std::endl;
 		exit(6);
 	}
 
@@ -29,25 +32,27 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 	for (unsigned int j = 0; j < weapons.size(); j++) {
 		Texture* wImage = new Texture(ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::weapon, weapons[j] + "/image.png")),
-				GL_TEXTURE_2D, GL_LINEAR, true);
-				
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j]
+						+ "/image.png")), GL_TEXTURE_2D, GL_LINEAR, true);
+
 		Texture* pImage = new Texture(ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::weapon, weapons[j] + "/player.png")),
-				GL_TEXTURE_2D, GL_LINEAR, true);
-				
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j]
+						+ "/player.png")), GL_TEXTURE_2D, GL_LINEAR, true);
+
 		Weapon *weapon = new Weapon(wImage, pImage, sndManager->create(
-				fileUtility->getFullPath(FileUtility::weapon, weapons[j] + "/shot.ogg")),
-				sndManager->create(fileUtility->getFullPath(
-						FileUtility::weapon, weapons[j] + "/reload.ogg")));
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j]
+						+ "/shot.ogg")), sndManager->create(
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j]
+						+ "/reload.ogg")));
 
 		weapon->Name = weapons[j];
 
 		std::ifstream in;
-		in.open(m_fileUtility->getFullPath(FileUtility::weapon, weapons[j] + "/stats").c_str());
+		in.open(m_fileUtility->getFullPath(FileUtility::weapon, weapons[j]
+				+ "/stats").c_str());
 		if (!in) {
-			std::cerr << "Couldn't load stats of weapon " << 
-				weapons[j] << '.' << std::endl;
+			std::cerr << "Couldn't load stats of weapon " << weapons[j] << '.'
+					<< std::endl;
 			exit(4);
 		}
 
@@ -55,8 +60,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 		std::string strbuf;
 		while (in) {
 			getline(in, strbuf, ' ');
-			weapon->Type
-					= (Bullet::BulletType) strtol(strbuf.c_str(), NULL, 10);
+			weapon->Type = (BulletType) strtol(strbuf.c_str(), NULL, 10);
 			getline(in, shellName, ' ');
 			in >> weapon->AmmoClipSize;
 			weapon->Ammo = weapon->AmmoClipSize;
@@ -79,16 +83,17 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 		unsigned int framesCount = fileUtility->getFilesCountFromDir(
 				fileUtility->getFullPath(FileUtility::anima, shellDir));
 
-		std::cout << "Shell animation of " << weapons[j] << " - " << 
-			shellName <<", frames count: " << framesCount << '.' << std::endl;
-		
+		std::cout << "Shell animation of " << weapons[j] << " - " << shellName
+				<< ", frames count: " << framesCount << '.' << std::endl;
+
 		shellDir += '/';
 		for (unsigned i = 0; i < framesCount; i++) {
 			std::ostringstream filename;
 			filename << i << ".png";
 
 			SDL_Surface *surface = ImageUtility::loadImage(
-					fileUtility->getFullPath(FileUtility::anima, shellDir + filename.str()));
+					fileUtility->getFullPath(FileUtility::anima, shellDir
+							+ filename.str()));
 
 			animSurfaces.push_back(surface);
 		}
@@ -114,4 +119,6 @@ WeaponManager::~WeaponManager() {
 		delete Weapons[i];
 	}
 	Weapons.clear();
+}
+
 }

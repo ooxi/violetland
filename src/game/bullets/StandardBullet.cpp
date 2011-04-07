@@ -1,8 +1,10 @@
 #include "StandardBullet.h"
 
+namespace violetland {
+
 StandardBullet::StandardBullet(float x, float y, float dX, float dY,
 		bool explosive) :
-	Bullet(x, y, dX, dY, Bullet::standard) {
+	Bullet(x, y, dX, dY, BULLET_STANDARD) {
 	Speed = 3;
 	Damage = 1;
 	MaxRange = 1000;
@@ -27,13 +29,12 @@ void StandardBullet::process(int deltaTime) {
 	m_range += Speed * deltaTime;
 	Alpha = MaxRange - m_range;
 	if (Alpha <= 0) {
-	    Alpha = 0;
-	    m_active = 0;
-	    m_readyToRemove = 1;
-	}
-	else {
-	    Alpha /= MaxRange;
-	    m_readyToRemove = 0;
+		Alpha = 0;
+		m_active = 0;
+		m_readyToRemove = 1;
+	} else {
+		Alpha /= MaxRange;
+		m_readyToRemove = 0;
 	}
 }
 
@@ -64,4 +65,6 @@ bool StandardBullet::checkHit(Object* objRef) {
 	} else {
 		return false;
 	}
+}
+
 }

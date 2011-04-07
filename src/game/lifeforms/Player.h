@@ -5,6 +5,7 @@
 #include "../Weapon.h"
 
 namespace violetland {
+
 enum PlayerActionMode {
 	PLAYER_ACT_MODE_FIRE = 0, PLAYER_ACT_MODE_TELEPORT
 };
@@ -82,6 +83,7 @@ public:
 	bool Empty;
 	PlayerActionMode ActionMode;
 };
+
 }
 
 #endif /* PLAYER_H_ */

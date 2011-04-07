@@ -44,6 +44,7 @@ set(srcFileList
 	${srcBulletsDir}/StandardBullet.cpp
 	${srcBulletsDir}/LaserBullet.cpp
 	${srcBulletsDir}/GrenadeBullet.cpp
+	${srcBulletsDir}/Flame.cpp
 	${srcSystemDir}/Object.cpp
 	${srcSystemDir}/InputHandler.cpp
 	${srcSystemDir}/ConfigFile.cpp

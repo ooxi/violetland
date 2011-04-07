@@ -4,6 +4,8 @@
 #include "../system/sound/SoundManager.h"
 #include "Weapon.h"
 
+namespace violetland {
+
 class WeaponManager {
 public:
 	FileUtility* m_fileUtility;
@@ -13,5 +15,7 @@ public:
 	std::vector<Weapon*> Weapons;
 	Weapon* getWeaponByName(std::string name);
 };
+
+}
 
 #endif /* WEAPONMANAGER_H_ */

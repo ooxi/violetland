@@ -4,6 +4,8 @@
 #include "SDL_opengl.h"
 #include "Bullet.h"
 
+namespace violetland {
+
 class LaserBullet: public Bullet {
 private:
 	float Alpha;
@@ -14,5 +16,7 @@ public:
 	virtual void draw();
 	virtual bool checkHit(Object* objRef);
 };
+
+}
 
 #endif /* LASERBULLET_H_ */
