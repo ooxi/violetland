@@ -61,12 +61,15 @@ void violetland::Monster::rollFrame(bool forward) {
 	m_body->rollFrame(forward);
 }
 
-Sound* violetland::Monster::hit(float damage, bool poison) {
+Sound* violetland::Monster::hit(float damage, bool poison, bool stop) {
 	LifeForm::hit(damage, poison);
 
 	m_bleedCount += damage * 5;
 	Poisoned = poison || Poisoned;
-	Speed = 0.0f;
+
+	if (stop)
+		Speed = 0.0f;
+
 	Angle += ((rand() % 50) - 25) * damage;
 
 	if (m_walkDelay > 0)

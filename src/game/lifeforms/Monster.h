@@ -18,7 +18,7 @@ public:
 	Monster(MonsterTemplate* base, int lvl);
 	virtual void process(int deltaTime);
 	virtual void draw();
-	virtual Sound* hit(float damage, bool poison);
+	virtual Sound* hit(float damage, bool poison, bool stop);
 
 	void setAppearance(float scale, float rMask, float gMask, float bMask,
 			float aMask);
@@ -26,7 +26,7 @@ public:
 	bool isBleeding();
 	virtual StaticObject* getCorpse();
 	void destroy();
-	~Monster();
+	virtual ~Monster();
 	bool Angry;
 	string targetId;
 	MonsterTemplate* Base;

@@ -58,22 +58,27 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		std::string shellName;
 		std::string strbuf;
-		while (in) {
-			getline(in, strbuf, ' ');
-			weapon->Type = (BulletType) strtol(strbuf.c_str(), NULL, 10);
-			getline(in, shellName, ' ');
-			in >> weapon->AmmoClipSize;
-			weapon->Ammo = weapon->AmmoClipSize;
-			in >> weapon->Damage;
-			in >> weapon->FireDelayTime;
-			in >> weapon->ReloadTime;
-			in >> weapon->FireRange;
-			in >> weapon->BulletSpeed;
-			in >> weapon->ReturnForce;
-			in >> weapon->BulletsAtOnce;
-			in >> weapon->XDiff;
-			in >> weapon->YDiff;
-		}
+
+		getline(in, strbuf, ' ');
+		weapon->Type = (BulletType) strtol(strbuf.c_str(), NULL, 10);
+
+		if (weapon->Type == BULLET_FLAME)
+			weapon->setBulletImage(new Texture(ImageUtility::loadImage(
+					fileUtility->getFullPath(FileUtility::weapon, weapons[j]
+							+ "/bullet.png")), GL_TEXTURE_2D, GL_LINEAR, true));
+
+		getline(in, shellName, ' ');
+		in >> weapon->AmmoClipSize;
+		weapon->Ammo = weapon->AmmoClipSize;
+		in >> weapon->Damage;
+		in >> weapon->FireDelayTime;
+		in >> weapon->ReloadTime;
+		in >> weapon->FireRange;
+		in >> weapon->BulletSpeed;
+		in >> weapon->ReturnForce;
+		in >> weapon->BulletsAtOnce;
+		in >> weapon->XDiff;
+		in >> weapon->YDiff;
 
 		in.close();
 

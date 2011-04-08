@@ -23,9 +23,8 @@ Weapon::Weapon(Texture* droppedTex, Texture* playerTex, Sound* shotSound,
 	m_bulletTex = NULL;
 }
 
-void Weapon::setBulletImage(std::string image) {
-	m_bulletTex = new Texture(ImageUtility::loadImage(image), GL_TEXTURE_2D,
-			GL_LINEAR, true);
+void Weapon::setBulletImage(Texture* _tex) {
+	m_bulletTex = _tex;
 }
 
 Texture *Weapon::getDroppedTex() {
@@ -66,7 +65,7 @@ std::vector<Bullet*> *Weapon::fire(float x, float y, float dX, float dY) {
 			newBullet = new StandardBullet(x, y, dX, dY, true);
 			break;
 		case BULLET_FLAME:
-			newBullet = new Flame(x, y, dX, dY, m_droppedTex);
+			newBullet = new Flame(x, y, dX, dY, m_bulletTex);
 		}
 		newBullet->Damage = Damage;
 		newBullet->Speed = BulletSpeed;

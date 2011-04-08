@@ -1572,7 +1572,7 @@ void handleMonster(LifeForm* lf) {
 			if (targetLifeForm->Frozen == 0 && targetLifeForm->Attack()) {
 				if ((rand() % 100) > enemy->ChanceToEvade() * 100) {
 					Sound* hitSound = enemy->hit(targetLifeForm->Damage(),
-							false);
+							false, true);
 					if (hitSound != NULL)
 						//TODO: There should be more channels for shouts
 						hitSound->play(7, 0, 0);
@@ -1934,9 +1934,12 @@ void handleLifeForms() {
 }
 
 void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
+	if (enemy->Frozen > 0 && bullet->Type == BULLET_FLAME)
+		return;
+
 	Player* player = (Player*) gameState->getLifeForm(bullet->OwnerId);
 
-	if (bloodStains.size() < 10) {
+	if (bullet->Type == BULLET_STANDARD && bloodStains.size() < 10) {
 		for (unsigned int k = 0; k < 10 / 3; k++) {
 			int angleDev = 90 + (rand() % 60) - 30;
 			float distance = (rand() % 100);
@@ -1950,43 +1953,60 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 		}
 	}
 
-	if (enemy->Frozen > 0) {
-		ParticleSystem* partSys = new ParticleSystem();
-		for (unsigned int k = 0; k < 5; k++) {
-			Particle * p = new Particle(enemy->X + (rand() % 50) - 25, enemy->Y
-					+ (rand() % 50) - 25, 128, 128,
-					resources->Crystal->getTexture());
-			p->RMask = p->GMask = p->BMask = 1.0f;
-			p->AMask = 1.0f;
-			p->Scale = (rand() % 50) / 100.0f * enemy->Scale;
-			p->XSpeed = ((rand() % 400) - 200) / 1000.0f;
-			p->YSpeed = ((rand() % 400) - 200) / 1000.0f;
-			p->AMod = -0.002;
-			partSys->Particles.push_back(p);
-		}
-
-		particleSystems.push_back(partSys);
+	if (bullet->Type == BULLET_FLAME) {
+		enemy->RMask -= bullet->Damage / enemy->MaxHealth();
+		if (enemy->RMask < 0)
+			enemy->RMask = 0;
+		enemy->GMask -= bullet->Damage / enemy->MaxHealth();
+		if (enemy->GMask < 0)
+			enemy->GMask = 0;
+		enemy->BMask -= bullet->Damage / enemy->MaxHealth();
+		if (enemy->BMask < 0)
+			enemy->BMask = 0;
+		enemy->AMask += bullet->Damage / enemy->MaxHealth();
+		if (enemy->AMask > 1)
+			enemy->AMask = 1;
 	} else {
-		ParticleSystem* partSys = new ParticleSystem();
-		for (unsigned int k = 0; k < 15; k++) {
-			Particle * p = new Particle(enemy->X + (rand() % 50) - 25, enemy->Y
-					+ (rand() % 50) - 25, 128, 128, resources->BloodTex[(rand()
-					% 299) / 100]);
-			p->RMask = p->GMask = p->BMask = 0.0f;
-			if (enemy->Poisoned)
-				p->GMask = 1.0f - (rand() % 200) / 1000.0f;
-			else
-				p->RMask = 1.0f - (rand() % 200) / 1000.0f;
-			p->AMask = 1.0f;
-			p->Scale = (rand() % 15) / 100.0f * enemy->Scale;
-			int angleDev = 90 + (rand() % 60) - 30;
-			p->XSpeed = -cos((bullet->Angle + angleDev) * M_PI / 180.0f) / 3.0f;
-			p->YSpeed = -sin((bullet->Angle + angleDev) * M_PI / 180.0f) / 3.0f;
-			p->AMod = -0.004;
-			partSys->Particles.push_back(p);
-		}
+		if (enemy->Frozen > 0) {
+			ParticleSystem* partSys = new ParticleSystem();
+			for (unsigned int k = 0; k < 5; k++) {
+				Particle * p = new Particle(enemy->X + (rand() % 50) - 25,
+						enemy->Y + (rand() % 50) - 25, 128, 128,
+						resources->Crystal->getTexture());
+				p->RMask = p->GMask = p->BMask = 1.0f;
+				p->AMask = 1.0f;
+				p->Scale = (rand() % 50) / 100.0f * enemy->Scale;
+				p->XSpeed = ((rand() % 400) - 200) / 1000.0f;
+				p->YSpeed = ((rand() % 400) - 200) / 1000.0f;
+				p->AMod = -0.002;
+				partSys->Particles.push_back(p);
+			}
 
-		particleSystems.push_back(partSys);
+			particleSystems.push_back(partSys);
+		} else {
+			ParticleSystem* partSys = new ParticleSystem();
+			for (unsigned int k = 0; k < 15; k++) {
+				Particle * p = new Particle(enemy->X + (rand() % 50) - 25,
+						enemy->Y + (rand() % 50) - 25, 128, 128,
+						resources->BloodTex[(rand() % 299) / 100]);
+				p->RMask = p->GMask = p->BMask = 0.0f;
+				if (enemy->Poisoned)
+					p->GMask = 1.0f - (rand() % 200) / 1000.0f;
+				else
+					p->RMask = 1.0f - (rand() % 200) / 1000.0f;
+				p->AMask = 1.0f;
+				p->Scale = (rand() % 15) / 100.0f * enemy->Scale;
+				int angleDev = 90 + (rand() % 60) - 30;
+				p->XSpeed = -cos((bullet->Angle + angleDev) * M_PI / 180.0f)
+						/ 3.0f;
+				p->YSpeed = -sin((bullet->Angle + angleDev) * M_PI / 180.0f)
+						/ 3.0f;
+				p->AMod = -0.004;
+				partSys->Particles.push_back(p);
+			}
+
+			particleSystems.push_back(partSys);
+		}
 	}
 
 	bool bypassDirectDamage = false;
@@ -2006,7 +2026,10 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 
 	if (!bypassDirectDamage) {
 		float damageLoss = enemy->getHealth();
-		Sound* hitSound = enemy->hit(bullet->Damage, bullet->Poisoned);
+
+		Sound* hitSound = enemy->hit(bullet->Damage, bullet->Poisoned,
+				bullet->Type != BULLET_FLAME);
+
 		if (hitSound != NULL) {
 			hitSound->play(7, 0, 0);
 			hitSound->setPos(Object::calc_angle(enemy->X, enemy->Y, player->X,

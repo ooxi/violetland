@@ -22,7 +22,7 @@ private:
 public:
 	Weapon(Texture* droppedTex, Texture* playerTex, Sound* shotSound,
 			Sound* reloadSound);
-	void setBulletImage(std::string image);
+	void setBulletImage(Texture* _tex);
 	void process(int deltaTime);
 	std::vector<Bullet*> *fire(float x, float y, float dX, float dY);
 	bool reload(float timeMod);

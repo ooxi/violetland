@@ -18,6 +18,7 @@ public:
 	Flame(float x, float y, float targetX, float targetY, Texture* tex);
 	virtual void process(int deltaTime);
 	virtual void draw();
+	virtual bool checkHit(Object* objRef);
 	virtual ~Flame();
 };
 
