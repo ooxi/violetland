@@ -35,6 +35,10 @@ void VideoManager::countFrame(int frameDelay) {
 		SDL_Delay(frameDelay - m_frameDeltaTime);
 }
 
+void VideoManager::resetDeltaTime() {
+	m_frameDeltaTime = 0;
+}
+
 int VideoManager::getFps() {
 	return m_fps;
 }

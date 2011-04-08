@@ -40,6 +40,7 @@ public:
 	bool Lost;
 	bool HighScore;
 	bool Begun;
+	bool JustBegun;
 	bool Paused;
 	std::string PlayerName;
 	float TimeOfDay;

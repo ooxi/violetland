@@ -46,6 +46,8 @@ public:
 
 	// Time in milliseconds between the latest and the previous frames
 	int getFrameDeltaTime();
+	
+	void resetDeltaTime();
 
 	/* Width and height factors
 	 * (for dealing with various aspect ratios)

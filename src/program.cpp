@@ -2496,6 +2496,12 @@ void runMainLoop() {
 		handleCommonControls();
 
 		if (gameState->Begun) {
+			if (gameState->JustBegun) {
+				videoManager->resetDeltaTime();
+				gameState->JustBegun = false;
+				continue;
+			}
+
 			Player* player = (Player*) gameState->getLifeForm(playerId);
 
 			musicManager->process(player, gameState);
