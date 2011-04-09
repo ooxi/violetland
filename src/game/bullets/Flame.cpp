@@ -10,9 +10,9 @@ Flame::Flame(float x, float y, float targetX, float targetY, Texture* tex) :
 	m_img = new StaticObject(x, y, 128, 128, tex, false);
 	m_img->RMask = 1.0;
 	m_img->GMask = (float) (rand() % 50) / 100 + 0.4;
-	m_img->BMask = 0.5;
+	m_img->BMask = 0.3;
 	m_img->Scale = 0.001;
-	m_rotation = (float) ((rand() % 10) - 10) / 10;
+	m_rotation = (float) ((rand() % 20) - 10) / 10;
 }
 
 void Flame::process(int deltaTime) {

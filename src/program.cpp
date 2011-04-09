@@ -196,7 +196,7 @@ void startGame(std::string elementName) {
 			resources->PlayerDeathSprites[(rand()
 					% (int) resources->PlayerDeathSprites.size())],
 			resources->PlayerHitSounds, resources->PlayerDeathSound);
-	player->setWeapon(weaponManager->getWeaponByName("PM"));
+	player->setWeapon(weaponManager->getWeaponByName("Flamethrower"));
 	player->HitR = 0.28f;
 
 	gameState->lifeForms.insert(map<string, LifeForm*>::value_type(player->Id,
@@ -1935,7 +1935,7 @@ void handleLifeForms() {
 
 void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 	if (enemy->Frozen > 0 && bullet->Type == BULLET_FLAME)
-		return;
+		enemy->Frozen = 0;
 
 	Player* player = (Player*) gameState->getLifeForm(bullet->OwnerId);
 
