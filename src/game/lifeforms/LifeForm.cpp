@@ -85,26 +85,22 @@ void violetland::LifeForm::move(float direction, int deltaTime) {
 	turn(direction, MaxSpeed(), deltaTime);
 }
 
-StaticObject* violetland::LifeForm::getCorpse() {
-	return NULL;
-}
-
-float violetland::LifeForm::getStrength() {
+float violetland::LifeForm::getStrength() const {
 	return Strength;
 }
-float violetland::LifeForm::getAgility() {
+float violetland::LifeForm::getAgility() const {
 	return Agility;
 }
 
-float violetland::LifeForm::getVitality() {
+float violetland::LifeForm::getVitality() const {
 	return Vitality;
 }
-const float violetland::LifeForm::MaxHealth() {
+const float violetland::LifeForm::MaxHealth() const {
 	return getVitality() > 0.8f ? 1.0f + (getVitality() - 1.0f) * 2.0f
 			+ (getStrength() - 1.0f) : 0.4f;
 }
 
-const float violetland::LifeForm::ChanceToEvade() {
+const float violetland::LifeForm::ChanceToEvade() const {
 	return getAgility() > 1.0f ? (getAgility() - 1.0f) / 2.0f : 0.0f;
 }
 
@@ -119,38 +115,43 @@ const bool violetland::LifeForm::Attack() {
 	}
 }
 
-const float violetland::LifeForm::Damage() {
+const float violetland::LifeForm::Damage() const {
 	return getStrength() / 8.0f;
 }
 
-const int violetland::LifeForm::AttackDelay() {
+const int violetland::LifeForm::AttackDelay() const {
 	return (1.0f - (getAgility() - 1.0f) / 2.0f) * 1000;
 }
 
-const float violetland::LifeForm::MaxSpeed() {
+const float violetland::LifeForm::MaxSpeed() const {
 	return getAgility() / 5.0f;
 }
 
-const float violetland::LifeForm::HealthRegen() {
+const float violetland::LifeForm::HealthRegen() const {
 	return getVitality() > 1.0f ? (getVitality() - 1.0f) * 0.000005f : 0.0f;
 }
 
-const float violetland::LifeForm::ReloadSpeedMod() {
+const float violetland::LifeForm::ReloadSpeedMod() const {
 	return 1.0f / getAgility();
 }
 
-const float violetland::LifeForm::WeaponRetForceMod() {
+const float violetland::LifeForm::WeaponRetForceMod() const {
 	return getStrength() > 1.0f ? 1.0f - (getStrength() - 1.0f) * 1.1f : 1.0f;
 }
 
+const float violetland::LifeForm::fixHealth(float health) const {
+	if (health > MaxHealth())
+		return MaxHealth();
+	else if (health < 0)
+		return 0;
+	else
+		return health;
+}
+
 void violetland::LifeForm::setHealth(float value) {
-	m_health = value;
-	if (m_health > MaxHealth())
-		m_health = MaxHealth();
-	if (m_health < 0)
-		m_health = 0;
+	m_health = fixHealth(value);
 }
 
 const float violetland::LifeForm::getHealth() {
-	return m_health;
+	return m_health = fixHealth(m_health);
 }

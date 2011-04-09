@@ -55,17 +55,17 @@ Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
 	Empty = false;
 }
 
-float Player::getStrength() {
+float Player::getStrength() const {
 	return Strength * ((bonusTimes[PLAYER_BONUS_STRENGTHBOOST] > 0) ? 1.2f
 			: 1.0f);
 }
 
-float Player::getAgility() {
+float Player::getAgility() const {
 	return Agility
 			* ((bonusTimes[PLAYER_BONUS_AGILITYBOOST] > 0) ? 1.2f : 1.0f);
 }
 
-float Player::getVitality() {
+float Player::getVitality() const {
 	return Vitality * ((bonusTimes[PLAYER_BONUS_VITALITYBOOST] > 0) ? 1.2f
 			: 1.0f);
 }
@@ -156,11 +156,11 @@ void Player::toggleLaser() {
 	m_laser = !m_laser;
 }
 
-const bool Player::getLight() {
+const bool Player::getLight() const {
 	return m_light;
 }
 
-const bool Player::getLaser() {
+const bool Player::getLaser() const {
 	return m_laser;
 }
 
@@ -274,11 +274,11 @@ StaticObject* Player::getCorpse() {
 	return corpse;
 }
 
-const float Player::getLegsAngle() {
+const float Player::getLegsAngle() const {
 	return m_body->Angle;
 }
 
-const float Player::getArmsAngle() {
+const float Player::getArmsAngle() const {
 	return m_arms->Angle;
 }
 
@@ -290,7 +290,7 @@ void Player::setY(float value) {
 	Y = m_arms->Y = m_body->Y = value;
 }
 
-Weapon* Player::getWeapon() {
+Weapon* Player::getWeapon() const {
 	return m_weapon;
 }
 

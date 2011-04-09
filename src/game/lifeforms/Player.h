@@ -42,21 +42,21 @@ public:
 	virtual void draw();
 	virtual Sound* hit(float damage, bool poison);
 
-	virtual float getStrength();
-	virtual float getAgility();
-	virtual float getVitality();
+	virtual float getStrength() const;
+	virtual float getAgility() const;
+	virtual float getVitality() const;
 
 	void hit();
 	void reload();
 	void toggleLight();
 	void toggleLaser();
-	const float getLegsAngle();
-	const float getArmsAngle();
+	const float getLegsAngle() const;
+	const float getArmsAngle() const;
 	void setX(float value);
 	void setY(float value);
-	const bool getLight();
-	const bool getLaser();
-	Weapon* getWeapon();
+	const bool getLight() const;
+	const bool getLaser() const;
+	Weapon* getWeapon() const;
 	void setWeapon(Weapon *value);
 	std::vector<Bullet*> *fire();
 	Bullet* throwGrenade(Sprite* grenadeSprite);

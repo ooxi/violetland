@@ -28,6 +28,7 @@ class LifeForm: public Object {
 private:
 	int m_lastAttackTime;
 	float m_health;
+	const float fixHealth(float health) const;
 protected:
 	DynamicObject *m_body;
 	bool m_walking;
@@ -50,21 +51,21 @@ public:
 	float TargetX, TargetY;
 	LifeFormState State;
 	void setHealth(float value);
-	virtual float getStrength();
-	virtual float getAgility();
-	virtual float getVitality();
+	virtual float getStrength() const;
+	virtual float getAgility() const;
+	virtual float getVitality() const;
 	const float getHealth();
-	const float MaxHealth();
-	const float MaxSpeed();
-	const float ChanceToEvade();
+	const float MaxHealth() const;
+	const float MaxSpeed() const;
+	const float ChanceToEvade() const;
 	const bool Attack();
-	const float Damage();
-	const int AttackDelay();
-	const float ReloadSpeedMod();
-	const float WeaponRetForceMod();
-	const float HealthRegen();
+	const float Damage() const;
+	const int AttackDelay() const;
+	const float ReloadSpeedMod() const;
+	const float WeaponRetForceMod() const;
+	const float HealthRegen() const;
 	LifeFormType Type;
-	virtual StaticObject* getCorpse();
+	virtual StaticObject* getCorpse() = 0;
 	bool Poisoned;
 	bool Burning;
 	int Frozen;
