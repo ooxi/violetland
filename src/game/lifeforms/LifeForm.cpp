@@ -29,6 +29,7 @@ violetland::LifeForm::LifeForm(float x, float y, int w, int h) :
 	Poisoned = false;
 	m_walking = false;
 	Frozen = 0;
+	Burning = false;
 	Level = 1;
 	Name = "Unknown lifeform";
 }
@@ -59,6 +60,23 @@ void violetland::LifeForm::process(int deltaTime) {
 
 		if (Poisoned)
 			setHealth(getHealth() - 0.0002 * deltaTime);
+
+		if (Burning) {
+			RMask -= 0.02 / MaxHealth();
+			if (RMask < 0)
+				RMask = 0;
+			GMask -= 0.02 / MaxHealth();
+			if (GMask < 0)
+				GMask = 0;
+			BMask -= 0.02 / MaxHealth();
+			if (BMask < 0)
+				BMask = 0;
+			AMask += 0.01 / MaxHealth();
+			if (AMask > 1)
+				AMask = 1;
+
+			setHealth(getHealth() - 0.0004 * deltaTime);
+		}
 
 		if (!m_walking) {
 			Speed -= Acceleration * deltaTime;

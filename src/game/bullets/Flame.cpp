@@ -30,10 +30,10 @@ void Flame::process(int deltaTime) {
 	m_img->AMask = Speed / 1.5;
 	m_img->Angle += m_rotation;
 
-	if (Speed < 0.1)
+	if (m_img->AMask < 0.2)
 		m_active = false;
 
-	if (Speed < 0.01)
+	if (m_img->AMask < 0.02)
 		m_readyToRemove = true;
 }
 

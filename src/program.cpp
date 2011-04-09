@@ -196,7 +196,7 @@ void startGame(std::string elementName) {
 			resources->PlayerDeathSprites[(rand()
 					% (int) resources->PlayerDeathSprites.size())],
 			resources->PlayerHitSounds, resources->PlayerDeathSound);
-	player->setWeapon(weaponManager->getWeaponByName("Flamethrower"));
+	player->setWeapon(weaponManager->getWeaponByName("PM"));
 	player->HitR = 0.28f;
 
 	gameState->lifeForms.insert(map<string, LifeForm*>::value_type(player->Id,
@@ -1488,11 +1488,30 @@ void handleMonster(LifeForm* lf) {
 	}
 
 	// Visual related
+
 	if (lf->Frozen <= 0) {
 		if (enemy->isBleeding() && bloodStains.size() < 12) {
 			addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
 					/ 50.0f + 0.1f, enemy->Poisoned);
 		}
+	}
+
+	if (lf->Burning) {
+		ParticleSystem* partSys = new ParticleSystem();
+		for (unsigned int k = 0; k < 5; k++) {
+			Particle * p = new Particle(enemy->X + (rand() % 50) - 25, enemy->Y
+					+ (rand() % 50) - 25, 128, 128, resources->ExplTex[0]);
+			p->RMask = 1.0;
+			p->GMask = (float) (rand() % 50) / 100 + 0.4;
+			p->BMask = 0.3;
+			p->AMask = 0.7;
+			p->Scale = (rand() % 45) / 100.0f * enemy->Scale;
+			p->YSpeed = -((rand() % 400) - 150) / 1000.0f;
+			p->AMod = -0.002;
+			partSys->Particles.push_back(p);
+		}
+
+		particleSystems.push_back(partSys);
 	}
 
 	// AI
@@ -1934,8 +1953,12 @@ void handleLifeForms() {
 }
 
 void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
-	if (enemy->Frozen > 0 && bullet->Type == BULLET_FLAME)
-		enemy->Frozen = 0;
+	if (bullet->Type == BULLET_FLAME) {
+		if (enemy->Frozen > 0)
+			enemy->Frozen = 0;
+
+		enemy->Burning = true;
+	}
 
 	Player* player = (Player*) gameState->getLifeForm(bullet->OwnerId);
 
@@ -1953,20 +1976,7 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 		}
 	}
 
-	if (bullet->Type == BULLET_FLAME) {
-		enemy->RMask -= bullet->Damage / enemy->MaxHealth();
-		if (enemy->RMask < 0)
-			enemy->RMask = 0;
-		enemy->GMask -= bullet->Damage / enemy->MaxHealth();
-		if (enemy->GMask < 0)
-			enemy->GMask = 0;
-		enemy->BMask -= bullet->Damage / enemy->MaxHealth();
-		if (enemy->BMask < 0)
-			enemy->BMask = 0;
-		enemy->AMask += bullet->Damage / enemy->MaxHealth();
-		if (enemy->AMask > 1)
-			enemy->AMask = 1;
-	} else {
+	if (bullet->Type != BULLET_FLAME) {
 		if (enemy->Frozen > 0) {
 			ParticleSystem* partSys = new ParticleSystem();
 			for (unsigned int k = 0; k < 5; k++) {
@@ -2214,6 +2224,7 @@ void handlePowerups() {
 							!= LIFEFORM_STATE_ALIVE)
 						continue;
 					lf->Frozen = *(int*) gameState->powerups[i]->Object;
+					lf->Burning = false;
 					lf->Speed = 0.0f;
 				}
 				player->bonusTimes[PLAYER_BONUS_FREEZE]
