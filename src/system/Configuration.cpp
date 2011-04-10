@@ -69,7 +69,7 @@ void Configuration::read() {
 		}
 
 	} catch (...) {
-		printf("Can't open config file.\n");
+		std::cout << "Can't open config file." << std::endl;
 	}
 }
 

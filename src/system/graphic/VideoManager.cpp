@@ -3,7 +3,7 @@
 VideoManager::VideoManager(FileUtility* fileUtility) {
 	m_fileUtility = fileUtility;
 
-	printf("SDL_GL_SetAttribute SDL_GL_DOUBLEBUFFER...\n");
+	std::cout << "SDL_GL_SetAttribute SDL_GL_DOUBLEBUFFER..." << std::endl;
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	RegularText = NULL;
@@ -13,7 +13,7 @@ VideoManager::VideoManager(FileUtility* fileUtility) {
 	m_framesCount = 0;
 
 	// Seems that this code is supported only in windows.
-	// printf("SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL...\n");
+	// std::cout << "SDL_GL_SetAttribute SDL_GL_SWAP_CONTROL..." << std::endl;
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 }
 
@@ -88,8 +88,8 @@ VideoMode VideoManager::getVideoMode() {
 }
 
 void VideoManager::setMode(VideoMode mode, Camera* cam) {
-	fprintf(stdout, "SDL_SetVideoMode %ix%i (%c)...\n", mode.Width,
-			mode.Height, mode.Full ? 'f' : 'w');
+	std::cout << "SDL_SetVideoMode " << mode.Width << 'x' << mode.Height << 
+			'(' << (mode.Full ? 'f' : 'w') << ")..." << std::endl;
 
 	m_videoMode = mode;
 
@@ -103,11 +103,11 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 	Scale = (float) mode.Width / 800;
 
 	if (screen == NULL) {
-		fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
+		std::cerr << "Couldn't set video mode: " << SDL_GetError() << std::endl;;
 		exit(2);
 	}
 
-	printf("glViewport...\n");
+	std::cout << "glViewport..." << std::endl;
 	glViewport(0, 0, mode.Width, mode.Height);
 
 	if (RegularText != NULL) {
@@ -117,7 +117,7 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 		delete SmallText;
 	}
 
-	printf("Preparing fonts...\n");
+	std::cout << "Preparing fonts..." << std::endl;
 
 	RegularText = new TextManager(m_fileUtility->getFullPath(
 			FileUtility::common, "fonts/archangelsk.ttf"), 46 * WK);

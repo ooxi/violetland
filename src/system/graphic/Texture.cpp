@@ -41,7 +41,7 @@ Texture::Texture(SDL_Surface *surface, GLenum type, GLint filter,
 		else
 			texture_format = GL_BGR;
 	} else {
-		printf("Couldn't create GL texture from the SDL surface!");
+		std::cout << "Couldn't create GL texture from the SDL surface!" << std::endl;
 		throw 1;
 	}
 

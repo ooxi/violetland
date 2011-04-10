@@ -25,12 +25,12 @@ std::vector<std::string> FileUtility::getFilesFromDir(std::string dir) {
 		while ((ep = readdir(dp))) {
 			std::string path = dir + "/" + ep->d_name;
 			if (stat(path.c_str(), &st) != 0) {
-				fprintf(stderr, "*** error: stat failed on: %s\n", path.c_str());
+				std::cerr << "*** error: stat failed on: " << path << std::endl;
 				continue;
 			}
 			if (S_ISREG(st.st_mode)) {
 				files.push_back(ep->d_name);
-				//fprintf(stdout, "REG\t%s\n", ep->d_name);
+				//std::cout << "REG\t" << ep->d_name << std::endl;
 			}
 		}
 		closedir(dp);
@@ -52,12 +52,12 @@ std::vector<std::string> FileUtility::getSubDirsFromDir(std::string dir) {
 				continue;
 			std::string path = dir + "/" + ep->d_name;
 			if (stat(path.c_str(), &st) != 0) {
-				fprintf(stderr, "*** error: stat failed on: %s\n", path.c_str());
+				std::cerr << "*** error: stat failed on: " << path << std::endl;
 				continue;
 			}
 			if (S_ISDIR(st.st_mode)) {
 				subDirs.push_back(ep->d_name);
-				//fprintf(stdout, "DIR\t%s\n", ep->d_name);
+				//std::cout << "REG\t" << ep->d_name << std::endl;
 			}
 		}
 		closedir(dp);
@@ -71,10 +71,9 @@ int FileUtility::getSubDirsCountFromDir(std::string dir) {
 }
 
 void FileUtility::traceResPath() {
-	printf("Path to resources is set to:\n\t");
-	printf(m_resPath.c_str());
-	printf("\n");
-	printf("To change the path use -r <path> key\n");
+	std::cout << "Path to resources is set to:" << std::endl;
+	std::cout << '\t' << m_resPath << std::endl;
+	std::cout << "To change the path use -r <path> key" << std::endl;
 }
 
 FileUtility::FileUtility(char *argPath) {

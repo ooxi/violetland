@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "InputHandler.h"
 #include <libintl.h>
 #include <locale.h>
@@ -6,7 +8,7 @@
 using namespace std;
 
 InputHandler::InputHandler(Binding* binding) {
-	printf("InputHandler...\n");
+	std::cout << "InputHandler..." << std::endl;
 
 	for (int i = 0; i < GameInputEventsCount; i++) {
 		m_event[i] = false;

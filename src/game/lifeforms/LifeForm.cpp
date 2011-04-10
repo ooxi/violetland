@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "LifeForm.h"
 
 violetland::LifeForm::LifeForm(float x, float y, int w, int h) :
@@ -16,9 +18,9 @@ violetland::LifeForm::LifeForm(float x, float y, int w, int h) :
 #if defined linux || defined __FreeBSD__ || defined __APPLE__
 	t = static_cast<unsigned long> (time(NULL));
 #endif  //linux || __FreeBSD__ || __APPLE__
-	char buf[30];
-	sprintf(buf, "%li", UidGenerator::getInstance()->getId());
-	Id = buf;
+	std::ostringstream buf;
+	buf << UidGenerator::getInstance()->getId();
+	Id = buf.str();
 	Strength = 1.0f;
 	Agility = 1.0f;
 	Vitality = 1.0f;

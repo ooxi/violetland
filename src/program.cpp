@@ -116,13 +116,11 @@ void createTerrain() {
 	int baseTex = (rand() % baseTexCount);
 
 	string tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
-	tilesDir.append("/%i");
-	char *buf;
-	sprintf(buf = new char[2000], tilesDir.c_str(), baseTex);
-	int tilesCount = fileUtility->getFilesCountFromDir(buf);
-	delete[] buf;
-
 	ostringstream oss;
+	oss << baseTex;
+	int tilesCount = fileUtility->getFilesCountFromDir(tilesDir + "/"+oss.str());
+
+	oss.str("");
 	oss << "terrain/base_" << baseTex << ".png";
 	SDL_Surface *terrainSurface = ImageUtility::loadImage(
 			fileUtility->getFullPath(FileUtility::image, oss.str()), 1);

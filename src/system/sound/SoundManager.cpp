@@ -1,19 +1,24 @@
+#include <sstream>
+
 #include "SoundManager.h"
 
 SoundManager::SoundManager(FileUtility* fileUtility, Configuration* config) {
-	printf("SoundManager...\n");
+	std::ostringstream oss;
+	
+	std::cout << "SoundManager..." << std::endl;
 
 	m_fileUtility = fileUtility;
 	m_config = config;
 
-	fprintf(stdout, "Mix_OpenAudio (freq %i)...\n", MIX_DEFAULT_FREQUENCY);
+	std::cout << "Mix_OpenAudio (freq " << MIX_DEFAULT_FREQUENCY << ")..." << std::endl;
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) != 0) {
 		m_enabled = false;
-		fprintf(stderr, "\tsound is disabled\n\t%s\n", Mix_GetError());
+		std::cerr << "\tsound is disabled" << std::endl;
+		std::cerr << '\t' << Mix_GetError() << std::endl;
 	} else {
 		m_enabled = true;
 		Mix_AllocateChannels(16);
-		printf("\tsound is enabled\n");
+		std::cout << "\tsound is enabled" << std::endl;
 		Mix_Volume(0, m_config->MusicVolume * 12);
 		for (unsigned int a = 1; a <= 8; a++) {
 			Mix_Volume(a, m_config->SoundVolume * 12);
