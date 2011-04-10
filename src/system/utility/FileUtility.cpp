@@ -23,15 +23,6 @@ std::vector<std::string> FileUtility::getFilesFromDir(std::string dir) {
 	dp = opendir(dir.c_str());
 	if (dp != NULL) {
 		while ((ep = readdir(dp))) {
-#ifdef _WIN32
-			if (!(ep->data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-			{
-				files.push_back(ep->d_name);
-				// fprintf(stdout, "\t%s\n", ep->d_name);
-			}
-#endif //_WIN32
-#if defined linux || defined __FreeBSD__ || defined __APPLE__
-			// if (ep->d_type == DT_REG) {
 			std::string path = dir + "/" + ep->d_name;
 			if (stat(path.c_str(), &st) != 0) {
 				fprintf(stderr, "*** error: stat failed on: %s\n", path.c_str());
@@ -39,9 +30,8 @@ std::vector<std::string> FileUtility::getFilesFromDir(std::string dir) {
 			}
 			if (S_ISREG(st.st_mode)) {
 				files.push_back(ep->d_name);
-				// fprintf(stdout, "\t%s\n", ep->d_name);
+				//fprintf(stdout, "REG\t%s\n", ep->d_name);
 			}
-#endif //linux || __FreeBSD__ || __APPLE__
 		}
 		closedir(dp);
 	}
@@ -58,15 +48,6 @@ std::vector<std::string> FileUtility::getSubDirsFromDir(std::string dir) {
 	dp = opendir(dir.c_str());
 	if (dp != NULL) {
 		while ((ep = readdir(dp))) {
-#ifdef _WIN32
-			if ((ep->data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && ep->d_name[0] != '.')
-			{
-				subDirs.push_back(ep->d_name);
-				// fprintf(stdout, "\t%s\n", ep->d_name);
-			}
-#endif //_WIN32W
-#if defined linux || defined __FreeBSD__ || defined __APPLE__
-			// if (ep->d_type == DT_DIR && ep->d_name[0] != '.') {
 			if (ep->d_name[0] == '.')
 				continue;
 			std::string path = dir + "/" + ep->d_name;
@@ -76,9 +57,8 @@ std::vector<std::string> FileUtility::getSubDirsFromDir(std::string dir) {
 			}
 			if (S_ISDIR(st.st_mode)) {
 				subDirs.push_back(ep->d_name);
-				// fprintf(stdout, "\t%s\n", ep->d_name);
+				//fprintf(stdout, "DIR\t%s\n", ep->d_name);
 			}
-#endif //linux || __FreeBSD__ || __APPLE__
 		}
 		closedir(dp);
 	}
