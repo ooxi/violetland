@@ -2,39 +2,40 @@
 
 namespace violetland {
 
-Flame::Flame(float x, float y, float targetX, float targetY, Texture* tex) :
+Flame::Flame(float x, float y, Texture* tex) :
 	Bullet(x, y, x, y, BULLET_FLAME) {
-	m_targetX = targetX;
-	m_targetY = targetY;
-	m_distance = Object::calc_dist(X, Y, m_targetX, m_targetY);
 	m_img = new StaticObject(x, y, 128, 128, tex, false);
 	m_img->RMask = 1.0;
 	m_img->GMask = (float) (rand() % 50) / 100 + 0.4;
 	m_img->BMask = 0.3;
 	m_img->Scale = 0.001;
-	m_rotation = (float) ((rand() % 20) - 10) / 10;
 }
 
 void Flame::process(int deltaTime) {
-	X -= cos((Angle + 90) * M_PI / 180) * deltaTime * Speed;
-	Y -= sin((Angle + 90) * M_PI / 180) * deltaTime * Speed;
+	const float dist = m_range / MaxRange;
+
+	if (m_active && dist >= 0.7)
+		m_active = false;
+
+	if (dist >= 1.0)
+		m_readyToRemove = true;
+
+	const float relSpeed = (1.0 - dist) * Speed;
+
+	X -= cos((Angle + 90) * M_PI / 180) * deltaTime * relSpeed;
+	Y -= sin((Angle + 90) * M_PI / 180) * deltaTime * relSpeed;
 
 	m_img->X = X;
 	m_img->Y = Y;
 
-	m_range += Speed * deltaTime;
+	m_range += relSpeed * deltaTime;
 
-	Speed = Speed * 0.96;
-	m_img->Scale += Speed / 10;
+	m_img->Scale = 2.5 * dist;
 
-	m_img->AMask = Speed / 1.5;
-	m_img->Angle += m_rotation;
-
-	if (m_img->AMask < 0.2)
-		m_active = false;
-
-	if (m_img->AMask < 0.02)
-		m_readyToRemove = true;
+	if (dist < 0.5)
+		m_img->AMask = dist;
+	else
+		m_img->AMask = 1.0 - dist;
 }
 
 void Flame::draw() {

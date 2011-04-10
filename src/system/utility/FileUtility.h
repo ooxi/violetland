@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <string>
-//dirent for windows can be obtained at http://www.softagalleria.net/dirent.php
+// dirent v1.11 for windows: http://www.softagalleria.net/dirent.php
 #include <dirent.h>
 
 class FileUtility {

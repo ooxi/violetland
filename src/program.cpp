@@ -194,6 +194,8 @@ void startGame(std::string elementName) {
 			resources->PlayerDeathSprites[(rand()
 					% (int) resources->PlayerDeathSprites.size())],
 			resources->PlayerHitSounds, resources->PlayerDeathSound);
+
+	// TODO: add "default weapon" parameter to config file
 	player->setWeapon(weaponManager->getWeaponByName("PM"));
 	player->HitR = 0.28f;
 
@@ -1912,10 +1914,10 @@ void handleLifeForms() {
 	}
 
 	if (!gameState->lifeForms.empty()) {
-		map<string, LifeForm*>::const_iterator iter;
-		for (iter = gameState->lifeForms.begin(); iter
-				!= gameState->lifeForms.end(); ++iter) {
-			LifeForm* lifeForm = iter->second;
+		map<string, LifeForm*>::const_iterator it = gameState->lifeForms.begin();
+		while (it != gameState->lifeForms.end())
+		{
+			LifeForm* lifeForm = it->second;
 
 			if (lifeForm->Type == LIFEFORM_PLAYER) {
 				if (!gameState->Lost) {
@@ -1938,13 +1940,14 @@ void handleLifeForms() {
 			if (lifeForm->State == LIFEFORM_STATE_DIED)
 				bloodStains.push_back(lifeForm->getCorpse());
 
-			if (lifeForm->State == LIFEFORM_STATE_DIED || lifeForm->State
-					== LIFEFORM_STATE_BURST) {
-
-				if (lifeForm->Type == LIFEFORM_MONSTER) {
+			if ((lifeForm->State == LIFEFORM_STATE_DIED || lifeForm->State
+					== LIFEFORM_STATE_BURST) && lifeForm->Type == LIFEFORM_MONSTER) {
 					delete lifeForm;
-					gameState->lifeForms.erase(iter->first);
-				}
+					gameState->lifeForms.erase(it++);
+			}
+			else
+			{
+				++it;
 			}
 		}
 	}

@@ -9,13 +9,9 @@ namespace violetland {
 
 class Flame: public Bullet {
 private:
-	float m_targetX, m_targetY;
-	float m_distance;
-	float m_scale;
-	float m_rotation;
 	StaticObject* m_img;
 public:
-	Flame(float x, float y, float targetX, float targetY, Texture* tex);
+	Flame(float x, float y, Texture* tex);
 	virtual void process(int deltaTime);
 	virtual void draw();
 	virtual bool checkHit(Object* objRef);

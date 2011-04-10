@@ -65,7 +65,7 @@ std::vector<Bullet*> *Weapon::fire(float x, float y, float dX, float dY) {
 			newBullet = new StandardBullet(x, y, dX, dY, true);
 			break;
 		case BULLET_FLAME:
-			newBullet = new Flame(x, y, dX, dY, m_bulletTex);
+			newBullet = new Flame(x, y, m_bulletTex);
 		}
 		newBullet->Damage = Damage;
 		newBullet->Speed = BulletSpeed;
