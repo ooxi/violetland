@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "FileUtility.h"
 
 void FileUtility::truncateFullPathToDir(char *path) {
