@@ -59,9 +59,8 @@ vector<violetland::Blood> violetland::GameState::processExplosion(float x,
 			continue;
 
 		// Damage life forms in range
-		float distance = Object::calc_dist(x, y, lifeForm->X,
-				lifeForm->Y) - lifeForm->HitR * lifeForm->Scale
-				* lifeForm->getWidth();
+		float distance = Object::calc_dist(x, y, lifeForm->X, lifeForm->Y)
+				- lifeForm->HitR * lifeForm->Scale * lifeForm->getWidth();
 
 		if (distance < range) {
 			float dmg = (range - distance) / range * damage;
@@ -75,8 +74,7 @@ vector<violetland::Blood> violetland::GameState::processExplosion(float x,
 
 			Blood blood;
 
-			blood.angle
-					= Object::calc_angle(lifeForm->X, lifeForm->Y, x, y);
+			blood.angle = Object::calc_angle(lifeForm->X, lifeForm->Y, x, y);
 			blood.x = lifeForm->X;
 			blood.y = lifeForm->Y;
 			blood.scale = lifeForm->Scale;

@@ -118,7 +118,8 @@ void createTerrain() {
 	string tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
 	ostringstream oss;
 	oss << baseTex;
-	int tilesCount = fileUtility->getFilesCountFromDir(tilesDir + "/"+oss.str());
+	int tilesCount = fileUtility->getFilesCountFromDir(tilesDir + "/"
+			+ oss.str());
 
 	oss.str("");
 	oss << "terrain/base_" << baseTex << ".png";
@@ -1914,9 +1915,8 @@ void handleLifeForms() {
 	}
 
 	if (!gameState->lifeForms.empty()) {
-		map<string, LifeForm*>::const_iterator it = gameState->lifeForms.begin();
-		while (it != gameState->lifeForms.end())
-		{
+		map<string, LifeForm*>::iterator it = gameState->lifeForms.begin();
+		while (it != gameState->lifeForms.end()) {
 			LifeForm* lifeForm = it->second;
 
 			if (lifeForm->Type == LIFEFORM_PLAYER) {
@@ -1941,12 +1941,11 @@ void handleLifeForms() {
 				bloodStains.push_back(lifeForm->getCorpse());
 
 			if ((lifeForm->State == LIFEFORM_STATE_DIED || lifeForm->State
-					== LIFEFORM_STATE_BURST) && lifeForm->Type == LIFEFORM_MONSTER) {
-					delete lifeForm;
-					gameState->lifeForms.erase(it++);
-			}
-			else
-			{
+					== LIFEFORM_STATE_BURST) && lifeForm->Type
+					== LIFEFORM_MONSTER) {
+				delete lifeForm;
+				gameState->lifeForms.erase(it++);
+			} else {
 				++it;
 			}
 		}
