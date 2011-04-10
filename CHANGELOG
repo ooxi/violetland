@@ -3,6 +3,22 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.3.2]
+
+[+] support of internationalization: english, french, russian, galician, spain
+[+] new game mode "attack waves"
+[+] new weapon "flamethrower"
+[+] new perk "wide sight"
+[*] new font
+[*] more animations: teleportation, nuclear explosion
+[*] some monsters have now the parameter "stamina" - they can't run all the time
+[*] default player name is the system user name on linux platform
+[*] issue 19 (xp and item will drop out immediately after kill monster)
+[!] issue 36 and other fixes around movements of player and monsters
+[!] issue 38 (light is placed wrong for sawed-off shotgun)
+[!] issue 40 (blue cursor after death in teleportation mode)
+[!] issues 45, 48 and other undocumented fixes to improve performance and reliability
+
 [0.3.1]
 
 [+] new weapon "SawedOff-Shotgun"
