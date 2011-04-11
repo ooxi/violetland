@@ -1,10 +1,10 @@
 #include "ImageUtility.h"
 
-SDL_Surface *ImageUtility::loadImage(const std::string& fileName, float prescale) {
-	SDL_Surface *image = IMG_Load(fileName.c_str());
+SDL_Surface *ImageUtility::loadImage(filesystem::path fileName, float prescale) {
+	SDL_Surface *image = IMG_Load(fileName.string().c_str());
 	if (image == NULL) {
 		// visual studio compiler can't compile [ ... << const std::string ... ] ?!
-		std::cerr << "Couldn't load " << fileName.c_str() << ": " << SDL_GetError() << std::endl;
+		std::cerr << "Couldn't load " << fileName << ": " << SDL_GetError() << std::endl;
 		throw 1;
 	}
 

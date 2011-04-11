@@ -46,8 +46,7 @@ Sprite* violetland::MonsterFactory::loadMonsterSprite(std::string name,
 	
 	unsigned int framesCount = 
 		m_fileUtility->getFilesCountFromDir(
-		m_fileUtility->getFullPath(	FileUtility::monsters, 
-									name + '/' + animType + '/' ));
+		m_fileUtility->getFullPath(FileUtility::monsters, name) /= animType );
 
 	std::cout << "Monster " << name << ", animation of " << animType << 
 		", frames count: " << framesCount << '.' << std::endl;
@@ -76,7 +75,7 @@ void violetland::MonsterFactory::fillMonsterStats(MonsterTemplate* t,
 		std::string name) {
 	std::ifstream in;
 	string buf = name + "/stats";
-	in.open(m_fileUtility->getFullPath(FileUtility::monsters, buf).c_str());
+	in.open(m_fileUtility->getFullPath(FileUtility::monsters, buf).string().c_str());
 	if (!in) {
 		std::cout << "Couldn't load monster stats." << std::endl;
 		exit(4);

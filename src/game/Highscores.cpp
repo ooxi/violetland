@@ -1,8 +1,9 @@
 #include "Highscores.h"
 #include "../system/utility/Templates.h"
 
-using namespace violetland;
 using namespace std;
+using namespace boost;
+using namespace violetland;
 
 HighscoresEntry::HighscoresEntry() {
 	this->Agility = 0;
@@ -33,9 +34,9 @@ Highscores::Highscores(FileUtility* fileUtility) {
 }
 
 void Highscores::read() {
-	string hsFile = m_fileUtility->getFullPath(FileUtility::user, "highscores");
+	filesystem::path hsFile = m_fileUtility->getFullPath(FileUtility::user, "highscores");
 
-	ifstream ifile(hsFile.c_str(), ios::binary);
+	filesystem::ifstream ifile(hsFile, ios::binary);
 	if (!ifile.fail()) {
 		while (true) {
 			HighscoresEntry* p = new HighscoresEntry();
@@ -77,15 +78,15 @@ bool Highscores::isHighscore(HighscoresEntry* entry) {
 }
 
 void Highscores::clear() {
-	std::string hsFile = m_fileUtility->getFullPath(FileUtility::user,
+	filesystem::path hsFile = m_fileUtility->getFullPath(FileUtility::user,
 			"highscores");
 
-	remove(hsFile.c_str());
+	filesystem::remove(hsFile);
 }
 
 bool Highscores::add(HighscoresEntry* entry) {
-	string hsFile = m_fileUtility->getFullPath(FileUtility::user, "highscores");
-	string hsTempFile = m_fileUtility->getFullPath(FileUtility::user,
+	filesystem::path hsFile = m_fileUtility->getFullPath(FileUtility::user, "highscores");
+	filesystem::path hsTempFile = m_fileUtility->getFullPath(FileUtility::user,
 			"highscores~");
 
 	bool placed = false;
@@ -105,7 +106,7 @@ bool Highscores::add(HighscoresEntry* entry) {
 	if (!placed)
 		return false;
 
-	ofstream ofile(hsTempFile.c_str(), ios::binary);
+	filesystem::ofstream ofile(hsTempFile, ios::binary);
 	if (!ofile.fail()) {
 		for (unsigned int i = 0; i < (m_data.size() < 10 ? m_data.size() : 10); i++) {
 			string temp = *(m_data[i]->Name);
@@ -117,11 +118,11 @@ bool Highscores::add(HighscoresEntry* entry) {
 		}
 		ofile.close();
 
-		remove(hsFile.c_str());
+		filesystem::remove(hsFile);
 
-		FileUtility::copyFile(hsTempFile.c_str(), hsFile.c_str());
+		FileUtility::copyFile(hsTempFile, hsFile);
 
-		remove(hsTempFile.c_str());
+		filesystem::remove(hsTempFile);
 
 		std::cout << "Scores was updated." << std::endl;
 	} else {

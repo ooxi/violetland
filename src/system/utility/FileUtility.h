@@ -1,31 +1,32 @@
 #ifndef FILEUTILITY_H_
 #define FILEUTILITY_H_
 
-#include <fstream>
 #include <vector>
 #include <sys/stat.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <string>
-// dirent v1.11 for windows: http://www.softagalleria.net/dirent.php
-#include <dirent.h>
+
+#include <boost/filesystem.hpp>
+
+using namespace boost;
 
 class FileUtility {
 private:
-	std::string m_appPath, m_resPath, m_usrPath;
+	filesystem::path m_appPath, m_resPath, m_usrPath;
 public:
 	enum PathType {
 		common = 0, image, anima, sound, music, monsters, weapon, user
 	};
 	FileUtility(char *argPath);
 	static void truncateFullPathToDir(char *path);
-	static bool copyFile(const char srcPath[], const char destPath[]);
+	static void copyFile(filesystem::path srcPath, filesystem::path destPath);
 	void traceResPath();
 	void setFullResPath(std::string path);
-	std::string getFullPath(PathType type, std::string resource);
-	std::vector<std::string> getFilesFromDir(std::string dir);
-	int getFilesCountFromDir(std::string dir);
-	std::vector<std::string> getSubDirsFromDir(std::string dir);
-	int getSubDirsCountFromDir(std::string dir);
+	filesystem::path getFullPath(PathType type, std::string resource);
+	std::vector<std::string> getFilesFromDir(filesystem::path dir);
+	unsigned int getFilesCountFromDir(filesystem::path dir);
+	std::vector<std::string> getSubDirsFromDir(filesystem::path dir);
+	unsigned int getSubDirsCountFromDir(filesystem::path dir);
 };
 
 #endif /* FILEUTILITY_H_ */

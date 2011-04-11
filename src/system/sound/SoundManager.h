@@ -1,8 +1,12 @@
 #ifndef SOUNDMANAGER_H_
 #define SOUNDMANAGER_H_
 
+#include <boost/filesystem.hpp>
+
 #include "Sound.h"
 #include "../Configuration.h"
+
+using namespace boost;
 
 class SoundManager {
 private:
@@ -11,7 +15,7 @@ private:
 	FileUtility * m_fileUtility;
 public:
 	SoundManager(FileUtility* fileUtility, Configuration* config);
-	Sound* create(std::string name);
+	Sound* create(filesystem::path name);
 	~SoundManager();
 };
 

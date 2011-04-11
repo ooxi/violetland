@@ -117,8 +117,8 @@ void Configuration::write() {
 				InputHandler::getEventName(i));
 	}
 
-	std::ofstream ofile(
-			m_fileUtility->getFullPath(FileUtility::user, "config").c_str());
+	filesystem::ofstream ofile(
+			m_fileUtility->getFullPath(FileUtility::user, "config"));
 	if (ofile) {
 		ofile << cFile;
 		ofile.close();

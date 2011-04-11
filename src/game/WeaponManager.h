@@ -1,6 +1,8 @@
 #ifndef WEAPONMANAGER_H_
 #define WEAPONMANAGER_H_
 
+#include <boost/filesystem/fstream.hpp>
+
 #include "../system/sound/SoundManager.h"
 #include "Weapon.h"
 

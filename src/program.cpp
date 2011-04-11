@@ -32,6 +32,8 @@
 #define _(STRING)            gettext(STRING)
 #define TRANSLATION_PATH 	"./po"
 
+#include <boost/filesystem.hpp>
+
 // The Game
 #include "system/Configuration.h"
 #include "system/InputHandler.h"
@@ -64,6 +66,7 @@
 #include <sstream>
 
 using namespace std;
+using namespace boost;
 using namespace violetland;
 
 const string PROJECT = "violetland";
@@ -115,11 +118,10 @@ void createTerrain() {
 			fileUtility->getFullPath(FileUtility::image, "terrain"));
 	int baseTex = (rand() % baseTexCount);
 
-	string tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
+	filesystem::path tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
 	ostringstream oss;
 	oss << baseTex;
-	int tilesCount = fileUtility->getFilesCountFromDir(tilesDir + "/"
-			+ oss.str());
+	int tilesCount = fileUtility->getFilesCountFromDir(tilesDir /= oss.str());
 
 	oss.str("");
 	oss << "terrain/base_" << baseTex << ".png";

@@ -2,6 +2,8 @@
 
 #include "SoundManager.h"
 
+using namespace boost;
+
 SoundManager::SoundManager(FileUtility* fileUtility, Configuration* config) {
 	std::ostringstream oss;
 	
@@ -26,8 +28,8 @@ SoundManager::SoundManager(FileUtility* fileUtility, Configuration* config) {
 	}
 }
 
-Sound* SoundManager::create(std::string path) {
-	Mix_Chunk * chunk = m_enabled ? Mix_LoadWAV(path.c_str()) : NULL;
+Sound* SoundManager::create(filesystem::path path) {
+	Mix_Chunk * chunk = m_enabled ? Mix_LoadWAV(path.string().c_str()) : NULL;
 	Sound* snd = new Sound(chunk, m_enabled);
 	return snd;
 }

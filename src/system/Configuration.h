@@ -1,6 +1,8 @@
 #ifndef CONFIGURATION_H_
 #define CONFIGURATION_H_
 
+#include <boost/filesystem/fstream.hpp>
+
 #include "utility/FileUtility.h"
 #include "ConfigFile.h"
 #include "InputHandler.h"

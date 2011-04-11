@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-TextManager::TextManager(std::string fontPath, int fontSize) {
-	m_font = TTF_OpenFont(fontPath.c_str(), fontSize);
+TextManager::TextManager(filesystem::path fontPath, int fontSize) {
+	m_font = TTF_OpenFont(fontPath.string().c_str(), fontSize);
 	if (!m_font) {
 		std::cerr << "Couldn't initialize font: " << TTF_GetError() << std::endl;
 		exit(5);

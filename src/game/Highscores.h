@@ -1,10 +1,11 @@
 #ifndef HIGHSCORES_H_
 #define HIGHSCORES_H_
 
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+
 #include "../system/utility/FileUtility.h"
 #include "lifeforms/Player.h"
-
-//class Player;
 
 class HighscoresEntry {
 public:

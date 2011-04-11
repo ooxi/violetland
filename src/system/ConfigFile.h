@@ -3,11 +3,15 @@
 #include <string>
 #include <map>
 #include <iostream>
-#include <fstream>
 #include <sstream>
+
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 #ifndef CONFIGFILE_H_
 #define CONFIGFILE_H_
+
+using namespace boost;
 
 class ConfigFile {
 protected:
@@ -20,7 +24,7 @@ protected:
 	typedef std::map<std::string, std::string>::const_iterator mapci;
 
 public:
-	ConfigFile(std::string filename, std::string delimiter = "=",
+	ConfigFile(filesystem::path filename, std::string delimiter = "=",
 			std::string comment = "#", std::string sentry = "EndConfigFile");
 	ConfigFile();
 
@@ -65,9 +69,9 @@ protected:
 
 public:
 	struct file_not_found {
-		std::string filename;
-		file_not_found(const std::string& filename_ = std::string()) :
-			filename(filename_) {
+		filesystem::path filename;
+		file_not_found(filesystem::path filename = filesystem::path()) :
+			filename(filename) {
 		}
 	};
 	struct key_not_found { // thrown only by T read(key) variant of read()

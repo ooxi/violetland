@@ -32,24 +32,24 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 	for (unsigned int j = 0; j < weapons.size(); j++) {
 		Texture* wImage = new Texture(ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::weapon, weapons[j]
-						+ "/image.png")), GL_TEXTURE_2D, GL_LINEAR, true);
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j])
+						/= "image.png"), GL_TEXTURE_2D, GL_LINEAR, true);
 
 		Texture* pImage = new Texture(ImageUtility::loadImage(
-				fileUtility->getFullPath(FileUtility::weapon, weapons[j]
-						+ "/player.png")), GL_TEXTURE_2D, GL_LINEAR, true);
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j])
+						/= "player.png"), GL_TEXTURE_2D, GL_LINEAR, true);
 
 		Weapon *weapon = new Weapon(wImage, pImage, sndManager->create(
-				fileUtility->getFullPath(FileUtility::weapon, weapons[j]
-						+ "/shot.ogg")), sndManager->create(
-				fileUtility->getFullPath(FileUtility::weapon, weapons[j]
-						+ "/reload.ogg")));
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j])
+						/= "shot.ogg"), sndManager->create(
+				fileUtility->getFullPath(FileUtility::weapon, weapons[j])
+						/= "reload.ogg"));
 
 		weapon->Name = weapons[j];
 
-		std::ifstream in;
-		in.open(m_fileUtility->getFullPath(FileUtility::weapon, weapons[j]
-				+ "/stats").c_str());
+		filesystem::ifstream in;
+		in.open(m_fileUtility->getFullPath(FileUtility::weapon, weapons[j]) 
+				/= "stats");
 		if (!in) {
 			std::cerr << "Couldn't load stats of weapon " << weapons[j] << '.'
 					<< std::endl;
@@ -64,8 +64,8 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		if (weapon->Type == BULLET_FLAME)
 			weapon->setBulletImage(new Texture(ImageUtility::loadImage(
-					fileUtility->getFullPath(FileUtility::weapon, weapons[j]
-							+ "/bullet.png")), GL_TEXTURE_2D, GL_LINEAR, true));
+					fileUtility->getFullPath(FileUtility::weapon, weapons[j])
+							/= "bullet.png"), GL_TEXTURE_2D, GL_LINEAR, true));
 
 		getline(in, shellName, ' ');
 		in >> weapon->AmmoClipSize;
@@ -84,21 +84,22 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		std::vector<SDL_Surface*> animSurfaces;
 
-		std::string shellDir = "shells/" + shellName;
+		filesystem::path shellDir = "shells";
+		shellDir /= shellName;
 		unsigned int framesCount = fileUtility->getFilesCountFromDir(
-				fileUtility->getFullPath(FileUtility::anima, shellDir));
+				fileUtility->getFullPath(FileUtility::anima, shellDir.string()));
 
 		std::cout << "Shell animation of " << weapons[j] << " - " << shellName
 				<< ", frames count: " << framesCount << '.' << std::endl;
 
-		shellDir += '/';
 		for (unsigned i = 0; i < framesCount; i++) {
 			std::ostringstream filename;
 			filename << i << ".png";
+			filesystem::path tmp = shellDir;
+			tmp /= filename.str();
 
 			SDL_Surface *surface = ImageUtility::loadImage(
-					fileUtility->getFullPath(FileUtility::anima, shellDir
-							+ filename.str()));
+					fileUtility->getFullPath(FileUtility::anima, tmp.string()));
 
 			animSurfaces.push_back(surface);
 		}
