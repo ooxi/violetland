@@ -6,36 +6,36 @@ using namespace boost;
 using namespace violetland;
 
 HighscoresEntry::HighscoresEntry() {
-	this->Agility = 0;
-	this->Strength = 0;
-	this->Vitality = 0;
-	this->Time = 0;
-	this->Xp = 0;
-	this->Name = new string();
+	Agility = 0;
+	Strength = 0;
+	Vitality = 0;
+	Time = 0;
+	Xp = 0;
+	Name = new string();
 }
 
 HighscoresEntry::HighscoresEntry(Player* player, int Time) {
-	this->Agility = player->Agility;
-	this->Strength = player->Strength;
-	this->Vitality = player->Vitality;
-	this->Time = Time;
-	this->Xp = player->Xp;
-	this->Name = new string();
+	Agility = player->Agility;
+	Strength = player->Strength;
+	Vitality = player->Vitality;
+	Time = Time;
+	Xp = player->Xp;
+	Name = new string();
 }
 
 HighscoresEntry::~HighscoresEntry() {
 	delete Name;
 }
 
-Highscores::Highscores(FileUtility* fileUtility) {
-	m_fileUtility = fileUtility;
-
+Highscores::Highscores(FileUtility* fileUtility):
+	m_fileUtility(fileUtility), 
+	hsFile(m_fileUtility->getFullPath(FileUtility::user, "highscores")), 
+	hsTempFile(m_fileUtility->getFullPath(FileUtility::user, "highscores~")) {
+	
 	read();
 }
 
 void Highscores::read() {
-	filesystem::path hsFile = m_fileUtility->getFullPath(FileUtility::user, "highscores");
-
 	filesystem::ifstream ifile(hsFile, ios::binary);
 	if (!ifile.fail()) {
 		while (true) {
@@ -78,17 +78,10 @@ bool Highscores::isHighscore(HighscoresEntry* entry) {
 }
 
 void Highscores::clear() {
-	filesystem::path hsFile = m_fileUtility->getFullPath(FileUtility::user,
-			"highscores");
-
 	filesystem::remove(hsFile);
 }
 
 bool Highscores::add(HighscoresEntry* entry) {
-	filesystem::path hsFile = m_fileUtility->getFullPath(FileUtility::user, "highscores");
-	filesystem::path hsTempFile = m_fileUtility->getFullPath(FileUtility::user,
-			"highscores~");
-
 	bool placed = false;
 	for (unsigned int i = 0; i < m_data.size(); i++) {
 		if (entry->Xp > m_data[i]->Xp) {

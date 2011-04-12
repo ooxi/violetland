@@ -114,27 +114,26 @@ void createTerrain() {
 		delete terrain;
 
 	cout << "Forming terrain..." << endl;
+    
+    filesystem::path tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
+	unsigned baseTex = rand() % fileUtility->getFilesCountFromDir(tilesDir);
 
-	int baseTexCount = fileUtility->getFilesCountFromDir(
-			fileUtility->getFullPath(FileUtility::image, "terrain"));
-	int baseTex = (rand() % baseTexCount);
-
-	filesystem::path tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
 	ostringstream oss;
 	oss << baseTex;
-	int tilesCount = fileUtility->getFilesCountFromDir(tilesDir /= oss.str());
+	unsigned tilesCount = fileUtility->getFilesCountFromDir(
+            filesystem::path(tilesDir) /= oss.str());
 
 	oss.str("");
-	oss << "terrain/base_" << baseTex << ".png";
+	oss << "base_" << baseTex << ".png";
 	SDL_Surface *terrainSurface = ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, oss.str()), 1);
+			filesystem::path(tilesDir) /= oss.str(), 1);
 
 	vector<SDL_Surface*> tiles;
-	for (int i = 0; i < tilesCount; i++) {
+	for (unsigned i = 0; i < tilesCount; i++) {
 		oss.str("");
-		oss << "terrain/" << baseTex << '/' << i << ".png";
-		SDL_Surface *tile = ImageUtility::loadImage(fileUtility->getFullPath(
-				FileUtility::image, oss.str()), 1);
+		oss << baseTex << '/' << i << ".png";
+		SDL_Surface *tile = ImageUtility::loadImage(
+                filesystem::path(tilesDir) /= oss.str(), 1);
 		tiles.push_back(tile);
 	}
 

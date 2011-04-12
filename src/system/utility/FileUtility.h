@@ -22,7 +22,7 @@ public:
 	static void copyFile(filesystem::path srcPath, filesystem::path destPath);
 	void traceResPath();
 	void setFullResPath(std::string path);
-	filesystem::path getFullPath(PathType type, std::string resource);
+	filesystem::path getFullPath(PathType type, std::string resource) const;
 	std::vector<std::string> getFilesFromDir(filesystem::path dir);
 	unsigned int getFilesCountFromDir(filesystem::path dir);
 	std::vector<std::string> getSubDirsFromDir(filesystem::path dir);

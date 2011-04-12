@@ -118,12 +118,11 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 	}
 
 	std::cout << "Preparing fonts..." << std::endl;
-
-	RegularText = new TextManager(m_fileUtility->getFullPath(
-			FileUtility::common, "fonts/archangelsk.ttf"), 46 * WK);
-
-	SmallText = new TextManager(m_fileUtility->getFullPath(FileUtility::common,
-			"fonts/archangelsk.ttf"), 24 * WK);
+	filesystem::path fontPath = m_fileUtility->getFullPath(
+			FileUtility::common, "fonts/archangelsk.ttf");
+	
+	RegularText = new TextManager(fontPath, 46 * WK);
+	SmallText = new TextManager(fontPath, 24 * WK);
 }
 
 VideoManager::~VideoManager() {

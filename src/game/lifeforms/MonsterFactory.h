@@ -1,6 +1,10 @@
 #ifndef MONSTERFACTORY_H_
 #define MONSTERFACTORY_H_
 
+#include <sstream>
+
+#include <boost/filesystem/fstream.hpp>
+
 #include "../../system/sound/SoundManager.h"
 #include "Monster.h"
 

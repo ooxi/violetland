@@ -97,7 +97,7 @@ void FileUtility::setFullResPath(std::string path) {
 	traceResPath();
 }
 
-filesystem::path FileUtility::getFullPath(PathType type, std::string resource) {
+filesystem::path FileUtility::getFullPath(PathType type, std::string resource) const {
 	filesystem::path path(m_resPath);
 	filesystem::path usrPath(m_usrPath);
 

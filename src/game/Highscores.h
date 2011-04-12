@@ -23,7 +23,9 @@ public:
 class Highscores {
 private:
 	std::vector<HighscoresEntry*> m_data;
-	FileUtility* m_fileUtility;
+	const FileUtility* m_fileUtility;
+	const filesystem::path hsFile;
+	const filesystem::path hsTempFile;
 public:
 	Highscores(FileUtility* fileUtility);
 	void clear();
