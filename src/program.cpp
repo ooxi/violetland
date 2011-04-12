@@ -30,7 +30,7 @@
 #include <libintl.h>
 #include <locale.h>
 #define _(STRING)            gettext(STRING)
-#define TRANSLATION_PATH 	"../po"
+#define TRANSLATION_PATH 	"./po"
 
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>

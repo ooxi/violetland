@@ -44,8 +44,8 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 				GL_TEXTURE_2D, GL_LINEAR, true);
 
 		Weapon *weapon = new Weapon(wImage, pImage, 
-				sndManager->create(filesystem::path(weaponPath) /= "shot.png"), 
-				sndManager->create(filesystem::path(weaponPath) /= "reload.png"));
+				sndManager->create(filesystem::path(weaponPath) /= "shot.ogg"), 
+				sndManager->create(filesystem::path(weaponPath) /= "reload.ogg"));
 
 		weapon->Name = weapons[j];
 
