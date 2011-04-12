@@ -30,9 +30,10 @@
 #include <libintl.h>
 #include <locale.h>
 #define _(STRING)            gettext(STRING)
-#define TRANSLATION_PATH 	"./po"
+#define TRANSLATION_PATH 	"../po"
 
 #include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 
 // The Game
 #include "system/Configuration.h"
@@ -269,7 +270,7 @@ string getDefaultName() {
 
 // Creation of system objects and their customization
 void initSystem() {
-	printf(_("Name found : %s\n"), getDefaultName().c_str());
+	std::cout << (format(_("Name found : %s")) % getDefaultName()) << std::endl;
 
 	//~
 	//~ Internationalization Initialization
@@ -415,79 +416,77 @@ void refreshCharStatsWindow() {
 
 	Window* charStats = windows.find("charstats")->second;
 
-	char *buf;
-	//TODO: what is sprintf_s?
-	sprintf(buf = new char[100], _("Current player level: %i"),
-			(int) ((player->Level)));
-	charStats->addElement("level", videoManager->RegularText->getObject(buf, l,
+	ostringstream oss;
+	oss << format(_("Current player level: %i")) % player->Level;
+	charStats->addElement("level", videoManager->RegularText->getObject(oss.str(), l,
 			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
-	delete[] buf;
 
-	sprintf(buf = new char[100], _("Available improvement points: %i"),
-			(int) ((player->LevelPoints)));
+	oss.str("");
+	oss << format(_("Available improvement points: %i")) % player->LevelPoints;
 	charStats->addElement("availpoints", videoManager->RegularText->getObject(
-			buf, l, videoManager->RegularText->getHeight() * 5.0f,
+			oss.str(), l, videoManager->RegularText->getHeight() * 5.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
-	delete[] buf;
 
-	sprintf(buf = new char[100], _("Strength: %i"), (int) ((player->Strength
-			* 100)));
-	charStats->addElement("strength", videoManager->RegularText->getObject(buf,
+	oss.str("");
+	oss << format(_("Strength: %i")) % (player->Strength*100);
+	charStats->addElement("strength", videoManager->RegularText->getObject(oss.str(),
 			l, videoManager->RegularText->getHeight() * 7.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
-	delete[] buf;
-	sprintf(buf = new char[100], _("Agility: %i"), (int) ((player->Agility
-			* 100)));
-	charStats->addElement("agility", videoManager->RegularText->getObject(buf,
+
+	oss.str("");
+	oss << format(_("Agility: %i")) % (player->Agility*100);
+	charStats->addElement("agility", videoManager->RegularText->getObject(oss.str(),
 			l, videoManager->RegularText->getHeight() * 8.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
-	delete[] buf;
-	sprintf(buf = new char[100], _("Vitality: %i"), (int) ((player->Vitality
-			* 100)));
-	charStats->addElement("vitality", videoManager->RegularText->getObject(buf,
+    
+	oss.str("");
+	oss << format(_("Vitality: %i")) % (player->Vitality*100);
+	charStats->addElement("vitality", videoManager->RegularText->getObject(oss.str(),
 			l, videoManager->RegularText->getHeight() * 9.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
-	delete[] buf;
 
-	sprintf(buf = new char[100], _("HP: %i / Max HP: %i"),
-			(int) ((player->getHealth() * 100)), (int) ((player->MaxHealth()
-					* 100)));
-	charStats->addElement("hp", videoManager->RegularText->getObject(buf, l,
+	
+	oss.str("");
+	oss << format(_("HP: %i / Max HP: %i")) % (player->getHealth()*100) % 
+            (player->MaxHealth()*100);
+	charStats->addElement("hp", videoManager->RegularText->getObject(oss.str(), l,
 			videoManager->RegularText->getHeight() * 11.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
-	delete[] buf;
-	sprintf(buf = new char[100], _("Melee damage: %i"),
-			(int) ((player->Damage() * 100)));
-	charStats->addElement("melee", videoManager->RegularText->getObject(buf, l,
+
+	
+	oss.str("");
+	oss << format(_("Melee damage: %i")) % (player->Damage()*100);
+	charStats->addElement("melee", videoManager->RegularText->getObject(oss.str(), l,
 			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
 			TextManager::MIDDLE));
-	delete[] buf;
-	sprintf(buf = new char[100], _("Chance of block: %i%%"),
-			(int) ((player->ChanceToEvade() * 100)));
+
+	oss.str("");
+	oss << format(_("Chance of block: %i%%")) % (player->ChanceToEvade()*100);
 	charStats->addElement("chanceblock", videoManager->RegularText->getObject(
-			buf, l, videoManager->RegularText->getHeight() * 13.0f,
+			oss.str(), l, videoManager->RegularText->getHeight() * 13.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
-	delete[] buf;
-	sprintf(buf = new char[100], _("Reloading speed modifier: %i%%"),
-			(int) ((player->ReloadSpeedMod() * 100)));
+
+	oss.str("");
+	oss << format(_("Reloading speed modifier: %i%%")) % (player->ReloadSpeedMod()*100);
 	charStats->addElement("reloadingspeed",
-			videoManager->RegularText->getObject(buf, l,
+			videoManager->RegularText->getObject(oss.str(), l,
 					videoManager->RegularText->getHeight() * 14.0f,
 					TextManager::LEFT, TextManager::MIDDLE));
-	delete[] buf;
-	sprintf(buf = new char[100], _("Accuracy deviation modifier: %i%%"),
-			(int) ((player->WeaponRetForceMod() * 100)));
-	charStats->addElement("accuracy", videoManager->RegularText->getObject(buf,
+
+	oss.str("");
+	oss << format(_("Accuracy deviation modifier: %i%%")) % 
+            (player->WeaponRetForceMod()*100);
+	charStats->addElement("accuracy", videoManager->RegularText->getObject(oss.str(),
 			l, videoManager->RegularText->getHeight() * 15.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
-	delete[] buf;
-	sprintf(buf = new char[100], _("Health regeneration: %.2f/min"),
-			(player->HealthRegen() * 6000000));
+
+	oss.str("");
+	oss << format(_("Health regeneration: %.2f/min")) % (player->HealthRegen()*100);
 	charStats->addElement("healthregen", videoManager->RegularText->getObject(
-			buf, l, videoManager->RegularText->getHeight() * 16.0f,
+			oss.str(), l, videoManager->RegularText->getHeight() * 16.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
-	delete[] buf;
+
 
 	if (player->Unstoppable)
 		charStats->addElement("+unstoppable",
@@ -981,8 +980,8 @@ void controlsMenuWindowController(std::string elementName) {
 		}
 	}
 
-	fprintf(stdout, _("Bind action %s to %s.\n"), elementName.c_str(),
-			InputHandler::getKeyName(config->PlayerInputBinding[key]));
+	cout << (format(_("Bind action %s to %s.")) % elementName %
+			InputHandler::getKeyName(config->PlayerInputBinding[key])) << endl;
 
 	config->write();
 
@@ -2291,11 +2290,11 @@ void handlePowerups() {
 				if (input->getDownInput(InputHandler::Pickup)
 						|| config->AutoWeaponPickup) {
 					player->setWeapon((Weapon*) gameState->powerups[i]->Object);
-					char *buf;
-					sprintf(buf = new char[200], _("You have taken the %s."),
-							player->getWeapon()->Name.c_str());
-					hud->addMessage(buf);
-					delete[] buf;
+					ostringstream oss;
+                    oss << format(_("You have taken the %s.")) % 
+                            player->getWeapon()->Name;
+					hud->addMessage(oss.str());
+                    
 					deletePowerup = true;
 				}
 				break;
@@ -2514,13 +2513,12 @@ void drawGame() {
 }
 
 void drawFps() {
-	char* buf;
-	sprintf(buf = new char[30], _("FPS: %i"), videoManager->getFps());
-	videoManager->RegularText->draw(buf, config->Screen.Width
+	ostringstream oss;
+	oss << format(_("FPS: %i")) % videoManager->getFps();
+	videoManager->RegularText->draw(oss.str(), config->Screen.Width
 			- videoManager->RegularText->getIndent(), config->Screen.Height
 			- videoManager->RegularText->getIndent(), TextManager::RIGHT,
 			TextManager::BOTTOM);
-	delete[] buf;
 }
 
 void runMainLoop() {

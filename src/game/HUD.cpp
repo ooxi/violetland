@@ -1,5 +1,3 @@
-#include <sstream>
-#include <iomanip>
 #include "HUD.h"
 #include <libintl.h>
 #include <locale.h>
@@ -220,12 +218,11 @@ void violetland::HUD::drawEndGameScreen(GameState* gameState, int xp) {
 	m_videoManager->RegularText->draw(_("They have overcome..."),
 			screen.Width / 2, y, TextManager::CENTER, TextManager::MIDDLE);
 
-	char* buf;
-	sprintf(buf = new char[30], _("You have earned %i points."), xp);
-	m_videoManager->RegularText->draw(buf, screen.Width / 2, y
+	ostringstream oss;
+	oss << format(_("You have earned %i points.")) % xp;
+	m_videoManager->RegularText->draw(oss.str(), screen.Width / 2, y
 			+ m_videoManager->RegularText->getHeight(), TextManager::CENTER,
 			TextManager::MIDDLE);
-	delete[] buf;
 
 	if (gameState->HighScore) {
 		m_videoManager->RegularText->draw(_("Enter your name:"), screen.Width / 2,
@@ -269,22 +266,21 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 			m_videoManager->RegularText->getIndent(), TextManager::LEFT,
 			TextManager::TOP);
 
-	char* buf;
-	sprintf(buf = new char[30], _("Grenades: %i"), player->Grenades);
-	m_videoManager->RegularText->draw(buf,
+	oss.str("");
+	oss << format(_("Grenades: %i")) % player->Grenades;
+	m_videoManager->RegularText->draw(oss.str(),
 			m_videoManager->RegularText->getIndent(),
 			m_videoManager->RegularText->getIndent()
 					+ m_videoManager->RegularText->getHeight(),
 			TextManager::LEFT, TextManager::TOP);
-	delete[] buf;
 
-	sprintf(buf = new char[30], _("Teleports: %i"), player->Teleports);
-	m_videoManager->RegularText->draw(buf,
+	oss.str("");
+	oss << format(_("Teleports: %i")) % player->Teleports;
+	m_videoManager->RegularText->draw(oss.str(),
 			m_videoManager->RegularText->getIndent(),
 			m_videoManager->RegularText->getIndent()
 					+ m_videoManager->RegularText->getHeight() * 2,
 			TextManager::LEFT, TextManager::TOP);
-	delete[] buf;
 
 	if (!gameState->Lost)
 		if (Info != "")

@@ -1,6 +1,10 @@
 #ifndef RESOURCES_H_
 #define RESOURCES_H_
 
+#include <sstream>
+
+#include <boost/format.hpp>
+
 #include "../system/graphic/Sprite.h"
 #include "../system/sound/SoundManager.h"
 #include "../system/utility/Templates.h"

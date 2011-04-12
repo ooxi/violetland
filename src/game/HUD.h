@@ -1,6 +1,11 @@
 #ifndef HUD_H_
 #define HUD_H_
 
+#include <sstream>
+#include <iomanip>
+
+#include <boost/format.hpp>
+
 #include "../system/graphic/VideoManager.h"
 #include "GameState.h"
 #include "Resources.h"
