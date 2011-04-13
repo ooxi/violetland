@@ -54,12 +54,13 @@ public:
 	void resetMouseButtons();
 	int mouseX, mouseY;
 	static std::string getEventName(int eventNumber);
-	static const int getEventNumber(std::string eventName);
+	static const unsigned getEventNumber(std::string eventName);
 	static const char* getKeyName(Binding bind);
 private:
 	void processEvent(BindingType type, bool down, int value);
 	void processTextInput(SDL_Event event);
 	bool m_event[GameInputEventsCount];
+	static std::string m_eventNames[GameInputEventsCount];
 	InputMode m_mode;
 	bool m_textValidated;
 	std::string m_textContent;

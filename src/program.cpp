@@ -877,6 +877,25 @@ void switchResolutionUp(std::string elementName) {
 
 void controlsMenuWindowController(std::string elementName);
 
+inline void addControlElement(Window* w, unsigned i, unsigned strN, 
+		unsigned lx, unsigned rx) {
+    unsigned y = videoManager->RegularText->getHeight() * strN;
+    string eventName = InputHandler::getEventName(i);
+    string keyName = InputHandler::getKeyName(config->PlayerInputBinding[i]);
+    
+	w->addElement(eventName, 
+			videoManager->RegularText->getObject(eventName, lx, y,
+				TextManager::LEFT, TextManager::MIDDLE));
+
+	string skey = eventName + "key";
+	w->addElement(skey, 
+			videoManager->RegularText->getObject(keyName, rx, y,
+				TextManager::RIGHT, TextManager::MIDDLE));
+
+	w->addHandler(Window::hdl_lclick, eventName, 
+			controlsMenuWindowController);
+}
+
 void refreshControlsMenuWindow() {
 	Window* w = windows.find("controls")->second;
 
@@ -890,38 +909,14 @@ void refreshControlsMenuWindow() {
 	const int col2_l = config->Screen.Width * 0.55f;
 	const int col2_r = config->Screen.Width * 0.9f;
 
-	int col1_items = InputHandler::GameInputEventsCount / 2;
-	int col2_items = col1_items;
-	if (col1_items + col2_items != InputHandler::GameInputEventsCount)
-		col1_items++;
+	unsigned col1_items = (InputHandler::GameInputEventsCount+1) / 2;
+	unsigned col2_items = InputHandler::GameInputEventsCount - col1_items;
 
-	for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
-		int l, r, strN;
-		if (i < col1_items) {
-			l = col1_l;
-			r = col1_r;
-			strN = i + 4;
-		} else {
-			l = col2_l;
-			r = col2_r;
-			strN = i - col1_items + 4;
-		}
-
-		w->addElement(InputHandler::getEventName(i),
-				videoManager->RegularText->getObject(
-						InputHandler::getEventName(i), l,
-						videoManager->RegularText->getHeight() * strN,
-						TextManager::LEFT, TextManager::MIDDLE));
-
-		string skey = InputHandler::getEventName(i) + "key";
-		w->addElement(skey, videoManager->RegularText->getObject(
-				InputHandler::getKeyName(config->PlayerInputBinding[i]), r,
-				videoManager->RegularText->getHeight() * strN,
-				TextManager::RIGHT, TextManager::MIDDLE));
-
-		w->addHandler(Window::hdl_lclick, InputHandler::getEventName(i),
-				controlsMenuWindowController);
-	}
+	for (unsigned i = 0; i < col1_items; i++)
+        addControlElement(w, i, i + 4, col1_l, col1_r);
+    
+    for (unsigned i = col1_items; i < InputHandler::GameInputEventsCount; i++)
+        addControlElement(w, i, i - col1_items + 4, col2_l, col2_r);
 }
 
 void drawWindows() {

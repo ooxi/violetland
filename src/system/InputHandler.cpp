@@ -1,4 +1,5 @@
 #include <iostream>
+#include <exception>
 
 #include "InputHandler.h"
 #include <libintl.h>
@@ -6,6 +7,8 @@
 #define _(STRING)            gettext(STRING)
 #define MAX_CHARACTERS 20
 using namespace std;
+
+string InputHandler::m_eventNames[GameInputEventsCount];
 
 InputHandler::InputHandler(Binding* binding) {
 	std::cout << "InputHandler..." << std::endl;
@@ -22,6 +25,26 @@ InputHandler::InputHandler(Binding* binding) {
 	m_textValidated = false;
 	m_textContent = "";
 	m_curTextPos = 0;
+	
+	m_eventNames[Restart] = _("Restart");
+	m_eventNames[Exit] = _("Exit");
+	m_eventNames[Menu] = _("Menu");
+	m_eventNames[MenuClickA] = _("MenuClickA");
+	m_eventNames[MenuClickB] = _("MenuClickB");
+	m_eventNames[ToggleLight] = _("Toggle Light");
+	m_eventNames[ToggleLaser] = _("Toggle Laser");
+	m_eventNames[ShowChar] = _("Show Char");
+	m_eventNames[Pause] = _("Pause");
+	m_eventNames[MoveLeft] = _("Move Left");
+	m_eventNames[MoveRight] = _("Move Right");
+	m_eventNames[MoveUp] = _("Move Up");
+	m_eventNames[MoveDown] = _("Move Down");
+	m_eventNames[Help] = _("Help");
+	m_eventNames[Pickup] = _("Pick Up");
+	m_eventNames[ThrowGrenade] = _("Throw Grenade");
+	m_eventNames[Fire] = _("Fire");
+	m_eventNames[Reload] = _("Reload");
+	m_eventNames[Teleport] = _("Teleport");
 }
 
 void InputHandler::setInputMode(InputMode mode) {
@@ -145,132 +168,18 @@ void InputHandler::process() {
 }
 
 string InputHandler::getEventName(int eventNumber) {
-	switch (eventNumber) {
-	case Restart:
-		return _("Restart");
-		break;
-	case Exit:
-		return _("Exit");
-		break;
-	case Menu:
-		return _("Menu");
-		break;
-	case MenuClickA:
-		return _("MenuClickA");
-		break;
-	case MenuClickB:
-		return _("MenuClickB");
-		break;
-	case ToggleLight:
-		return _("Toggle Light");
-		break;
-	case ToggleLaser:
-		return _("Toggle Laser");
-		break;
-	case ShowChar:
-		return _("Show Char");
-		break;
-	case Pause:
-		return _("Pause");
-		break;
-	case MoveLeft:
-		return _("Move Left");
-		break;
-	case MoveRight:
-		return _("Move Right");
-		break;
-	case MoveUp:
-		return _("Move Up");
-		break;
-	case MoveDown:
-		return _("Move Down");
-		break;
-	case Help:
-		return _("Help");
-		break;
-	case Pickup:
-		return _("Pick Up");
-		break;
-	case ThrowGrenade:
-		return _("Throw Grenade");
-		break;
-	case Fire:
-		return _("Fire");
-		break;
-	case Reload:
-		return _("Reload");
-		break;
-	case Teleport:
-		return _("Teleport");
-		break;
-	case GameInputEventsCount:
-		return "GameInputEventsCount";
-		break;
-	default:
-		return _("Unknown event");
-		break;
-	}
+	if (eventNumber > GameInputEventsCount)
+		throw exception();
+	else
+		return m_eventNames[eventNumber];
 }
 
-const int InputHandler::getEventNumber(std::string eventName) {
-	if (eventName.compare("Restart") == 0)
-		return Restart;
+const unsigned InputHandler::getEventNumber(std::string eventName) {
+	for (unsigned i = 0; i < GameInputEventsCount; ++i)
+		if (m_eventNames[i] == eventName)
+			return i;
 
-	if (eventName.compare("Exit") == 0)
-		return Exit;
-
-	if (eventName.compare("Menu") == 0)
-		return Menu;
-
-	if (eventName.compare("MenuClickA") == 0)
-		return MenuClickA;
-
-	if (eventName.compare("MenuClickB") == 0)
-		return MenuClickB;
-
-	if (eventName.compare("Toggle Light") == 0)
-		return ToggleLight;
-
-	if (eventName.compare("Toggle Laser") == 0)
-		return ToggleLaser;
-
-	if (eventName.compare("Show Char") == 0)
-		return ShowChar;
-
-	if (eventName.compare("Pause") == 0)
-		return Pause;
-
-	if (eventName.compare("Move Left") == 0)
-		return MoveLeft;
-
-	if (eventName.compare("Move Right") == 0)
-		return MoveRight;
-
-	if (eventName.compare("Move Up") == 0)
-		return MoveUp;
-
-	if (eventName.compare("Move Down") == 0)
-		return MoveDown;
-
-	if (eventName.compare("Help") == 0)
-		return Help;
-
-	if (eventName.compare("Pick Up") == 0)
-		return Pickup;
-
-	if (eventName.compare("Throw Grenade") == 0)
-		return ThrowGrenade;
-
-	if (eventName.compare("Fire") == 0)
-		return Fire;
-
-	if (eventName.compare("Reload") == 0)
-		return Reload;
-
-	if (eventName.compare("Teleport") == 0)
-		return Teleport;
-
-	return GameInputEventsCount;
+	throw exception();
 }
 
 const char* InputHandler::getKeyName(Binding bind) {
