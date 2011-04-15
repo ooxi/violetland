@@ -4,6 +4,11 @@
 #include "../Texture.h"
 #include "../../Object.h"
 
+struct Label {
+    const char* id;
+    const char* text;
+};
+
 class TextObject: public Object {
 private:
 	Texture* m_texture;

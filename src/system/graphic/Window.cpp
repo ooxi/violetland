@@ -14,9 +14,18 @@ Window::Window(float x, float y, int w, int h, float r, float g, float b,
 	CloseFlag = false;
 }
 
-void Window::addElement(std::string name, TextObject* element) {
-	removeElement(name, true);
-	m_elements[name] = element;
+void Window::addElement(std::string id, TextObject* element) 
+{
+	removeElement(id, true);
+	m_elements[id] = element;
+}
+
+void Window::addElement(std::string id, std::string text, TextManager* manager, 
+	int x, int y, TextManager::TextHAlignFlag halign, 
+	TextManager::TextVAlignFlag valign) {
+	removeElement(id, true);
+	TextObject* element = manager->getObject(text, x, y, halign, valign);
+	m_elements[id] = element;
 }
 
 void Window::removeElement(std::string name, bool remainHandler) {

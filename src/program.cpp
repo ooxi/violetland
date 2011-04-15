@@ -29,7 +29,7 @@
 //~ Internationalization Dependances
 #include <libintl.h>
 #include <locale.h>
-#define _(STRING)            gettext(STRING)
+#define _(STRING)			gettext(STRING)
 #define TRANSLATION_PATH 	"./po"
 
 #include <boost/filesystem.hpp>
@@ -114,14 +114,14 @@ void createTerrain() {
 		delete terrain;
 
 	cout << "Forming terrain..." << endl;
-    
-    filesystem::path tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
+	
+	filesystem::path tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
 	unsigned baseTex = rand() % fileUtility->getFilesCountFromDir(tilesDir);
 
 	ostringstream oss;
 	oss << baseTex;
 	unsigned tilesCount = fileUtility->getFilesCountFromDir(
-            filesystem::path(tilesDir) /= oss.str());
+			filesystem::path(tilesDir) /= oss.str());
 
 	oss.str("");
 	oss << "base_" << baseTex << ".png";
@@ -133,7 +133,7 @@ void createTerrain() {
 		oss.str("");
 		oss << baseTex << '/' << i << ".png";
 		SDL_Surface *tile = ImageUtility::loadImage(
-                filesystem::path(tilesDir) /= oss.str(), 1);
+				filesystem::path(tilesDir) /= oss.str(), 1);
 		tiles.push_back(tile);
 	}
 
@@ -412,121 +412,97 @@ void refreshCharStatsWindow() {
 
 	const int l = (int) (config->Screen.Width * 0.1f);
 	const int r = (int) (config->Screen.Width * 0.6f);
+	const int h = videoManager->RegularText->getHeight();
 
 	Window* charStats = windows.find("charstats")->second;
 
 	ostringstream oss;
 	oss << format(_("Current player level: %i")) % player->Level;
-	charStats->addElement("level", videoManager->RegularText->getObject(oss.str(), l,
-			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+	charStats->addElement("level", oss.str(), videoManager->RegularText, 
+			l, 4*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << format(_("Available improvement points: %i")) % player->LevelPoints;
-	charStats->addElement("availpoints", videoManager->RegularText->getObject(
-			oss.str(), l, videoManager->RegularText->getHeight() * 5.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	charStats->addElement("availpoints", oss.str(), videoManager->RegularText,
+			l, 5*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << format(_("Strength: %i")) % (player->Strength*100);
-	charStats->addElement("strength", videoManager->RegularText->getObject(oss.str(),
-			l, videoManager->RegularText->getHeight() * 7.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	charStats->addElement("strength", oss.str(), videoManager->RegularText,
+			l, 7*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << format(_("Agility: %i")) % (player->Agility*100);
-	charStats->addElement("agility", videoManager->RegularText->getObject(oss.str(),
-			l, videoManager->RegularText->getHeight() * 8.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-    
+	charStats->addElement("agility", oss.str(), videoManager->RegularText,
+			l, 8*h, TextManager::LEFT, TextManager::MIDDLE);
+	
 	oss.str("");
 	oss << format(_("Vitality: %i")) % (player->Vitality*100);
-	charStats->addElement("vitality", videoManager->RegularText->getObject(oss.str(),
-			l, videoManager->RegularText->getHeight() * 9.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	charStats->addElement("vitality", oss.str(), videoManager->RegularText,
+			l, 9*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	
 	oss.str("");
 	oss << format(_("HP: %i / Max HP: %i")) % (player->getHealth()*100) % 
-            (player->MaxHealth()*100);
-	charStats->addElement("hp", videoManager->RegularText->getObject(oss.str(), l,
-			videoManager->RegularText->getHeight() * 11.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+			(player->MaxHealth()*100);
+	charStats->addElement("hp", oss.str(), videoManager->RegularText, 
+			l, 11*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	
 	oss.str("");
 	oss << format(_("Melee damage: %i")) % (player->Damage()*100);
-	charStats->addElement("melee", videoManager->RegularText->getObject(oss.str(), l,
-			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+	charStats->addElement("melee", oss.str(), videoManager->RegularText, 
+			l, 12*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << format(_("Chance of block: %i%%")) % (player->ChanceToEvade()*100);
-	charStats->addElement("chanceblock", videoManager->RegularText->getObject(
-			oss.str(), l, videoManager->RegularText->getHeight() * 13.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	charStats->addElement("chanceblock", oss.str(), videoManager->RegularText,
+			l, 13*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << format(_("Reloading speed modifier: %i%%")) % (player->ReloadSpeedMod()*100);
-	charStats->addElement("reloadingspeed",
-			videoManager->RegularText->getObject(oss.str(), l,
-					videoManager->RegularText->getHeight() * 14.0f,
-					TextManager::LEFT, TextManager::MIDDLE));
+	charStats->addElement("reloadingspeed", oss.str(), videoManager->RegularText, 
+			l, 14*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << format(_("Accuracy deviation modifier: %i%%")) % 
-            (player->WeaponRetForceMod()*100);
-	charStats->addElement("accuracy", videoManager->RegularText->getObject(oss.str(),
-			l, videoManager->RegularText->getHeight() * 15.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+			(player->WeaponRetForceMod()*100);
+	charStats->addElement("accuracy", oss.str(), videoManager->RegularText,
+			l, 15*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << format(_("Health regeneration: %.2f/min")) % (player->HealthRegen()*100);
-	charStats->addElement("healthregen", videoManager->RegularText->getObject(
-			oss.str(), l, videoManager->RegularText->getHeight() * 16.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	charStats->addElement("healthregen", oss.str(), videoManager->RegularText,
+			l, 16*h, TextManager::LEFT, TextManager::MIDDLE);
 
 
 	if (player->Unstoppable)
-		charStats->addElement("+unstoppable",
-				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 4.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
+		charStats->addElement("+unstoppable", "+", videoManager->RegularText,
+				r, 4*h, TextManager::CENTER, TextManager::MIDDLE);
 
 	if (player->PoisonBullets)
-		charStats->addElement("+poisonbullets",
-				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 5.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
+		charStats->addElement("+poisonbullets", "+", videoManager->RegularText, 
+				r, 5*h, TextManager::CENTER, TextManager::MIDDLE);
 
 	if (player->BigCalibre)
-		charStats->addElement("+bigcalibre",
-				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 6.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
+		charStats->addElement("+bigcalibre", "+", videoManager->RegularText,
+				r, 6*h, TextManager::CENTER, TextManager::MIDDLE);
 
 	if (player->Telekinesis)
-		charStats->addElement("+telekinesis",
-				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 7.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
+		charStats->addElement("+telekinesis", "+", videoManager->RegularText, 
+				r, 7*h, TextManager::CENTER, TextManager::MIDDLE);
 
 	if (player->NightVision)
-		charStats->addElement("+nightvision",
-				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 8.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
+		charStats->addElement("+nightvision", "+", videoManager->RegularText, 
+				r, 8*h, TextManager::CENTER, TextManager::MIDDLE);
 
 	if (player->Looting)
-		charStats->addElement("+looting", videoManager->RegularText->getObject(
-				"+", r, videoManager->RegularText->getHeight() * 9.0f,
-				TextManager::CENTER, TextManager::MIDDLE));
+		charStats->addElement("+looting", "+", videoManager->RegularText, 
+				r, 9*h, TextManager::CENTER, TextManager::MIDDLE);
 
 	if (player->WideSight)
-		charStats->addElement("+widesight",
-				videoManager->RegularText->getObject("+", r,
-						videoManager->RegularText->getHeight() * 10.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
+		charStats->addElement("+widesight", "+", videoManager->RegularText, 
+				r, 10*h, TextManager::CENTER, TextManager::MIDDLE);
 }
 
 void increaseVioletParam(std::string elementName) {
@@ -594,73 +570,28 @@ void takePerk(std::string elementName) {
 }
 
 void showPerkDetails(std::string elementName) {
-	if (elementName.compare("unstoppable") == 0) {
+	int x = config->Screen.Width / 2;
+	int y = videoManager->RegularText->getHeight();
+	
+	map<string, string> m;
+	m["unstoppable"] = _("Unstoppable: enemies can't block your "
+			"movement anymore, but they still can hurt you.");
+	m["poisonbullets"] = _("Poison bullets: after getting hit by your "
+			"bullet, enemies slowly lose health until they die.");
+	m["bigcalibre"] = _("Big calibre: your bullets can wound a few "
+			"monsters in a row.");
+	m["telekinesis"] = _("Telekinesis: useful things slowly move "
+		"towards you.");
+	m["nightvision"] = _("Night vision: you can see in the dark.");
+	m["looting"] = _("Looting: Monsters will drop more bonuses.");
+	m["widesight"] = _("Wide sight: accessible area for action "
+			"is much more.");
+
+	map<string, string>::iterator it = m.find(elementName);
+	if (it != m.end())
 		windows["charstats"]->addElement(
-				"explantation",
-				videoManager->SmallText->getObject(
-						_("Unstoppable: enemies can't block your movement any more, but they still can hurt you."),
-						config->Screen.Width / 2,
-						videoManager->RegularText->getHeight() * 1.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
-	}
-
-	if (elementName.compare("poisonbullets") == 0) {
-		windows["charstats"]->addElement(
-				"explantation",
-				videoManager->SmallText->getObject(
-						_("Poison bullets: after getting hit by your bullet, enemies slowly lose health until they die."),
-						config->Screen.Width / 2,
-						videoManager->RegularText->getHeight() * 1.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
-	}
-
-	if (elementName.compare("bigcalibre") == 0) {
-		windows["charstats"]->addElement(
-				"explantation",
-				videoManager->SmallText->getObject(
-						_("Big calibre: your bullets can wound a few monsters in a row."),
-						config->Screen.Width / 2,
-						videoManager->RegularText->getHeight() * 1.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
-	}
-
-	if (elementName.compare("telekinesis") == 0) {
-		windows["charstats"]->addElement(
-				"explantation",
-				videoManager->SmallText->getObject(
-						_("Telekinesis: useful things slowly move towards you."),
-						config->Screen.Width / 2,
-						videoManager->RegularText->getHeight() * 1.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
-	}
-
-	if (elementName.compare("nightvision") == 0) {
-		windows["charstats"]->addElement("explantation",
-				videoManager->SmallText->getObject(
-						_("Night vision: you can see in the dark."),
-						config->Screen.Width / 2,
-						videoManager->RegularText->getHeight() * 1.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
-	}
-
-	if (elementName.compare("looting") == 0) {
-		windows["charstats"]->addElement("explantation",
-				videoManager->SmallText->getObject(
-						_("Looting: Monsters will drop more bonuses."),
-						config->Screen.Width / 2,
-						videoManager->RegularText->getHeight() * 1.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
-	}
-
-	if (elementName.compare("widesight") == 0) {
-		windows["charstats"]->addElement(
-				"explantation",
-				videoManager->SmallText->getObject(
-						_("Wide sight: accessible area for action is much more."),
-						config->Screen.Width / 2,
-						videoManager->RegularText->getHeight() * 1.0f,
-						TextManager::CENTER, TextManager::MIDDLE));
-	}
+				"explantation", it->second, videoManager->SmallText,
+				x, y, TextManager::CENTER, TextManager::MIDDLE);
 }
 
 void createCharStatWindow() {
@@ -707,58 +638,48 @@ void backFromOptionsAndSave(std::string elementName);
 void refreshOptionsWindow() {
 	const int l = config->Screen.Width * 0.1f;
 	const int r = config->Screen.Width * 0.6f;
+	const int h = videoManager->RegularText->getHeight();
 
 	Window* w = windows.find("options")->second;
 
 	if (config->AutoReload)
-		w->addElement("+autoreload", videoManager->RegularText->getObject("+",
-				l, videoManager->RegularText->getHeight() * 6.0f,
-				TextManager::LEFT, TextManager::MIDDLE));
+		w->addElement("+autoreload", "+", videoManager->RegularText,
+				l, 6*h, TextManager::LEFT, TextManager::MIDDLE);
 	else
 		w->removeElement("+autoreload", false);
 
 	if (config->AutoWeaponPickup)
-		w->addElement("+autopickup", videoManager->RegularText->getObject("+",
-				l, videoManager->RegularText->getHeight() * 7.0f,
-				TextManager::LEFT, TextManager::MIDDLE));
+		w->addElement("+autopickup", "+", videoManager->RegularText,
+				l, 7*h, TextManager::LEFT, TextManager::MIDDLE);
 	else
 		w->removeElement("+autopickup", false);
 
 	if (config->FriendlyFire)
-		w->addElement("+friendlyfire", videoManager->RegularText->getObject(
-				"+", l, videoManager->RegularText->getHeight() * 8.0f,
-				TextManager::LEFT, TextManager::MIDDLE));
+		w->addElement("+friendlyfire", "+", videoManager->RegularText,
+				l, 8*h, TextManager::LEFT, TextManager::MIDDLE);
 	else
 		w->removeElement("+friendlyfire", false);
 
 	if (config->Screen.Full)
-		w->addElement("+fullscreen", videoManager->RegularText->getObject("+",
-				r, videoManager->RegularText->getHeight() * 6.0f,
-				TextManager::LEFT, TextManager::MIDDLE));
+		w->addElement("+fullscreen", "+", videoManager->RegularText,
+				r, 6*h, TextManager::LEFT, TextManager::MIDDLE);
 	else
 		w->removeElement("+fullscreen", false);
 
 	ostringstream oss;
 	oss << tempConfig->Screen.Width << 'x' << tempConfig->Screen.Height;
-	TextObject* resInfo = videoManager->RegularText->getObject(oss.str(), r
-			+ videoManager->RegularText->getHeight() * 8.0f,
-			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	w->addElement("+resolution", resInfo);
+	w->addElement("+resolution", oss.str(), videoManager->RegularText,
+			r+8*h, 7*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << config->SoundVolume * 10 << '%';
-	TextObject* sndInd = videoManager->RegularText->getObject(oss.str(), l,
-			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	w->addElement("+soundvolume", sndInd);
+	w->addElement("+soundvolume", oss.str(), videoManager->RegularText,
+			l, 12*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << config->MusicVolume * 10 << '%';
-	TextObject * musInd = videoManager->RegularText->getObject(oss.str(), l,
-			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-	w->addElement("+musicvolume", musInd);
+	w->addElement("+musicvolume", oss.str(), videoManager->RegularText,
+			l, 13*h, TextManager::LEFT, TextManager::MIDDLE);
 }
 
 void switchGameOption(std::string elementName) {
@@ -879,18 +800,15 @@ void controlsMenuWindowController(std::string elementName);
 
 inline void addControlElement(Window* w, unsigned i, unsigned strN, 
 		unsigned lx, unsigned rx) {
-    unsigned y = videoManager->RegularText->getHeight() * strN;
-    string eventName = InputHandler::getEventName(i);
-    string keyName = InputHandler::getKeyName(config->PlayerInputBinding[i]);
-    
-	w->addElement(eventName, 
-			videoManager->RegularText->getObject(eventName, lx, y,
-				TextManager::LEFT, TextManager::MIDDLE));
+	unsigned y = videoManager->RegularText->getHeight() * strN;
+	string eventName = InputHandler::getEventName(i);
+	string keyName = InputHandler::getKeyName(config->PlayerInputBinding[i]);
+	
+	w->addElement(eventName, eventName, videoManager->RegularText, 
+			lx, y, TextManager::LEFT, TextManager::MIDDLE);
 
-	string skey = eventName + "key";
-	w->addElement(skey, 
-			videoManager->RegularText->getObject(keyName, rx, y,
-				TextManager::RIGHT, TextManager::MIDDLE));
+	w->addElement(eventName + "key", keyName, videoManager->RegularText, 
+			rx, y, TextManager::RIGHT, TextManager::MIDDLE);
 
 	w->addHandler(Window::hdl_lclick, eventName, 
 			controlsMenuWindowController);
@@ -902,9 +820,9 @@ void refreshControlsMenuWindow() {
 	const int col1_l = config->Screen.Width * 0.1f;
 	const int col1_r = config->Screen.Width * 0.45f;
 
-	w->addElement("controls", videoManager->RegularText->getObject(
-			_("Controls"), col1_l, videoManager->RegularText->getHeight()
-					* 2.0f, TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("controls", _("Controls"), videoManager->RegularText, 
+			col1_l, videoManager->RegularText->getHeight()* 2.0f, 
+			TextManager::LEFT, TextManager::MIDDLE);
 
 	const int col2_l = config->Screen.Width * 0.55f;
 	const int col2_r = config->Screen.Width * 0.9f;
@@ -913,10 +831,10 @@ void refreshControlsMenuWindow() {
 	unsigned col2_items = InputHandler::GameInputEventsCount - col1_items;
 
 	for (unsigned i = 0; i < col1_items; i++)
-        addControlElement(w, i, i + 4, col1_l, col1_r);
-    
-    for (unsigned i = col1_items; i < InputHandler::GameInputEventsCount; i++)
-        addControlElement(w, i, i - col1_items + 4, col2_l, col2_r);
+		addControlElement(w, i, i + 4, col1_l, col1_r);
+	
+	for (unsigned i = col1_items; i < InputHandler::GameInputEventsCount; i++)
+		addControlElement(w, i, i - col1_items + 4, col2_l, col2_r);
 }
 
 void drawWindows() {
@@ -943,10 +861,9 @@ void controlsMenuWindowController(std::string elementName) {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	w->addElement("pressakey",
-			videoManager->RegularText->getObject(_("Press a key, please..."),
-					config->Screen.Width / 2, config->Screen.Height / 2,
-					TextManager::CENTER, TextManager::MIDDLE));
+	w->addElement("pressakey", _("Press a key, please..."), videoManager->RegularText,
+			config->Screen.Width / 2, config->Screen.Height / 2,
+			TextManager::CENTER, TextManager::MIDDLE);
 
 	windows["pressakey"] = w;
 
@@ -1004,6 +921,20 @@ void resetControls(std::string elementName) {
 		config->PlayerInputBinding[i] = config_default->PlayerInputBinding[i];
 }
 
+void addOptionLabel(Window* w, const Label& label, int x, int y) {
+	w->addElement(label.id, label.text, videoManager->RegularText, x, y, 
+		TextManager::LEFT, TextManager::MIDDLE);
+}
+
+void addSection(Window* w, const Label& header, const Label labels[], 
+	int labelsCount, int x, int y, int hindent, int vindent, int vstep) {
+	
+	addOptionLabel(w, header, x, y);
+			
+	for (int i = 0; i < labelsCount; ++i)
+		addOptionLabel(w, labels[i], x+hindent, y+vindent+i*vstep);
+}
+		
 void createOptionsWindow() {
 	tempConfig = new Configuration(*config);
 
@@ -1012,73 +943,44 @@ void createOptionsWindow() {
 
 	const int l = config->Screen.Width * 0.1f;
 	const int r = config->Screen.Width * 0.6f;
+	const int h = videoManager->RegularText->getHeight();
 
-	w->addElement("options", videoManager->RegularText->getObject(_("Options"),
-			l, videoManager->RegularText->getHeight() * 2.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	Label options = {"options", _("Options")};
+	addOptionLabel(w, options, l, h * 2.0f);
+	
+	Label gameplay = {"sectiongame", _("Gameplay")};
+	Label gameplayLabels[] = {
+		{"autoreload", _("Weapon autoreloading")},
+		{"autopickup", _("Weapon autotaking")},
+		{"friendlyfire", _("Friendly fire")},
+	};
+	addSection(w, gameplay, gameplayLabels, 
+			sizeof(gameplayLabels)/sizeof(Label), l, 4*h, 2*h, 2*h, h);
 
-	w->addElement("sectiongame", videoManager->RegularText->getObject(
-			_("Gameplay"), l, videoManager->RegularText->getHeight()
-					* 4.0f, TextManager::LEFT, TextManager::MIDDLE));
+	Label graphics = {"sectiongraphics", _("Graphics")};
+	Label graphicsLabels[] = {
+		{"fullscreen", _("Fullscreen")},
+		{"resolution", _("Resolution")},
+	};
+	addSection(w, graphics, graphicsLabels, 
+			sizeof(graphicsLabels)/sizeof(Label), r, 4*h, 2*h, 2*h, h);
+	
+	Label sound = {"sectionsound", _("Sound")};
+	Label soundLabels[] = {
+		{"soundvolume", _("Sound volume")},
+		{"musicvolume", _("Music volume")},
+	};
+	addSection(w, sound, soundLabels, 
+			sizeof(soundLabels)/sizeof(Label), l, 10*h, 3*h, 2*h, h);
+	
+	Label controls = {"controlstitle", _("Controls")};
+	Label controlsLabels[] = {
+		{"controlsmenu", _("Edit Controls")},
+		{"controlsreset", _("Reset Controls")},
+	};
+	addSection(w, controls, controlsLabels, 
+			sizeof(controlsLabels)/sizeof(Label), r, 10*h, 2*h, 2*h, h);
 
-	w->addElement("autoreload", videoManager->RegularText->getObject(
-			_("Weapon autoreloading"), l
-					+ videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 6.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-	w->addElement("autopickup", videoManager->RegularText->getObject(
-			_("Weapon autotaking"), l
-					+ videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 7.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-	w->addElement("friendlyfire", videoManager->RegularText->getObject(
-			_("Friendly fire"), l
-					+ videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	w->addElement("sectiongraphics", videoManager->RegularText->getObject(
-			_("Graphics"), r, videoManager->RegularText->getHeight()
-					* 4.0f, TextManager::LEFT, TextManager::MIDDLE));
-
-	w->addElement("fullscreen", videoManager->RegularText->getObject(
-			_("Fullscreen"), r + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 6.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-	w->addElement("resolution", videoManager->RegularText->getObject(
-			_("Resolution"), r + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 7.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	w->addElement("sectionsound", videoManager->RegularText->getObject(
-			_("Sound"), l,
-			videoManager->RegularText->getHeight() * 10.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	w->addElement("soundvolume", videoManager->RegularText->getObject(
-			_("Sound volume"), l + videoManager->RegularText->getHeight()
-					* 3.0f, videoManager->RegularText->getHeight() * 12.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-	w->addElement("musicvolume", videoManager->RegularText->getObject(
-			_("Music volume"), l + videoManager->RegularText->getHeight()
-					* 3.0f, videoManager->RegularText->getHeight() * 13.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	w->addElement("controlstitle", videoManager->RegularText->getObject(
-			_("Controls"), r, videoManager->RegularText->getHeight()
-					* 10.0f, TextManager::LEFT, TextManager::MIDDLE));
-
-	w->addElement("controlsmenu", videoManager->RegularText->getObject(
-			_("Edit Controls"), r
-					+ videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 12.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	w->addElement("controlsreset", videoManager->RegularText->getObject(
-			_("Reset Controls"), r
-					+ videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 13.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
 
 	w->addHandler(Window::hdl_lclick, "autoreload", switchGameOption);
 	w->addHandler(Window::hdl_lclick, "autopickup", switchGameOption);
@@ -1093,10 +995,8 @@ void createOptionsWindow() {
 	w->addHandler(Window::hdl_lclick, "controlsmenu", createControlsMenuWindow);
 	w->addHandler(Window::hdl_lclick, "controlsreset", resetControls);
 
-	w->addElement("savereturn", videoManager->RegularText->getObject(
-			_("Save and return"), l,
-			videoManager->RegularText->getHeight() * 16.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+	Label savereturn = {"savereturn", _("Save and return")};
+	addOptionLabel(w, savereturn, l, h * 16.0f);
 	w->addHandler(Window::hdl_lclick, "savereturn", backFromOptionsAndSave);
 
 	windows["options"] = w;
@@ -1134,9 +1034,9 @@ void refreshMainMenuWindow() {
 		break;
 	}
 
-	w->addElement("gamemode", videoManager->RegularText->getObject(
-			strGameMode.c_str(), r, videoManager->RegularText->getHeight()
-					* 8.0f, TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("gamemode", strGameMode, videoManager->RegularText, 
+			r, videoManager->RegularText->getHeight()* 8.0f, 
+			TextManager::LEFT, TextManager::MIDDLE);
 }
 
 void switchGameMode(std::string elementName) {
@@ -1187,31 +1087,26 @@ void highScoresWindowController(std::string elementName) {
 }
 
 void createHighscoresWindow() {
-	Window *scoresWin = new Window(0.0f, 0.0f, config->Screen.Width,
+	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
 	const int l = config->Screen.Width * 0.1f;
 	const int r2 = l * 2.0f;
 	const int r3 = l * 5.0f;
 	const int r4 = l * 7.0f;
+	const int h = videoManager->RegularText->getHeight();
 
-	scoresWin->addElement("highscores", videoManager->RegularText->getObject(
-			_("Highscores"), l, videoManager->RegularText->getHeight()
-					* 2.0f, TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("highscores", _("Highscores"), videoManager->RegularText, 
+			l, 2*h, TextManager::LEFT, TextManager::MIDDLE);
 
-	scoresWin->addElement("headerXp", videoManager->RegularText->getObject(
-			_("XP"), l, videoManager->RegularText->getHeight() * 4.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-	scoresWin->addElement("headerParams", videoManager->RegularText->getObject(
-			_("Str/Agil/Vital"), r2,
-			videoManager->RegularText->getHeight() * 4.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-	scoresWin->addElement("headerTime", videoManager->RegularText->getObject(
-			_("Time"), r3, videoManager->RegularText->getHeight() * 4.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-	scoresWin->addElement("headerName", videoManager->RegularText->getObject(
-			_("Name"), r4, videoManager->RegularText->getHeight() * 4.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("headerXp", _("XP"), videoManager->RegularText,
+			l, 4*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("headerParams", _("Str/Agil/Vital"), videoManager->RegularText,
+			r2, 4*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("headerTime", _("Time"), videoManager->RegularText,
+			r3, 4*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("headerName", _("Name"), videoManager->RegularText,
+			r4, 4*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	Highscores s(fileUtility);
 	vector<HighscoresEntry*> highscores = s.getData();
@@ -1222,13 +1117,8 @@ void createHighscoresWindow() {
 
 			oss1 << "xp" << i;
 			oss2 << highscores[i]->Xp;
-			scoresWin->addElement(
-					oss1.str(),
-					videoManager->RegularText->getObject(
-							oss2.str(),
-							l,
-							videoManager->RegularText->getHeight() * (5.0f + i),
-							TextManager::LEFT, TextManager::MIDDLE));
+			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
+					l, (5+i)*h, TextManager::LEFT, TextManager::MIDDLE);
 
 			oss1.str("");
 			oss2.str("");
@@ -1236,13 +1126,8 @@ void createHighscoresWindow() {
 			oss2 << (int) (highscores[i]->Strength * 100) << '/'
 					<< (int) (highscores[i]->Agility * 100) << '/'
 					<< (int) (highscores[i]->Vitality * 100);
-			scoresWin->addElement(
-					oss1.str(),
-					videoManager->RegularText->getObject(
-							oss2.str(),
-							r2,
-							videoManager->RegularText->getHeight() * (5.0f + i),
-							TextManager::LEFT, TextManager::MIDDLE));
+			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
+					r2, (5+i)*h, TextManager::LEFT, TextManager::MIDDLE);
 
 			const int minutes = highscores[i]->Time / 60000;
 			const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
@@ -1251,41 +1136,26 @@ void createHighscoresWindow() {
 			oss2.str("");
 			oss1 << "time" << i;
 			oss2 << minutes << "m " << seconds << 's';
-			scoresWin->addElement(
-					oss1.str(),
-					videoManager->RegularText->getObject(
-							oss2.str(),
-							r3,
-							videoManager->RegularText->getHeight() * (5.0f + i),
-							TextManager::LEFT, TextManager::MIDDLE));
+			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
+					r3, (5+i)*h, TextManager::LEFT, TextManager::MIDDLE);
 
 			oss1.str("");
 			oss1 << "name" << i;
-			scoresWin->addElement(
-					oss1.str(),
-					videoManager->RegularText->getObject(
-							highscores[i]->Name->c_str(),
-							r4,
-							videoManager->RegularText->getHeight() * (5.0f + i),
-							TextManager::LEFT, TextManager::MIDDLE));
+			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
+					r4, (5+i)*h, TextManager::LEFT, TextManager::MIDDLE);
 		}
 
-	scoresWin->addElement("back", videoManager->RegularText->getObject(
-			_("Back to main menu"), l,
-			videoManager->RegularText->getHeight() * 16.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+	w->addElement("back", _("Back to main menu"), videoManager->RegularText,
+			l, 16*h, TextManager::LEFT, TextManager::MIDDLE);
 
-	scoresWin->addElement("reset", videoManager->RegularText->getObject(
-			_("Reset list"), r3, videoManager->RegularText->getHeight()
-					* 16.0f, TextManager::LEFT, TextManager::MIDDLE));
+	w->addElement("reset", _("Reset list"), videoManager->RegularText,
+			r3, 16*h, TextManager::LEFT, TextManager::MIDDLE);
 
-	scoresWin->addHandler(Window::hdl_lclick, "back",
-			highScoresWindowController);
+	w->addHandler(Window::hdl_lclick, "back", highScoresWindowController);
 
-	scoresWin->addHandler(Window::hdl_lclick, "reset",
-			highScoresWindowController);
+	w->addHandler(Window::hdl_lclick, "reset", highScoresWindowController);
 
-	windows["highscores"] = scoresWin;
+	windows["highscores"] = w;
 }
 
 void showHighScores(std::string elementName) {
@@ -2285,10 +2155,10 @@ void handlePowerups() {
 						|| config->AutoWeaponPickup) {
 					player->setWeapon((Weapon*) gameState->powerups[i]->Object);
 					ostringstream oss;
-                    oss << format(_("You have taken the %s.")) % 
-                            player->getWeapon()->Name;
+					oss << format(_("You have taken the %s.")) % 
+							player->getWeapon()->Name;
 					hud->addMessage(oss.str());
-                    
+					
 					deletePowerup = true;
 				}
 				break;

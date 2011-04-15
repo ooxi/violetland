@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include "text/TextObject.h"
+#include "text/TextManager.h"
 #include "../InputHandler.h"
 
 class Window {
@@ -18,7 +19,10 @@ public:
 		hdl_all = 0, hdl_click, hdl_lclick, hdl_rclick, hdl_move
 	};
 	Window(float x, float y, int w, int h, float r, float g, float b, float a);
-	void addElement(std::string name, TextObject* element);
+	void addElement(std::string id, TextObject* element);
+	void addElement(std::string id, std::string text, TextManager* manager, 
+			int x, int y, TextManager::TextHAlignFlag halign, 
+			TextManager::TextVAlignFlag valign);
 	void removeElement(std::string name, bool remainHandler);
 	//	void addHandler(HandlerType hdl, std::string elementName, void(*func)());
 	void addHandler(HandlerType hdl, std::string elementName, void(*func)(
