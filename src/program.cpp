@@ -570,7 +570,7 @@ void showPerkDetails(std::string elementName) {
 	map<string, string>::iterator it = m.find(elementName);
 	if (it != m.end())
 		windows["charstats"]->addElement(
-				"explantation", it->second, videoManager->SmallText,
+				"explanation", it->second, videoManager->SmallText,
 				x, y, TextManager::CENTER, TextManager::MIDDLE);
 }
 
@@ -729,7 +729,9 @@ void switchVolumeUp(std::string elementName) {
 		}
 	}
 	else
-		refreshOptionsWindow();
+		return;
+	
+	refreshOptionsWindow();
 }
 
 void switchResolutionDown(std::string elementName) {
@@ -1360,7 +1362,7 @@ void handleMonster(LifeForm* lf) {
 	// AI
 
 	// Check if current target exist and is in range
-	if (enemy->targetId == "ambient") {
+	if (enemy->targetId != "ambient") {
 		LifeForm* targetLifeForm = gameState->getLifeForm(enemy->targetId);
 
 		if (targetLifeForm == NULL)
@@ -1602,7 +1604,6 @@ void handlePlayer(LifeForm* lf) {
 
 //Choice and creation of bonus
 void dropPowerup(float x, float y, float chance, bool forceWeapon) {
-	bool powerupDropped = false;
 	Powerup *newPowerup;
 
 	// Weapon drop - should be first check
@@ -1618,108 +1619,86 @@ void dropPowerup(float x, float y, float chance, bool forceWeapon) {
 		newPowerup->Type = BONUS_WEAPON;
 		newPowerup->Object = weaponManager->Weapons[weaponIndex];
 		newPowerup->HitR = 0.5f;
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance * 5)) {
+	else if (roulette(chance * 5)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.3f;
 		newPowerup->Type = BONUS_MEDIKIT;
 		newPowerup->Object = new float(0.1f);
 		newPowerup->RMask = newPowerup->BMask = 0.2f;
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance * 2.5)) {
+	else if (roulette(chance * 2.5)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_MEDIKIT;
 		newPowerup->Object = new float(0.2f);
 		newPowerup->RMask = newPowerup->GMask = 0.4f;
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance)) {
+	else if (roulette(chance)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.5f;
 		newPowerup->Type = BONUS_MEDIKIT;
 		newPowerup->Object = new float(0.6f);
 		newPowerup->BMask = newPowerup->GMask = 0.2f;
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance * 2)) {
+	else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_GRENADES]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_GRENADES;
 		newPowerup->Object = new int(1);
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance * 2)) {
+	else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_FREEZE]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_FREEZE;
 		newPowerup->Object = new int(10000);
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance * 2)) {
+	else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_NUKE]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_NUKE;
 		newPowerup->Object = new int(10000);
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance * 2)) {
+	else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_PENBULLETS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_PENBULLETS;
 		newPowerup->Object = new int(10000);
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance * 2)) {
+	else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[BONUS_VITALITYROIDS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_VITALITYROIDS;
 		newPowerup->RMask = newPowerup->BMask = 0.2f;
 		newPowerup->Object = new int(10000);
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance * 2)) {
+	else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[BONUS_STRENGTHROIDS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_STRENGTHROIDS;
 		newPowerup->GMask = newPowerup->BMask = 0.2f;
 		newPowerup->Object = new int(10000);
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance * 2)) {
+	else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[BONUS_AGILITYROIDS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_AGILITYROIDS;
 		newPowerup->RMask = newPowerup->GMask = 0.2f;
 		newPowerup->Object = new int(10000);
-		powerupDropped = true;
 	}
-
-	if (!powerupDropped && roulette(chance * 2)) {
+	else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_TELEPORTS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_TELEPORTS;
 		newPowerup->Object = new int(1);
-		powerupDropped = true;
 	}
-
-	if (powerupDropped)
-		gameState->powerups.push_back(newPowerup);
+	else
+		return;
+	
+	gameState->powerups.push_back(newPowerup);
 }
 
 void handleLifeForms() {
@@ -1756,49 +1735,43 @@ void handleLifeForms() {
 		}
 	}
 
-	if (!gameState->lifeForms.empty()) {
-		map<string, LifeForm*>::iterator it = gameState->lifeForms.begin();
-		while (it != gameState->lifeForms.end()) {
-			LifeForm* lifeForm = it->second;
+	map<string, LifeForm*>::iterator it = gameState->lifeForms.begin();
+	while (it != gameState->lifeForms.end()) {
+		LifeForm* lifeForm = it->second;
 
-			if (lifeForm->Type == LIFEFORM_PLAYER) {
-				if (!gameState->Lost) {
-					if (lifeForm->State == LIFEFORM_STATE_DIED
-							|| lifeForm->State == LIFEFORM_STATE_BURST)
-						loseGame(player);
-
-					if (lifeForm->State == LIFEFORM_STATE_ALIVE)
-						handlePlayer(lifeForm);
-				}
+		if (lifeForm->Type == LIFEFORM_PLAYER) {
+			if (!gameState->Lost) {
+				if (lifeForm->State == LIFEFORM_STATE_DIED
+						|| lifeForm->State == LIFEFORM_STATE_BURST)
+					loseGame(player);
+				else if (lifeForm->State == LIFEFORM_STATE_ALIVE)
+					handlePlayer(lifeForm);
 			}
+		}
+		else if (lifeForm->Type == LIFEFORM_MONSTER) {
+			if (lifeForm->State == LIFEFORM_STATE_ALIVE)
+				handleMonster(lifeForm);
+		}
 
-			if (lifeForm->Type == LIFEFORM_MONSTER) {
-				if (lifeForm->State == LIFEFORM_STATE_ALIVE)
-					handleMonster(lifeForm);
-			}
+		lifeForm->process(videoManager->getFrameDeltaTime());
 
-			lifeForm->process(videoManager->getFrameDeltaTime());
+		if (lifeForm->State == LIFEFORM_STATE_DIED)
+			bloodStains.push_back(lifeForm->getCorpse());
 
-			if (lifeForm->State == LIFEFORM_STATE_DIED)
-				bloodStains.push_back(lifeForm->getCorpse());
-
-			if ((lifeForm->State == LIFEFORM_STATE_DIED || lifeForm->State
-					== LIFEFORM_STATE_BURST) && lifeForm->Type
-					== LIFEFORM_MONSTER) {
-				delete lifeForm;
-				gameState->lifeForms.erase(it++);
-			} else {
-				++it;
-			}
+		if ((lifeForm->State == LIFEFORM_STATE_DIED || lifeForm->State
+				== LIFEFORM_STATE_BURST) && lifeForm->Type
+				== LIFEFORM_MONSTER) {
+			delete lifeForm;
+			gameState->lifeForms.erase(it++);
+		} else {
+			++it;
 		}
 	}
 }
 
 void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 	if (bullet->Type == BULLET_FLAME) {
-		if (enemy->Frozen > 0)
-			enemy->Frozen = 0;
-
+		enemy->Frozen = 0;
 		enemy->Burning = true;
 	}
 
@@ -1917,47 +1890,44 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 }
 
 void handleBullets() {
-	if (!gameState->bullets.empty()) {
-		for (int i = gameState->bullets.size() - 1; i >= 0; i--) {
-			gameState->bullets[i]->process(videoManager->getFrameDeltaTime());
+	for (int i = gameState->bullets.size() - 1; i >= 0; i--) {
+		gameState->bullets[i]->process(videoManager->getFrameDeltaTime());
 
-			if (gameState->bullets[i]->isActive()
-					&& !gameState->lifeForms.empty()) {
-				map<string, LifeForm*>::const_iterator iter;
-				for (iter = gameState->lifeForms.begin(); iter
-						!= gameState->lifeForms.end(); ++iter) {
-					LifeForm* lf = iter->second;
+		if (gameState->bullets[i]->isActive()) {
+			map<string, LifeForm*>::const_iterator iter;
+			for (iter = gameState->lifeForms.begin(); iter
+					!= gameState->lifeForms.end(); ++iter) {
+				LifeForm* lf = iter->second;
 
-					if (lf->Type == LIFEFORM_PLAYER || lf->State
-							!= LIFEFORM_STATE_ALIVE)
-						continue;
+				if (lf->Type == LIFEFORM_PLAYER || lf->State
+						!= LIFEFORM_STATE_ALIVE)
+					continue;
 
-					Monster* enemy = (Monster*) lf;
+				Monster* enemy = (Monster*) lf;
 
-					if (gameState->bullets[i]->checkHit(enemy)) {
-						collideBulletAndEnemy(gameState->bullets[i], enemy);
-					}
+				if (gameState->bullets[i]->checkHit(enemy)) {
+					collideBulletAndEnemy(gameState->bullets[i], enemy);
 				}
 			}
+		}
 
-			if (gameState->bullets[i]->isReadyToRemove()
-					&& gameState->bullets[i]->Type == BULLET_GRENADE) {
-				addExplosion(gameState->bullets[i]->X,
-						gameState->bullets[i]->Y,
-						gameState->bullets[i]->Damage, 150.0f);
+		if (gameState->bullets[i]->isReadyToRemove()
+				&& gameState->bullets[i]->Type == BULLET_GRENADE) {
+			addExplosion(gameState->bullets[i]->X,
+					gameState->bullets[i]->Y,
+					gameState->bullets[i]->Damage, 150.0f);
 
-				resources->ExplSounds[0]->play(8, 0, 0);
+			resources->ExplSounds[0]->play(8, 0, 0);
 
-				Explosion* expl = new Explosion(false,
-						gameState->bullets[i]->X, gameState->bullets[i]->Y,
-						150.0f, resources->ExplTex[0], resources->ExplTex[1]);
-				particleSystems.push_back(expl);
-			}
+			Explosion* expl = new Explosion(false,
+					gameState->bullets[i]->X, gameState->bullets[i]->Y,
+					150.0f, resources->ExplTex[0], resources->ExplTex[1]);
+			particleSystems.push_back(expl);
+		}
 
-			if (gameState->bullets[i]->isReadyToRemove()) {
-				delete gameState->bullets[i];
-				gameState->bullets.erase(gameState->bullets.begin() + i);
-			}
+		if (gameState->bullets[i]->isReadyToRemove()) {
+			delete gameState->bullets[i];
+			gameState->bullets.erase(gameState->bullets.begin() + i);
 		}
 	}
 }
@@ -2477,8 +2447,8 @@ void parsePreferences(int argc, char *argv[]) {
 		else if (arg == "-h")
 			if (i + 1 < argc)
 				config->Screen.Height = strtol(argv[i + 1], NULL, 10);
-		else if (arg == "--fps") ) {
-			if (&& i + 1 < argc) {
+		else if (arg == "--fps") {
+			if (i + 1 < argc) {
 				int lim = strtol(argv[i + 1], NULL, 10);
 				config->FrameDelay = lim > 0 ? 1000 / lim : 0;
 			}
