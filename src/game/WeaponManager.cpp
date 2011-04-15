@@ -24,7 +24,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 	}
 
 	for (int i = 0; i < (int) weapons.size(); i++) {
-		if (weapons.at(i).compare("PM") == 0) {
+		if (weapons.at(i) == "PM") {
 			weapons.at(i) = weapons.back();
 			weapons.back() = "PM";
 			std::cout << "EDIT: Putting PM to the end of list!" << std::endl;

@@ -509,13 +509,11 @@ void increaseVioletParam(std::string elementName) {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
 
 	if (player->LevelPoints > 0) {
-		if (elementName.compare("strength") == 0)
+		if (elementName == "strength")
 			player->Strength += 0.1;
-
-		if (elementName.compare("agility") == 0)
+		else if (elementName == "agility")
 			player->Agility += 0.1;
-
-		if (elementName.compare("vitality") == 0) {
+		else if (elementName == "vitality") {
 			float h = player->getHealth() / player->MaxHealth();
 			player->Vitality += 0.1;
 			player->setHealth(h * player->MaxHealth());
@@ -528,44 +526,26 @@ void increaseVioletParam(std::string elementName) {
 
 void takePerk(std::string elementName) {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
-
+	
 	if (player->LevelPoints > 0) {
-		if (elementName.compare("unstoppable") == 0 && !player->Unstoppable) {
-			player->Unstoppable = true;
-			player->LevelPoints--;
-		}
+		map<string, bool*> m;
+		m["unstoppable"] = &player->Unstoppable;
+		m["poisonbullets"] = &player->PoisonBullets;
+		m["bigcalibre"] = &player->BigCalibre;
+		m["telekinesis"] = &player->Telekinesis;
+		m["nightvision"] = &player->NightVision;
+		m["looting"] = &player->Looting;
+		m["widesight"] = &player->WideSight;
 
-		if (elementName.compare("poisonbullets") == 0 && !player->PoisonBullets) {
-			player->PoisonBullets = true;
-			player->LevelPoints--;
+		map<string, bool*>::iterator it = m.find(elementName);
+		
+		if (it != m.end()) {
+			if (!*it->second) {
+				*it->second = true;
+				--player->LevelPoints;
+				refreshCharStatsWindow();
+			}
 		}
-
-		if (elementName.compare("bigcalibre") == 0 && !player->BigCalibre) {
-			player->BigCalibre = true;
-			player->LevelPoints--;
-		}
-
-		if (elementName.compare("telekinesis") == 0 && !player->Telekinesis) {
-			player->Telekinesis = true;
-			player->LevelPoints--;
-		}
-
-		if (elementName.compare("nightvision") == 0 && !player->NightVision) {
-			player->NightVision = true;
-			player->LevelPoints--;
-		}
-
-		if (elementName.compare("looting") == 0 && !player->Looting) {
-			player->Looting = true;
-			player->LevelPoints--;
-		}
-
-		if (elementName.compare("widesight") == 0 && !player->WideSight) {
-			player->WideSight = true;
-			player->LevelPoints--;
-		}
-
-		refreshCharStatsWindow();
 	}
 }
 
@@ -683,23 +663,21 @@ void refreshOptionsWindow() {
 }
 
 void switchGameOption(std::string elementName) {
-	if (elementName.compare("autoreload") == 0)
-		config->AutoReload = !config->AutoReload;
-
-	if (elementName.compare("autopickup") == 0)
-		config->AutoWeaponPickup = !config->AutoWeaponPickup;
-
-	if (elementName.compare("friendlyfire") == 0)
-		config->FriendlyFire = !config->FriendlyFire;
-
-	if (elementName.compare("fullscreen") == 0)
-		config->Screen.Full = !config->Screen.Full;
-
-	refreshOptionsWindow();
+	map<string, bool*> m;
+	m["autoreload"] = &config->AutoReload;
+	m["autopickup"] = &config->AutoWeaponPickup;
+	m["friendlyfire"] = &config->FriendlyFire;
+	m["fullscreen"] = &config->Screen.Full;
+	
+	map<string, bool*>::iterator it = m.find(elementName);
+	if (it != m.end()) {
+		*it->second = !*it->second;
+		refreshOptionsWindow();
+	}
 }
 
 void switchVolumeDown(std::string elementName) {
-	if (elementName.compare("musicvolume") == 0) {
+	if (elementName == "musicvolume") {
 		if (config->MusicVolume > 0) {
 			config->MusicVolume--;
 			Mix_Volume(0, config->MusicVolume * 12);
@@ -708,8 +686,7 @@ void switchVolumeDown(std::string elementName) {
 			Mix_Volume(0, config->MusicVolume * 12);
 		}
 	}
-
-	if (elementName.compare("soundvolume") == 0) {
+	else if (elementName == "soundvolume") {
 		if (config->SoundVolume > 0) {
 			config->SoundVolume--;
 			for (unsigned int a = 1; a <= 8; a++) {
@@ -722,12 +699,14 @@ void switchVolumeDown(std::string elementName) {
 			}
 		}
 	}
+	else
+		return;
 
 	refreshOptionsWindow();
 }
 
 void switchVolumeUp(std::string elementName) {
-	if (elementName.compare("musicvolume") == 0) {
+	if (elementName == "musicvolume") {
 		if (config->MusicVolume <= 9) {
 			config->MusicVolume++;
 			Mix_Volume(0, config->MusicVolume * 12);
@@ -736,8 +715,7 @@ void switchVolumeUp(std::string elementName) {
 			Mix_Volume(0, 0);
 		}
 	}
-
-	if (elementName.compare("soundvolume") == 0) {
+	else if (elementName == "soundvolume") {
 		if (config->SoundVolume <= 9) {
 			config->SoundVolume++;
 			for (unsigned int a = 1; a <= 8; a++) {
@@ -750,8 +728,8 @@ void switchVolumeUp(std::string elementName) {
 			}
 		}
 	}
-
-	refreshOptionsWindow();
+	else
+		refreshOptionsWindow();
 }
 
 void switchResolutionDown(std::string elementName) {
@@ -1074,12 +1052,11 @@ void createMainMenuWindow() {
 }
 
 void highScoresWindowController(std::string elementName) {
-	if (elementName.compare("back") == 0) {
+	if (elementName == "back") {
 		windows["highscores"]->CloseFlag = true;
 		createMainMenuWindow();
 	}
-
-	if (elementName.compare("reset") == 0) {
+	else if (elementName == "reset") {
 		Highscores s(fileUtility);
 		s.clear();
 		highScoresWindowController("back");
@@ -1383,7 +1360,7 @@ void handleMonster(LifeForm* lf) {
 	// AI
 
 	// Check if current target exist and is in range
-	if (enemy->targetId.compare("ambient") != 0) {
+	if (enemy->targetId == "ambient") {
 		LifeForm* targetLifeForm = gameState->getLifeForm(enemy->targetId);
 
 		if (targetLifeForm == NULL)
@@ -1400,7 +1377,7 @@ void handleMonster(LifeForm* lf) {
 	}
 
 	// Check for new targets in range
-	if (enemy->targetId.compare("ambient") == 0) {
+	if (enemy->targetId == "ambient") {
 		LifeForm* lifeForm = gameState->getLifeForm(playerId);
 
 		if (lifeForm->State == LIFEFORM_STATE_ALIVE) {
@@ -1411,7 +1388,7 @@ void handleMonster(LifeForm* lf) {
 		}
 	}
 
-	if (enemy->targetId.compare("ambient") == 0) {
+	if (enemy->targetId == "ambient") {
 		// Hang around
 
 		float range = Object::calc_dist(enemy->X, enemy->Y, enemy->TargetX,
@@ -2455,7 +2432,7 @@ void parsePreferences(int argc, char *argv[]) {
 	for (int i = 0; i < argc; i++) {
 		string arg = argv[i];
 
-		if (arg.compare("--help") == 0) {
+		if (arg == "--help") {
 			printVersion();
 			cout << endl << "Arguments:" << endl;
 			cout << "\t--help\t\t\t\tPrint help (this message) and exit"
@@ -2486,36 +2463,36 @@ void parsePreferences(int argc, char *argv[]) {
 		fileUtility->setFullResPath(getMacBundlePath()+"/Contents/Resources");
 #endif
 
-		if (arg.compare("-r") == 0 && i + 1 < argc) {
-			fileUtility->setFullResPath(argv[i + 1]);
+		else if (arg == "-r") {
+			if (i + 1 < argc)
+				fileUtility->setFullResPath(argv[i + 1]);
 		}
-
-		if (arg.compare("-f") == 0)
+		else if (arg == "-f")
 			config->Screen.Full = true;
-
-		if (arg.compare("-i") == 0)
+		else if (arg == "-i")
 			config->Screen.Full = false;
-
-		if (arg.compare("-w") == 0 && i + 1 < argc)
-			config->Screen.Width = strtol(argv[i + 1], NULL, 10);
-
-		if (arg.compare("-h") == 0 && i + 1 < argc)
-			config->Screen.Height = strtol(argv[i + 1], NULL, 10);
-
-		if (arg.compare("--fps") == 0 && i + 1 < argc) {
-			int lim = strtol(argv[i + 1], NULL, 10);
-			config->FrameDelay = lim > 0 ? 1000 / lim : 0;
+		else if (arg == "-w" )
+			if (i + 1 < argc)
+				config->Screen.Width = strtol(argv[i + 1], NULL, 10);
+		else if (arg == "-h")
+			if (i + 1 < argc)
+				config->Screen.Height = strtol(argv[i + 1], NULL, 10);
+		else if (arg == "--fps") ) {
+			if (&& i + 1 < argc) {
+				int lim = strtol(argv[i + 1], NULL, 10);
+				config->FrameDelay = lim > 0 ? 1000 / lim : 0;
+			}
 		}
-
-		if (arg.compare("--showfps") == 0)
+		else if (arg == "--showfps")
 			config->ShowFps = true;
-
-		if (arg.compare("--monsters") == 0 && i + 1 < argc) {
-			int n = strtol(argv[i + 1], NULL, 10);
-			if (n >= 0)
-				config->MonstersAtStart = n;
-			else
-				cout << "Number of monsters must be positive." << endl;
+		else if (arg == "--monsters") {
+			if (i + 1 < argc) {
+				int n = strtol(argv[i + 1], NULL, 10);
+				if (n >= 0)
+					config->MonstersAtStart = n;
+				else
+					cout << "Number of monsters must be positive." << endl;
+			}
 		}
 	}
 }
