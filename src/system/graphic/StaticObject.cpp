@@ -108,10 +108,6 @@ void StaticObject::setTexture(Texture* texture, bool takeCareOfTexture) {
 	m_takeCareOfTexture = takeCareOfTexture;
 }
 
-Texture* StaticObject::getTexture() {
-	return m_texture;
-}
-
 StaticObject::~StaticObject() {
 	if (m_takeCareOfTexture)
 		delete m_texture;

@@ -56,14 +56,6 @@ float Object::calc_angle(float x1, float y1, float x2, float y2) {
 	return 180.0f / M_PI * atan2(x2 - x1, -y2 + y1);
 }
 
-const float Object::getWidth() {
-	return m_width;
-}
-
-const float Object::getHeight() {
-	return m_width;
-}
-
 float Object::calc_dist(float x1, float y1, float x2, float y2) {
 	return hypot(x2 - x1, -y2 + y1);
 }
@@ -71,22 +63,6 @@ float Object::calc_dist(float x1, float y1, float x2, float y2) {
 void Object::move(int deltaTime) {
 	X -= cos((Angle + 90) * M_PI / 180) * deltaTime * Speed;
 	Y -= sin((Angle + 90) * M_PI / 180) * deltaTime * Speed;
-}
-
-const float Object::getLeft() {
-	return X + m_left * Scale;
-}
-
-const float Object::getRight() {
-	return X + m_right * Scale;
-}
-
-const float Object::getTop() {
-	return Y + m_top * Scale;
-}
-
-const float Object::getBottom() {
-	return Y + m_bottom * Scale;
 }
 
 const bool Object::detectCollide(Object *refObj) {

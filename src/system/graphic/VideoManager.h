@@ -30,7 +30,9 @@ public:
 	std::vector<SDL_Rect> GetAvailableModes();
 
 	// Gets current video mode
-	VideoMode getVideoMode();
+	VideoMode getVideoMode() const {
+		return m_videoMode;
+	}
 
 	// Sets current video mode and modifies the camera for this mode
 	void setMode(VideoMode mode, Camera* cam);
@@ -42,12 +44,18 @@ public:
 	void countFrame(int frameDelay);
 
 	// Average value of FPS for 5 seconds
-	int getFps();
+	int getFps() const {
+		return m_fps;
+	}
 
 	// Time in milliseconds between the latest and the previous frames
-	int getFrameDeltaTime();
+	int getFrameDeltaTime() const {
+		return m_frameDeltaTime;
+	}
 
-	void resetDeltaTime();
+	void resetDeltaTime() {
+		m_frameDeltaTime = 0;
+	}
 
 	/* Width and height factors
 	 * (for dealing with various aspect ratios)

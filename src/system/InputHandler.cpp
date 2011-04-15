@@ -74,18 +74,6 @@ void InputHandler::setInputModeText(bool mandatory, std::string text) {
 	m_curTextPos = strlen(m_textContent.c_str());
 }
 
-string InputHandler::getTextToShow() {
-	return m_textContent;
-}
-
-bool InputHandler::hasBeenValidated() {
-	return m_textValidated;
-}
-
-bool InputHandler::getDownInput(GameInputEvents evnt) {
-	return m_event[evnt];
-}
-
 bool InputHandler::getPressInput(GameInputEvents evnt) {
 	if (m_event[evnt]) {
 		m_event[evnt] = false;

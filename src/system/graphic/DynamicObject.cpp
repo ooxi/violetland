@@ -29,14 +29,6 @@ void DynamicObject::rollFrame(bool forward) {
 	}
 }
 
-void DynamicObject::process(int deltaTime) {
-	Object::move(deltaTime);
-}
-
-Texture* DynamicObject::getFrame() {
-	return AnimSprite->getFrame(Frame);
-}
-
 void DynamicObject::draw(float x, float y, float angle, float scale,
 		float rMask, float gMask, float bMask, float aMask) {
 	Texture* frameTex = AnimSprite->getFrame(Frame);

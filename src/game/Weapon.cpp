@@ -23,18 +23,6 @@ Weapon::Weapon(Texture* droppedTex, Texture* playerTex, Sound* shotSound,
 	m_bulletTex = NULL;
 }
 
-void Weapon::setBulletImage(Texture* _tex) {
-	m_bulletTex = _tex;
-}
-
-Texture *Weapon::getDroppedTex() {
-	return m_droppedTex;
-}
-
-Texture *Weapon::getPlayerTex() {
-	return m_playerTex;
-}
-
 void Weapon::process(int deltaTime) {
 	if (m_fireDelay > 0)
 		m_fireDelay -= deltaTime;
@@ -90,7 +78,7 @@ bool Weapon::reload(float timeMod) {
 		return false;
 }
 
-float Weapon::getReloadState() {
+float Weapon::getReloadState() const {
 	if (m_reload > 0)
 		return 1.0f - (float) m_reload / ReloadTime;
 	else

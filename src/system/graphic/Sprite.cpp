@@ -9,14 +9,6 @@ Sprite::Sprite(std::vector<SDL_Surface*> surfaces) {
 	surfaces.clear();
 }
 
-Texture* Sprite::getFrame(int index) {
-	return m_frames[index];
-}
-
-const int Sprite::getFramesCount() {
-	return m_frames.size();
-}
-
 Sprite::~Sprite() {
 	clearVector(&m_frames);
 }

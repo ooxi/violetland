@@ -47,9 +47,15 @@ public:
 	void process();
 	void setInputMode(InputMode mode);
 	void setInputModeText(bool mandatory, std::string text);
-	std::string getTextToShow();
-	bool hasBeenValidated();
-	bool getDownInput(GameInputEvents evnt);
+	const std::string& getTextToShow() const {
+		return m_textContent;
+	}
+	bool hasBeenValidated() const {
+		return m_textValidated;
+	}
+	bool getDownInput(GameInputEvents evnt) const {
+		return m_event[evnt];
+	}
 	bool getPressInput(GameInputEvents evnt);
 	void resetMouseButtons();
 	int mouseX, mouseY;

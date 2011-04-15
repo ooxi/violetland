@@ -21,8 +21,12 @@ public:
 	TextManager(filesystem::path fontPath, int fontSize);
 	void draw(const std::string& textBuf, float x, float y, TextHAlignFlag halign,
 			TextVAlignFlag valign);
-	const int getHeight();
-	const int getIndent();
+	const int getHeight() const {
+		return m_height;
+	}
+	const int getIndent() const {
+		return m_ident;
+	}
 	TextObject* getObject(const std::string& textBuf, float x, float y,
 			TextHAlignFlag halign, TextVAlignFlag valign);
 	virtual ~TextManager();

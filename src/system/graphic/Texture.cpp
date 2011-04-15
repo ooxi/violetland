@@ -1,9 +1,9 @@
 #include "Texture.h"
 
-Texture::Texture(int width, int height, GLenum type, GLint filter) {
+Texture::Texture(int width, int height, GLenum type, GLint filter): 
+	m_type(type) {
 	m_width = width;
 	m_height = height;
-	m_type = type;
 
 	char* colorBits = new char[width * height * 3];
 
@@ -20,10 +20,10 @@ Texture::Texture(int width, int height, GLenum type, GLint filter) {
 }
 
 Texture::Texture(SDL_Surface *surface, GLenum type, GLint filter,
-		bool takeCareOfSurface) {
+		bool takeCareOfSurface): 
+	m_type(type) {
 	m_width = surface->w;
 	m_height = surface->h;
-	m_type = type;
 
 	GLint nOfColors;
 	GLenum texture_format;
@@ -57,22 +57,6 @@ Texture::Texture(SDL_Surface *surface, GLenum type, GLint filter,
 	if (surface && takeCareOfSurface) {
 		SDL_FreeSurface(surface);
 	}
-}
-
-const int Texture::getWidth() {
-	return m_width;
-}
-
-const int Texture::getHeight() {
-	return m_height;
-}
-
-const GLuint Texture::getTextureId() {
-	return m_textureId;
-}
-
-const GLenum Texture::getType() {
-	return m_type;
 }
 
 Texture::~Texture() {

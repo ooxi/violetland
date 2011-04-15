@@ -22,15 +22,21 @@ private:
 public:
 	Weapon(Texture* droppedTex, Texture* playerTex, Sound* shotSound,
 			Sound* reloadSound);
-	void setBulletImage(Texture* _tex);
+	void setBulletImage(Texture* _tex) {
+		m_bulletTex = _tex;
+	}
+	Texture* getDroppedTex() const {
+		return m_droppedTex;
+	}
+	Texture* getPlayerTex() const {
+		return m_playerTex;
+	}
 	void process(int deltaTime);
 	std::vector<Bullet*> *fire(float x, float y, float dX, float dY);
 	bool reload(float timeMod);
 	void pickup();
-	float getReloadState();
+	float getReloadState() const;
 	void deleteResources();
-	Texture *getDroppedTex();
-	Texture *getPlayerTex();
 	~Weapon();
 	Sprite* ShellSprite;
 	BulletType Type;

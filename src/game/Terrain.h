@@ -21,8 +21,12 @@ public:
 	void drawOn(StaticObject *piece);
 	void endDrawOn();
 	void draw(Camera *cam);
-	const int getTileWidth();
-	const int getTileHeight();
+	const int getTileWidth() const {
+		return m_tileWidth;
+	}
+	const int getTileHeight() const {
+		return m_tileHeight;
+	}
 	~Terrain();
 };
 

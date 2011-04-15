@@ -133,10 +133,6 @@ bool Highscores::add(HighscoresEntry* entry) {
 	return true;
 }
 
-vector<HighscoresEntry*> Highscores::getData() {
-	return m_data;
-}
-
 Highscores::~Highscores() {
 	clearVector<HighscoresEntry*>(&m_data);
 }

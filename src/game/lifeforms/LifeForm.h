@@ -50,11 +50,21 @@ public:
 	float Vitality;
 	float TargetX, TargetY;
 	LifeFormState State;
-	void setHealth(float value);
-	virtual float getStrength() const;
-	virtual float getAgility() const;
-	virtual float getVitality() const;
-	const float getHealth();
+	void setHealth(float value) {
+		m_health = fixHealth(value);
+	}
+	const float getHealth() {
+		return m_health = fixHealth(m_health);
+	}
+	virtual float getStrength() const {
+		return Strength;
+	}
+	virtual float getAgility() const {
+		return Agility;
+	}
+	virtual float getVitality() const {
+		return Vitality;
+	}
 	const float MaxHealth() const;
 	const float MaxSpeed() const;
 	const float ChanceToEvade() const;

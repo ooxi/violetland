@@ -9,12 +9,26 @@ private:
 public:
 	Camera();
 	~Camera();
-	const int getW();
-	void setW(int value);
-	const int getH();
-	void setH(int value);
-	const int getHalfW();
-	const int getHalfH();
+	const int getW() const {
+		return m_w;
+	}
+	void setW(int value) {
+		m_w = value;
+		m_halfW = value / 2;
+	}
+	const int getH() const {
+		return m_h;
+	}
+	void setH(int value) {
+		m_h = value;
+		m_halfH = value / 2;
+	}
+	const int getHalfW() const {
+		return m_halfW;
+	}
+	const int getHalfH() const {
+		return m_halfH;
+	}
 	void applyGLOrtho();
 	float X, Y;
 };

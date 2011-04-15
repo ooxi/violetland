@@ -19,7 +19,9 @@ public:
 	void draw(bool hreflect, bool vreflect, float x, float y, float angle,
 			float scale);
 	void setTexture(Texture* texture, bool takeCareOfTexture);
-	Texture* getTexture();
+	Texture* getTexture() const {
+		return m_texture;
+	}
 	virtual ~StaticObject();
 };
 

@@ -35,18 +35,6 @@ void VideoManager::countFrame(int frameDelay) {
 		SDL_Delay(frameDelay - m_frameDeltaTime);
 }
 
-void VideoManager::resetDeltaTime() {
-	m_frameDeltaTime = 0;
-}
-
-int VideoManager::getFps() {
-	return m_fps;
-}
-
-int VideoManager::getFrameDeltaTime() {
-	return m_frameDeltaTime;
-}
-
 bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 		int* true_bpp) {
 	Uint32 flags = SDL_OPENGL;
@@ -81,10 +69,6 @@ std::vector<SDL_Rect> VideoManager::GetAvailableModes() {
 	}
 
 	return modes;
-}
-
-VideoMode VideoManager::getVideoMode() {
-	return m_videoMode;
 }
 
 void VideoManager::setMode(VideoMode mode, Camera* cam) {

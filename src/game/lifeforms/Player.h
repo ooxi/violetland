@@ -48,15 +48,29 @@ public:
 
 	void hit();
 	void reload();
-	void toggleLight();
-	void toggleLaser();
-	const float getLegsAngle() const;
-	const float getArmsAngle() const;
+	void toggleLight() {
+		m_light = !m_light;
+	}
+	void toggleLaser() {
+		m_laser = !m_laser;
+	}	
+	const float getLegsAngle() const {
+		return m_body->Angle;
+	}
+	const float getArmsAngle() const {
+		return m_arms->Angle;
+	}
 	void setX(float value);
 	void setY(float value);
-	const bool getLight() const;
-	const bool getLaser() const;
-	Weapon* getWeapon() const;
+	const bool getLight() const {
+        return m_light;
+	}
+	const bool getLaser() const {
+		return m_laser;
+	}
+	const Weapon* getWeapon() const {
+		return m_weapon;
+	}
 	void setWeapon(Weapon *value);
 	std::vector<Bullet*> *fire();
 	Bullet* throwGrenade(Sprite* grenadeSprite);

@@ -17,12 +17,24 @@ public:
 	static float calc_dist(float x1, float y1, float x2, float y2);
 	Object(float x, float y, int width, int height);
 	void turn(float targetAngle, float angleSpeed, int deltaTime);
-	const float getWidth();
-	const float getHeight();
-	const float getLeft();
-	const float getRight();
-	const float getTop();
-	const float getBottom();
+	const float getWidth() const {
+		return m_width;
+	}
+	const float getHeight() const {
+		return m_width;
+	}
+	const float getLeft() const {
+		return X + m_left * Scale;
+	}
+	const float getRight() const {
+		return X + m_right * Scale;
+	}
+	const float getTop() const {
+		return Y + m_top * Scale;
+	}
+	const float getBottom() const {
+		return Y + m_bottom * Scale;
+	}
 	const bool detectCollide(Object *refObj);
 	const bool detectCollide(float x, float y);
 	const bool detectCollide(float x1, float y1, float x2, float y2);

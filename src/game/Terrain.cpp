@@ -146,14 +146,6 @@ void Terrain::drawOnTile(int tileX, int tileY, StaticObject *piece) {
 	m_tiles[tileIndex]->setTexture(tex, true);
 }
 
-const int Terrain::getTileWidth() {
-	return m_tileWidth;
-}
-
-const int Terrain::getTileHeight() {
-	return m_tileHeight;
-}
-
 Terrain::~Terrain() {
 	for (unsigned int i = 0; i < m_tiles.size(); i++) {
 		delete m_tiles[i];

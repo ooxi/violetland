@@ -16,8 +16,12 @@ public:
 	void draw();
 	void draw(float x, float y, float angle, float scale, float rMask,
 			float gMask, float bMask, float aMask);
-	Texture* getFrame();
-	void process(int deltaTime);
+	Texture* getFrame() const {
+		return AnimSprite->getFrame(Frame);
+	}
+	void process(int deltaTime) {
+		Object::move(deltaTime);
+	}
 	virtual ~DynamicObject();
 	int Frame;
 	Sprite* AnimSprite;

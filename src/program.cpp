@@ -460,7 +460,7 @@ void refreshCharStatsWindow() {
 			l, 13*h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
-	oss << format(_("Reloading speed modifier: %i%%")) % (player->ReloadSpeedMod()*100);
+	oss << format(_("Reloading speed modifier: %i%%")) % int(player->ReloadSpeedMod()*100);
 	charStats->addElement("reloadingspeed", oss.str(), videoManager->RegularText, 
 			l, 14*h, TextManager::LEFT, TextManager::MIDDLE);
 

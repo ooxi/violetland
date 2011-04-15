@@ -24,14 +24,6 @@ void TextManager::draw(const std::string& textBuf, float x, float y,
 	delete textObject;
 }
 
-const int TextManager::getHeight() {
-	return m_height;
-}
-
-const int TextManager::getIndent() {
-	return m_ident;
-}
-
 TextObject* TextManager::getObject(const std::string& textBuf, float x, float y,
 		TextHAlignFlag halign, TextVAlignFlag valign) {
 

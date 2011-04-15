@@ -49,8 +49,8 @@ CharStatsWindow::CharStatsWindow(Configuration* config,
 					* 2.0f, videoManager->RegularText->getHeight() * 10.0f,
 			TextManager::LEFT, TextManager::MIDDLE));
 
-	addElement("explantation", videoManager->SmallText->getObject(
-			_("Move mouse over text to get explantation..."),
+	addElement("explanation", videoManager->SmallText->getObject(
+			_("Move mouse over text to get explanation..."),
 			config->Screen.Width / 2, videoManager->RegularText->getHeight()
 					* 1.0f, TextManager::CENTER, TextManager::MIDDLE));
 }

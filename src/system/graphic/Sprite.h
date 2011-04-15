@@ -9,8 +9,12 @@ private:
 	std::vector<Texture*> m_frames;
 public:
 	Sprite(std::vector<SDL_Surface*> surfaces);
-	Texture* getFrame(int index);
-	const int getFramesCount();
+	Texture* getFrame(int index) const {
+		return m_frames[index];
+	}
+	const int getFramesCount() const {
+		return m_frames.size();
+	}
 	virtual ~Sprite();
 };
 

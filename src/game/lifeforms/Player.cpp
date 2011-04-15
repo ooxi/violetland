@@ -148,22 +148,6 @@ void Player::reload() {
 		AccuracyDeviation = 0;
 }
 
-void Player::toggleLight() {
-	m_light = !m_light;
-}
-
-void Player::toggleLaser() {
-	m_laser = !m_laser;
-}
-
-const bool Player::getLight() const {
-	return m_light;
-}
-
-const bool Player::getLaser() const {
-	return m_laser;
-}
-
 void Player::processState(int deltaTime) {
 	if (State == LIFEFORM_STATE_ALIVE) {
 		m_arms->X = m_body->X = X;
@@ -274,24 +258,12 @@ StaticObject* Player::getCorpse() {
 	return corpse;
 }
 
-const float Player::getLegsAngle() const {
-	return m_body->Angle;
-}
-
-const float Player::getArmsAngle() const {
-	return m_arms->Angle;
-}
-
 void Player::setX(float value) {
 	X = m_arms->X = m_body->X = value;
 }
 
 void Player::setY(float value) {
 	Y = m_arms->Y = m_body->Y = value;
-}
-
-Weapon* Player::getWeapon() const {
-	return m_weapon;
 }
 
 void Player::teleport() {

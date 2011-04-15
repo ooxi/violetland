@@ -105,16 +105,6 @@ void violetland::LifeForm::move(float direction, int deltaTime) {
 	turn(direction, MaxSpeed(), deltaTime);
 }
 
-float violetland::LifeForm::getStrength() const {
-	return Strength;
-}
-float violetland::LifeForm::getAgility() const {
-	return Agility;
-}
-
-float violetland::LifeForm::getVitality() const {
-	return Vitality;
-}
 const float violetland::LifeForm::MaxHealth() const {
 	return getVitality() > 0.8f ? 1.0f + (getVitality() - 1.0f) * 2.0f
 			+ (getStrength() - 1.0f) : 0.4f;
@@ -166,12 +156,4 @@ const float violetland::LifeForm::fixHealth(float health) const {
 		return 0;
 	else
 		return health;
-}
-
-void violetland::LifeForm::setHealth(float value) {
-	m_health = fixHealth(value);
-}
-
-const float violetland::LifeForm::getHealth() {
-	return m_health = fixHealth(m_health);
 }

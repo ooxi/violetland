@@ -39,13 +39,13 @@ public:
 
 	bool keyExists(const std::string& key) const;
 
-	std::string getDelimiter() const {
+	const std::string& getDelimiter() const {
 		return myDelimiter;
 	}
-	std::string getComment() const {
+	const std::string& getComment() const {
 		return myComment;
 	}
-	std::string getSentry() const {
+	const std::string& getSentry() const {
 		return mySentry;
 	}
 	std::string setDelimiter(const std::string& s) {

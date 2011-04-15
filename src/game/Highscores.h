@@ -32,7 +32,9 @@ public:
 	void read();
 	bool isHighscore(HighscoresEntry* entry);
 	bool add(HighscoresEntry* entry);
-	std::vector<HighscoresEntry*> getData();
+	const vector<HighscoresEntry*>& getData() {
+		return m_data;
+	}
 	~Highscores();
 };
 
