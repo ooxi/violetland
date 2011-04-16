@@ -3,7 +3,6 @@
 SDL_Surface *ImageUtility::loadImage(filesystem::path fileName, float prescale) {
 	SDL_Surface *image = IMG_Load(fileName.string().c_str());
 	if (image == NULL) {
-		// visual studio compiler can't compile [ ... << const std::string ... ] ?!
 		std::cerr << "Couldn't load " << fileName << ": " << SDL_GetError() << std::endl;
 		throw 1;
 	}

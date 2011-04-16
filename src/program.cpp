@@ -15,6 +15,8 @@
 #include "pwd.h"
 #endif
 
+#include <sstream>
+
 // Apple Mac OS X compatibility
 #ifdef __APPLE__
 #include "system/utility/macBundlePath.h"
@@ -64,14 +66,12 @@
 #include "windows/HelpWindow.h"
 #include "windows/CharStatsWindow.h"
 
-#include <sstream>
-
 using namespace std;
 using namespace boost;
 using namespace violetland;
 
 const string PROJECT = "violetland";
-const string VERSION = "0.3.2";
+const string VERSION = "0.4.0";
 const string DEFAULT_CHAR_NAME = "Violet";
 
 Configuration* config;
@@ -839,21 +839,29 @@ void controlsMenuWindowController(std::string elementName) {
 	int key = InputHandler::getEventNumber(elementName);
 
 	input->resetMouseButtons();
-	SDL_Event event;
-	while (event.type != SDL_QUIT && event.type != SDL_KEYDOWN && event.type
-			!= SDL_MOUSEBUTTONDOWN) {
-		SDL_WaitEvent(&event);
-		switch (event.type) {
+
+	SDL_Event sdlEvent;
+
+	bool ok = false;
+	while(!ok)
+	{
+		SDL_WaitEvent(&sdlEvent);
+
+		switch (sdlEvent.type) {
 		case SDL_KEYDOWN:
 			config->PlayerInputBinding[key].Type = InputHandler::Keyboard;
-			config->PlayerInputBinding[key].Value = event.key.keysym.sym;
+			config->PlayerInputBinding[key].Value = sdlEvent.key.keysym.sym;
+			ok = true;
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			config->PlayerInputBinding[key].Type = InputHandler::Mouse;
-			config->PlayerInputBinding[key].Value = event.button.button;
+			config->PlayerInputBinding[key].Value = sdlEvent.button.button;
+			ok = true;
 			break;
 		case SDL_QUIT:
+			ok = true;
 			gameState->end();
+			break;
 		}
 	}
 

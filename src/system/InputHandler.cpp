@@ -1,6 +1,5 @@
 #include <iostream>
 #include <exception>
-
 #include "InputHandler.h"
 #include <libintl.h>
 #include <locale.h>
@@ -96,8 +95,8 @@ void InputHandler::processEvent(BindingType type, bool down, int value) {
 	}
 }
 
-void InputHandler::processTextInput(SDL_Event event) {
-	switch (event.key.keysym.sym) {
+void InputHandler::processTextInput(SDL_Event sdlEvent) {
+	switch (sdlEvent.key.keysym.sym) {
 	case SDLK_ESCAPE:
 		setInputMode(Direct);
 		break;
@@ -112,8 +111,8 @@ void InputHandler::processTextInput(SDL_Event event) {
 		}
 		break;
 	default:
-		if (event.key.keysym.unicode < 127 && m_curTextPos < MAX_CHARACTERS) {
-			char c = event.key.keysym.unicode;
+		if (sdlEvent.key.keysym.unicode < 127 && m_curTextPos < MAX_CHARACTERS) {
+			char c = sdlEvent.key.keysym.unicode;
 			if (' ' <= c && c <= '~')
 				m_textContent.insert(m_curTextPos++, 1, c);
 		}
@@ -122,31 +121,31 @@ void InputHandler::processTextInput(SDL_Event event) {
 }
 
 void InputHandler::process() {
-	SDL_Event event;
+	SDL_Event sdlEvent;
 
-	while (SDL_PollEvent(&event)) {
-		switch (event.type) {
+	while (SDL_PollEvent(&sdlEvent)) {
+		switch (sdlEvent.type) {
 		case SDL_KEYDOWN:
 			if (m_mode == Direct)
-				processEvent(Keyboard, true, event.key.keysym.sym);
+				processEvent(Keyboard, true, sdlEvent.key.keysym.sym);
 
 			if (m_mode == Text || m_mode == TextMandatory)
-				processTextInput(event);
+				processTextInput(sdlEvent);
 
 			break;
 		case SDL_KEYUP:
-			processEvent(Keyboard, false, event.key.keysym.sym);
+			processEvent(Keyboard, false, sdlEvent.key.keysym.sym);
 
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			processEvent(Mouse, true, event.button.button);
+			processEvent(Mouse, true, sdlEvent.button.button);
 			break;
 		case SDL_MOUSEBUTTONUP:
-			processEvent(Mouse, false, event.button.button);
+			processEvent(Mouse, false, sdlEvent.button.button);
 			break;
 		case SDL_MOUSEMOTION:
-			mouseX = event.motion.x;
-			mouseY = event.motion.y;
+			mouseX = sdlEvent.motion.x;
+			mouseY = sdlEvent.motion.y;
 			break;
 		case SDL_QUIT:
 			m_event[Exit] = true;
@@ -172,20 +171,25 @@ const unsigned InputHandler::getEventNumber(std::string eventName) {
 
 const char* InputHandler::getKeyName(Binding bind) {
 	if (bind.Type == InputHandler::Keyboard)
-		return SDL_GetKeyName(SDLKey(bind.Value));
-	else if (bind.Type == InputHandler::Mouse)
-		switch (bind.Value) {
-		default:
-		case SDL_BUTTON_LEFT:
-			return "left mouse";
-			break;
-		case SDL_BUTTON_RIGHT:
-			return "right mouse";
-			break;
-		case SDL_BUTTON_MIDDLE:
-			return "middle mouse";
-			break;
+	{
+		std::string keyName = SDL_GetKeyName(SDLKey(bind.Value));
+		return keyName.c_str();
+	}
+	else 
+	{
+		if (bind.Type == InputHandler::Mouse)
+		{
+			switch (bind.Value) {
+			default:
+			case SDL_BUTTON_LEFT:
+				return "left mouse";
+			case SDL_BUTTON_RIGHT:
+				return "right mouse";
+			case SDL_BUTTON_MIDDLE:
+				return "middle mouse";
+			}
 		}
+	}
 
 	return NULL;
 }

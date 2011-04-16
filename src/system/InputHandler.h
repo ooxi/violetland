@@ -2,6 +2,7 @@
 #define INPUTHANDLER_H_
 
 #include <string>
+
 #include "SDL.h"
 
 class InputHandler {
@@ -64,7 +65,7 @@ public:
 	static const char* getKeyName(Binding bind);
 private:
 	void processEvent(BindingType type, bool down, int value);
-	void processTextInput(SDL_Event event);
+	void processTextInput(SDL_Event sdlEvent);
 	bool m_event[GameInputEventsCount];
 	static std::string m_eventNames[GameInputEventsCount];
 	InputMode m_mode;
