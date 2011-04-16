@@ -8,23 +8,18 @@ MainMenuWindow::MainMenuWindow(Configuration* config, GameState* gameState,
 	Window(0.0f, 0.0f, config->Screen.Width, config->Screen.Height, 0.0f, 0.0f,
 			0.0f, 0.5f) {
 	const int l = config->Screen.Width * 0.1f;
+	const int h = text->getHeight();
 
-	if (gameState->Begun && !gameState->Lost) {
-		addElement("resume", text->getObject(_("Resume"), l, text->getHeight()
-				* 7.0f, TextManager::LEFT, TextManager::MIDDLE));
-	}
-
-	addElement("start", text->getObject(_("Start"), l, text->getHeight() * 8.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	addElement("options", text->getObject(_("Options"), l, text->getHeight()
-			* 9.0f, TextManager::LEFT, TextManager::MIDDLE));
-
-	addElement("highscores", text->getObject(_("High scores"), l,
-			text->getHeight() * 10.0f, TextManager::LEFT, TextManager::MIDDLE));
-
-	addElement("exit", text->getObject(_("Exit"), l, text->getHeight() * 11.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
+	std::vector<Label> labels;
+	if (gameState->Begun && !gameState->Lost)
+		labels.push_back(Label("resume", _("Resume")));
+	labels.push_back(Label("start", _("Start")));
+	labels.push_back(Label("options", _("Options")));
+	labels.push_back(Label("highscores", _("High scores")));
+	labels.push_back(Label("exit", _("Exit")));
+	
+	addElements(labels, text, 
+			l, 7*h, h, TextManager::LEFT, TextManager::MIDDLE);
 }
 
 MainMenuWindow::~MainMenuWindow() {

@@ -295,7 +295,7 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 }
 
 void violetland::HUD::addMessage(std::string message) {
-	m_messages.push_back(m_videoManager->SmallText->getObject(message.c_str(),
+	m_messages.push_back(m_videoManager->SmallText->getObject(message,
 			0, 0, TextManager::LEFT, TextManager::MIDDLE));
 }
 

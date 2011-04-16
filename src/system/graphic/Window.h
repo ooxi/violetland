@@ -23,6 +23,12 @@ public:
 	void addElement(std::string id, std::string text, TextManager* manager, 
 			int x, int y, TextManager::TextHAlignFlag halign, 
 			TextManager::TextVAlignFlag valign);
+	void addElement(const Label label, TextManager* manager, 
+			int x, int y, TextManager::TextHAlignFlag halign, 
+			TextManager::TextVAlignFlag valign);
+	void addElements(const std::vector<Label>& labels, 
+			TextManager* manager, int x, int y, int vstep, 
+			TextManager::TextHAlignFlag halign, TextManager::TextVAlignFlag valign);
 	void removeElement(std::string name, bool remainHandler);
 	//	void addHandler(HandlerType hdl, std::string elementName, void(*func)());
 	void addHandler(HandlerType hdl, std::string elementName, void(*func)(

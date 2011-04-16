@@ -417,92 +417,78 @@ void refreshCharStatsWindow() {
 	Window* charStats = windows.find("charstats")->second;
 
 	ostringstream oss;
+	vector<Label> stats;
+	
 	oss << format(_("Current player level: %i")) % player->Level;
-	charStats->addElement("level", oss.str(), videoManager->RegularText, 
-			l, 4*h, TextManager::LEFT, TextManager::MIDDLE);
-
+	stats.push_back(Label("level", oss.str()));
+	
 	oss.str("");
 	oss << format(_("Available improvement points: %i")) % player->LevelPoints;
-	charStats->addElement("availpoints", oss.str(), videoManager->RegularText,
-			l, 5*h, TextManager::LEFT, TextManager::MIDDLE);
+	stats.push_back(Label("availpoints", oss.str()));
 
 	oss.str("");
 	oss << format(_("Strength: %i")) % (player->Strength*100);
-	charStats->addElement("strength", oss.str(), videoManager->RegularText,
-			l, 7*h, TextManager::LEFT, TextManager::MIDDLE);
+	stats.push_back(Label("strength", oss.str()));
 
 	oss.str("");
 	oss << format(_("Agility: %i")) % (player->Agility*100);
-	charStats->addElement("agility", oss.str(), videoManager->RegularText,
-			l, 8*h, TextManager::LEFT, TextManager::MIDDLE);
-	
+	stats.push_back(Label("agility", oss.str()));
+
 	oss.str("");
 	oss << format(_("Vitality: %i")) % (player->Vitality*100);
-	charStats->addElement("vitality", oss.str(), videoManager->RegularText,
-			l, 9*h, TextManager::LEFT, TextManager::MIDDLE);
+	stats.push_back(Label("vitality", oss.str()));
 
-	
 	oss.str("");
-	oss << format(_("HP: %i / Max HP: %i")) % (player->getHealth()*100) % 
+	oss << format(_("HP: %i / Max HP: %i")) % round(player->getHealth()*100) % 
 			(player->MaxHealth()*100);
-	charStats->addElement("hp", oss.str(), videoManager->RegularText, 
-			l, 11*h, TextManager::LEFT, TextManager::MIDDLE);
+	stats.push_back(Label("hp", oss.str()));
 
-	
 	oss.str("");
 	oss << format(_("Melee damage: %i")) % (player->Damage()*100);
-	charStats->addElement("melee", oss.str(), videoManager->RegularText, 
-			l, 12*h, TextManager::LEFT, TextManager::MIDDLE);
+	stats.push_back(Label("melee", oss.str()));
+
 
 	oss.str("");
 	oss << format(_("Chance of block: %i%%")) % (player->ChanceToEvade()*100);
-	charStats->addElement("chanceblock", oss.str(), videoManager->RegularText,
-			l, 13*h, TextManager::LEFT, TextManager::MIDDLE);
+	stats.push_back(Label("chanceblock", oss.str()));
 
 	oss.str("");
-	oss << format(_("Reloading speed modifier: %i%%")) % int(player->ReloadSpeedMod()*100);
-	charStats->addElement("reloadingspeed", oss.str(), videoManager->RegularText, 
-			l, 14*h, TextManager::LEFT, TextManager::MIDDLE);
+	oss << format(_("Reloading speed modifier: %i%%")) % 
+			round(player->ReloadSpeedMod()*100);
+	stats.push_back(Label("reloadingspeed", oss.str()));
 
 	oss.str("");
 	oss << format(_("Accuracy deviation modifier: %i%%")) % 
 			(player->WeaponRetForceMod()*100);
-	charStats->addElement("accuracy", oss.str(), videoManager->RegularText,
-			l, 15*h, TextManager::LEFT, TextManager::MIDDLE);
+	stats.push_back(Label("accuracy", oss.str()));
 
 	oss.str("");
 	oss << format(_("Health regeneration: %.2f/min")) % (player->HealthRegen()*100);
-	charStats->addElement("healthregen", oss.str(), videoManager->RegularText,
-			l, 16*h, TextManager::LEFT, TextManager::MIDDLE);
+	stats.push_back(Label("healthregen", oss.str()));
+	
+	charStats->addElements(stats, videoManager->RegularText, 
+			l, 4*h, h, TextManager::LEFT, TextManager::MIDDLE);
 
 
+	vector<string> perks;
 	if (player->Unstoppable)
-		charStats->addElement("+unstoppable", "+", videoManager->RegularText,
-				r, 4*h, TextManager::CENTER, TextManager::MIDDLE);
-
+		perks.push_back("+unstoppable");
 	if (player->PoisonBullets)
-		charStats->addElement("+poisonbullets", "+", videoManager->RegularText, 
-				r, 5*h, TextManager::CENTER, TextManager::MIDDLE);
-
+		perks.push_back("+poisonbullets");
 	if (player->BigCalibre)
-		charStats->addElement("+bigcalibre", "+", videoManager->RegularText,
-				r, 6*h, TextManager::CENTER, TextManager::MIDDLE);
-
+		perks.push_back("+bigcalibre");
 	if (player->Telekinesis)
-		charStats->addElement("+telekinesis", "+", videoManager->RegularText, 
-				r, 7*h, TextManager::CENTER, TextManager::MIDDLE);
-
+		perks.push_back("+telekinesis");
 	if (player->NightVision)
-		charStats->addElement("+nightvision", "+", videoManager->RegularText, 
-				r, 8*h, TextManager::CENTER, TextManager::MIDDLE);
-
+		perks.push_back("+nightvision");
 	if (player->Looting)
-		charStats->addElement("+looting", "+", videoManager->RegularText, 
-				r, 9*h, TextManager::CENTER, TextManager::MIDDLE);
-
+		perks.push_back("+looting");
 	if (player->WideSight)
-		charStats->addElement("+widesight", "+", videoManager->RegularText, 
-				r, 10*h, TextManager::CENTER, TextManager::MIDDLE);
+		perks.push_back("+widesight");
+	
+	for (unsigned i = 0; i < perks.size(); ++i)
+		charStats->addElement(perks[i], "+",  videoManager->RegularText,
+				r, (4+i)*h, TextManager::CENTER, TextManager::MIDDLE);
 }
 
 void increaseVioletParam(std::string elementName) {
@@ -900,20 +886,6 @@ void resetControls(std::string elementName) {
 	for (int i = 0; i < InputHandler::GameInputEventsCount; i++)
 		config->PlayerInputBinding[i] = config_default->PlayerInputBinding[i];
 }
-
-void addOptionLabel(Window* w, const Label& label, int x, int y) {
-	w->addElement(label.id, label.text, videoManager->RegularText, x, y, 
-		TextManager::LEFT, TextManager::MIDDLE);
-}
-
-void addSection(Window* w, const Label& header, const Label labels[], 
-	int labelsCount, int x, int y, int hindent, int vindent, int vstep) {
-	
-	addOptionLabel(w, header, x, y);
-			
-	for (int i = 0; i < labelsCount; ++i)
-		addOptionLabel(w, labels[i], x+hindent, y+vindent+i*vstep);
-}
 		
 void createOptionsWindow() {
 	tempConfig = new Configuration(*config);
@@ -925,41 +897,48 @@ void createOptionsWindow() {
 	const int r = config->Screen.Width * 0.6f;
 	const int h = videoManager->RegularText->getHeight();
 
-	Label options = {"options", _("Options")};
-	addOptionLabel(w, options, l, h * 2.0f);
+	w->addElement("options", _("Options"), videoManager->RegularText,
+			l, 2*h, TextManager::LEFT, TextManager::MIDDLE);
 	
-	Label gameplay = {"sectiongame", _("Gameplay")};
-	Label gameplayLabels[] = {
-		{"autoreload", _("Weapon autoreloading")},
-		{"autopickup", _("Weapon autotaking")},
-		{"friendlyfire", _("Friendly fire")},
-	};
-	addSection(w, gameplay, gameplayLabels, 
-			sizeof(gameplayLabels)/sizeof(Label), l, 4*h, 2*h, 2*h, h);
+	vector<Label> gameplayLabels;
+	gameplayLabels.push_back(Label("autoreload", _("Weapon autoreloading")));
+	gameplayLabels.push_back(Label("autopickup", _("Weapon autotaking")));
+	gameplayLabels.push_back(Label("friendlyfire", _("Friendly fire")));
+	
+	w->addElement("sectiongame", _("Gameplay"), videoManager->RegularText,
+			l, 4*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElements(gameplayLabels, videoManager->RegularText,
+			l+2*h, 6*h, h, TextManager::LEFT, TextManager::MIDDLE);
 
-	Label graphics = {"sectiongraphics", _("Graphics")};
-	Label graphicsLabels[] = {
-		{"fullscreen", _("Fullscreen")},
-		{"resolution", _("Resolution")},
-	};
-	addSection(w, graphics, graphicsLabels, 
-			sizeof(graphicsLabels)/sizeof(Label), r, 4*h, 2*h, 2*h, h);
+
+	vector<Label> graphicsLabels;
+	graphicsLabels.push_back(Label("fullscreen", _("Fullscreen")));
+	graphicsLabels.push_back(Label("resolution", _("Resolution")));
 	
-	Label sound = {"sectionsound", _("Sound")};
-	Label soundLabels[] = {
-		{"soundvolume", _("Sound volume")},
-		{"musicvolume", _("Music volume")},
-	};
-	addSection(w, sound, soundLabels, 
-			sizeof(soundLabels)/sizeof(Label), l, 10*h, 3*h, 2*h, h);
+	w->addElement("sectiongraphics", _("Graphics"), videoManager->RegularText,
+			r, 4*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElements(graphicsLabels, videoManager->RegularText, 
+			r+2*h, 6*h, h, TextManager::LEFT, TextManager::MIDDLE);
+
+
+	vector<Label> soundLabels;
+	soundLabels.push_back(Label("soundvolume", _("Sound volume")));
+	soundLabels.push_back(Label("musicvolume", _("Music volume")));
 	
-	Label controls = {"controlstitle", _("Controls")};
-	Label controlsLabels[] = {
-		{"controlsmenu", _("Edit Controls")},
-		{"controlsreset", _("Reset Controls")},
-	};
-	addSection(w, controls, controlsLabels, 
-			sizeof(controlsLabels)/sizeof(Label), r, 10*h, 2*h, 2*h, h);
+	w->addElement("sectionsound", _("Sound"), videoManager->RegularText,
+			l, 10*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElements(soundLabels, videoManager->RegularText, 
+			l+3*h, 12*h, h, TextManager::LEFT, TextManager::MIDDLE);
+	
+	
+	vector<Label> controlsLabels;
+	controlsLabels.push_back(Label("controlsmenu", _("Edit Controls")));
+	controlsLabels.push_back(Label("controlsreset", _("Reset Controls")));
+	
+	w->addElement("controlstitle", _("Controls"), videoManager->RegularText,
+			r, 10*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElements(controlsLabels, videoManager->RegularText,
+			r+2*h, 12*h, h, TextManager::LEFT, TextManager::MIDDLE);
 
 
 	w->addHandler(Window::hdl_lclick, "autoreload", switchGameOption);
@@ -975,8 +954,8 @@ void createOptionsWindow() {
 	w->addHandler(Window::hdl_lclick, "controlsmenu", createControlsMenuWindow);
 	w->addHandler(Window::hdl_lclick, "controlsreset", resetControls);
 
-	Label savereturn = {"savereturn", _("Save and return")};
-	addOptionLabel(w, savereturn, l, h * 16.0f);
+	w->addElement("savereturn", _("Save and return"), videoManager->RegularText, 
+			l, 16*h, TextManager::LEFT, TextManager::MIDDLE);
 	w->addHandler(Window::hdl_lclick, "savereturn", backFromOptionsAndSave);
 
 	windows["options"] = w;

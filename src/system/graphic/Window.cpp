@@ -20,12 +20,27 @@ void Window::addElement(std::string id, TextObject* element)
 	m_elements[id] = element;
 }
 
-void Window::addElement(std::string id, std::string text, TextManager* manager, 
-	int x, int y, TextManager::TextHAlignFlag halign, 
+void Window::addElement(std::string id, std::string text, 
+	TextManager* manager, int x, int y, TextManager::TextHAlignFlag halign, 
 	TextManager::TextVAlignFlag valign) {
 	removeElement(id, true);
 	TextObject* element = manager->getObject(text, x, y, halign, valign);
 	m_elements[id] = element;
+}
+
+inline void Window::addElement(Label label, TextManager* manager, int x, int y, 
+	TextManager::TextHAlignFlag halign, 
+	TextManager::TextVAlignFlag valign) {
+	addElement(label.id, label.text, manager, x, y, halign, valign);
+}
+
+
+void Window::addElements(const std::vector<Label>& labels, 
+	TextManager* manager, int x, int y, int vstep, 
+	TextManager::TextHAlignFlag halign, TextManager::TextVAlignFlag valign) {
+	
+	for (unsigned i = 0; i < labels.size(); ++i)
+		addElement(labels[i], manager, x, y+i*vstep, halign, valign);
 }
 
 void Window::removeElement(std::string name, bool remainHandler) {

@@ -5,8 +5,11 @@
 #include "../../Object.h"
 
 struct Label {
-    const char* id;
-    const char* text;
+    std::string id;
+    std::string text;
+    public:
+	Label(std::string id, std::string text):
+	    id(id), text(text) {}
 };
 
 class TextObject: public Object {

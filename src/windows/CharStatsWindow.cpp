@@ -7,52 +7,27 @@ CharStatsWindow::CharStatsWindow(Configuration* config,
 		VideoManager* videoManager) :
 	Window(0.0f, 0.0f, config->Screen.Width, config->Screen.Height, 0.0f, 0.0f,
 			0.0f, 0.5f) {
-	const float r = config->Screen.Width * 0.6f;
+	const int r = config->Screen.Width * 0.6f;
+	const int h = videoManager->RegularText->getHeight();
 
-	addElement("perks", videoManager->RegularText->getObject(_("Perks:"), r,
-			videoManager->RegularText->getHeight() * 2.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
+	addElement("perks", _("Perks:"), videoManager->RegularText, 
+			r, 2*h, TextManager::LEFT, TextManager::MIDDLE);
+			
+	std::vector<Label> labels;
+	labels.push_back(Label("unstoppable", _("Unstoppable")));
+	labels.push_back(Label("poisonbullets", _("Poison bullets")));
+	labels.push_back(Label("bigcalibre", _("Big calibre")));
+	labels.push_back(Label("telekinesis", _("Telekinesis")));
+	labels.push_back(Label("nightvision", _("Night vision")));
+	labels.push_back(Label("looting", _("Looting")));
+	labels.push_back(Label("widesight", _("Wide sight")));
+	
+	addElements(labels, videoManager->RegularText, 
+			r+2*h, 4*h, h, TextManager::LEFT, TextManager::MIDDLE);
 
-	addElement("unstoppable", videoManager->RegularText->getObject(
-			_("Unstoppable"), r + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 4.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	addElement("poisonbullets", videoManager->RegularText->getObject(
-			_("Poison bullets"), r
-					+ videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 5.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	addElement("bigcalibre", videoManager->RegularText->getObject(
-			_("Big calibre"), r + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 6.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	addElement("telekinesis", videoManager->RegularText->getObject(
-			_("Telekinesis"), r + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 7.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	addElement("nightvision", videoManager->RegularText->getObject(
-			_("Night vision"), r + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 8.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	addElement("looting", videoManager->RegularText->getObject(_("Looting"), r
-			+ videoManager->RegularText->getHeight() * 2.0f,
-			videoManager->RegularText->getHeight() * 9.0f, TextManager::LEFT,
-			TextManager::MIDDLE));
-
-	addElement("widesight", videoManager->RegularText->getObject(
-			_("Wide sight"), r + videoManager->RegularText->getHeight()
-					* 2.0f, videoManager->RegularText->getHeight() * 10.0f,
-			TextManager::LEFT, TextManager::MIDDLE));
-
-	addElement("explanation", videoManager->SmallText->getObject(
-			_("Move mouse over text to get explanation..."),
-			config->Screen.Width / 2, videoManager->RegularText->getHeight()
-					* 1.0f, TextManager::CENTER, TextManager::MIDDLE));
+	addElement("explanation", _("Move mouse over text to get explanation..."),
+			videoManager->SmallText, config->Screen.Width / 2, h, 
+			TextManager::CENTER, TextManager::MIDDLE);
 }
 
 CharStatsWindow::~CharStatsWindow() {

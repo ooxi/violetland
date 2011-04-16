@@ -1,6 +1,8 @@
 #ifndef HELPWINDOW_H_
 #define HELPWINDOW_H_
 
+#include <sstream>
+
 #include "../system/graphic/Window.h"
 #include "../system/Configuration.h"
 #include "../system/graphic/text/TextManager.h"
