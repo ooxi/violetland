@@ -470,25 +470,25 @@ void refreshCharStatsWindow() {
 	charStats->addElements(stats, videoManager->RegularText, l, 4 * h, h,
 			TextManager::LEFT, TextManager::MIDDLE);
 
-	vector<string> perks;
-	if (player->Unstoppable)
-		perks.push_back("+unstoppable");
-	if (player->PoisonBullets)
-		perks.push_back("+poisonbullets");
-	if (player->BigCalibre)
-		perks.push_back("+bigcalibre");
-	if (player->Telekinesis)
-		perks.push_back("+telekinesis");
-	if (player->NightVision)
-		perks.push_back("+nightvision");
-	if (player->Looting)
-		perks.push_back("+looting");
-	if (player->WideSight)
-		perks.push_back("+widesight");
+	struct BoolString {
+		bool f;
+		const char* str;
+	};
+	
+	BoolString perks[] = {
+		{player->Unstoppable, "+unstoppable"},
+		{player->PoisonBullets, "+poisonbullets"},
+		{player->BigCalibre, "+bigcalibre"},
+		{player->Telekinesis, "+telekinesis"},
+		{player->NightVision, "+nightvision"},
+		{player->Looting, "+looting"},
+		{player->WideSight, "+widesight"},
+	};
 
-	for (unsigned i = 0; i < perks.size(); ++i)
-		charStats->addElement(perks[i], "+", videoManager->RegularText, r, (4
-				+ i) * h, TextManager::CENTER, TextManager::MIDDLE);
+	for (unsigned i = 0; i < sizeof(perks)/sizeof(BoolString); ++i)
+		if (perks[i].f)
+			charStats->addElement(perks[i].str, "+", videoManager->RegularText, 
+				r, (4 + i) * h, TextManager::CENTER, TextManager::MIDDLE);
 }
 
 void increaseVioletParam(std::string elementName) {
