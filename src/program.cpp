@@ -114,33 +114,34 @@ void createTerrain() {
 		delete terrain;
 
 	cout << "Forming terrain..." << endl;
-	
-	filesystem::path tilesDir = fileUtility->getFullPath(FileUtility::image, "terrain");
+
+	filesystem::path tilesDir = fileUtility->getFullPath(FileUtility::image,
+			"terrain");
 	unsigned baseTex = rand() % fileUtility->getFilesCountFromDir(tilesDir);
 
 	ostringstream oss;
 	oss << baseTex;
-	unsigned tilesCount = fileUtility->getFilesCountFromDir(
-			filesystem::path(tilesDir) /= oss.str());
+	unsigned tilesCount = fileUtility->getFilesCountFromDir(filesystem::path(
+			tilesDir) /= oss.str());
 
 	oss.str("");
 	oss << "base_" << baseTex << ".png";
-	SDL_Surface *terrainSurface = ImageUtility::loadImage(
-			filesystem::path(tilesDir) /= oss.str(), 1);
+	SDL_Surface *terrainSurface = ImageUtility::loadImage(filesystem::path(
+			tilesDir) /= oss.str(), 1);
 
 	vector<SDL_Surface*> tiles;
 	for (unsigned i = 0; i < tilesCount; i++) {
 		oss.str("");
 		oss << baseTex << '/' << i << ".png";
-		SDL_Surface *tile = ImageUtility::loadImage(
-				filesystem::path(tilesDir) /= oss.str(), 1);
+		SDL_Surface *tile = ImageUtility::loadImage(filesystem::path(tilesDir)
+				/= oss.str(), 1);
 		tiles.push_back(tile);
 	}
 
 	terrain = new Terrain(terrainSurface, tiles, gameState->GameAreaSize);
 
 	SDL_FreeSurface(terrainSurface);
-	for (int i = 0; i < tilesCount; i++) {
+	for (unsigned int i = 0; i < tilesCount; i++) {
 		SDL_FreeSurface(tiles[i]);
 	}
 	tiles.clear();
@@ -418,57 +419,56 @@ void refreshCharStatsWindow() {
 
 	ostringstream oss;
 	vector<Label> stats;
-	
+
 	oss << format(_("Current player level: %i")) % player->Level;
 	stats.push_back(Label("level", oss.str()));
-	
+
 	oss.str("");
 	oss << format(_("Available improvement points: %i")) % player->LevelPoints;
 	stats.push_back(Label("availpoints", oss.str()));
 
 	oss.str("");
-	oss << format(_("Strength: %i")) % (player->Strength*100);
+	oss << format(_("Strength: %i")) % (player->Strength * 100);
 	stats.push_back(Label("strength", oss.str()));
 
 	oss.str("");
-	oss << format(_("Agility: %i")) % (player->Agility*100);
+	oss << format(_("Agility: %i")) % (player->Agility * 100);
 	stats.push_back(Label("agility", oss.str()));
 
 	oss.str("");
-	oss << format(_("Vitality: %i")) % (player->Vitality*100);
+	oss << format(_("Vitality: %i")) % (player->Vitality * 100);
 	stats.push_back(Label("vitality", oss.str()));
 
 	oss.str("");
-	oss << format(_("HP: %i / Max HP: %i")) % round(player->getHealth()*100) % 
-			(player->MaxHealth()*100);
+	oss << format(_("HP: %i / Max HP: %i")) % round(player->getHealth() * 100)
+			% (player->MaxHealth() * 100);
 	stats.push_back(Label("hp", oss.str()));
 
 	oss.str("");
-	oss << format(_("Melee damage: %i")) % (player->Damage()*100);
+	oss << format(_("Melee damage: %i")) % (player->Damage() * 100);
 	stats.push_back(Label("melee", oss.str()));
 
-
 	oss.str("");
-	oss << format(_("Chance of block: %i%%")) % (player->ChanceToEvade()*100);
+	oss << format(_("Chance of block: %i%%")) % (player->ChanceToEvade() * 100);
 	stats.push_back(Label("chanceblock", oss.str()));
 
 	oss.str("");
-	oss << format(_("Reloading speed modifier: %i%%")) % 
-			round(player->ReloadSpeedMod()*100);
+	oss << format(_("Reloading speed modifier: %i%%")) % round(
+			player->ReloadSpeedMod() * 100);
 	stats.push_back(Label("reloadingspeed", oss.str()));
 
 	oss.str("");
-	oss << format(_("Accuracy deviation modifier: %i%%")) % 
-			(player->WeaponRetForceMod()*100);
+	oss << format(_("Accuracy deviation modifier: %i%%"))
+			% (player->WeaponRetForceMod() * 100);
 	stats.push_back(Label("accuracy", oss.str()));
 
 	oss.str("");
-	oss << format(_("Health regeneration: %.2f/min")) % (player->HealthRegen()*100);
+	oss << format(_("Health regeneration: %.2f/min")) % (player->HealthRegen()
+			* 100);
 	stats.push_back(Label("healthregen", oss.str()));
-	
-	charStats->addElements(stats, videoManager->RegularText, 
-			l, 4*h, h, TextManager::LEFT, TextManager::MIDDLE);
 
+	charStats->addElements(stats, videoManager->RegularText, l, 4 * h, h,
+			TextManager::LEFT, TextManager::MIDDLE);
 
 	vector<string> perks;
 	if (player->Unstoppable)
@@ -485,10 +485,10 @@ void refreshCharStatsWindow() {
 		perks.push_back("+looting");
 	if (player->WideSight)
 		perks.push_back("+widesight");
-	
+
 	for (unsigned i = 0; i < perks.size(); ++i)
-		charStats->addElement(perks[i], "+",  videoManager->RegularText,
-				r, (4+i)*h, TextManager::CENTER, TextManager::MIDDLE);
+		charStats->addElement(perks[i], "+", videoManager->RegularText, r, (4
+				+ i) * h, TextManager::CENTER, TextManager::MIDDLE);
 }
 
 void increaseVioletParam(std::string elementName) {
@@ -512,7 +512,7 @@ void increaseVioletParam(std::string elementName) {
 
 void takePerk(std::string elementName) {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
-	
+
 	if (player->LevelPoints > 0) {
 		map<string, bool*> m;
 		m["unstoppable"] = &player->Unstoppable;
@@ -524,7 +524,7 @@ void takePerk(std::string elementName) {
 		m["widesight"] = &player->WideSight;
 
 		map<string, bool*>::iterator it = m.find(elementName);
-		
+
 		if (it != m.end()) {
 			if (!*it->second) {
 				*it->second = true;
@@ -538,7 +538,7 @@ void takePerk(std::string elementName) {
 void showPerkDetails(std::string elementName) {
 	int x = config->Screen.Width / 2;
 	int y = videoManager->RegularText->getHeight();
-	
+
 	map<string, string> m;
 	m["unstoppable"] = _("Unstoppable: enemies can't block your "
 			"movement anymore, but they still can hurt you.");
@@ -547,7 +547,7 @@ void showPerkDetails(std::string elementName) {
 	m["bigcalibre"] = _("Big calibre: your bullets can wound a few "
 			"monsters in a row.");
 	m["telekinesis"] = _("Telekinesis: useful things slowly move "
-		"towards you.");
+			"towards you.");
 	m["nightvision"] = _("Night vision: you can see in the dark.");
 	m["looting"] = _("Looting: Monsters will drop more bonuses.");
 	m["widesight"] = _("Wide sight: accessible area for action "
@@ -555,9 +555,9 @@ void showPerkDetails(std::string elementName) {
 
 	map<string, string>::iterator it = m.find(elementName);
 	if (it != m.end())
-		windows["charstats"]->addElement(
-				"explanation", it->second, videoManager->SmallText,
-				x, y, TextManager::CENTER, TextManager::MIDDLE);
+		windows["charstats"]->addElement("explanation", it->second,
+				videoManager->SmallText, x, y, TextManager::CENTER,
+				TextManager::MIDDLE);
 }
 
 void createCharStatWindow() {
@@ -609,43 +609,43 @@ void refreshOptionsWindow() {
 	Window* w = windows.find("options")->second;
 
 	if (config->AutoReload)
-		w->addElement("+autoreload", "+", videoManager->RegularText,
-				l, 6*h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement("+autoreload", "+", videoManager->RegularText, l, 6 * h,
+				TextManager::LEFT, TextManager::MIDDLE);
 	else
 		w->removeElement("+autoreload", false);
 
 	if (config->AutoWeaponPickup)
-		w->addElement("+autopickup", "+", videoManager->RegularText,
-				l, 7*h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement("+autopickup", "+", videoManager->RegularText, l, 7 * h,
+				TextManager::LEFT, TextManager::MIDDLE);
 	else
 		w->removeElement("+autopickup", false);
 
 	if (config->FriendlyFire)
-		w->addElement("+friendlyfire", "+", videoManager->RegularText,
-				l, 8*h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement("+friendlyfire", "+", videoManager->RegularText, l,
+				8 * h, TextManager::LEFT, TextManager::MIDDLE);
 	else
 		w->removeElement("+friendlyfire", false);
 
 	if (config->Screen.Full)
-		w->addElement("+fullscreen", "+", videoManager->RegularText,
-				r, 6*h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement("+fullscreen", "+", videoManager->RegularText, r, 6 * h,
+				TextManager::LEFT, TextManager::MIDDLE);
 	else
 		w->removeElement("+fullscreen", false);
 
 	ostringstream oss;
 	oss << tempConfig->Screen.Width << 'x' << tempConfig->Screen.Height;
-	w->addElement("+resolution", oss.str(), videoManager->RegularText,
-			r+8*h, 7*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("+resolution", oss.str(), videoManager->RegularText, r + 8
+			* h, 7 * h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << config->SoundVolume * 10 << '%';
-	w->addElement("+soundvolume", oss.str(), videoManager->RegularText,
-			l, 12*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("+soundvolume", oss.str(), videoManager->RegularText, l, 12
+			* h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << config->MusicVolume * 10 << '%';
-	w->addElement("+musicvolume", oss.str(), videoManager->RegularText,
-			l, 13*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("+musicvolume", oss.str(), videoManager->RegularText, l, 13
+			* h, TextManager::LEFT, TextManager::MIDDLE);
 }
 
 void switchGameOption(std::string elementName) {
@@ -654,7 +654,7 @@ void switchGameOption(std::string elementName) {
 	m["autopickup"] = &config->AutoWeaponPickup;
 	m["friendlyfire"] = &config->FriendlyFire;
 	m["fullscreen"] = &config->Screen.Full;
-	
+
 	map<string, bool*>::iterator it = m.find(elementName);
 	if (it != m.end()) {
 		*it->second = !*it->second;
@@ -671,8 +671,7 @@ void switchVolumeDown(std::string elementName) {
 			config->MusicVolume = 10;
 			Mix_Volume(0, config->MusicVolume * 12);
 		}
-	}
-	else if (elementName == "soundvolume") {
+	} else if (elementName == "soundvolume") {
 		if (config->SoundVolume > 0) {
 			config->SoundVolume--;
 			for (unsigned int a = 1; a <= 8; a++) {
@@ -684,8 +683,7 @@ void switchVolumeDown(std::string elementName) {
 				Mix_Volume(a, config->SoundVolume * 12);
 			}
 		}
-	}
-	else
+	} else
 		return;
 
 	refreshOptionsWindow();
@@ -700,8 +698,7 @@ void switchVolumeUp(std::string elementName) {
 			config->MusicVolume = 0;
 			Mix_Volume(0, 0);
 		}
-	}
-	else if (elementName == "soundvolume") {
+	} else if (elementName == "soundvolume") {
 		if (config->SoundVolume <= 9) {
 			config->SoundVolume++;
 			for (unsigned int a = 1; a <= 8; a++) {
@@ -713,10 +710,9 @@ void switchVolumeUp(std::string elementName) {
 				Mix_Volume(a, 0);
 			}
 		}
-	}
-	else
+	} else
 		return;
-	
+
 	refreshOptionsWindow();
 }
 
@@ -764,20 +760,19 @@ void switchResolutionUp(std::string elementName) {
 
 void controlsMenuWindowController(std::string elementName);
 
-inline void addControlElement(Window* w, unsigned i, unsigned strN, 
+inline void addControlElement(Window* w, unsigned i, unsigned strN,
 		unsigned lx, unsigned rx) {
 	unsigned y = videoManager->RegularText->getHeight() * strN;
 	string eventName = InputHandler::getEventName(i);
 	string keyName = InputHandler::getKeyName(config->PlayerInputBinding[i]);
-	
-	w->addElement(eventName, eventName, videoManager->RegularText, 
-			lx, y, TextManager::LEFT, TextManager::MIDDLE);
 
-	w->addElement(eventName + "key", keyName, videoManager->RegularText, 
-			rx, y, TextManager::RIGHT, TextManager::MIDDLE);
+	w->addElement(eventName, eventName, videoManager->RegularText, lx, y,
+			TextManager::LEFT, TextManager::MIDDLE);
 
-	w->addHandler(Window::hdl_lclick, eventName, 
-			controlsMenuWindowController);
+	w->addElement(eventName + "key", keyName, videoManager->RegularText, rx, y,
+			TextManager::RIGHT, TextManager::MIDDLE);
+
+	w->addHandler(Window::hdl_lclick, eventName, controlsMenuWindowController);
 }
 
 void refreshControlsMenuWindow() {
@@ -786,19 +781,18 @@ void refreshControlsMenuWindow() {
 	const int col1_l = config->Screen.Width * 0.1f;
 	const int col1_r = config->Screen.Width * 0.45f;
 
-	w->addElement("controls", _("Controls"), videoManager->RegularText, 
-			col1_l, videoManager->RegularText->getHeight()* 2.0f, 
-			TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("controls", _("Controls"), videoManager->RegularText, col1_l,
+			videoManager->RegularText->getHeight() * 2.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 
 	const int col2_l = config->Screen.Width * 0.55f;
 	const int col2_r = config->Screen.Width * 0.9f;
 
-	unsigned col1_items = (InputHandler::GameInputEventsCount+1) / 2;
-	unsigned col2_items = InputHandler::GameInputEventsCount - col1_items;
+	unsigned col1_items = (InputHandler::GameInputEventsCount + 1) / 2;
 
 	for (unsigned i = 0; i < col1_items; i++)
 		addControlElement(w, i, i + 4, col1_l, col1_r);
-	
+
 	for (unsigned i = col1_items; i < InputHandler::GameInputEventsCount; i++)
 		addControlElement(w, i, i - col1_items + 4, col2_l, col2_r);
 }
@@ -827,9 +821,9 @@ void controlsMenuWindowController(std::string elementName) {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	w->addElement("pressakey", _("Press a key, please..."), videoManager->RegularText,
-			config->Screen.Width / 2, config->Screen.Height / 2,
-			TextManager::CENTER, TextManager::MIDDLE);
+	w->addElement("pressakey", _("Press a key, please..."),
+			videoManager->RegularText, config->Screen.Width / 2,
+			config->Screen.Height / 2, TextManager::CENTER, TextManager::MIDDLE);
 
 	windows["pressakey"] = w;
 
@@ -843,8 +837,7 @@ void controlsMenuWindowController(std::string elementName) {
 	SDL_Event sdlEvent;
 
 	bool ok = false;
-	while(!ok)
-	{
+	while (!ok) {
 		SDL_WaitEvent(&sdlEvent);
 
 		switch (sdlEvent.type) {
@@ -865,8 +858,9 @@ void controlsMenuWindowController(std::string elementName) {
 		}
 	}
 
-	cout << (format(_("Bind action %s to %s.")) % elementName %
-			InputHandler::getKeyName(config->PlayerInputBinding[key])) << endl;
+	cout << (format(_("Bind action %s to %s.")) % elementName
+			% InputHandler::getKeyName(config->PlayerInputBinding[key]))
+			<< endl;
 
 	config->write();
 
@@ -894,7 +888,7 @@ void resetControls(std::string elementName) {
 	for (int i = 0; i < InputHandler::GameInputEventsCount; i++)
 		config->PlayerInputBinding[i] = config_default->PlayerInputBinding[i];
 }
-		
+
 void createOptionsWindow() {
 	tempConfig = new Configuration(*config);
 
@@ -905,49 +899,45 @@ void createOptionsWindow() {
 	const int r = config->Screen.Width * 0.6f;
 	const int h = videoManager->RegularText->getHeight();
 
-	w->addElement("options", _("Options"), videoManager->RegularText,
-			l, 2*h, TextManager::LEFT, TextManager::MIDDLE);
-	
+	w->addElement("options", _("Options"), videoManager->RegularText, l, 2 * h,
+			TextManager::LEFT, TextManager::MIDDLE);
+
 	vector<Label> gameplayLabels;
 	gameplayLabels.push_back(Label("autoreload", _("Weapon autoreloading")));
 	gameplayLabels.push_back(Label("autopickup", _("Weapon autotaking")));
 	gameplayLabels.push_back(Label("friendlyfire", _("Friendly fire")));
-	
-	w->addElement("sectiongame", _("Gameplay"), videoManager->RegularText,
-			l, 4*h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElements(gameplayLabels, videoManager->RegularText,
-			l+2*h, 6*h, h, TextManager::LEFT, TextManager::MIDDLE);
 
+	w->addElement("sectiongame", _("Gameplay"), videoManager->RegularText, l, 4
+			* h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElements(gameplayLabels, videoManager->RegularText, l + 2 * h, 6 * h,
+			h, TextManager::LEFT, TextManager::MIDDLE);
 
 	vector<Label> graphicsLabels;
 	graphicsLabels.push_back(Label("fullscreen", _("Fullscreen")));
 	graphicsLabels.push_back(Label("resolution", _("Resolution")));
-	
-	w->addElement("sectiongraphics", _("Graphics"), videoManager->RegularText,
-			r, 4*h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElements(graphicsLabels, videoManager->RegularText, 
-			r+2*h, 6*h, h, TextManager::LEFT, TextManager::MIDDLE);
 
+	w->addElement("sectiongraphics", _("Graphics"), videoManager->RegularText,
+			r, 4 * h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElements(graphicsLabels, videoManager->RegularText, r + 2 * h, 6 * h,
+			h, TextManager::LEFT, TextManager::MIDDLE);
 
 	vector<Label> soundLabels;
 	soundLabels.push_back(Label("soundvolume", _("Sound volume")));
 	soundLabels.push_back(Label("musicvolume", _("Music volume")));
-	
-	w->addElement("sectionsound", _("Sound"), videoManager->RegularText,
-			l, 10*h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElements(soundLabels, videoManager->RegularText, 
-			l+3*h, 12*h, h, TextManager::LEFT, TextManager::MIDDLE);
-	
-	
+
+	w->addElement("sectionsound", _("Sound"), videoManager->RegularText, l, 10
+			* h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElements(soundLabels, videoManager->RegularText, l + 3 * h, 12 * h,
+			h, TextManager::LEFT, TextManager::MIDDLE);
+
 	vector<Label> controlsLabels;
 	controlsLabels.push_back(Label("controlsmenu", _("Edit Controls")));
 	controlsLabels.push_back(Label("controlsreset", _("Reset Controls")));
-	
-	w->addElement("controlstitle", _("Controls"), videoManager->RegularText,
-			r, 10*h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElements(controlsLabels, videoManager->RegularText,
-			r+2*h, 12*h, h, TextManager::LEFT, TextManager::MIDDLE);
 
+	w->addElement("controlstitle", _("Controls"), videoManager->RegularText, r,
+			10 * h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElements(controlsLabels, videoManager->RegularText, r + 2 * h,
+			12 * h, h, TextManager::LEFT, TextManager::MIDDLE);
 
 	w->addHandler(Window::hdl_lclick, "autoreload", switchGameOption);
 	w->addHandler(Window::hdl_lclick, "autopickup", switchGameOption);
@@ -962,8 +952,9 @@ void createOptionsWindow() {
 	w->addHandler(Window::hdl_lclick, "controlsmenu", createControlsMenuWindow);
 	w->addHandler(Window::hdl_lclick, "controlsreset", resetControls);
 
-	w->addElement("savereturn", _("Save and return"), videoManager->RegularText, 
-			l, 16*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("savereturn", _("Save and return"),
+			videoManager->RegularText, l, 16 * h, TextManager::LEFT,
+			TextManager::MIDDLE);
 	w->addHandler(Window::hdl_lclick, "savereturn", backFromOptionsAndSave);
 
 	windows["options"] = w;
@@ -1001,9 +992,9 @@ void refreshMainMenuWindow() {
 		break;
 	}
 
-	w->addElement("gamemode", strGameMode, videoManager->RegularText, 
-			r, videoManager->RegularText->getHeight()* 8.0f, 
-			TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("gamemode", strGameMode, videoManager->RegularText, r,
+			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
+			TextManager::MIDDLE);
 }
 
 void switchGameMode(std::string elementName) {
@@ -1044,8 +1035,7 @@ void highScoresWindowController(std::string elementName) {
 	if (elementName == "back") {
 		windows["highscores"]->CloseFlag = true;
 		createMainMenuWindow();
-	}
-	else if (elementName == "reset") {
+	} else if (elementName == "reset") {
 		Highscores s(fileUtility);
 		s.clear();
 		highScoresWindowController("back");
@@ -1062,17 +1052,18 @@ void createHighscoresWindow() {
 	const int r4 = l * 7.0f;
 	const int h = videoManager->RegularText->getHeight();
 
-	w->addElement("highscores", _("Highscores"), videoManager->RegularText, 
-			l, 2*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("highscores", _("Highscores"), videoManager->RegularText, l,
+			2 * h, TextManager::LEFT, TextManager::MIDDLE);
 
-	w->addElement("headerXp", _("XP"), videoManager->RegularText,
-			l, 4*h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElement("headerParams", _("Str/Agil/Vital"), videoManager->RegularText,
-			r2, 4*h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElement("headerTime", _("Time"), videoManager->RegularText,
-			r3, 4*h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElement("headerName", _("Name"), videoManager->RegularText,
-			r4, 4*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("headerXp", _("XP"), videoManager->RegularText, l, 4 * h,
+			TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("headerParams", _("Str/Agil/Vital"),
+			videoManager->RegularText, r2, 4 * h, TextManager::LEFT,
+			TextManager::MIDDLE);
+	w->addElement("headerTime", _("Time"), videoManager->RegularText, r3,
+			4 * h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("headerName", _("Name"), videoManager->RegularText, r4,
+			4 * h, TextManager::LEFT, TextManager::MIDDLE);
 
 	Highscores s(fileUtility);
 	vector<HighscoresEntry*> highscores = s.getData();
@@ -1083,8 +1074,8 @@ void createHighscoresWindow() {
 
 			oss1 << "xp" << i;
 			oss2 << highscores[i]->Xp;
-			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
-					l, (5+i)*h, TextManager::LEFT, TextManager::MIDDLE);
+			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, l,
+					(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
 			oss1.str("");
 			oss2.str("");
@@ -1093,7 +1084,7 @@ void createHighscoresWindow() {
 					<< (int) (highscores[i]->Agility * 100) << '/'
 					<< (int) (highscores[i]->Vitality * 100);
 			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
-					r2, (5+i)*h, TextManager::LEFT, TextManager::MIDDLE);
+					r2, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
 			const int minutes = highscores[i]->Time / 60000;
 			const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
@@ -1103,19 +1094,19 @@ void createHighscoresWindow() {
 			oss1 << "time" << i;
 			oss2 << minutes << "m " << seconds << 's';
 			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
-					r3, (5+i)*h, TextManager::LEFT, TextManager::MIDDLE);
+					r3, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
 			oss1.str("");
 			oss1 << "name" << i;
 			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
-					r4, (5+i)*h, TextManager::LEFT, TextManager::MIDDLE);
+					r4, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 		}
 
-	w->addElement("back", _("Back to main menu"), videoManager->RegularText,
-			l, 16*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("back", _("Back to main menu"), videoManager->RegularText, l,
+			16 * h, TextManager::LEFT, TextManager::MIDDLE);
 
-	w->addElement("reset", _("Reset list"), videoManager->RegularText,
-			r3, 16*h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("reset", _("Reset list"), videoManager->RegularText, r3, 16
+			* h, TextManager::LEFT, TextManager::MIDDLE);
 
 	w->addHandler(Window::hdl_lclick, "back", highScoresWindowController);
 
@@ -1606,85 +1597,73 @@ void dropPowerup(float x, float y, float chance, bool forceWeapon) {
 		newPowerup->Type = BONUS_WEAPON;
 		newPowerup->Object = weaponManager->Weapons[weaponIndex];
 		newPowerup->HitR = 0.5f;
-	}
-	else if (roulette(chance * 5)) {
+	} else if (roulette(chance * 5)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.3f;
 		newPowerup->Type = BONUS_MEDIKIT;
 		newPowerup->Object = new float(0.1f);
 		newPowerup->RMask = newPowerup->BMask = 0.2f;
-	}
-	else if (roulette(chance * 2.5)) {
+	} else if (roulette(chance * 2.5)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_MEDIKIT;
 		newPowerup->Object = new float(0.2f);
 		newPowerup->RMask = newPowerup->GMask = 0.4f;
-	}
-	else if (roulette(chance)) {
+	} else if (roulette(chance)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
 		newPowerup->Scale = 0.5f;
 		newPowerup->Type = BONUS_MEDIKIT;
 		newPowerup->Object = new float(0.6f);
 		newPowerup->BMask = newPowerup->GMask = 0.2f;
-	}
-	else if (roulette(chance * 2)) {
+	} else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_GRENADES]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_GRENADES;
 		newPowerup->Object = new int(1);
-	}
-	else if (roulette(chance * 2)) {
+	} else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_FREEZE]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_FREEZE;
 		newPowerup->Object = new int(10000);
-	}
-	else if (roulette(chance * 2)) {
+	} else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_NUKE]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_NUKE;
 		newPowerup->Object = new int(10000);
-	}
-	else if (roulette(chance * 2)) {
+	} else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_PENBULLETS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_PENBULLETS;
 		newPowerup->Object = new int(10000);
-	}
-	else if (roulette(chance * 2)) {
+	} else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[BONUS_VITALITYROIDS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_VITALITYROIDS;
 		newPowerup->RMask = newPowerup->BMask = 0.2f;
 		newPowerup->Object = new int(10000);
-	}
-	else if (roulette(chance * 2)) {
+	} else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[BONUS_STRENGTHROIDS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_STRENGTHROIDS;
 		newPowerup->GMask = newPowerup->BMask = 0.2f;
 		newPowerup->Object = new int(10000);
-	}
-	else if (roulette(chance * 2)) {
+	} else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y,
 				resources->PowerupTex[BONUS_AGILITYROIDS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_AGILITYROIDS;
 		newPowerup->RMask = newPowerup->GMask = 0.2f;
 		newPowerup->Object = new int(10000);
-	}
-	else if (roulette(chance * 2)) {
+	} else if (roulette(chance * 2)) {
 		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_TELEPORTS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->Type = BONUS_TELEPORTS;
 		newPowerup->Object = new int(1);
-	}
-	else
+	} else
 		return;
-	
+
 	gameState->powerups.push_back(newPowerup);
 }
 
@@ -1728,14 +1707,13 @@ void handleLifeForms() {
 
 		if (lifeForm->Type == LIFEFORM_PLAYER) {
 			if (!gameState->Lost) {
-				if (lifeForm->State == LIFEFORM_STATE_DIED
-						|| lifeForm->State == LIFEFORM_STATE_BURST)
+				if (lifeForm->State == LIFEFORM_STATE_DIED || lifeForm->State
+						== LIFEFORM_STATE_BURST)
 					loseGame(player);
 				else if (lifeForm->State == LIFEFORM_STATE_ALIVE)
 					handlePlayer(lifeForm);
 			}
-		}
-		else if (lifeForm->Type == LIFEFORM_MONSTER) {
+		} else if (lifeForm->Type == LIFEFORM_MONSTER) {
 			if (lifeForm->State == LIFEFORM_STATE_ALIVE)
 				handleMonster(lifeForm);
 		}
@@ -1746,8 +1724,7 @@ void handleLifeForms() {
 			bloodStains.push_back(lifeForm->getCorpse());
 
 		if ((lifeForm->State == LIFEFORM_STATE_DIED || lifeForm->State
-				== LIFEFORM_STATE_BURST) && lifeForm->Type
-				== LIFEFORM_MONSTER) {
+				== LIFEFORM_STATE_BURST) && lifeForm->Type == LIFEFORM_MONSTER) {
 			delete lifeForm;
 			gameState->lifeForms.erase(it++);
 		} else {
@@ -1900,15 +1877,14 @@ void handleBullets() {
 
 		if (gameState->bullets[i]->isReadyToRemove()
 				&& gameState->bullets[i]->Type == BULLET_GRENADE) {
-			addExplosion(gameState->bullets[i]->X,
-					gameState->bullets[i]->Y,
+			addExplosion(gameState->bullets[i]->X, gameState->bullets[i]->Y,
 					gameState->bullets[i]->Damage, 150.0f);
 
 			resources->ExplSounds[0]->play(8, 0, 0);
 
-			Explosion* expl = new Explosion(false,
-					gameState->bullets[i]->X, gameState->bullets[i]->Y,
-					150.0f, resources->ExplTex[0], resources->ExplTex[1]);
+			Explosion* expl = new Explosion(false, gameState->bullets[i]->X,
+					gameState->bullets[i]->Y, 150.0f, resources->ExplTex[0],
+					resources->ExplTex[1]);
 			particleSystems.push_back(expl);
 		}
 
@@ -2089,10 +2065,10 @@ void handlePowerups() {
 						|| config->AutoWeaponPickup) {
 					player->setWeapon((Weapon*) gameState->powerups[i]->Object);
 					ostringstream oss;
-					oss << format(_("You have taken the %s.")) % 
-							player->getWeapon()->Name;
+					oss << format(_("You have taken the %s."))
+							% player->getWeapon()->Name;
 					hud->addMessage(oss.str());
-					
+
 					deletePowerup = true;
 				}
 				break;
@@ -2423,26 +2399,24 @@ void parsePreferences(int argc, char *argv[]) {
 		else if (arg == "-r") {
 			if (i + 1 < argc)
 				fileUtility->setFullResPath(argv[i + 1]);
-		}
-		else if (arg == "-f")
+		} else if (arg == "-f") {
 			config->Screen.Full = true;
-		else if (arg == "-i")
+		} else if (arg == "-i") {
 			config->Screen.Full = false;
-		else if (arg == "-w" )
+		} else if (arg == "-w") {
 			if (i + 1 < argc)
 				config->Screen.Width = strtol(argv[i + 1], NULL, 10);
-		else if (arg == "-h")
+		} else if (arg == "-h") {
 			if (i + 1 < argc)
 				config->Screen.Height = strtol(argv[i + 1], NULL, 10);
-		else if (arg == "--fps") {
+		} else if (arg == "--fps") {
 			if (i + 1 < argc) {
 				int lim = strtol(argv[i + 1], NULL, 10);
 				config->FrameDelay = lim > 0 ? 1000 / lim : 0;
 			}
-		}
-		else if (arg == "--showfps")
+		} else if (arg == "--showfps") {
 			config->ShowFps = true;
-		else if (arg == "--monsters") {
+		} else if (arg == "--monsters") {
 			if (i + 1 < argc) {
 				int n = strtol(argv[i + 1], NULL, 10);
 				if (n >= 0)
