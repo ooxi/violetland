@@ -2362,7 +2362,7 @@ void parsePreferences(int argc, char *argv[]) {
 	config = new Configuration(fileUtility);
 	config->read();
 
-	for (int i = 0; i < argc; i++) {
+	for (int i = 1; i < argc; i++) {
 		string arg = argv[i];
 
 		if (arg == "--help") {
@@ -2397,28 +2397,28 @@ void parsePreferences(int argc, char *argv[]) {
 #endif
 
 		else if (arg == "-r") {
-			if (i + 1 < argc)
-				fileUtility->setFullResPath(argv[i + 1]);
+			if (++i < argc)
+				fileUtility->setFullResPath(argv[i]);
 		} else if (arg == "-f") {
 			config->Screen.Full = true;
 		} else if (arg == "-i") {
 			config->Screen.Full = false;
 		} else if (arg == "-w") {
-			if (i + 1 < argc)
-				config->Screen.Width = strtol(argv[i + 1], NULL, 10);
+			if (++i < argc)
+				config->Screen.Width = strtol(argv[i], NULL, 10);
 		} else if (arg == "-h") {
-			if (i + 1 < argc)
-				config->Screen.Height = strtol(argv[i + 1], NULL, 10);
+			if (++i < argc)
+				config->Screen.Height = strtol(argv[i], NULL, 10);
 		} else if (arg == "--fps") {
-			if (i + 1 < argc) {
-				int lim = strtol(argv[i + 1], NULL, 10);
+			if (++i < argc) {
+				int lim = strtol(argv[i], NULL, 10);
 				config->FrameDelay = lim > 0 ? 1000 / lim : 0;
 			}
 		} else if (arg == "--showfps") {
 			config->ShowFps = true;
 		} else if (arg == "--monsters") {
-			if (i + 1 < argc) {
-				int n = strtol(argv[i + 1], NULL, 10);
+			if (++i < argc) {
+				int n = strtol(argv[i], NULL, 10);
 				if (n >= 0)
 					config->MonstersAtStart = n;
 				else
