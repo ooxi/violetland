@@ -96,7 +96,7 @@ void violetland::GameState::process(int deltaTime) {
 
 void violetland::GameState::reset() {
 	clearMap<string, LifeForm*> (&lifeForms);
-	clearVector<Powerup*> (&powerups);
+	clearVector<BasePowerup*> (&powerups);
 	clearVector<Bullet*> (&bullets);
 }
 

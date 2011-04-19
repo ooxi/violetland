@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <vector>
+
 #include "../system/utility/Templates.h"
 #include "Terrain.h"
 #include "lifeforms/Player.h"
@@ -13,6 +14,8 @@
 using namespace std;
 
 namespace violetland {
+class BasePowerup;
+
 struct Blood {
 	float x, y, angle, scale;
 	bool poisoned;
@@ -48,7 +51,7 @@ public:
 	int GameAreaSize;
 
 	map<string, LifeForm*> lifeForms;
-	vector<Powerup*> powerups;
+	vector<BasePowerup*> powerups;
 	vector<Bullet*> bullets;
 };
 }

@@ -38,6 +38,7 @@
 #include <boost/format.hpp>
 
 // The Game
+#include "game/Game.h"
 #include "system/Configuration.h"
 #include "system/InputHandler.h"
 #include "system/utility/ImageUtility.h"
@@ -52,11 +53,11 @@
 #include "system/graphic/Explosion.h"
 #include "system/sound/SoundManager.h"
 #include "game/GameState.h"
+#include "game/Powerup.h"
 #include "game/Resources.h"
 #include "game/lifeforms/MonsterFactory.h"
 #include "game/lifeforms/Monster.h"
 #include "game/lifeforms/Player.h"
-#include "game/Powerup.h"
 #include "game/Terrain.h"
 #include "game/MusicManager.h"
 #include "game/WeaponManager.h"
@@ -96,6 +97,7 @@ vector<StaticObject*> bloodStains;
 Terrain* terrain;
 
 GameState* gameState;
+Game* game;
 string playerId;
 
 map<string, Window*> windows;
@@ -377,6 +379,7 @@ void initSystem() {
 	input = new InputHandler(config->PlayerInputBinding);
 
 	gameState = new GameState();
+	game = new Game(input, hud, config, gameState, resources, particleSystems);
 }
 
 // Operations at destruction of the player:
@@ -411,8 +414,8 @@ void switchGamePause() {
 void refreshCharStatsWindow() {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
 
-	const int l = (int) (config->Screen.Width * 0.1f);
-	const int r = (int) (config->Screen.Width * 0.6f);
+	const int l = (int) (videoManager->getVideoMode().Width * 0.1f);
+	const int r = (int) (videoManager->getVideoMode().Width * 0.6f);
 	const int h = videoManager->RegularText->getHeight();
 
 	Window* charStats = windows.find("charstats")->second;
@@ -536,7 +539,7 @@ void takePerk(std::string elementName) {
 }
 
 void showPerkDetails(std::string elementName) {
-	int x = config->Screen.Width / 2;
+	int x = videoManager->getVideoMode().Width / 2;
 	int y = videoManager->RegularText->getHeight();
 
 	map<string, string> m;
@@ -602,8 +605,8 @@ void shutdownSystem() {
 void backFromOptionsAndSave(std::string elementName);
 
 void refreshOptionsWindow() {
-	const int l = config->Screen.Width * 0.1f;
-	const int r = config->Screen.Width * 0.6f;
+	const int l = videoManager->getVideoMode().Width * 0.1f;
+	const int r = videoManager->getVideoMode().Width * 0.6f;
 	const int h = videoManager->RegularText->getHeight();
 
 	Window* w = windows.find("options")->second;
@@ -778,15 +781,15 @@ inline void addControlElement(Window* w, unsigned i, unsigned strN,
 void refreshControlsMenuWindow() {
 	Window* w = windows.find("controls")->second;
 
-	const int col1_l = config->Screen.Width * 0.1f;
-	const int col1_r = config->Screen.Width * 0.45f;
+	const int col1_l = videoManager->getVideoMode().Width * 0.1f;
+	const int col1_r = videoManager->getVideoMode().Width * 0.45f;
 
 	w->addElement("controls", _("Controls"), videoManager->RegularText, col1_l,
 			videoManager->RegularText->getHeight() * 2.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
 
-	const int col2_l = config->Screen.Width * 0.55f;
-	const int col2_r = config->Screen.Width * 0.9f;
+	const int col2_l = videoManager->getVideoMode().Width * 0.55f;
+	const int col2_r = videoManager->getVideoMode().Width * 0.9f;
 
 	unsigned col1_items = (InputHandler::GameInputEventsCount + 1) / 2;
 
@@ -895,8 +898,8 @@ void createOptionsWindow() {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = config->Screen.Width * 0.1f;
-	const int r = config->Screen.Width * 0.6f;
+	const int l = videoManager->getVideoMode().Width * 0.1f;
+	const int r = videoManager->getVideoMode().Width * 0.6f;
 	const int h = videoManager->RegularText->getHeight();
 
 	w->addElement("options", _("Options"), videoManager->RegularText, l, 2 * h,
@@ -980,7 +983,7 @@ void endGame(std::string elementName) {
 void refreshMainMenuWindow() {
 	Window* w = windows.find("mainmenu")->second;
 
-	const int r = config->Screen.Width * 0.3f;
+	const int r = videoManager->getVideoMode().Width * 0.3f;
 
 	string strGameMode = _("Unknown");
 	switch (gameMode) {
@@ -1046,7 +1049,7 @@ void createHighscoresWindow() {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
-	const int l = config->Screen.Width * 0.1f;
+	const int l = videoManager->getVideoMode().Width * 0.1f;
 	const int r2 = l * 2.0f;
 	const int r3 = l * 5.0f;
 	const int r4 = l * 7.0f;
@@ -1582,7 +1585,7 @@ void handlePlayer(LifeForm* lf) {
 
 //Choice and creation of bonus
 void dropPowerup(float x, float y, float chance, bool forceWeapon) {
-	Powerup *newPowerup;
+	BasePowerup *newPowerup;
 
 	// Weapon drop - should be first check
 	if (forceWeapon || roulette(chance * 2.5)) {
@@ -1592,75 +1595,47 @@ void dropPowerup(float x, float y, float chance, bool forceWeapon) {
 		else
 			weaponIndex = (rand() % (weaponManager->Weapons.size() - 1));
 
-		newPowerup = new Powerup(x, y,
-				weaponManager->Weapons[weaponIndex]->getDroppedTex());
-		newPowerup->Type = BONUS_WEAPON;
-		newPowerup->Object = weaponManager->Weapons[weaponIndex];
+		newPowerup = new WeaponPowerup(x, y, weaponManager->Weapons[weaponIndex]);
 		newPowerup->HitR = 0.5f;
 	} else if (roulette(chance * 5)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
+		newPowerup = new MedikitPowerup(x, y, resources->PowerupTex[BONUS_MEDIKIT], 0.1f);
 		newPowerup->Scale = 0.3f;
-		newPowerup->Type = BONUS_MEDIKIT;
-		newPowerup->Object = new float(0.1f);
 		newPowerup->RMask = newPowerup->BMask = 0.2f;
 	} else if (roulette(chance * 2.5)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
+		newPowerup = new MedikitPowerup(x, y, resources->PowerupTex[BONUS_MEDIKIT], 0.2f);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_MEDIKIT;
-		newPowerup->Object = new float(0.2f);
 		newPowerup->RMask = newPowerup->GMask = 0.4f;
 	} else if (roulette(chance)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_MEDIKIT]);
+		newPowerup = new MedikitPowerup(x, y, resources->PowerupTex[BONUS_MEDIKIT], 0.6f);
 		newPowerup->Scale = 0.5f;
-		newPowerup->Type = BONUS_MEDIKIT;
-		newPowerup->Object = new float(0.6f);
 		newPowerup->BMask = newPowerup->GMask = 0.2f;
 	} else if (roulette(chance * 2)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_GRENADES]);
+		newPowerup = new GrenadePowerup(x, y, resources->PowerupTex[BONUS_GRENADES]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_GRENADES;
-		newPowerup->Object = new int(1);
 	} else if (roulette(chance * 2)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_FREEZE]);
+		newPowerup = new FreezePowerup(x, y, resources->PowerupTex[BONUS_FREEZE]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_FREEZE;
-		newPowerup->Object = new int(10000);
 	} else if (roulette(chance * 2)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_NUKE]);
+		newPowerup = new NukePowerup(x, y, resources->PowerupTex[BONUS_NUKE]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_NUKE;
-		newPowerup->Object = new int(10000);
 	} else if (roulette(chance * 2)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_PENBULLETS]);
+		newPowerup = new PenetrationBulletsPowerup(x, y, resources->PowerupTex[BONUS_PENBULLETS]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_PENBULLETS;
-		newPowerup->Object = new int(10000);
 	} else if (roulette(chance * 2)) {
-		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[BONUS_VITALITYROIDS]);
+		newPowerup = new VitalityPowerup(x, y, resources->PowerupTex[BONUS_VITALITYROIDS]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_VITALITYROIDS;
 		newPowerup->RMask = newPowerup->BMask = 0.2f;
-		newPowerup->Object = new int(10000);
 	} else if (roulette(chance * 2)) {
-		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[BONUS_STRENGTHROIDS]);
+		newPowerup = new StrengthPowerup(x, y, resources->PowerupTex[BONUS_STRENGTHROIDS]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_STRENGTHROIDS;
 		newPowerup->GMask = newPowerup->BMask = 0.2f;
-		newPowerup->Object = new int(10000);
 	} else if (roulette(chance * 2)) {
-		newPowerup = new Powerup(x, y,
-				resources->PowerupTex[BONUS_AGILITYROIDS]);
+		newPowerup = new AgilityPowerup(x, y, resources->PowerupTex[BONUS_AGILITYROIDS]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_AGILITYROIDS;
 		newPowerup->RMask = newPowerup->GMask = 0.2f;
-		newPowerup->Object = new int(10000);
 	} else if (roulette(chance * 2)) {
-		newPowerup = new Powerup(x, y, resources->PowerupTex[BONUS_TELEPORTS]);
+		newPowerup = new TeleportPowerup(x, y, resources->PowerupTex[BONUS_TELEPORTS]);
 		newPowerup->Scale = 0.4f;
-		newPowerup->Type = BONUS_TELEPORTS;
-		newPowerup->Object = new int(1);
 	} else
 		return;
 
@@ -1910,20 +1885,7 @@ void handlePowerups() {
 
 	for (int i = gameState->powerups.size() - 1; i >= 0; i--) {
 		bool deletePowerup = false;
-		gameState->powerups[i]->Time -= videoManager->getFrameDeltaTime();
-		gameState->powerups[i]->AMask = gameState->powerups[i]->Time / 15000.0;
-		if (gameState->powerups[i]->Type != BONUS_WEAPON) {
-			gameState->powerups[i]->Angle += videoManager->getFrameDeltaTime()
-					* 0.05f * gameState->powerups[i]->Dir;
-
-			if (gameState->powerups[i]->Angle > 45
-					&& gameState->powerups[i]->Dir > 0)
-				gameState->powerups[i]->Dir = -1;
-
-			if (gameState->powerups[i]->Angle < -45
-					&& gameState->powerups[i]->Dir < 0)
-				gameState->powerups[i]->Dir = 1;
-		}
+		gameState->powerups[i]->process(videoManager->getFrameDeltaTime());
 
 		if (gameState->powerups[i]->Time <= 0)
 			deletePowerup = true;
@@ -1931,38 +1893,7 @@ void handlePowerups() {
 		if (!gameState->Lost && gameState->powerups[i]->detectCollide(
 				player->TargetX, player->TargetY)) {
 
-			switch (gameState->powerups[i]->Type) {
-			case BONUS_MEDIKIT:
-				hud->Info = _("a medikit");
-				break;
-			case BONUS_FREEZE:
-				hud->Info = _("a nitrogen bomb");
-				break;
-			case BONUS_NUKE:
-				hud->Info = _("nuke!");
-				break;
-			case BONUS_GRENADES:
-				hud->Info = _("a hand grenade");
-				break;
-			case BONUS_PENBULLETS:
-				hud->Info = _("penetration bullets");
-				break;
-			case BONUS_VITALITYROIDS:
-				hud->Info = _("vitality boost");
-				break;
-			case BONUS_STRENGTHROIDS:
-				hud->Info = _("strength boost");
-				break;
-			case BONUS_AGILITYROIDS:
-				hud->Info = _("agility boost");
-				break;
-			case BONUS_TELEPORTS:
-				hud->Info = _("a teleport");
-				break;
-			case BONUS_WEAPON:
-				hud->Info = ((Weapon*) gameState->powerups[i]->Object)->Name;
-				break;
-			}
+			hud->Info = gameState->powerups[i]->getHudInfo();
 
 			if (player->Telekinesis) {
 				float a = Object::calc_angle(gameState->powerups[i]->X,
@@ -1977,109 +1908,12 @@ void handlePowerups() {
 		}
 
 		if (!gameState->Lost && (gameState->powerups[i]->detectCollide(player))) {
-			switch (gameState->powerups[i]->Type) {
-			case BONUS_MEDIKIT: {
-				if (player->getHealth() < player->MaxHealth()) {
-					hud->addMessage(_("You have taken a medical kit."));
-					player->setHealth(player->getHealth()
-							+ *(float*) gameState->powerups[i]->Object);
-					deletePowerup = true;
-				}
-				break;
-			}
-			case BONUS_FREEZE: {
-				hud->addMessage(_("All have been frozen around you."));
-
-				map<string, LifeForm*>::const_iterator iter;
-				for (iter = gameState->lifeForms.begin(); iter
-						!= gameState->lifeForms.end(); ++iter) {
-					LifeForm* lf = iter->second;
-
-					if (lf->Type == LIFEFORM_PLAYER || lf->State
-							!= LIFEFORM_STATE_ALIVE)
-						continue;
-					lf->Frozen = *(int*) gameState->powerups[i]->Object;
-					lf->Burning = false;
-					lf->Speed = 0.0f;
-				}
-				player->bonusTimes[PLAYER_BONUS_FREEZE]
-						= *(int*) gameState->powerups[i]->Object;
-				deletePowerup = true;
-				break;
-			}
-			case BONUS_NUKE: {
-				hud->addMessage(_("Boom!"));
-				addExplosion(player->X, player->Y, 12.0f, 400.0f);
-
-				resources->ExplSounds[1]->play(8, 0, 0);
-
-				Explosion * expl = new Explosion(true, player->X, player->Y,
-						400.0f, resources->ExplTex[0], resources->ExplTex[1]);
-				particleSystems.push_back(expl);
-
-				deletePowerup = true;
-				break;
-			}
-			case BONUS_PENBULLETS: {
-				hud->addMessage(_("You got powerful penetration bullets."));
-				player->bonusTimes[PLAYER_BONUS_PENBULLETS]
-						= *(int*) gameState->powerups[i]->Object;
-				deletePowerup = true;
-				break;
-			}
-			case BONUS_VITALITYROIDS: {
-				hud->addMessage(_("You got a vitality boost."));
-				player->bonusTimes[PLAYER_BONUS_VITALITYBOOST]
-						+= *(int*) gameState->powerups[i]->Object;
-				deletePowerup = true;
-				break;
-			}
-			case BONUS_STRENGTHROIDS: {
-				hud->addMessage(_("You got a strength boost."));
-				player->bonusTimes[PLAYER_BONUS_STRENGTHBOOST]
-						+= *(int*) gameState->powerups[i]->Object;
-				deletePowerup = true;
-				break;
-			}
-			case BONUS_AGILITYROIDS: {
-				hud->addMessage(_("You got a agility boost."));
-				player->bonusTimes[PLAYER_BONUS_AGILITYBOOST]
-						+= *(int*) gameState->powerups[i]->Object;
-				deletePowerup = true;
-				break;
-			}
-			case BONUS_GRENADES: {
-				hud->addMessage(_("You have taken a grenade."));
-				player->Grenades += *(int*) gameState->powerups[i]->Object;
-				deletePowerup = true;
-				break;
-			}
-			case BONUS_TELEPORTS: {
-				hud->addMessage(_("You have taken a teleport."));
-				player->Teleports += *(int*) gameState->powerups[i]->Object;
-				deletePowerup = true;
-				break;
-			}
-			case BONUS_WEAPON: {
-				if (input->getDownInput(InputHandler::Pickup)
-						|| config->AutoWeaponPickup) {
-					player->setWeapon((Weapon*) gameState->powerups[i]->Object);
-					ostringstream oss;
-					oss << format(_("You have taken the %s."))
-							% player->getWeapon()->Name;
-					hud->addMessage(oss.str());
-
-					deletePowerup = true;
-				}
-				break;
-			}
-			}
+			deletePowerup = gameState->powerups[i]->modify(game, player);
 		}
 
 		if (deletePowerup) {
 			delete gameState->powerups[i];
 			gameState->powerups.erase(gameState->powerups.begin() + i);
-			continue;
 		}
 	}
 }
