@@ -467,7 +467,7 @@ void refreshCharStatsWindow() {
 
 	oss.str("");
 	oss << format(_("Health regeneration: %.2f/min")) % (player->HealthRegen()
-			* 100);
+			* 6000000);
 	stats.push_back(Label("healthregen", oss.str()));
 
 	charStats->addElements(stats, videoManager->RegularText, l, 4 * h, h,
