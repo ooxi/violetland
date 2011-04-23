@@ -13,6 +13,8 @@ Terrain::Terrain(SDL_Surface *surface, std::vector<SDL_Surface*> tiles,
 	int tilesStartX = -m_gameAreaSize + m_tileWidth / 2;
 	int tilesStartY = -m_gameAreaSize + m_tileHeight / 2;
 
+	std::cout << "Creating terrain tiles from the base texture..." << std::endl;
+
 	for (int i = 0; i < m_xTilesCount; i++) {
 		for (int j = 0; j < m_yTilesCount; j++) {
 			Texture* baseTex = new Texture(surface, GL_TEXTURE_2D, GL_NEAREST,
@@ -27,6 +29,8 @@ Terrain::Terrain(SDL_Surface *surface, std::vector<SDL_Surface*> tiles,
 			m_tiles.push_back(newTile);
 		}
 	}
+
+	std::cout << "Painting terrain tiles with debris textures..." << std::endl;
 
 	Terrain::beginDrawOn();
 
@@ -48,6 +52,8 @@ Terrain::Terrain(SDL_Surface *surface, std::vector<SDL_Surface*> tiles,
 	}
 
 	Terrain::endDrawOn();
+
+	std::cout << "Terrain has been generated successfully." << std::endl;
 }
 
 void Terrain::beginDrawOn() {
@@ -102,10 +108,9 @@ void Terrain::draw(Camera* cam) {
 	float bottom = cam->Y + cam->getHalfH();
 	float top = cam->Y - cam->getHalfH();
 	for (unsigned int i = 0; i < m_tiles.size(); i++) {
-		if (m_tiles[i]->getLeft() < right
-				&& m_tiles[i]->getRight() > left
-				&& m_tiles[i]->getTop() < bottom
-				&& m_tiles[i]->getBottom() > top)
+		if (m_tiles[i]->getLeft() < right && m_tiles[i]->getRight() > left
+				&& m_tiles[i]->getTop() < bottom && m_tiles[i]->getBottom()
+				> top)
 			m_tiles[i]->draw(m_tileDList);
 	}
 }
