@@ -857,7 +857,7 @@ void controlsMenuWindowController(std::string elementName) {
 		}
 	}
 
-	cout << (format(_("Bind action %s to %s.")) % elementName
+	cout << (format(_("Bind action %s to key %s.")) % elementName
 			% InputHandler::getKeyName(config->PlayerInputBinding[key]))
 			<< endl;
 

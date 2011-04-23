@@ -169,11 +169,11 @@ const unsigned InputHandler::getEventNumber(std::string eventName) {
 	throw exception();
 }
 
-const char* InputHandler::getKeyName(Binding bind) {
+string InputHandler::getKeyName(Binding bind) {
 	if (bind.Type == InputHandler::Keyboard)
 	{
-		std::string keyName = SDL_GetKeyName(SDLKey(bind.Value));
-		return keyName.c_str();
+		string keyName = SDL_GetKeyName(SDLKey(bind.Value));
+		return keyName;
 	}
 	else 
 	{

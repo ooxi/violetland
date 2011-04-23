@@ -5,6 +5,8 @@
 
 #include "SDL.h"
 
+using namespace std;
+
 class InputHandler {
 public:
 	enum BindingType {
@@ -60,17 +62,17 @@ public:
 	bool getPressInput(GameInputEvents evnt);
 	void resetMouseButtons();
 	int mouseX, mouseY;
-	static std::string getEventName(int eventNumber);
-	static const unsigned getEventNumber(std::string eventName);
-	static const char* getKeyName(Binding bind);
+	static string getEventName(int eventNumber);
+	static const unsigned getEventNumber(string eventName);
+	static string getKeyName(Binding bind);
 private:
 	void processEvent(BindingType type, bool down, int value);
 	void processTextInput(SDL_Event sdlEvent);
 	bool m_event[GameInputEventsCount];
-	static std::string m_eventNames[GameInputEventsCount];
+	static string m_eventNames[GameInputEventsCount];
 	InputMode m_mode;
 	bool m_textValidated;
-	std::string m_textContent;
+	string m_textContent;
 	int m_curTextPos;
 	Binding* m_binding;
 };
