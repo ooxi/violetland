@@ -477,21 +477,17 @@ void refreshCharStatsWindow() {
 		bool f;
 		const char* str;
 	};
-	
-	BoolString perks[] = {
-		{player->Unstoppable, "+unstoppable"},
-		{player->PoisonBullets, "+poisonbullets"},
-		{player->BigCalibre, "+bigcalibre"},
-		{player->Telekinesis, "+telekinesis"},
-		{player->NightVision, "+nightvision"},
-		{player->Looting, "+looting"},
-		{player->WideSight, "+widesight"},
-	};
 
-	for (unsigned i = 0; i < sizeof(perks)/sizeof(BoolString); ++i)
+	BoolString perks[] = { { player->Unstoppable, "+unstoppable" }, {
+			player->PoisonBullets, "+poisonbullets" }, { player->BigCalibre,
+			"+bigcalibre" }, { player->Telekinesis, "+telekinesis" }, {
+			player->NightVision, "+nightvision" }, { player->Looting,
+			"+looting" }, { player->WideSight, "+widesight" }, };
+
+	for (unsigned i = 0; i < sizeof(perks) / sizeof(BoolString); ++i)
 		if (perks[i].f)
-			charStats->addElement(perks[i].str, "+", videoManager->RegularText, 
-				r, (4 + i) * h, TextManager::CENTER, TextManager::MIDDLE);
+			charStats->addElement(perks[i].str, "+", videoManager->RegularText,
+					r, (4 + i) * h, TextManager::CENTER, TextManager::MIDDLE);
 }
 
 void increaseVioletParam(std::string elementName) {
@@ -1595,46 +1591,57 @@ void dropPowerup(float x, float y, float chance, bool forceWeapon) {
 		else
 			weaponIndex = (rand() % (weaponManager->Weapons.size() - 1));
 
-		newPowerup = new WeaponPowerup(x, y, weaponManager->Weapons[weaponIndex]);
+		newPowerup = new WeaponPowerup(x, y,
+				weaponManager->Weapons[weaponIndex]);
 		newPowerup->HitR = 0.5f;
 	} else if (roulette(chance * 5)) {
-		newPowerup = new MedikitPowerup(x, y, resources->PowerupTex[BONUS_MEDIKIT], 0.1f);
+		newPowerup = new MedikitPowerup(x, y,
+				resources->PowerupTex[BONUS_MEDIKIT], 0.1f);
 		newPowerup->Scale = 0.3f;
 		newPowerup->RMask = newPowerup->BMask = 0.2f;
 	} else if (roulette(chance * 2.5)) {
-		newPowerup = new MedikitPowerup(x, y, resources->PowerupTex[BONUS_MEDIKIT], 0.2f);
+		newPowerup = new MedikitPowerup(x, y,
+				resources->PowerupTex[BONUS_MEDIKIT], 0.2f);
 		newPowerup->Scale = 0.4f;
 		newPowerup->RMask = newPowerup->GMask = 0.4f;
 	} else if (roulette(chance)) {
-		newPowerup = new MedikitPowerup(x, y, resources->PowerupTex[BONUS_MEDIKIT], 0.6f);
+		newPowerup = new MedikitPowerup(x, y,
+				resources->PowerupTex[BONUS_MEDIKIT], 0.6f);
 		newPowerup->Scale = 0.5f;
 		newPowerup->BMask = newPowerup->GMask = 0.2f;
 	} else if (roulette(chance * 2)) {
-		newPowerup = new GrenadePowerup(x, y, resources->PowerupTex[BONUS_GRENADES]);
+		newPowerup = new GrenadePowerup(x, y,
+				resources->PowerupTex[BONUS_GRENADES]);
 		newPowerup->Scale = 0.4f;
 	} else if (roulette(chance * 2)) {
-		newPowerup = new FreezePowerup(x, y, resources->PowerupTex[BONUS_FREEZE]);
+		newPowerup = new FreezePowerup(x, y,
+				resources->PowerupTex[BONUS_FREEZE]);
 		newPowerup->Scale = 0.4f;
 	} else if (roulette(chance * 2)) {
 		newPowerup = new NukePowerup(x, y, resources->PowerupTex[BONUS_NUKE]);
 		newPowerup->Scale = 0.4f;
 	} else if (roulette(chance * 2)) {
-		newPowerup = new PenetrationBulletsPowerup(x, y, resources->PowerupTex[BONUS_PENBULLETS]);
+		newPowerup = new PenetrationBulletsPowerup(x, y,
+				resources->PowerupTex[BONUS_PENBULLETS]);
 		newPowerup->Scale = 0.4f;
 	} else if (roulette(chance * 2)) {
-		newPowerup = new VitalityPowerup(x, y, resources->PowerupTex[BONUS_VITALITYROIDS]);
+		newPowerup = new VitalityPowerup(x, y,
+				resources->PowerupTex[BONUS_VITALITYROIDS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->RMask = newPowerup->BMask = 0.2f;
 	} else if (roulette(chance * 2)) {
-		newPowerup = new StrengthPowerup(x, y, resources->PowerupTex[BONUS_STRENGTHROIDS]);
+		newPowerup = new StrengthPowerup(x, y,
+				resources->PowerupTex[BONUS_STRENGTHROIDS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->GMask = newPowerup->BMask = 0.2f;
 	} else if (roulette(chance * 2)) {
-		newPowerup = new AgilityPowerup(x, y, resources->PowerupTex[BONUS_AGILITYROIDS]);
+		newPowerup = new AgilityPowerup(x, y,
+				resources->PowerupTex[BONUS_AGILITYROIDS]);
 		newPowerup->Scale = 0.4f;
 		newPowerup->RMask = newPowerup->GMask = 0.2f;
 	} else if (roulette(chance * 2)) {
-		newPowerup = new TeleportPowerup(x, y, resources->PowerupTex[BONUS_TELEPORTS]);
+		newPowerup = new TeleportPowerup(x, y,
+				resources->PowerupTex[BONUS_TELEPORTS]);
 		newPowerup->Scale = 0.4f;
 	} else
 		return;
@@ -2031,10 +2038,15 @@ void drawGame() {
 			!= gameState->lifeForms.end(); ++iter) {
 		LifeForm* lifeForm = iter->second;
 
+		// Explicit check if lifeform is out of screen bounds
+		// In fact, such a check is made in opengl
+		// Perhaps opengl even does it quickly, I do not know
 		if (lifeForm->getLeft() >= right || lifeForm->getRight() <= left
-				&& lifeForm->getTop() >= bottom && lifeForm->getBottom() <= top)
+				|| lifeForm->getTop() >= bottom || lifeForm->getBottom() <= top)
 			continue;
 
+		// Check if lifeform is dead, we should draw only alive lifeforms
+		// Images of corpses are printed on the texture of the terrain
 		if (lifeForm->Type == LIFEFORM_PLAYER && (lifeForm->State
 				== LIFEFORM_STATE_DIED || lifeForm->State
 				== LIFEFORM_STATE_BURST))
