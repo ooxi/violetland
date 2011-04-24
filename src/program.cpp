@@ -270,10 +270,8 @@ string getDefaultName() {
 #endif
 }
 
-// Creation of system objects and their customization
-void initSystem() {
-	std::cout << (format(_("Name found : %s")) % getDefaultName()) << std::endl;
 
+void initInternationlization() {
 	//~
 	//~ Internationalization Initialization
 	//~
@@ -286,6 +284,16 @@ void initSystem() {
 
 	//~ i18n: sets the message domain
 	textdomain("violetland");
+	
+	InputHandler::initEventNames();
+}
+
+
+// Creation of system objects and their customization
+void initSystem() {
+	std::cout << (format(_("Name found : %s")) % getDefaultName()) << std::endl;
+
+	initInternationlization();
 
 	srand((unsigned) time(NULL));
 
@@ -762,16 +770,17 @@ void controlsMenuWindowController(std::string elementName);
 inline void addControlElement(Window* w, unsigned i, unsigned strN,
 		unsigned lx, unsigned rx) {
 	unsigned y = videoManager->RegularText->getHeight() * strN;
+	string eventId = InputHandler::getEventIdentifier(i);
 	string eventName = InputHandler::getEventName(i);
 	string keyName = InputHandler::getKeyName(config->PlayerInputBinding[i]);
 
-	w->addElement(eventName, eventName, videoManager->RegularText, lx, y,
+	w->addElement(eventId, eventName, videoManager->RegularText, lx, y,
 			TextManager::LEFT, TextManager::MIDDLE);
 
-	w->addElement(eventName + "key", keyName, videoManager->RegularText, rx, y,
+	w->addElement(eventId + "key", keyName, videoManager->RegularText, rx, y,
 			TextManager::RIGHT, TextManager::MIDDLE);
 
-	w->addHandler(Window::hdl_lclick, eventName, controlsMenuWindowController);
+	w->addHandler(Window::hdl_lclick, eventId, controlsMenuWindowController);
 }
 
 void refreshControlsMenuWindow() {

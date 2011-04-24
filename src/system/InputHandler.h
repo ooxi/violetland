@@ -63,13 +63,16 @@ public:
 	void resetMouseButtons();
 	int mouseX, mouseY;
 	static string getEventName(int eventNumber);
-	static const unsigned getEventNumber(string eventName);
+	static string getEventIdentifier(int eventNumber);
+	static const unsigned getEventNumber(string eventIdentifier);
 	static string getKeyName(Binding bind);
+	static void initEventNames();
 private:
 	void processEvent(BindingType type, bool down, int value);
 	void processTextInput(SDL_Event sdlEvent);
 	bool m_event[GameInputEventsCount];
 	static string m_eventNames[GameInputEventsCount];
+	static string m_eventIdentifiers[GameInputEventsCount];
 	InputMode m_mode;
 	bool m_textValidated;
 	string m_textContent;

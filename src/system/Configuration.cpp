@@ -65,7 +65,7 @@ void Configuration::read() {
 
 		for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
 			ReadPlayerBinding(&cFile, &PlayerInputBinding[i],
-					InputHandler::getEventName(i));
+					InputHandler::getEventIdentifier(i));
 		}
 
 	} catch (...) {
@@ -74,10 +74,10 @@ void Configuration::read() {
 }
 
 void Configuration::ReadPlayerBinding(ConfigFile* cFile,
-		InputHandler::Binding* binding, std::string actionName) {
+		InputHandler::Binding* binding, std::string eventIdentifier) {
 	int type;
-	std::string keyType = "playerInputBinding_" + actionName + "Type";
-	std::string keyValue = "playerInputBinding_" + actionName + "Value";
+	std::string keyType = "playerInputBinding_" + eventIdentifier + "Type";
+	std::string keyValue = "playerInputBinding_" + eventIdentifier + "Value";
 
 	if (cFile->keyExists(keyType)) {
 		cFile->readInto(type, keyType);
@@ -87,9 +87,9 @@ void Configuration::ReadPlayerBinding(ConfigFile* cFile,
 }
 
 void Configuration::WritePlayerBinding(ConfigFile* cFile,
-		InputHandler::Binding* binding, std::string actionName) {
-	std::string keyType = "playerInputBinding_" + actionName + "Type";
-	std::string keyValue = "playerInputBinding_" + actionName + "Value";
+		InputHandler::Binding* binding, std::string eventIdentifier) {
+	std::string keyType = "playerInputBinding_" + eventIdentifier + "Type";
+	std::string keyValue = "playerInputBinding_" + eventIdentifier + "Value";
 
 	cFile->add(keyType, (int) binding->Type);
 	cFile->add(keyValue, binding->Value);
@@ -114,7 +114,7 @@ void Configuration::write() {
 
 	for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
 		WritePlayerBinding(&cFile, &PlayerInputBinding[i],
-				InputHandler::getEventName(i));
+				InputHandler::getEventIdentifier(i));
 	}
 
 	filesystem::ofstream ofile(

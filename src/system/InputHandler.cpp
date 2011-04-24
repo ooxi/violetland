@@ -1,15 +1,71 @@
 #include <iostream>
 #include <exception>
-#include "InputHandler.h"
+
 #include <libintl.h>
 #include <locale.h>
+#include <boost/static_assert.hpp>
+
+#include "InputHandler.h"
+
 #define _(STRING)            gettext(STRING)
 #define MAX_CHARACTERS 20
 using namespace std;
 
+string InputHandler::m_eventIdentifiers[] = {
+	"Restart", 
+	"Exit", 
+	"Menu", 
+	"MenuClickA", 
+	"MenuClickB", 
+	"Toggle Light", 
+	"Toggle Laser", 
+	"Show Char", 
+	"Pause", 
+	"Move Left", 
+	"Move Right", 
+	"Move Up", 
+	"Move Down", 
+	"Help", 
+	"Pick Up", 
+	"Throw Grenade", 
+	"Fire", 
+	"Reload", 
+	"Teleport", 
+};
+
 string InputHandler::m_eventNames[GameInputEventsCount];
 
+void InputHandler::initEventNames() {
+	string names[] = {
+		_("Restart"), 
+		_("Exit"), 
+		_("Menu"), 
+		_("MenuClickA"), 
+		_("MenuClickB"), 
+		_("Toggle Light"), 
+		_("Toggle Laser"), 
+		_("Show Char"), 
+		_("Pause"), 
+		_("Move Left"), 
+		_("Move Right"), 
+		_("Move Up"), 
+		_("Move Down"), 
+		_("Help"), 
+		_("Pick Up"), 
+		_("Throw Grenade"), 
+		_("Fire"), 
+		_("Reload"), 
+		_("Teleport"), 
+	};
+	BOOST_STATIC_ASSERT(sizeof(names)/sizeof(string) == GameInputEventsCount);
+	
+	for (unsigned i = 0; i < GameInputEventsCount; ++i)
+		m_eventNames[i] = names[i];
+}
+
 InputHandler::InputHandler(Binding* binding) {
+	BOOST_STATIC_ASSERT(sizeof(m_eventNames)/sizeof(string) == GameInputEventsCount);
+	
 	std::cout << "InputHandler..." << std::endl;
 
 	for (int i = 0; i < GameInputEventsCount; i++) {
@@ -24,26 +80,6 @@ InputHandler::InputHandler(Binding* binding) {
 	m_textValidated = false;
 	m_textContent = "";
 	m_curTextPos = 0;
-	
-	m_eventNames[Restart] = _("Restart");
-	m_eventNames[Exit] = _("Exit");
-	m_eventNames[Menu] = _("Menu");
-	m_eventNames[MenuClickA] = _("MenuClickA");
-	m_eventNames[MenuClickB] = _("MenuClickB");
-	m_eventNames[ToggleLight] = _("Toggle Light");
-	m_eventNames[ToggleLaser] = _("Toggle Laser");
-	m_eventNames[ShowChar] = _("Show Char");
-	m_eventNames[Pause] = _("Pause");
-	m_eventNames[MoveLeft] = _("Move Left");
-	m_eventNames[MoveRight] = _("Move Right");
-	m_eventNames[MoveUp] = _("Move Up");
-	m_eventNames[MoveDown] = _("Move Down");
-	m_eventNames[Help] = _("Help");
-	m_eventNames[Pickup] = _("Pick Up");
-	m_eventNames[ThrowGrenade] = _("Throw Grenade");
-	m_eventNames[Fire] = _("Fire");
-	m_eventNames[Reload] = _("Reload");
-	m_eventNames[Teleport] = _("Teleport");
 }
 
 void InputHandler::setInputMode(InputMode mode) {
@@ -161,9 +197,16 @@ string InputHandler::getEventName(int eventNumber) {
 		return m_eventNames[eventNumber];
 }
 
-const unsigned InputHandler::getEventNumber(std::string eventName) {
+string InputHandler::getEventIdentifier(int eventNumber) {
+	if (eventNumber > GameInputEventsCount)
+		throw exception();
+	else
+		return m_eventIdentifiers[eventNumber];
+}
+
+const unsigned InputHandler::getEventNumber(std::string eventIdentifier) {
 	for (unsigned i = 0; i < GameInputEventsCount; ++i)
-		if (m_eventNames[i] == eventName)
+		if (m_eventIdentifiers[i] == eventIdentifier)
 			return i;
 
 	throw exception();
