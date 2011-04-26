@@ -19,7 +19,6 @@ public:
 	};
 	FileUtility(char *argPath);
 	static void truncateFullPathToDir(char *path);
-	static void copyFile(filesystem::path srcPath, filesystem::path destPath);
 	void traceResPath();
 	void setFullResPath(std::string path);
 	filesystem::path getFullPath(PathType type, std::string resource) const;

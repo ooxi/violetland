@@ -87,10 +87,6 @@ FileUtility::FileUtility(char *argPath) {
 	traceResPath();
 }
 
-void FileUtility::copyFile(filesystem::path srcPath, filesystem::path destPath) {
-	filesystem::copy_file(srcPath, destPath);
-}
-
 void FileUtility::setFullResPath(std::string path) {
 	m_resPath = path;
 	traceResPath();

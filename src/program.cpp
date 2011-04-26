@@ -102,8 +102,6 @@ string playerId;
 
 map<string, Window*> windows;
 
-HighscoresEntry* highscore;
-
 GameMode gameMode;
 
 bool roulette(float eventProbability) {
@@ -399,8 +397,7 @@ void loseGame(Player* player) {
 	hud->addMessage(_("You are gobbled up."));
 
 	Highscores s(fileUtility);
-	highscore = new HighscoresEntry(player, gameState->Time);
-	gameState->HighScore = s.isHighscore(highscore);
+	gameState->HighScore = s.isHighscore(player->Xp);
 
 	if (gameState->HighScore) {
 		gameState->PlayerName = getDefaultName();
@@ -1074,41 +1071,41 @@ void createHighscoresWindow() {
 			4 * h, TextManager::LEFT, TextManager::MIDDLE);
 
 	Highscores s(fileUtility);
-	vector<HighscoresEntry*> highscores = s.getData();
+	set<HighscoresEntry> highscores = s.getData();
+	set<HighscoresEntry>::reverse_iterator it = highscores.rbegin();
+	for (unsigned i = 0; it != highscores.rend(); ++it, ++i) {
+		ostringstream oss1, oss2;
 
-	if (!highscores.empty())
-		for (unsigned int i = 0; i < highscores.size(); i++) {
-			ostringstream oss1, oss2;
+		oss1 << "xp" << i;
+		oss2 << it->Xp;
+		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, l,
+				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
-			oss1 << "xp" << i;
-			oss2 << highscores[i]->Xp;
-			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, l,
-					(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		oss1.str("");
+		oss2.str("");
+		oss1 << "params" << i;
+		oss2 << (int) (it->Strength * 100) << '/'
+				<< (int) (it->Agility * 100) << '/'
+				<< (int) (it->Vitality * 100);
+		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
+				r2, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
-			oss1.str("");
-			oss2.str("");
-			oss1 << "params" << i;
-			oss2 << (int) (highscores[i]->Strength * 100) << '/'
-					<< (int) (highscores[i]->Agility * 100) << '/'
-					<< (int) (highscores[i]->Vitality * 100);
-			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
-					r2, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		const int minutes = it->Time / 60000;
+		const int seconds = (it->Time - minutes * 60000) / 1000;
 
-			const int minutes = highscores[i]->Time / 60000;
-			const int seconds = (highscores[i]->Time - minutes * 60000) / 1000;
+		oss1.str("");
+		oss2.str("");
+		oss1 << "time" << i;
+		oss2 << minutes << "m " << seconds << 's';
+		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
+				r3, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
-			oss1.str("");
-			oss2.str("");
-			oss1 << "time" << i;
-			oss2 << minutes << "m " << seconds << 's';
-			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
-					r3, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		oss1.str("");
+		oss1 << "name" << i;
+		w->addElement(oss1.str(), it->Name, videoManager->RegularText,
+				r4, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
+	}
 
-			oss1.str("");
-			oss1 << "name" << i;
-			w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
-					r4, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
-		}
 
 	w->addElement("back", _("Back to main menu"), videoManager->RegularText, l,
 			16 * h, TextManager::LEFT, TextManager::MIDDLE);
@@ -1954,10 +1951,11 @@ void processGame() {
 
 	if (gameState->HighScore) {
 		if (input->hasBeenValidated()) {
-			highscore->Name = new string(gameState->PlayerName);
+			Player* player = (Player*) gameState->getLifeForm(playerId);
 			input->setInputMode(InputHandler::Direct);
 			Highscores s(fileUtility);
-			s.add(highscore);
+			s.add(HighscoresEntry(
+				player, gameState->PlayerName, gameState->Time));
 			gameState->HighScore = false;
 		} else {
 			gameState->PlayerName = input->getTextToShow();

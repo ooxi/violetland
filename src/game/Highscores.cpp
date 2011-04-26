@@ -1,31 +1,18 @@
 #include "Highscores.h"
-#include "../system/utility/Templates.h"
 
 using namespace std;
 using namespace boost;
 using namespace violetland;
 
-HighscoresEntry::HighscoresEntry() {
-	Agility = 0;
-	Strength = 0;
-	Vitality = 0;
-	Time = 0;
-	Xp = 0;
-	Name = new string();
-}
+HighscoresEntry::HighscoresEntry(float Strength, float Agility, 
+	float Vitality, unsigned Xp, string Name, unsigned Time):
+	Strength(Strength), Agility(Agility), Vitality(Vitality), 
+	Xp(Xp), Name(Name), Time(Time) {}
 
-HighscoresEntry::HighscoresEntry(Player* player, int Time) {
-	Agility = player->Agility;
-	Strength = player->Strength;
-	Vitality = player->Vitality;
-	Time = Time;
-	Xp = player->Xp;
-	Name = new string();
-}
-
-HighscoresEntry::~HighscoresEntry() {
-	delete Name;
-}
+HighscoresEntry::HighscoresEntry(Player* player, string Name, unsigned Time):
+	Strength(player->Strength), Agility(player->Agility),
+	Vitality(player->Vitality),	Xp(player->Xp), 
+	Name(Name), Time(Time) {}
 
 Highscores::Highscores(FileUtility* fileUtility):
 	m_fileUtility(fileUtility), 
@@ -39,100 +26,92 @@ void Highscores::read() {
 	filesystem::ifstream ifile(hsFile, ios::binary);
 	if (!ifile.fail()) {
 		while (true) {
-			HighscoresEntry* p = new HighscoresEntry();
-			int size;
-			ifile.read(reinterpret_cast<char*> (p), sizeof(*p));
+			float Strength;
+			float Agility;
+			float Vitality;
+			unsigned Time;
+			unsigned Xp;
+			
+			ifile.read(reinterpret_cast<char*> (&Strength), sizeof(Strength));
+			ifile.read(reinterpret_cast<char*> (&Agility), sizeof(Agility));
+			ifile.read(reinterpret_cast<char*> (&Vitality), sizeof(Vitality));
+			ifile.read(reinterpret_cast<char*> (&Time), sizeof(Time));
+			ifile.read(reinterpret_cast<char*> (&Xp), sizeof(Xp));
+				
+			size_t size;
+			ifile.read(reinterpret_cast<char*> (&size), sizeof(size));
 			if (ifile.eof())
 				break;
-			ifile.read(reinterpret_cast<char*> (&size), sizeof(int));
+			if (size > 100)	// TODO: need reasonable value
+				break;
+				
+			char Name[size + 1];
+			ifile.read(Name, size);
+			Name[size] = '\0';
 			if (ifile.eof())
 				break;
-			char* name = (char*) malloc((size + 1) * sizeof(char));
-			ifile.read(reinterpret_cast<char*> (name), size);
-			delete p->Name;
-			p->Name = new string(name);
-			free(name);
-			if (ifile.eof())
-				break;
-			m_data.push_back(p);
+				
+			m_data.insert(m_data.begin(), 
+				HighscoresEntry(Strength, Agility, Vitality, Xp, Name, Time));
 		}
 		ifile.close();
+		while (m_data.size() > MAX_SIZE)
+			m_data.erase(m_data.begin());
 	} else {
-		std::cout << "Can't open file with scores." << std::endl;
+		cout << "Can't open file with scores." << endl;
 	}
 }
 
-bool Highscores::isHighscore(HighscoresEntry* entry) {
-	bool placed = false;
-	for (unsigned int i = 0; i < m_data.size(); i++) {
-		if (entry->Xp > m_data[i]->Xp) {
-			placed = true;
-			break;
-		}
-	}
+bool Highscores::isHighscore(unsigned Xp) {
+	if (m_data.size() < MAX_SIZE)
+		return true;
+	
+	if (Xp > m_data.begin()->Xp)
+		return true;
 
-	if ((!placed) && (m_data.size() < 10)) {
-		placed = true;
-	}
-	return placed;
+	return false;
 }
 
 void Highscores::clear() {
 	filesystem::remove(hsFile);
 }
 
-bool Highscores::add(HighscoresEntry* entry) {
-	bool placed = false;
-	for (unsigned int i = 0; i < m_data.size(); i++) {
-		if (entry->Xp > m_data[i]->Xp) {
-			m_data.insert(m_data.begin() + i, entry);
-			placed = true;
-			break;
-		}
+bool Highscores::add(HighscoresEntry entry) {
+	if (m_data.size() < MAX_SIZE)
+		m_data.insert(entry);
+	else if (*m_data.begin() < entry) {
+		m_data.erase(m_data.begin());
+		m_data.insert(entry);
 	}
-
-	if ((!placed) && (m_data.size() < 10)) {
-		m_data.push_back(entry);
-		placed = true;
-	}
-
-	if (!placed)
+	else
 		return false;
-
+	
+	
 	filesystem::ofstream ofile(hsTempFile, ios::binary);
 	if (!ofile.fail()) {
-		for (unsigned int i = 0; i < (m_data.size() < 10 ? m_data.size() : 10); i++) {
-			string temp = *(m_data[i]->Name);
-			m_data[i]->Name = NULL;
-			ofile.write(reinterpret_cast<char*> (m_data[i]), sizeof(*entry));
-			int a = strlen(temp.c_str()) + 1;
-			ofile.write(reinterpret_cast<char*> (&a), sizeof(int));
-			ofile.write(reinterpret_cast<const char*> (temp.c_str()), a);
+		set<HighscoresEntry>::iterator it = m_data.begin();
+		for (; it != m_data.end(); ++it) {
+			const char* tmp = it->Name.c_str();
+			size_t size = it->Name.size();
+			ofile.write(reinterpret_cast<const char*> (&it->Strength), sizeof(it->Strength));
+			ofile.write(reinterpret_cast<const char*> (&it->Agility), sizeof(it->Agility));
+			ofile.write(reinterpret_cast<const char*> (&it->Vitality), sizeof(it->Vitality));
+			ofile.write(reinterpret_cast<const char*> (&it->Time), sizeof(it->Time));
+			ofile.write(reinterpret_cast<const char*> (&it->Xp), sizeof(it->Xp));
+			
+			ofile.write(reinterpret_cast<char*> (&size), sizeof(size));
+			ofile.write(tmp, size);
 		}
 		ofile.close();
 
-		filesystem::remove(hsFile);
-
-		FileUtility::copyFile(hsTempFile, hsFile);
-
+		filesystem::copy_file(hsTempFile, hsFile, 
+				filesystem::copy_option::overwrite_if_exists);
 		filesystem::remove(hsTempFile);
 
-		std::cout << "Scores was updated." << std::endl;
+		cout << "Scores was updated." << endl;
 	} else {
-		std::cout << "Can't write scores to file." << std::endl;
+		cout << "Can't write scores to file." << endl;
 	}
-
-	for (unsigned int i = 0; i < m_data.size(); i++) {
-		if (m_data[i] != entry)
-			delete m_data[i];
-	}
-	m_data.clear();
-
-	read();
 
 	return true;
-}
-
-Highscores::~Highscores() {
-	clearVector<HighscoresEntry*>(&m_data);
 }
