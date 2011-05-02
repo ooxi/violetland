@@ -103,16 +103,19 @@ void Terrain::endDrawOn() {
 }
 
 void Terrain::draw(Camera* cam) {
-	float right = cam->X + cam->getHalfW();
-	float left = cam->X - cam->getHalfW();
-	float bottom = cam->Y + cam->getHalfH();
-	float top = cam->Y - cam->getHalfH();
-	for (unsigned int i = 0; i < m_tiles.size(); i++) {
-		if (m_tiles[i]->getLeft() < right && m_tiles[i]->getRight() > left
-				&& m_tiles[i]->getTop() < bottom && m_tiles[i]->getBottom()
-				> top)
-			m_tiles[i]->draw(m_tileDList);
-	}
+	const float right = cam->X + cam->getHalfW();
+	const float left = cam->X - cam->getHalfW();
+	const float bottom = cam->Y + cam->getHalfH();
+	const float top = cam->Y - cam->getHalfH();
+	
+	unsigned i0 = (left+m_gameAreaSize)/m_tileWidth;
+	unsigned i1 = ceil((right+m_gameAreaSize)/m_tileWidth);
+	unsigned j0 = (top+m_gameAreaSize)/m_tileHeight;
+	unsigned j1 = ceil((bottom+m_gameAreaSize)/m_tileHeight);
+	
+	for (unsigned i = i0; i < i1; ++i)
+		for (unsigned j = j0; j < j1; ++j)
+			m_tiles[i*m_yTilesCount+j]->draw(m_tileDList);
 }
 
 void Terrain::drawOnTile(int tileX, int tileY, StaticObject *piece) {
