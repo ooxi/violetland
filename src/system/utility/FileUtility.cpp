@@ -2,36 +2,36 @@
 #include "FileUtility.h"
 
 
-unsigned int FileUtility::getFilesCountFromDir(filesystem::path dir) {
+unsigned int FileUtility::getFilesCountFromDir(boost::filesystem::path dir) {
 	unsigned int count = 0;
-	filesystem::directory_iterator dir_it(dir);
+	boost::filesystem::directory_iterator dir_it(dir);
 
-	while (dir_it != filesystem::directory_iterator()) {
-		if (filesystem::is_regular_file(*dir_it))
+	while (dir_it != boost::filesystem::directory_iterator()) {
+		if (boost::filesystem::is_regular_file(*dir_it))
 			++count;
 		++dir_it;
 	}
 	return count;
 }
 
-std::vector<std::string> FileUtility::getFilesFromDir(filesystem::path dir) {
+std::vector<std::string> FileUtility::getFilesFromDir(boost::filesystem::path dir) {
 	std::vector<std::string> files;
-	filesystem::directory_iterator dir_it(dir);
+	boost::filesystem::directory_iterator dir_it(dir);
 
-	while (dir_it != filesystem::directory_iterator()) {
-		if (filesystem::is_regular_file(*dir_it))
+	while (dir_it != boost::filesystem::directory_iterator()) {
+		if (boost::filesystem::is_regular_file(*dir_it))
 			files.push_back(dir_it->filename());
 		++dir_it;
 	}
 	return files;
 }
 
-std::vector<std::string> FileUtility::getSubDirsFromDir(filesystem::path dir) {
+std::vector<std::string> FileUtility::getSubDirsFromDir(boost::filesystem::path dir) {
 	std::vector<std::string> subDirs;
-	filesystem::directory_iterator dir_it(dir);
+	boost::filesystem::directory_iterator dir_it(dir);
 
-	while (dir_it != filesystem::directory_iterator()) {
-		if (filesystem::is_directory(*dir_it))
+	while (dir_it != boost::filesystem::directory_iterator()) {
+		if (boost::filesystem::is_directory(*dir_it))
 			if (dir_it->path().filename()[0] != '.')
 				subDirs.push_back(dir_it->path().filename());
 		++dir_it;
@@ -39,12 +39,12 @@ std::vector<std::string> FileUtility::getSubDirsFromDir(filesystem::path dir) {
 	return subDirs;
 }
 
-unsigned int FileUtility::getSubDirsCountFromDir(filesystem::path dir) {
-	filesystem::directory_iterator dir_it(dir);
+unsigned int FileUtility::getSubDirsCountFromDir(boost::filesystem::path dir) {
+	boost::filesystem::directory_iterator dir_it(dir);
 	unsigned int count = 0;
 
-	while (dir_it != filesystem::directory_iterator()) {
-		if (filesystem::is_directory(*dir_it))
+	while (dir_it != boost::filesystem::directory_iterator()) {
+		if (boost::filesystem::is_directory(*dir_it))
 			if (dir_it->path().filename()[0] != '.')
 				++count;
 		++dir_it;
@@ -92,9 +92,9 @@ void FileUtility::setFullResPath(std::string path) {
 	traceResPath();
 }
 
-filesystem::path FileUtility::getFullPath(PathType type, std::string resource) const {
-	filesystem::path path(m_resPath);
-	filesystem::path usrPath(m_usrPath);
+boost::filesystem::path FileUtility::getFullPath(PathType type, std::string resource) const {
+	boost::filesystem::path path(m_resPath);
+	boost::filesystem::path usrPath(m_usrPath);
 
 	switch (type) {
 	case FileUtility::image:

@@ -10,7 +10,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 	m_fileUtility = fileUtility;
 	m_sndManager = sndManager;
 
-	filesystem::path weaponsPath = 
+	boost::filesystem::path weaponsPath = 
 			m_fileUtility->getFullPath(FileUtility::weapon, "");
 	std::vector<std::string> weapons = m_fileUtility->getSubDirsFromDir(
 			weaponsPath);
@@ -33,24 +33,24 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 	}
 
 	for (unsigned int j = 0; j < weapons.size(); j++) {
-		filesystem::path weaponPath(weaponsPath);
+		boost::filesystem::path weaponPath(weaponsPath);
 		weaponPath /= weapons[j];
 		Texture* wImage = new Texture(ImageUtility::loadImage(
-				filesystem::path(weaponPath) /= "image.png"), 
+				boost::filesystem::path(weaponPath) /= "image.png"), 
 				GL_TEXTURE_2D, GL_LINEAR, true);
 
 		Texture* pImage = new Texture(ImageUtility::loadImage(
-				filesystem::path(weaponPath) /= "player.png"), 
+				boost::filesystem::path(weaponPath) /= "player.png"), 
 				GL_TEXTURE_2D, GL_LINEAR, true);
 
 		Weapon *weapon = new Weapon(wImage, pImage, 
-				sndManager->create(filesystem::path(weaponPath) /= "shot.ogg"), 
-				sndManager->create(filesystem::path(weaponPath) /= "reload.ogg"));
+				sndManager->create(boost::filesystem::path(weaponPath) /= "shot.ogg"), 
+				sndManager->create(boost::filesystem::path(weaponPath) /= "reload.ogg"));
 
 		weapon->Name = weapons[j];
 
-		filesystem::ifstream in;
-		in.open(filesystem::path(weaponPath) /= "stats");
+		boost::filesystem::ifstream in;
+		in.open(boost::filesystem::path(weaponPath) /= "stats");
 		if (!in) {
 			std::cerr << "Couldn't load stats of weapon " << weapons[j] << '.'
 					<< std::endl;
@@ -65,7 +65,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		if (weapon->Type == BULLET_FLAME)
 			weapon->setBulletImage(new Texture(ImageUtility::loadImage(
-					filesystem::path(weaponPath) /= "bullet.png"), 
+					boost::filesystem::path(weaponPath) /= "bullet.png"), 
 					GL_TEXTURE_2D, GL_LINEAR, true));
 
 		getline(in, shellName, ' ');
@@ -85,7 +85,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		std::vector<SDL_Surface*> animSurfaces;
 
-		filesystem::path shellDir = 
+		boost::filesystem::path shellDir = 
 				fileUtility->getFullPath(FileUtility::anima, "shells");
 		shellDir /= shellName;
 		unsigned framesCount = 
@@ -99,7 +99,7 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 			filename << i << ".png";
 
 			SDL_Surface *surface = 
-					ImageUtility::loadImage(filesystem::path(shellDir) /= filename.str());
+					ImageUtility::loadImage(boost::filesystem::path(shellDir) /= filename.str());
 
 			animSurfaces.push_back(surface);
 		}

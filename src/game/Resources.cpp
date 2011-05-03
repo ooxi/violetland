@@ -49,7 +49,7 @@ Sprite* violetland::Resources::loadSprite(unsigned int frames,
 	std::vector<SDL_Surface*> animSurfaces;
 	for (unsigned i = 0; i < frames; i++) {
 		std::ostringstream oss;
-		oss << format(pattern) % i;
+		oss << boost::format(pattern) % i;
 		SDL_Surface *surface = ImageUtility::loadImage(m_fileUtil->getFullPath(
 				FileUtility::anima, oss.str()));
 		animSurfaces.push_back(surface);

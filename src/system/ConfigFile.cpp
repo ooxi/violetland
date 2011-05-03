@@ -1,11 +1,11 @@
 #include "ConfigFile.h"
 
-ConfigFile::ConfigFile(filesystem::path filename, std::string delimiter,
+ConfigFile::ConfigFile(boost::filesystem::path filename, std::string delimiter,
 		std::string comment, std::string sentry) :
 	myDelimiter(delimiter), myComment(comment), mySentry(sentry) {
 	// Construct a ConfigFile, getting keys and values from given file
 
-	filesystem::ifstream in(filename);
+	boost::filesystem::ifstream in(filename);
 
 	if (!in)
 		throw file_not_found(filename);

@@ -7,7 +7,7 @@ violetland::MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 	m_fileUtility = fileUtility;
 	m_sndManager = sndManager;
 
-	filesystem::path monstersPath = 
+	boost::filesystem::path monstersPath = 
 			m_fileUtility->getFullPath(FileUtility::monsters, "");
 	std::vector<std::string> monsters = 
 			m_fileUtility->getSubDirsFromDir(monstersPath);
@@ -23,7 +23,7 @@ violetland::MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 		MonsterTemplate* mt = new MonsterTemplate(loadMonsterSprite(
 				monsters[j], "walk"), loadMonsterSprite(monsters[j], "death"));
 
-		filesystem::path tmp(monstersPath);
+		boost::filesystem::path tmp(monstersPath);
 		tmp /= monsters[j];
 		tmp /= "sounds";
 		tmp /= "hit";
@@ -47,11 +47,11 @@ Sprite* violetland::MonsterFactory::loadMonsterSprite(std::string name,
 		std::string animType) {
 	std::vector<SDL_Surface*> animSurfaces;
 	
-	filesystem::path animPath = 
+	boost::filesystem::path animPath = 
 			m_fileUtility->getFullPath(FileUtility::monsters, name) /= animType;
 	
 	unsigned int framesCount = 
-		m_fileUtility->getFilesCountFromDir(filesystem::path(animPath));
+		m_fileUtility->getFilesCountFromDir(boost::filesystem::path(animPath));
 
 	std::cout << "Monster " << name << ", animation of " << animType << 
 		", frames count: " << framesCount << '.' << std::endl;
@@ -60,7 +60,7 @@ Sprite* violetland::MonsterFactory::loadMonsterSprite(std::string name,
 		ostringstream oss;
 		oss << i << ".png";
 		SDL_Surface *surface = 
-			ImageUtility::loadImage(filesystem::path(animPath) /= oss.str());
+			ImageUtility::loadImage(boost::filesystem::path(animPath) /= oss.str());
 		animSurfaces.push_back(surface);
 	}
 
@@ -78,7 +78,7 @@ Sound* violetland::MonsterFactory::loadMonsterSound(std::string soundType,
 
 void violetland::MonsterFactory::fillMonsterStats(MonsterTemplate* t,
 		std::string name) {
-	filesystem::ifstream in;
+	boost::filesystem::ifstream in;
 	string buf = name + "/stats";
 	in.open(m_fileUtility->getFullPath(FileUtility::monsters, buf));
 	if (!in) {

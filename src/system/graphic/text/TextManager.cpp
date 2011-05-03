@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-TextManager::TextManager(filesystem::path fontPath, int fontSize) {
+TextManager::TextManager(boost::filesystem::path fontPath, int fontSize) {
 	m_font = TTF_OpenFont(fontPath.string().c_str(), fontSize);
 	if (!m_font) {
 		std::cerr << "Couldn't initialize font: " << TTF_GetError() << std::endl;

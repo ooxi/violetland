@@ -36,6 +36,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
+#include <boost/math/special_functions/round.hpp>
 
 // The Game
 #include "game/Game.h"
@@ -68,7 +69,7 @@
 #include "windows/CharStatsWindow.h"
 
 using namespace std;
-using namespace boost;
+
 using namespace violetland;
 
 const string PROJECT = "violetland";
@@ -115,25 +116,25 @@ void createTerrain() {
 
 	cout << "Forming terrain..." << endl;
 
-	filesystem::path tilesDir = fileUtility->getFullPath(FileUtility::image,
+	boost::filesystem::path tilesDir = fileUtility->getFullPath(FileUtility::image,
 			"terrain");
 	unsigned baseTex = rand() % fileUtility->getFilesCountFromDir(tilesDir);
 
 	ostringstream oss;
 	oss << baseTex;
-	unsigned tilesCount = fileUtility->getFilesCountFromDir(filesystem::path(
+	unsigned tilesCount = fileUtility->getFilesCountFromDir(boost::filesystem::path(
 			tilesDir) /= oss.str());
 
 	oss.str("");
 	oss << "base_" << baseTex << ".png";
-	SDL_Surface *terrainSurface = ImageUtility::loadImage(filesystem::path(
+	SDL_Surface *terrainSurface = ImageUtility::loadImage(boost::filesystem::path(
 			tilesDir) /= oss.str(), 1);
 
 	vector<SDL_Surface*> tiles;
 	for (unsigned i = 0; i < tilesCount; i++) {
 		oss.str("");
 		oss << baseTex << '/' << i << ".png";
-		SDL_Surface *tile = ImageUtility::loadImage(filesystem::path(tilesDir)
+		SDL_Surface *tile = ImageUtility::loadImage(boost::filesystem::path(tilesDir)
 				/= oss.str(), 1);
 		tiles.push_back(tile);
 	}
@@ -228,7 +229,7 @@ inline string getProjectTitle() {
 	return PROJECT + " v" + VERSION;
 }
 
-// Outputs the information on the program and the runtime environment
+// Outputs the inboost::formation on the program and the runtime environment
 void printVersion() {
 	string env = "UNKNOWN";
 #ifdef _WIN32
@@ -289,7 +290,7 @@ void initInternationlization() {
 
 // Creation of system objects and their customization
 void initSystem() {
-	std::cout << (format(_("Name found : %s")) % getDefaultName()) << std::endl;
+	std::cout << (boost::format(_("Name found : %s")) % getDefaultName()) << std::endl;
 
 	initInternationlization();
 
@@ -428,50 +429,50 @@ void refreshCharStatsWindow() {
 	ostringstream oss;
 	vector<Label> stats;
 
-	oss << format(_("Current player level: %i")) % player->Level;
+	oss << boost::format(_("Current player level: %i")) % player->Level;
 	stats.push_back(Label("level", oss.str()));
 
 	oss.str("");
-	oss << format(_("Available improvement points: %i")) % player->LevelPoints;
+	oss << boost::format(_("Available improvement points: %i")) % player->LevelPoints;
 	stats.push_back(Label("availpoints", oss.str()));
 
 	oss.str("");
-	oss << format(_("Strength: %i")) % (player->Strength * 100);
+	oss << boost::format(_("Strength: %i")) % (player->Strength * 100);
 	stats.push_back(Label("strength", oss.str()));
 
 	oss.str("");
-	oss << format(_("Agility: %i")) % (player->Agility * 100);
+	oss << boost::format(_("Agility: %i")) % (player->Agility * 100);
 	stats.push_back(Label("agility", oss.str()));
 
 	oss.str("");
-	oss << format(_("Vitality: %i")) % (player->Vitality * 100);
+	oss << boost::format(_("Vitality: %i")) % (player->Vitality * 100);
 	stats.push_back(Label("vitality", oss.str()));
 
 	oss.str("");
-	oss << format(_("HP: %i / Max HP: %i")) % round(player->getHealth() * 100)
+	oss << boost::format(_("HP: %i / Max HP: %i")) % boost::math::round(player->getHealth() * 100)
 			% (player->MaxHealth() * 100);
 	stats.push_back(Label("hp", oss.str()));
 
 	oss.str("");
-	oss << format(_("Melee damage: %i")) % (player->Damage() * 100);
+	oss << boost::format(_("Melee damage: %i")) % (player->Damage() * 100);
 	stats.push_back(Label("melee", oss.str()));
 
 	oss.str("");
-	oss << format(_("Chance of block: %i%%")) % (player->ChanceToEvade() * 100);
+	oss << boost::format(_("Chance of block: %i%%")) % (player->ChanceToEvade() * 100);
 	stats.push_back(Label("chanceblock", oss.str()));
 
 	oss.str("");
-	oss << format(_("Reloading speed modifier: %i%%")) % round(
+	oss << boost::format(_("Reloading speed modifier: %i%%")) % boost::math::round(
 			player->ReloadSpeedMod() * 100);
 	stats.push_back(Label("reloadingspeed", oss.str()));
 
 	oss.str("");
-	oss << format(_("Accuracy deviation modifier: %i%%"))
+	oss << boost::format(_("Accuracy deviation modifier: %i%%"))
 			% (player->WeaponRetForceMod() * 100);
 	stats.push_back(Label("accuracy", oss.str()));
 
 	oss.str("");
-	oss << format(_("Health regeneration: %.2f/min")) % (player->HealthRegen()
+	oss << boost::format(_("Health regeneration: %.2f/min")) % (player->HealthRegen()
 			* 6000000);
 	stats.push_back(Label("healthregen", oss.str()));
 
@@ -863,7 +864,7 @@ void controlsMenuWindowController(std::string elementName) {
 		}
 	}
 
-	cout << (format(_("Bind action %s to key %s.")) % elementName
+	cout << (boost::format(_("Bind action %s to key %s.")) % elementName
 			% InputHandler::getKeyName(config->PlayerInputBinding[key]))
 			<< endl;
 
@@ -2142,7 +2143,7 @@ void drawGame() {
 
 void drawFps() {
 	ostringstream oss;
-	oss << format(_("FPS: %i")) % videoManager->getFps();
+	oss << boost::format(_("FPS: %i")) % videoManager->getFps();
 	videoManager->RegularText->draw(oss.str(), config->Screen.Width
 			- videoManager->RegularText->getIndent(), config->Screen.Height
 			- videoManager->RegularText->getIndent(), TextManager::RIGHT,

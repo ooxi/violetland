@@ -11,7 +11,7 @@
 #ifndef CONFIGFILE_H_
 #define CONFIGFILE_H_
 
-using namespace boost;
+
 
 class ConfigFile {
 protected:
@@ -24,7 +24,7 @@ protected:
 	typedef std::map<std::string, std::string>::const_iterator mapci;
 
 public:
-	ConfigFile(filesystem::path filename, std::string delimiter = "=",
+	ConfigFile(boost::filesystem::path filename, std::string delimiter = "=",
 			std::string comment = "#", std::string sentry = "EndConfigFile");
 	ConfigFile();
 
@@ -69,8 +69,8 @@ protected:
 
 public:
 	struct file_not_found {
-		filesystem::path filename;
-		file_not_found(filesystem::path filename = filesystem::path()) :
+		boost::filesystem::path filename;
+		file_not_found(boost::filesystem::path filename = boost::filesystem::path()) :
 			filename(filename) {
 		}
 	};

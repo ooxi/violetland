@@ -219,7 +219,7 @@ void violetland::HUD::drawEndGameScreen(GameState* gameState, int xp) {
 			screen.Width / 2, y, TextManager::CENTER, TextManager::MIDDLE);
 
 	ostringstream oss;
-	oss << format(_("You have earned %i points.")) % xp;
+	oss << boost::format(_("You have earned %i points.")) % xp;
 	m_videoManager->RegularText->draw(oss.str(), screen.Width / 2, y
 			+ m_videoManager->RegularText->getHeight(), TextManager::CENTER,
 			TextManager::MIDDLE);
@@ -267,7 +267,7 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 			TextManager::TOP);
 
 	oss.str("");
-	oss << format(_("Grenades: %i")) % player->Grenades;
+	oss << boost::format(_("Grenades: %i")) % player->Grenades;
 	m_videoManager->RegularText->draw(oss.str(),
 			m_videoManager->RegularText->getIndent(),
 			m_videoManager->RegularText->getIndent()
@@ -275,7 +275,7 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 			TextManager::LEFT, TextManager::TOP);
 
 	oss.str("");
-	oss << format(_("Teleports: %i")) % player->Teleports;
+	oss << boost::format(_("Teleports: %i")) % player->Teleports;
 	m_videoManager->RegularText->draw(oss.str(),
 			m_videoManager->RegularText->getIndent(),
 			m_videoManager->RegularText->getIndent()

@@ -32,8 +32,8 @@ class Highscores {
 private:
 	std::set<HighscoresEntry> m_data;
 	const FileUtility* m_fileUtility;
-	const filesystem::path hsFile;
-	const filesystem::path hsTempFile;
+	const boost::filesystem::path hsFile;
+	const boost::filesystem::path hsTempFile;
 public:
 	Highscores(FileUtility* fileUtility);
 	void clear();

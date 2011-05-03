@@ -1,7 +1,7 @@
 #include "Highscores.h"
 
 using namespace std;
-using namespace boost;
+
 using namespace violetland;
 
 HighscoresEntry::HighscoresEntry(float Strength, float Agility, 
@@ -23,7 +23,7 @@ Highscores::Highscores(FileUtility* fileUtility):
 }
 
 void Highscores::read() {
-	filesystem::ifstream ifile(hsFile, ios::binary);
+	boost::filesystem::ifstream ifile(hsFile, ios::binary);
 	if (!ifile.fail()) {
 		while (true) {
 			float Strength;
@@ -45,14 +45,14 @@ void Highscores::read() {
 			if (size > 100)	// TODO: need reasonable value
 				break;
 				
-			char Name[size + 1];
-			ifile.read(Name, size);
+			vector<char> Name(size + 1);
+			ifile.read(&Name[0], size);
 			Name[size] = '\0';
 			if (ifile.eof())
 				break;
 				
 			m_data.insert(m_data.begin(), 
-				HighscoresEntry(Strength, Agility, Vitality, Xp, Name, Time));
+				HighscoresEntry(Strength, Agility, Vitality, Xp, &Name[0], Time));
 		}
 		ifile.close();
 		while (m_data.size() > MAX_SIZE)
@@ -73,7 +73,7 @@ bool Highscores::isHighscore(unsigned Xp) {
 }
 
 void Highscores::clear() {
-	filesystem::remove(hsFile);
+	boost::filesystem::remove(hsFile);
 }
 
 bool Highscores::add(HighscoresEntry entry) {
@@ -87,7 +87,7 @@ bool Highscores::add(HighscoresEntry entry) {
 		return false;
 	
 	
-	filesystem::ofstream ofile(hsTempFile, ios::binary);
+	boost::filesystem::ofstream ofile(hsTempFile, ios::binary);
 	if (!ofile.fail()) {
 		set<HighscoresEntry>::iterator it = m_data.begin();
 		for (; it != m_data.end(); ++it) {
@@ -104,9 +104,9 @@ bool Highscores::add(HighscoresEntry entry) {
 		}
 		ofile.close();
 
-		filesystem::copy_file(hsTempFile, hsFile, 
-				filesystem::copy_option::overwrite_if_exists);
-		filesystem::remove(hsTempFile);
+		boost::filesystem::copy_file(hsTempFile, hsFile, 
+				boost::filesystem::copy_option::overwrite_if_exists);
+		boost::filesystem::remove(hsTempFile);
 
 		cout << "Scores was updated." << endl;
 	} else {

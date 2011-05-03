@@ -6,7 +6,7 @@
 #include "Sound.h"
 #include "../Configuration.h"
 
-using namespace boost;
+
 
 class SoundManager {
 private:
@@ -15,7 +15,7 @@ private:
 	FileUtility * m_fileUtility;
 public:
 	SoundManager(FileUtility* fileUtility, Configuration* config);
-	Sound* create(filesystem::path name);
+	Sound* create(boost::filesystem::path name);
 	~SoundManager();
 };
 

@@ -102,7 +102,7 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 	}
 
 	std::cout << "Preparing fonts..." << std::endl;
-	filesystem::path fontPath = m_fileUtility->getFullPath(
+	boost::filesystem::path fontPath = m_fileUtility->getFullPath(
 			FileUtility::common, "fonts/archangelsk.ttf");
 	
 	RegularText = new TextManager(fontPath, 46 * WK);

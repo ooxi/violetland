@@ -117,7 +117,7 @@ void Configuration::write() {
 				InputHandler::getEventIdentifier(i));
 	}
 
-	filesystem::ofstream ofile(
+	boost::filesystem::ofstream ofile(
 			m_fileUtility->getFullPath(FileUtility::user, "config"));
 	if (ofile) {
 		ofile << cFile;

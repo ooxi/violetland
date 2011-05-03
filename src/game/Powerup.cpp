@@ -163,7 +163,7 @@ bool violetland::WeaponPowerup::modify(Game* game, Player* player) {
 						|| game->config->AutoWeaponPickup) {
 		player->setWeapon(weapon);
 		std::ostringstream oss;
-		oss << format(_("You have taken the %s.")) % weapon->Name;
+		oss << boost::format(_("You have taken the %s.")) % weapon->Name;
 		game->hud->addMessage(oss.str());
 		return true;
 	}

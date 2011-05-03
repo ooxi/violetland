@@ -8,11 +8,11 @@
 
 #include <boost/filesystem.hpp>
 
-using namespace boost;
+
 
 class FileUtility {
 private:
-	filesystem::path m_appPath, m_resPath, m_usrPath;
+	boost::filesystem::path m_appPath, m_resPath, m_usrPath;
 public:
 	enum PathType {
 		common = 0, image, anima, sound, music, monsters, weapon, user
@@ -21,11 +21,11 @@ public:
 	static void truncateFullPathToDir(char *path);
 	void traceResPath();
 	void setFullResPath(std::string path);
-	filesystem::path getFullPath(PathType type, std::string resource) const;
-	std::vector<std::string> getFilesFromDir(filesystem::path dir);
-	unsigned int getFilesCountFromDir(filesystem::path dir);
-	std::vector<std::string> getSubDirsFromDir(filesystem::path dir);
-	unsigned int getSubDirsCountFromDir(filesystem::path dir);
+	boost::filesystem::path getFullPath(PathType type, std::string resource) const;
+	std::vector<std::string> getFilesFromDir(boost::filesystem::path dir);
+	unsigned int getFilesCountFromDir(boost::filesystem::path dir);
+	std::vector<std::string> getSubDirsFromDir(boost::filesystem::path dir);
+	unsigned int getSubDirsCountFromDir(boost::filesystem::path dir);
 };
 
 #endif /* FILEUTILITY_H_ */

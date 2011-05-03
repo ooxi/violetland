@@ -1,6 +1,6 @@
 #include "ImageUtility.h"
 
-SDL_Surface *ImageUtility::loadImage(filesystem::path fileName, float prescale) {
+SDL_Surface *ImageUtility::loadImage(boost::filesystem::path fileName, float prescale) {
 	SDL_Surface *image = IMG_Load(fileName.string().c_str());
 	if (image == NULL) {
 		std::cerr << "Couldn't load " << fileName << ": " << SDL_GetError() << std::endl;
@@ -8,7 +8,7 @@ SDL_Surface *ImageUtility::loadImage(filesystem::path fileName, float prescale) 
 	}
 
 	SDL_SetColorKey(image, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(
-			image->format, 255, 0, 255));
+		image->format, 255, 0, 255));
 
 	SDL_Surface *optimizedImage = SDL_DisplayFormatAlpha(image);
 	SDL_FreeSurface(image);
