@@ -3,6 +3,16 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.4.0]
+
+[+] new graphics for flamethrower and sawed-off shotgun
+[*] moved to boost library
+[*] small performance improvements
+[!] issue 49 (changing bindings is broken)
+[!] issue 51 (vitality does not affect health regeneration)
+[!] issue 52 (controls definitions not loads when starting program)
+[!] issue 53 (wrong values in highscores screen)
+
 [0.3.2]
 
 [+] support of internationalization: english, french, russian, galician, spain
