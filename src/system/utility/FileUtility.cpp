@@ -72,8 +72,7 @@ FileUtility::FileUtility(char *argPath) {
 	m_appPath = INSTALL_PREFIX;
 	m_appPath /= "bin";
 #ifndef DATA_INSTALL_DIR
-	m_appPath = argPath;
-	m_appPath = m_appPath.parent_path();
+	m_resPath = m_appPath;
 	m_resPath /= "../share/violetland";
 #else //DATA_INSTALL_DIR
 	m_resPath = DATA_INSTALL_DIR;
