@@ -9,11 +9,10 @@ class Terrain {
 private:
 	int m_viewport[4];
 	std::vector<StaticObject*> m_tiles;
-	int m_tileWidth, m_tileHeight;
+	const unsigned m_tileWidth, m_tileHeight;
 	int m_xTilesCount, m_yTilesCount;
-	int m_gameAreaSize;
+	const int m_gameAreaSize;
 	GLuint m_tileDList;
-	void drawOnTile(int tileX, int tileY, StaticObject *piece);
 public:
 	Terrain(SDL_Surface *base, std::vector<SDL_Surface*> tiles,
 			int gameAreaSize);
@@ -21,10 +20,10 @@ public:
 	void drawOn(StaticObject *piece);
 	void endDrawOn();
 	void draw(Camera *cam);
-	const int getTileWidth() const {
+	int getTileWidth() const {
 		return m_tileWidth;
 	}
-	const int getTileHeight() const {
+	int getTileHeight() const {
 		return m_tileHeight;
 	}
 	~Terrain();
