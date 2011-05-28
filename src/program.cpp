@@ -671,10 +671,10 @@ void switchVolumeDown(std::string elementName) {
 	if (elementName == "musicvolume") {
 		if (config->MusicVolume > 0) {
 			config->MusicVolume--;
-			Mix_Volume(0, config->MusicVolume * 12);
+			Mix_VolumeMusic(config->MusicVolume * 12);
 		} else {
 			config->MusicVolume = 10;
-			Mix_Volume(0, config->MusicVolume * 12);
+			Mix_VolumeMusic(config->MusicVolume * 12);
 		}
 	} else if (elementName == "soundvolume") {
 		if (config->SoundVolume > 0) {
@@ -698,10 +698,10 @@ void switchVolumeUp(std::string elementName) {
 	if (elementName == "musicvolume") {
 		if (config->MusicVolume <= 9) {
 			config->MusicVolume++;
-			Mix_Volume(0, config->MusicVolume * 12);
+			Mix_VolumeMusic(config->MusicVolume * 12);
 		} else {
 			config->MusicVolume = 0;
-			Mix_Volume(0, 0);
+			Mix_VolumeMusic(0);
 		}
 	} else if (elementName == "soundvolume") {
 		if (config->SoundVolume <= 9) {

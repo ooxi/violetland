@@ -7,7 +7,7 @@ Sound::Sound(Mix_Chunk* sndRef, bool enabled) {
 }
 
 bool Sound::isPlaying() {
-	return !(m_chan == -1 || Mix_Playing(m_chan) == 0) && m_enabled;
+	return m_chan != -1 && Mix_Playing(m_chan) != 0 && m_enabled;
 }
 
 void Sound::play(int chan, int fade, int loops) {

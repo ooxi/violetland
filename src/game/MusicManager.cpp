@@ -9,18 +9,6 @@ violetland::MusicManager::MusicManager(FileUtility* fileUtility,
 	m_soundManager = soundManager;
 	m_config = config;
 
-	std::vector<std::string> musicFiles = m_fileUtility->getFilesFromDir(
-			m_fileUtility->getFullPath(FileUtility::music, "."));
-
-	for (unsigned int i = 0; i < musicFiles.size(); i++) {
-		Sound* snd = m_soundManager->create(m_fileUtility->getFullPath(
-				FileUtility::music, musicFiles[i]));
-		m_music.insert(std::map<std::string, Sound*>::value_type(musicFiles[i],
-				snd));
-	}
-
-	std::cout << "\tloaded " << musicFiles.size() << " tracks" << std::endl;
-
 	m_currentPlaying = "null";
 }
 
@@ -31,43 +19,39 @@ void violetland::MusicManager::process(Player* player, GameState* gameState) {
 	}
 	bool afterPause = m_currentPlaying == DEFAULT;
 	if (player->getHealth() / player->MaxHealth() < 0.4f) {
-		play(0, "03.ogg", afterPause);
+		play("03.ogg", afterPause);
 	} else if (gameState->Time < 100000) {
-		play(0, "05.ogg", afterPause);
+		play("05.ogg", afterPause);
 	} else if (player->getWeapon()->Name == "Laser") {
-		play(0, "02.ogg", afterPause);
+		play("02.ogg", afterPause);
 	} else {
-		play(0, "01.ogg", afterPause);
+		play("01.ogg", afterPause);
 	}
 }
 
 void violetland::MusicManager::play() {
-	play(0, DEFAULT, false);
+	play(DEFAULT, false);
 }
 
-void violetland::MusicManager::play(int chan, std::string name, bool now) {
-	if (m_music.size() > 0) {
-		if (m_currentPlaying != "null" && m_currentPlaying != name) {
-			if (m_music[m_currentPlaying]->isPlaying()) {
-				m_music[m_currentPlaying]->stop(3000);
-			}
-		}
-		
-		if (m_currentPlaying != name) {
-			std::map<std::string, Sound*>::iterator it = m_music.find(name);
-			if (it != m_music.end()) {
-				it->second->play(chan, 3000, -1);
-				it->second->setVol(m_config->MusicVolume * 12);
-				m_currentPlaying = name;
-			}
-		}
+void violetland::MusicManager::play(std::string name, bool now) {
+	if (m_currentPlaying == name)
+		return;
+	
+	if (m_currentPlaying != "null")
+		Mix_FreeMusic(m_current);
+	
+	m_currentPlaying = name;
+	m_current = Mix_LoadMUS(m_fileUtility->getFullPath(FileUtility::music, name).string().c_str());
+	if(m_current) 
+	{
+		if(Mix_PlayMusic(m_current, -1) == -1)
+			cout << "Mix_PlayMusic: " << Mix_GetError() << endl;
 	}
+	else
+		cout << "Mix_LoadMUS: " << Mix_GetError() << endl;
 }
 
 violetland::MusicManager::~MusicManager() {
-	std::map<std::string, Sound*>::const_iterator iter;
-	for (iter = m_music.begin(); iter != m_music.end(); ++iter) {
-		delete iter->second;
-	}
-	m_music.clear();
+	if (m_currentPlaying != "null" && m_current)
+		Mix_FreeMusic(m_current);
 }

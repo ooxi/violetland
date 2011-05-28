@@ -11,14 +11,14 @@ private:
 	FileUtility* m_fileUtility;
 	SoundManager* m_soundManager;
 	Configuration* m_config;
-	std::map<std::string, Sound*> m_music;
+	Mix_Music* m_current;
 	std::string m_currentPlaying;
 public:
 	MusicManager(FileUtility* fileUtility, SoundManager* soundManager,
 			Configuration* config);
 	void process(Player* player, GameState* gameState);
 	void play();
-	void play(int chan, std::string name, bool now);
+	void play(std::string name, bool now);
 	~MusicManager();
 };
 }

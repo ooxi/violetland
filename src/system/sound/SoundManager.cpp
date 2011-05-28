@@ -21,8 +21,8 @@ SoundManager::SoundManager(FileUtility* fileUtility, Configuration* config) {
 		m_enabled = true;
 		Mix_AllocateChannels(16);
 		std::cout << "\tsound is enabled" << std::endl;
-		Mix_Volume(0, m_config->MusicVolume * 12);
-		for (unsigned int a = 1; a <= 8; a++) {
+		Mix_VolumeMusic(m_config->MusicVolume * 12);
+		for (unsigned int a = 1; a <= 8; ++a) {
 			Mix_Volume(a, m_config->SoundVolume * 12);
 		}
 	}
