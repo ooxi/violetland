@@ -72,8 +72,8 @@ std::vector<SDL_Rect> VideoManager::GetAvailableModes() {
 }
 
 void VideoManager::setMode(VideoMode mode, Camera* cam) {
-	std::cout << "SDL_SetVideoMode " << mode.Width << 'x' << mode.Height << 
-			'(' << (mode.Full ? 'f' : 'w') << ")..." << std::endl;
+	std::cout << "SDL_SetVideoMode " << mode.Width << 'x' << mode.Height << '('
+			<< (mode.Full ? 'f' : 'w') << ")..." << std::endl;
 
 	m_videoMode = mode;
 
@@ -87,7 +87,7 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 	Scale = (float) mode.Width / 800;
 
 	if (screen == NULL) {
-		std::cerr << "Couldn't set video mode: " << SDL_GetError() << std::endl;;
+		std::cerr << "Couldn't set video mode: " << SDL_GetError() << std::endl;
 		exit(2);
 	}
 
@@ -104,9 +104,9 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 	std::cout << "Preparing fonts..." << std::endl;
 	boost::filesystem::path fontPath = m_fileUtility->getFullPath(
 			FileUtility::common, "fonts/archangelsk.ttf");
-	
+
 	RegularText = new TextManager(fontPath, 46 * WK);
-	SmallText = new TextManager(fontPath, 24 * WK);
+	SmallText = new TextManager(fontPath, 30 * WK);
 }
 
 VideoManager::~VideoManager() {

@@ -12,6 +12,7 @@ Legend:
 [!] issue 51 (vitality does not affect health regeneration)
 [!] issue 52 (controls definitions not loads when starting program)
 [!] issue 53 (wrong values in highscores screen)
+[!] issue with path to resources after install with cmake
 
 [0.3.2]
 

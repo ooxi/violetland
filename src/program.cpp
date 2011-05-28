@@ -73,7 +73,7 @@ using namespace std;
 using namespace violetland;
 
 const string PROJECT = "violetland";
-const string VERSION = "0.4.0";
+const string VERSION = "0.4.1";
 const string DEFAULT_CHAR_NAME = "Violet";
 
 Configuration* config;
@@ -116,26 +116,26 @@ void createTerrain() {
 
 	cout << "Forming terrain..." << endl;
 
-	boost::filesystem::path tilesDir = fileUtility->getFullPath(FileUtility::image,
-			"terrain");
+	boost::filesystem::path tilesDir = fileUtility->getFullPath(
+			FileUtility::image, "terrain");
 	unsigned baseTex = rand() % fileUtility->getFilesCountFromDir(tilesDir);
 
 	ostringstream oss;
 	oss << baseTex;
-	unsigned tilesCount = fileUtility->getFilesCountFromDir(boost::filesystem::path(
-			tilesDir) /= oss.str());
+	unsigned tilesCount = fileUtility->getFilesCountFromDir(
+			boost::filesystem::path(tilesDir) /= oss.str());
 
 	oss.str("");
 	oss << "base_" << baseTex << ".png";
-	SDL_Surface *terrainSurface = ImageUtility::loadImage(boost::filesystem::path(
-			tilesDir) /= oss.str(), 1);
+	SDL_Surface *terrainSurface = ImageUtility::loadImage(
+			boost::filesystem::path(tilesDir) /= oss.str(), 1);
 
 	vector<SDL_Surface*> tiles;
 	for (unsigned i = 0; i < tilesCount; i++) {
 		oss.str("");
 		oss << baseTex << '/' << i << ".png";
-		SDL_Surface *tile = ImageUtility::loadImage(boost::filesystem::path(tilesDir)
-				/= oss.str(), 1);
+		SDL_Surface *tile = ImageUtility::loadImage(boost::filesystem::path(
+				tilesDir) /= oss.str(), 1);
 		tiles.push_back(tile);
 	}
 
@@ -269,7 +269,6 @@ string getDefaultName() {
 #endif
 }
 
-
 void initInternationlization() {
 	//~
 	//~ Internationalization Initialization
@@ -283,14 +282,14 @@ void initInternationlization() {
 
 	//~ i18n: sets the message domain
 	textdomain("violetland");
-	
+
 	InputHandler::initEventNames();
 }
 
-
 // Creation of system objects and their customization
 void initSystem() {
-	std::cout << (boost::format(_("Name found : %s")) % getDefaultName()) << std::endl;
+	std::cout << (boost::format(_("Name found : %s")) % getDefaultName())
+			<< std::endl;
 
 	initInternationlization();
 
@@ -433,7 +432,8 @@ void refreshCharStatsWindow() {
 	stats.push_back(Label("level", oss.str()));
 
 	oss.str("");
-	oss << boost::format(_("Available improvement points: %i")) % player->LevelPoints;
+	oss << boost::format(_("Available improvement points: %i"))
+			% player->LevelPoints;
 	stats.push_back(Label("availpoints", oss.str()));
 
 	oss.str("");
@@ -449,8 +449,8 @@ void refreshCharStatsWindow() {
 	stats.push_back(Label("vitality", oss.str()));
 
 	oss.str("");
-	oss << boost::format(_("HP: %i / Max HP: %i")) % boost::math::round(player->getHealth() * 100)
-			% (player->MaxHealth() * 100);
+	oss << boost::format(_("HP: %i / Max HP: %i")) % boost::math::round(
+			player->getHealth() * 100) % (player->MaxHealth() * 100);
 	stats.push_back(Label("hp", oss.str()));
 
 	oss.str("");
@@ -458,12 +458,13 @@ void refreshCharStatsWindow() {
 	stats.push_back(Label("melee", oss.str()));
 
 	oss.str("");
-	oss << boost::format(_("Chance of block: %i%%")) % (player->ChanceToEvade() * 100);
+	oss << boost::format(_("Chance of block: %i%%")) % (player->ChanceToEvade()
+			* 100);
 	stats.push_back(Label("chanceblock", oss.str()));
 
 	oss.str("");
-	oss << boost::format(_("Reloading speed modifier: %i%%")) % boost::math::round(
-			player->ReloadSpeedMod() * 100);
+	oss << boost::format(_("Reloading speed modifier: %i%%"))
+			% boost::math::round(player->ReloadSpeedMod() * 100);
 	stats.push_back(Label("reloadingspeed", oss.str()));
 
 	oss.str("");
@@ -472,8 +473,8 @@ void refreshCharStatsWindow() {
 	stats.push_back(Label("accuracy", oss.str()));
 
 	oss.str("");
-	oss << boost::format(_("Health regeneration: %.2f/min")) % (player->HealthRegen()
-			* 6000000);
+	oss << boost::format(_("Health regeneration: %.2f/min"))
+			% (player->HealthRegen() * 6000000);
 	stats.push_back(Label("healthregen", oss.str()));
 
 	charStats->addElements(stats, videoManager->RegularText, l, 4 * h, h,
@@ -1079,17 +1080,16 @@ void createHighscoresWindow() {
 
 		oss1 << "xp" << i;
 		oss2 << it->Xp;
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, l,
-				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, l, (5
+				+ i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
 		oss1.str("");
 		oss2.str("");
 		oss1 << "params" << i;
-		oss2 << (int) (it->Strength * 100) << '/'
-				<< (int) (it->Agility * 100) << '/'
-				<< (int) (it->Vitality * 100);
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
-				r2, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		oss2 << (int) (it->Strength * 100) << '/' << (int) (it->Agility * 100)
+				<< '/' << (int) (it->Vitality * 100);
+		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, r2, (5
+				+ i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
 		const int minutes = it->Time / 60000;
 		const int seconds = (it->Time - minutes * 60000) / 1000;
@@ -1098,15 +1098,14 @@ void createHighscoresWindow() {
 		oss2.str("");
 		oss1 << "time" << i;
 		oss2 << minutes << "m " << seconds << 's';
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText,
-				r3, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, r3, (5
+				+ i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
 		oss1.str("");
 		oss1 << "name" << i;
-		w->addElement(oss1.str(), it->Name, videoManager->RegularText,
-				r4, (5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement(oss1.str(), it->Name, videoManager->RegularText, r4, (5
+				+ i) * h, TextManager::LEFT, TextManager::MIDDLE);
 	}
-
 
 	w->addElement("back", _("Back to main menu"), videoManager->RegularText, l,
 			16 * h, TextManager::LEFT, TextManager::MIDDLE);
@@ -1955,8 +1954,8 @@ void processGame() {
 			Player* player = (Player*) gameState->getLifeForm(playerId);
 			input->setInputMode(InputHandler::Direct);
 			Highscores s(fileUtility);
-			s.add(HighscoresEntry(
-				player, gameState->PlayerName, gameState->Time));
+			s.add(HighscoresEntry(player, gameState->PlayerName,
+					gameState->Time));
 			gameState->HighScore = false;
 		} else {
 			gameState->PlayerName = input->getTextToShow();

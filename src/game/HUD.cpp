@@ -5,7 +5,6 @@
 
 violetland::HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
-	VideoMode videoMode = m_videoManager->getVideoMode();
 
 	m_resources = resources;
 	m_bonusImg.insert(std::map<PlayerBonusType, StaticObject*>::value_type(
@@ -79,13 +78,22 @@ void violetland::HUD::drawMessages() {
 
 		int s = m_messages.size();
 		for (int i = s - 1; i >= 0; i--) {
-			m_messages[i]->draw(true, m_messages[i]->X
-					+ m_videoManager->SmallText->getIndent(), m_bottomBasePoint
+			float x = m_messages[i]->X + m_videoManager->SmallText->getIndent();
+			float y = m_bottomBasePoint
 					- m_videoManager->RegularText->getHeight() - s
 					* m_videoManager->SmallText->getHeight() + i
-					* m_videoManager->SmallText->getHeight());
-			m_messages[i]->AMask -= 0.0001f
-					* m_videoManager->getFrameDeltaTime();
+					* m_videoManager->SmallText->getHeight();
+
+			if (m_messages[i]->Scale > 0) {
+				x = x + m_messages[i]->Scale;
+				m_messages[i]->Scale -= 0.4f
+						* m_videoManager->getFrameDeltaTime();
+			} else {
+				m_messages[i]->AMask -= 0.0001f
+						* m_videoManager->getFrameDeltaTime();
+			}
+
+			m_messages[i]->draw(true, x, y);
 
 			if (m_messages[i]->AMask <= 0) {
 				delete m_messages[i];
@@ -118,13 +126,13 @@ void violetland::HUD::drawExperience(float experience, int levelPoints,
 
 void violetland::HUD::drawBar(int x, int y, int width, int height, float value,
 		GLfloat* bcolor, GLfloat* fcolor1, GLfloat* fcolor2) {
-	glDisable( GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
 
 	glPushMatrix();
 
 	glTranslatef(x, y, 0.0f);
 
-	glBegin( GL_QUADS);
+	glBegin(GL_QUADS);
 
 	glNormal3f(0.0f, 0.0f, 1.0f);
 
@@ -206,17 +214,19 @@ void violetland::HUD::drawTime(GameState* gameState) {
 	const int seconds = (gameState->Time - minutes * 60000) / 1000;
 
 	ostringstream oss;
-	oss << setfill('0') << setw(2) << minutes << ':' << setfill('0') << setw(2) << seconds;
-	m_videoManager->RegularText->draw(oss.str(), m_videoManager->getVideoMode().Width / 2, 
-			bottomBasePoint, TextManager::CENTER, TextManager::MIDDLE);
+	oss << setfill('0') << setw(2) << minutes << ':' << setfill('0') << setw(2)
+			<< seconds;
+	m_videoManager->RegularText->draw(oss.str(),
+			m_videoManager->getVideoMode().Width / 2, bottomBasePoint,
+			TextManager::CENTER, TextManager::MIDDLE);
 }
 
 void violetland::HUD::drawEndGameScreen(GameState* gameState, int xp) {
 	VideoMode screen = m_videoManager->getVideoMode();
 
 	int y = screen.Height / 4;
-	m_videoManager->RegularText->draw(_("They have overcome..."),
-			screen.Width / 2, y, TextManager::CENTER, TextManager::MIDDLE);
+	m_videoManager->RegularText->draw(_("They have overcome..."), screen.Width
+			/ 2, y, TextManager::CENTER, TextManager::MIDDLE);
 
 	ostringstream oss;
 	oss << boost::format(_("You have earned %i points.")) % xp;
@@ -225,8 +235,8 @@ void violetland::HUD::drawEndGameScreen(GameState* gameState, int xp) {
 			TextManager::MIDDLE);
 
 	if (gameState->HighScore) {
-		m_videoManager->RegularText->draw(_("Enter your name:"), screen.Width / 2,
-				y + m_videoManager->RegularText->getHeight() * 2,
+		m_videoManager->RegularText->draw(_("Enter your name:"), screen.Width
+				/ 2, y + m_videoManager->RegularText->getHeight() * 2,
 				TextManager::CENTER, TextManager::MIDDLE);
 		m_videoManager ->RegularText->draw(
 				std::string(gameState->PlayerName).append("_").c_str(),
@@ -259,8 +269,8 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 		drawEndGameScreen(gameState, player->Xp);
 
 	ostringstream oss;
-	oss << player->getWeapon()->Name << ": " << player->getWeapon()->Ammo 
-		<< '/' << player->getWeapon()->AmmoClipSize;
+	oss << player->getWeapon()->Name << ": " << player->getWeapon()->Ammo
+			<< '/' << player->getWeapon()->AmmoClipSize;
 	m_videoManager->RegularText->draw(oss.str(),
 			m_videoManager->RegularText->getIndent(),
 			m_videoManager->RegularText->getIndent(), TextManager::LEFT,
@@ -295,8 +305,15 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 }
 
 void violetland::HUD::addMessage(std::string message) {
-	m_messages.push_back(m_videoManager->SmallText->getObject(message,
-			0, 0, TextManager::LEFT, TextManager::MIDDLE));
+	std::cout << message << std::endl;
+
+	TextObject* msg = m_videoManager->SmallText->getObject(message, 0, 0,
+			TextManager::LEFT, TextManager::MIDDLE);
+
+	// Here scale is the variable for control over animation sequence
+	msg->Scale = m_videoManager->getVideoMode().Width + msg->getWidth();
+
+	m_messages.push_back(msg);
 }
 
 void violetland::HUD::reset() {

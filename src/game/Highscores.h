@@ -19,9 +19,9 @@ public:
 	const float Strength;
 	const float Agility;
 	const float Vitality;
-	const unsigned Time;
 	const unsigned Xp;
 	const std::string Name;
+	const unsigned Time;
 	bool operator<(const HighscoresEntry& e) const {
 		return Xp < e.Xp;
 	}
