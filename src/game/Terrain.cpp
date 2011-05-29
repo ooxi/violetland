@@ -65,6 +65,10 @@ void Terrain::drawOn(StaticObject *piece) {
 	const float bottom = piece->getBottom();
 	const float top = piece->getTop();
 	
+	if (top < -m_gameAreaSize || left < -m_gameAreaSize || 
+		bottom > m_gameAreaSize || right > m_gameAreaSize)
+		return;
+	
 	unsigned i0 = max(left+m_gameAreaSize, 0.0f)/m_tileWidth;
 	unsigned i1 = min(int(ceil((right+m_gameAreaSize)/m_tileWidth)), m_xTilesCount);
 	unsigned j0 = max(top+m_gameAreaSize, 0.0f)/m_tileHeight;
