@@ -36,7 +36,6 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
-#include <boost/math/special_functions/round.hpp>
 
 // The Game
 #include "game/Game.h"
@@ -419,82 +418,8 @@ void switchGamePause() {
 void refreshCharStatsWindow() {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
 
-	const int l = (int) (videoManager->getVideoMode().Width * 0.1f);
-	const int r = (int) (videoManager->getVideoMode().Width * 0.6f);
-	const int h = videoManager->RegularText->getHeight();
-
-	Window* charStats = windows.find("charstats")->second;
-
-	ostringstream oss;
-	vector<Label> stats;
-
-	oss << boost::format(_("Current player level: %i")) % player->Level;
-	stats.push_back(Label("level", oss.str()));
-
-	oss.str("");
-	oss << boost::format(_("Available improvement points: %i"))
-			% player->LevelPoints;
-	stats.push_back(Label("availpoints", oss.str()));
-
-	oss.str("");
-	oss << boost::format(_("Strength: %i")) % (player->Strength * 100);
-	stats.push_back(Label("strength", oss.str()));
-
-	oss.str("");
-	oss << boost::format(_("Agility: %i")) % (player->Agility * 100);
-	stats.push_back(Label("agility", oss.str()));
-
-	oss.str("");
-	oss << boost::format(_("Vitality: %i")) % (player->Vitality * 100);
-	stats.push_back(Label("vitality", oss.str()));
-
-	oss.str("");
-	oss << boost::format(_("HP: %i / Max HP: %i")) % boost::math::round(
-			player->getHealth() * 100) % (player->MaxHealth() * 100);
-	stats.push_back(Label("hp", oss.str()));
-
-	oss.str("");
-	oss << boost::format(_("Melee damage: %i")) % (player->Damage() * 100);
-	stats.push_back(Label("melee", oss.str()));
-
-	oss.str("");
-	oss << boost::format(_("Chance of block: %i%%")) % (player->ChanceToEvade()
-			* 100);
-	stats.push_back(Label("chanceblock", oss.str()));
-
-	oss.str("");
-	oss << boost::format(_("Reloading speed modifier: %i%%"))
-			% boost::math::round(player->ReloadSpeedMod() * 100);
-	stats.push_back(Label("reloadingspeed", oss.str()));
-
-	oss.str("");
-	oss << boost::format(_("Accuracy deviation modifier: %i%%"))
-			% (player->WeaponRetForceMod() * 100);
-	stats.push_back(Label("accuracy", oss.str()));
-
-	oss.str("");
-	oss << boost::format(_("Health regeneration: %.2f/min"))
-			% (player->HealthRegen() * 6000000);
-	stats.push_back(Label("healthregen", oss.str()));
-
-	charStats->addElements(stats, videoManager->RegularText, l, 4 * h, h,
-			TextManager::LEFT, TextManager::MIDDLE);
-
-	struct BoolString {
-		bool f;
-		const char* str;
-	};
-
-	BoolString perks[] = { { player->Unstoppable, "+unstoppable" }, {
-			player->PoisonBullets, "+poisonbullets" }, { player->BigCalibre,
-			"+bigcalibre" }, { player->Telekinesis, "+telekinesis" }, {
-			player->NightVision, "+nightvision" }, { player->Looting,
-			"+looting" }, { player->WideSight, "+widesight" }, };
-
-	for (unsigned i = 0; i < sizeof(perks) / sizeof(BoolString); ++i)
-		if (perks[i].f)
-			charStats->addElement(perks[i].str, "+", videoManager->RegularText,
-					r, (4 + i) * h, TextManager::CENTER, TextManager::MIDDLE);
+	CharStatsWindow* charStats = (CharStatsWindow*)windows.find("charstats")->second;
+	charStats->refresh(player);
 }
 
 void increaseVioletParam(std::string elementName) {
@@ -542,51 +467,20 @@ void takePerk(std::string elementName) {
 }
 
 void showPerkDetails(std::string elementName) {
-	int x = videoManager->getVideoMode().Width / 2;
-	int y = videoManager->RegularText->getHeight();
-
-	map<string, string> m;
-	m["unstoppable"] = _("Unstoppable: enemies can't block your "
-			"movement anymore, but they still can hurt you.");
-	m["poisonbullets"] = _("Poison bullets: after getting hit by your "
-			"bullet, enemies slowly lose health until they die.");
-	m["bigcalibre"] = _("Big calibre: your bullets can wound a few "
-			"monsters in a row.");
-	m["telekinesis"] = _("Telekinesis: useful things slowly move "
-			"towards you.");
-	m["nightvision"] = _("Night vision: you can see in the dark.");
-	m["looting"] = _("Looting: Monsters will drop more bonuses.");
-	m["widesight"] = _("Wide sight: accessible area for action "
-			"is much more.");
-
-	map<string, string>::iterator it = m.find(elementName);
-	if (it != m.end())
-		windows["charstats"]->addElement("explanation", it->second,
-				videoManager->SmallText, x, y, TextManager::CENTER,
-				TextManager::MIDDLE);
+	((CharStatsWindow*)windows["charstats"])->showPerkDetails(elementName);
 }
 
+
 void createCharStatWindow() {
-	Window *charStats = new CharStatsWindow(config, videoManager);
+	CharStatsWindow *charStats = new CharStatsWindow(config, videoManager);
 
-	charStats->addHandler(Window::hdl_lclick, "strength", increaseVioletParam);
-	charStats->addHandler(Window::hdl_lclick, "agility", increaseVioletParam);
-	charStats->addHandler(Window::hdl_lclick, "vitality", increaseVioletParam);
-
-	charStats->addHandler(Window::hdl_lclick, "unstoppable", takePerk);
-	charStats->addHandler(Window::hdl_move, "unstoppable", showPerkDetails);
-	charStats->addHandler(Window::hdl_lclick, "poisonbullets", takePerk);
-	charStats->addHandler(Window::hdl_move, "poisonbullets", showPerkDetails);
-	charStats->addHandler(Window::hdl_lclick, "bigcalibre", takePerk);
-	charStats->addHandler(Window::hdl_move, "bigcalibre", showPerkDetails);
-	charStats->addHandler(Window::hdl_lclick, "telekinesis", takePerk);
-	charStats->addHandler(Window::hdl_move, "telekinesis", showPerkDetails);
-	charStats->addHandler(Window::hdl_lclick, "nightvision", takePerk);
-	charStats->addHandler(Window::hdl_move, "nightvision", showPerkDetails);
-	charStats->addHandler(Window::hdl_lclick, "looting", takePerk);
-	charStats->addHandler(Window::hdl_move, "looting", showPerkDetails);
-	charStats->addHandler(Window::hdl_lclick, "widesight", takePerk);
-	charStats->addHandler(Window::hdl_move, "widesight", showPerkDetails);
+	for (unsigned i = 0; i < charStats->paramIdsNumber; ++i)
+		charStats->addHandler(Window::hdl_lclick, charStats->paramIds[i], increaseVioletParam);
+	
+	for (unsigned i = 0; i < charStats->perkIdsNumber; ++i) {
+		charStats->Window::addHandler(Window::hdl_move, charStats->perkIds[i], showPerkDetails);
+		charStats->addHandler(Window::hdl_lclick, charStats->perkIds[i], takePerk);
+	}
 
 	windows["charstats"] = charStats;
 }
