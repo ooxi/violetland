@@ -9,12 +9,12 @@
 #define _(STRING)            gettext(STRING)
 
 const char* CharStatsWindow::perkIds[] = {
-	"unstoppable", 
-	"poisonbullets", 
+	"unstoppable",
+	"poisonbullets",
 	"bigcalibre",
-	"telekinesis", 
-	"nightvision", 
-	"looting", 
+	"telekinesis",
+	"nightvision",
+	"looting",
 	"widesight",
 };
 const unsigned CharStatsWindow::perkIdsNumber = sizeof(CharStatsWindow::perkIds)/sizeof(char*);
@@ -24,20 +24,38 @@ const char* CharStatsWindow::paramIds[] = {
 	"agility",
 	"vitality",
 };
-const unsigned CharStatsWindow::paramIdsNumber = sizeof(CharStatsWindow::paramIds)/sizeof(char*);
 
+const unsigned CharStatsWindow::paramIdsNumber = sizeof(CharStatsWindow::paramIds) / sizeof(char*);
+
+void CharStatsWindow::onPlayerParamClickEvent(void* sender, string paramName)
+{
+	CharStatsWindow* window = (CharStatsWindow*)sender;
+	window->increasePlayerParam(paramName);
+}
+
+void CharStatsWindow::onPerkHoverEvent(void* sender, string perkName)
+{
+	CharStatsWindow* window = (CharStatsWindow*)sender;
+	window->showPerkDetails(perkName);
+}
+
+void CharStatsWindow::onPerkClickEvent(void* sender, string perkName)
+{
+	CharStatsWindow* window = (CharStatsWindow*)sender;
+	window->givePerkToPlayer(perkName);
+}
 
 CharStatsWindow::CharStatsWindow(Configuration* config,
-		VideoManager* videoManager) :
-	Window(0.0f, 0.0f, videoManager->getVideoMode().Width, 
+		VideoManager* videoManager, Player* player) :
+	Window(0.0f, 0.0f, videoManager->getVideoMode().Width,
 			videoManager->getVideoMode().Height, 0.0f, 0.0f,
-			0.0f, 0.5f), videoManager(videoManager) {
+			0.0f, 0.5f), videoManager(videoManager), player(player) {
 	const int r = videoManager->getVideoMode().Width * 0.6f;
 	const int h = videoManager->RegularText->getHeight();
 
-	addElement("perks", _("Perks:"), videoManager->RegularText, 
+	addElement("perks", _("Perks:"), videoManager->RegularText,
 			r, 2*h, TextManager::LEFT, TextManager::MIDDLE);
-			
+
 	std::vector<Label> labels;
 	labels.push_back(Label("unstoppable", _("Unstoppable")));
 	labels.push_back(Label("poisonbullets", _("Poison bullets")));
@@ -46,14 +64,14 @@ CharStatsWindow::CharStatsWindow(Configuration* config,
 	labels.push_back(Label("nightvision", _("Night vision")));
 	labels.push_back(Label("looting", _("Looting")));
 	labels.push_back(Label("widesight", _("Wide sight")));
-	
-	addElements(labels, videoManager->RegularText, 
+
+	addElements(labels, videoManager->RegularText,
 			r+2*h, 4*h, h, TextManager::LEFT, TextManager::MIDDLE);
 
 	addElement("explanation", _("Move mouse over text to get explanation..."),
-			videoManager->SmallText, config->Screen.Width / 2, h, 
+			videoManager->SmallText, config->Screen.Width / 2, h,
 			TextManager::CENTER, TextManager::MIDDLE);
-			
+
 	perkDetails["unstoppable"] = _("Unstoppable: enemies can't block your "
 			"movement anymore, but they still can hurt you.");
 	perkDetails["poisonbullets"] = _("Poison bullets: after getting hit by your "
@@ -66,24 +84,21 @@ CharStatsWindow::CharStatsWindow(Configuration* config,
 	perkDetails["looting"] = _("Looting: Monsters will drop more bonuses.");
 	perkDetails["widesight"] = _("Wide sight: accessible area for action "
 			"is much more.");
+
+	for (unsigned i = 0; i < paramIdsNumber; ++i)
+			addHandler(Window::hdl_lclick, paramIds[i], onPlayerParamClickEvent);
+
+	for (unsigned i = 0; i < perkIdsNumber; ++i) {
+		addHandler(Window::hdl_move, perkIds[i], onPerkHoverEvent);
+		addHandler(Window::hdl_lclick, perkIds[i], onPerkClickEvent);
+	}
 }
 
-void CharStatsWindow::showPerkDetails(std::string elementName) {
-	int x = videoManager->getVideoMode().Width / 2;
-	int y = videoManager->RegularText->getHeight();
-
-	map<string, string>::iterator it = perkDetails.find(elementName);
-	if (it != perkDetails.end())
-		addElement("explanation", it->second,
-				videoManager->SmallText, x, y, TextManager::CENTER,
-				TextManager::MIDDLE);
-}
-
-void CharStatsWindow::refresh(violetland::Player* player) {
+void CharStatsWindow::refresh() {
 	const int l = (int) (videoManager->getVideoMode().Width * 0.1f);
 	const int r = (int) (videoManager->getVideoMode().Width * 0.6f);
 	const int h = videoManager->RegularText->getHeight();
-	
+
 	ostringstream oss;
 	vector<Label> stats;
 
@@ -156,6 +171,57 @@ void CharStatsWindow::refresh(violetland::Player* player) {
 					r, (4 + i) * h, TextManager::CENTER, TextManager::MIDDLE);
 }
 
+void CharStatsWindow::increasePlayerParam(std::string elementName) {
+	if (player->LevelPoints > 0) {
+		if (elementName == "strength")
+			player->Strength += 0.1;
+		else if (elementName == "agility")
+			player->Agility += 0.1;
+		else if (elementName == "vitality") {
+			float h = player->getHealth() / player->MaxHealth();
+			player->Vitality += 0.1;
+			player->setHealth(h * player->MaxHealth());
+		}
+
+		player->LevelPoints--;
+
+		refresh();
+	}
+}
+
+void CharStatsWindow::showPerkDetails(string perkName) {
+	int x = videoManager->getVideoMode().Width / 2;
+	int y = videoManager->RegularText->getHeight();
+
+	map<string, string>::iterator it = perkDetails.find(perkName);
+	if (it != perkDetails.end())
+		addElement("explanation", it->second,
+				videoManager->SmallText, x, y, TextManager::CENTER,
+				TextManager::MIDDLE);
+}
+
+void CharStatsWindow::givePerkToPlayer(string perkName) {
+	if (player->LevelPoints > 0) {
+		map<string, bool*> m;
+		m["unstoppable"] = &player->Unstoppable;
+		m["poisonbullets"] = &player->PoisonBullets;
+		m["bigcalibre"] = &player->BigCalibre;
+		m["telekinesis"] = &player->Telekinesis;
+		m["nightvision"] = &player->NightVision;
+		m["looting"] = &player->Looting;
+		m["widesight"] = &player->WideSight;
+
+		map<string, bool*>::iterator it = m.find(perkName);
+
+		if (it != m.end()) {
+			if (!*it->second) {
+				*it->second = true;
+				--player->LevelPoints;
+				refresh();
+			}
+		}
+	}
+}
 
 CharStatsWindow::~CharStatsWindow() {
 	// nothing

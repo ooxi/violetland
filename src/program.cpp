@@ -171,7 +171,7 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 }
 
 // The beginning of new game in selected mode
-void startGame(std::string elementName) {
+void startGame(void* sender, std::string elementName) {
 	if (aim)
 		delete aim;
 	aim = new Aim(config);
@@ -416,72 +416,12 @@ void switchGamePause() {
 }
 
 void refreshCharStatsWindow() {
-	Player* player = (Player*) gameState->getLifeForm(playerId);
-
 	CharStatsWindow* charStats = (CharStatsWindow*)windows.find("charstats")->second;
-	charStats->refresh(player);
+	charStats->refresh();
 }
-
-void increaseVioletParam(std::string elementName) {
-	Player* player = (Player*) gameState->getLifeForm(playerId);
-
-	if (player->LevelPoints > 0) {
-		if (elementName == "strength")
-			player->Strength += 0.1;
-		else if (elementName == "agility")
-			player->Agility += 0.1;
-		else if (elementName == "vitality") {
-			float h = player->getHealth() / player->MaxHealth();
-			player->Vitality += 0.1;
-			player->setHealth(h * player->MaxHealth());
-		}
-
-		player->LevelPoints--;
-		refreshCharStatsWindow();
-	}
-}
-
-void takePerk(std::string elementName) {
-	Player* player = (Player*) gameState->getLifeForm(playerId);
-
-	if (player->LevelPoints > 0) {
-		map<string, bool*> m;
-		m["unstoppable"] = &player->Unstoppable;
-		m["poisonbullets"] = &player->PoisonBullets;
-		m["bigcalibre"] = &player->BigCalibre;
-		m["telekinesis"] = &player->Telekinesis;
-		m["nightvision"] = &player->NightVision;
-		m["looting"] = &player->Looting;
-		m["widesight"] = &player->WideSight;
-
-		map<string, bool*>::iterator it = m.find(elementName);
-
-		if (it != m.end()) {
-			if (!*it->second) {
-				*it->second = true;
-				--player->LevelPoints;
-				refreshCharStatsWindow();
-			}
-		}
-	}
-}
-
-void showPerkDetails(std::string elementName) {
-	((CharStatsWindow*)windows["charstats"])->showPerkDetails(elementName);
-}
-
 
 void createCharStatWindow() {
-	CharStatsWindow *charStats = new CharStatsWindow(config, videoManager);
-
-	for (unsigned i = 0; i < charStats->paramIdsNumber; ++i)
-		charStats->addHandler(Window::hdl_lclick, charStats->paramIds[i], increaseVioletParam);
-	
-	for (unsigned i = 0; i < charStats->perkIdsNumber; ++i) {
-		charStats->Window::addHandler(Window::hdl_move, charStats->perkIds[i], showPerkDetails);
-		charStats->addHandler(Window::hdl_lclick, charStats->perkIds[i], takePerk);
-	}
-
+	CharStatsWindow *charStats = new CharStatsWindow(config, videoManager, (Player*)gameState->getLifeForm(playerId));
 	windows["charstats"] = charStats;
 }
 
@@ -499,7 +439,7 @@ void shutdownSystem() {
 	delete splash;
 }
 
-void backFromOptionsAndSave(std::string elementName);
+void backFromOptionsAndSave(void* sender, std::string elementName);
 
 void refreshOptionsWindow() {
 	const int l = videoManager->getVideoMode().Width * 0.1f;
@@ -548,7 +488,7 @@ void refreshOptionsWindow() {
 			* h, TextManager::LEFT, TextManager::MIDDLE);
 }
 
-void switchGameOption(std::string elementName) {
+void switchGameOption(void* sender, std::string elementName) {
 	map<string, bool*> m;
 	m["autoreload"] = &config->AutoReload;
 	m["autopickup"] = &config->AutoWeaponPickup;
@@ -562,7 +502,7 @@ void switchGameOption(std::string elementName) {
 	}
 }
 
-void switchVolumeDown(std::string elementName) {
+void switchVolumeDown(void* sender, std::string elementName) {
 	if (elementName == "musicvolume") {
 		if (config->MusicVolume > 0) {
 			config->MusicVolume--;
@@ -589,7 +529,7 @@ void switchVolumeDown(std::string elementName) {
 	refreshOptionsWindow();
 }
 
-void switchVolumeUp(std::string elementName) {
+void switchVolumeUp(void* sender, std::string elementName) {
 	if (elementName == "musicvolume") {
 		if (config->MusicVolume <= 9) {
 			config->MusicVolume++;
@@ -616,7 +556,7 @@ void switchVolumeUp(std::string elementName) {
 	refreshOptionsWindow();
 }
 
-void switchResolutionDown(std::string elementName) {
+void switchResolutionDown(void* sender, std::string elementName) {
 	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
 
 	bool set = false;
@@ -637,7 +577,7 @@ void switchResolutionDown(std::string elementName) {
 	refreshOptionsWindow();
 }
 
-void switchResolutionUp(std::string elementName) {
+void switchResolutionUp(void* sender, std::string elementName) {
 	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
 
 	bool set = false;
@@ -658,7 +598,7 @@ void switchResolutionUp(std::string elementName) {
 	refreshOptionsWindow();
 }
 
-void controlsMenuWindowController(std::string elementName);
+void controlsMenuWindowController(void* sender, std::string elementName);
 
 inline void addControlElement(Window* w, unsigned i, unsigned strN,
 		unsigned lx, unsigned rx) {
@@ -718,7 +658,7 @@ void drawWindows() {
 	}
 }
 
-void controlsMenuWindowController(std::string elementName) {
+void controlsMenuWindowController(void* sender, std::string elementName) {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -771,9 +711,9 @@ void controlsMenuWindowController(std::string elementName) {
 }
 
 void drawWindows();
-void showHighScores(std::string);
+void showHighScores(void* sender, std::string);
 
-void createControlsMenuWindow(std::string elementName) {
+void createControlsMenuWindow(void* sender, std::string elementName) {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -784,7 +724,7 @@ void createControlsMenuWindow(std::string elementName) {
 	windows["options"]->CloseFlag = true;
 }
 
-void resetControls(std::string elementName) {
+void resetControls(void* sender, std::string elementName) {
 	Configuration* config_default = new Configuration(fileUtility);
 	for (int i = 0; i < InputHandler::GameInputEventsCount; i++)
 		config->PlayerInputBinding[i] = config_default->PlayerInputBinding[i];
@@ -863,18 +803,18 @@ void createOptionsWindow() {
 	refreshOptionsWindow();
 }
 
-void showOptions(std::string elementName) {
+void showOptions(void* sender, std::string elementName) {
 	windows["mainmenu"]->CloseFlag = true;
 	createOptionsWindow();
 }
 
-void resumeGame(std::string elementName) {
+void resumeGame(void* sender, std::string elementName) {
 	Window* w = windows.find("mainmenu")->second;
 	w->CloseFlag = true;
 	switchGamePause();
 }
 
-void endGame(std::string elementName) {
+void endGame(void* sender, std::string elementName) {
 	gameState->end();
 }
 
@@ -898,7 +838,7 @@ void refreshMainMenuWindow() {
 			TextManager::MIDDLE);
 }
 
-void switchGameMode(std::string elementName) {
+void switchGameMode(void* sender, std::string elementName) {
 	switch (gameMode) {
 	case GAMEMODE_SURVIVAL:
 		gameMode = GAMEMODE_WAVES;
@@ -932,14 +872,14 @@ void createMainMenuWindow() {
 	refreshMainMenuWindow();
 }
 
-void highScoresWindowController(std::string elementName) {
+void highScoresWindowController(void* sender, std::string elementName) {
 	if (elementName == "back") {
 		windows["highscores"]->CloseFlag = true;
 		createMainMenuWindow();
 	} else if (elementName == "reset") {
 		Highscores s(fileUtility);
 		s.clear();
-		highScoresWindowController("back");
+		highScoresWindowController(sender, "back");
 	}
 }
 
@@ -1014,7 +954,7 @@ void createHighscoresWindow() {
 	windows["highscores"] = w;
 }
 
-void showHighScores(std::string elementName) {
+void showHighScores(void* sender, std::string elementName) {
 	windows["mainmenu"]->CloseFlag = true;
 	createHighscoresWindow();
 }
@@ -1031,7 +971,7 @@ void unloadResources() {
 	delete config;
 }
 
-void backFromOptionsAndSave(std::string elementName) {
+void backFromOptionsAndSave(void* sender, std::string elementName) {
 	bool changeVideoMode = config->Screen.Width != tempConfig->Screen.Width
 			|| config->Screen.Height != tempConfig->Screen.Height;
 

@@ -9,9 +9,9 @@ class Terrain {
 private:
 	int m_viewport[4];
 	std::vector<StaticObject*> m_tiles;
-	const unsigned m_tileWidth, m_tileHeight;
-	int m_xTilesCount, m_yTilesCount;
 	const int m_gameAreaSize;
+	const unsigned m_tileWidth, m_tileHeight;
+	unsigned m_xTilesCount, m_yTilesCount;
 	GLuint m_tileDList;
 public:
 	Terrain(SDL_Surface *base, std::vector<SDL_Surface*> tiles,

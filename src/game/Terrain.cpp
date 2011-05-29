@@ -70,9 +70,9 @@ void Terrain::drawOn(StaticObject *piece) {
 		return;
 	
 	unsigned i0 = max(left+m_gameAreaSize, 0.0f)/m_tileWidth;
-	unsigned i1 = min(int(ceil((right+m_gameAreaSize)/m_tileWidth)), m_xTilesCount);
+	unsigned i1 = min(unsigned(ceil((right+m_gameAreaSize)/m_tileWidth)), m_xTilesCount);
 	unsigned j0 = max(top+m_gameAreaSize, 0.0f)/m_tileHeight;
-	unsigned j1 = min(int(ceil((bottom+m_gameAreaSize)/m_tileHeight)), m_yTilesCount);
+	unsigned j1 = min(unsigned(ceil((bottom+m_gameAreaSize)/m_tileHeight)), m_yTilesCount);
 	const unsigned halfTileWidth = m_tileWidth / 2;
 	const unsigned halfTileHeight = m_tileHeight / 2;
 	
