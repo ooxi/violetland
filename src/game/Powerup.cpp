@@ -128,7 +128,7 @@ const std::string violetland::StrengthPowerup::getHudInfo() const {
 }
 
 bool violetland::StrengthPowerup::modify(Game* game, Player* player) {
-	game->hud->addMessage(_("You got a vitality boost."));
+	game->hud->addMessage(_("You got a strength boost."));
 	player->bonusTimes[PLAYER_BONUS_STRENGTHBOOST] += 10000;
 
 	return true;
@@ -139,7 +139,7 @@ const std::string violetland::AgilityPowerup::getHudInfo() const {
 }
 
 bool violetland::AgilityPowerup::modify(Game* game, Player* player) {
-	game->hud->addMessage(_("You got a vitality boost."));
+	game->hud->addMessage(_("You got a agility boost."));
 	player->bonusTimes[PLAYER_BONUS_AGILITYBOOST] += 10000;
 
 	return true;
