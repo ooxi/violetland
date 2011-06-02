@@ -1,5 +1,10 @@
 #include "StandardBullet.h"
 
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#include <math.h> 
+#endif
+
 namespace violetland {
 
 StandardBullet::StandardBullet(float x, float y, float dX, float dY,

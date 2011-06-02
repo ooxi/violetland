@@ -28,14 +28,15 @@
 #include "SDL_opengl.h"
 #include "SDL_ttf.h"
 
+// Boost
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+
 //~ Internationalization Dependances
 #include <libintl.h>
 #include <locale.h>
 #define _(STRING)			gettext(STRING)
 #define TRANSLATION_PATH 	"./po"
-
-#include <boost/filesystem.hpp>
-#include <boost/format.hpp>
 
 // The Game
 #include "game/Game.h"
@@ -68,7 +69,6 @@
 #include "windows/CharStatsWindow.h"
 
 using namespace std;
-
 using namespace violetland;
 
 const string PROJECT = "violetland";

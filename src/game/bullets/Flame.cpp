@@ -1,5 +1,10 @@
 #include "Flame.h"
 
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#include <math.h> 
+#endif
+
 namespace violetland {
 
 Flame::Flame(float x, float y, Texture* tex) :
