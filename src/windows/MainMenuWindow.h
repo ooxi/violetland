@@ -6,13 +6,20 @@
 #include "../game/GameState.h"
 #include "../system/graphic/text/TextManager.h"
 
-using namespace violetland;
-
+namespace violetland {
 class MainMenuWindow: public Window {
+private:
+	GameState* m_gameState;
+
+	void exitGame();
+
 public:
+	static void onMenuItemClick(void* sender, std::string menuItem);
+
 	MainMenuWindow(Configuration* config, GameState* gameState,
 			TextManager* text);
 	~MainMenuWindow();
 };
+}
 
 #endif /* MAINMENUWINDOW_H_ */

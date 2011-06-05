@@ -30,10 +30,12 @@ Player::Player() :
 	m_light = m_laser = false;
 
 	Unstoppable = PoisonBullets = BigCalibre = Telekinesis = NightVision
-			= Looting = WideSight = false;
+			= Looting = WideSight = Magneto = false;
 
 	for (int i = PLAYER_BONUS_FIRST; i < PLAYER_BONUS_COUNT; i++)
 		bonusTimes[i] = 0;
+
+	processTelekinesis(0, true);
 }
 
 Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
@@ -275,14 +277,31 @@ void Player::teleport() {
 void Player::setWeapon(Weapon *value) {
 	float Angle = 0;
 	if (m_weapon) {
+		Angle = getArmsAngle();
 		delete m_arms;
 		delete m_weapon;
-		Angle = getArmsAngle();
 	}
 	m_weapon = new Weapon(*value);
 	m_arms = new StaticObject(X, Y, 128, 128, m_weapon->getPlayerTex(), false);
 	m_arms->Angle = Angle;
 	AccuracyDeviation = 0;
+}
+
+// Controls telekinesis ability
+// Reset = true to reset timer (obvious!), deltaTime will be ignored, will return 0
+// Reset = false and deltaTime >= 0 to evaluate timer, returns percentage of telekinesis process (100 or more to complete)
+unsigned Player::processTelekinesis(int deltaTime, bool reset)
+{
+	if (reset)
+	{
+		m_telekinesisDelay = TELEKINESIS_DELAY;
+		return 0;
+	}
+	else
+	{
+		m_telekinesisDelay -= deltaTime;
+		return (unsigned)((float)(TELEKINESIS_DELAY - m_telekinesisDelay) / TELEKINESIS_DELAY * 10) * 10;
+	}
 }
 
 Player::~Player() {

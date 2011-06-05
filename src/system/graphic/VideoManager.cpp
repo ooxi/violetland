@@ -80,6 +80,8 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 	SDL_Surface *screen = SDL_SetVideoMode(mode.Width, mode.Height, mode.Color,
 			mode.Full ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
 
+	std::cout << "Calculating aspect size..." << std::endl;
+
 	float aspect = (float) mode.Width / mode.Height;
 	cam->setH((int) (cam->getW() / aspect));
 	WK = (float) mode.Width / cam->getW();

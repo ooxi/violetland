@@ -2,22 +2,10 @@
 
 #include "LifeForm.h"
 
-violetland::LifeForm::LifeForm(float x, float y, int w, int h) :
+using namespace violetland;
+
+LifeForm::LifeForm(float x, float y, int w, int h) :
 	Object(x, y, w, h) {
-	unsigned long t;
-#ifdef _WIN32
-	SYSTEMTIME winT;
-	GetLocalTime(&winT);
-	FILETIME fT;
-	SystemTimeToFileTime(&winT, &fT);
-	ULARGE_INTEGER sec;
-	sec.HighPart = fT.dwHighDateTime;
-	sec.LowPart = fT.dwLowDateTime;
-	t = sec.QuadPart / 1E7;
-#endif //_WIN32
-#if defined linux || defined __FreeBSD__ || defined __APPLE__
-	t = static_cast<unsigned long> (time(NULL));
-#endif  //linux || __FreeBSD__ || __APPLE__
 	std::ostringstream buf;
 	buf << UidGenerator::getInstance()->getId();
 	Id = buf.str();
@@ -36,11 +24,11 @@ violetland::LifeForm::LifeForm(float x, float y, int w, int h) :
 	Name = "Unknown lifeform";
 }
 
-void violetland::LifeForm::draw() {
+void LifeForm::draw() {
 	// nothing
 }
 
-Sound* violetland::LifeForm::hit(float damage, bool poison) {
+Sound* LifeForm::hit(float damage, bool poison) {
 	setHealth(getHealth() - damage);
 
 	if (getHealth() == 0 && State == LIFEFORM_STATE_ALIVE) {
@@ -50,7 +38,7 @@ Sound* violetland::LifeForm::hit(float damage, bool poison) {
 	return NULL;
 }
 
-void violetland::LifeForm::process(int deltaTime) {
+void LifeForm::process(int deltaTime) {
 	if (Frozen > 0) {
 		Frozen -= deltaTime;
 		if (Frozen < 0)
@@ -92,7 +80,7 @@ void violetland::LifeForm::process(int deltaTime) {
 	}
 }
 
-void violetland::LifeForm::move(float direction, int deltaTime) {
+void LifeForm::move(float direction, int deltaTime) {
 	if (m_walkDelay > 0)
 		return;
 
@@ -105,16 +93,16 @@ void violetland::LifeForm::move(float direction, int deltaTime) {
 	turn(direction, MaxSpeed(), deltaTime);
 }
 
-const float violetland::LifeForm::MaxHealth() const {
+const float LifeForm::MaxHealth() const {
 	return getVitality() > 0.8f ? 1.0f + (getVitality() - 1.0f) * 2.0f
 			+ (getStrength() - 1.0f) : 0.4f;
 }
 
-const float violetland::LifeForm::ChanceToEvade() const {
+const float LifeForm::ChanceToEvade() const {
 	return getAgility() > 1.0f ? (getAgility() - 1.0f) / 2.0f : 0.0f;
 }
 
-const bool violetland::LifeForm::Attack() {
+const bool LifeForm::Attack() {
 	int now = SDL_GetTicks();
 
 	if (now - m_lastAttackTime > AttackDelay()) {
@@ -125,35 +113,40 @@ const bool violetland::LifeForm::Attack() {
 	}
 }
 
-const float violetland::LifeForm::Damage() const {
+const float LifeForm::Damage() const {
 	return getStrength() / 8.0f;
 }
 
-const int violetland::LifeForm::AttackDelay() const {
+const int LifeForm::AttackDelay() const {
 	return (1.0f - (getAgility() - 1.0f) / 2.0f) * 1000;
 }
 
-const float violetland::LifeForm::MaxSpeed() const {
+const float LifeForm::MaxSpeed() const {
 	return getAgility() / 5.0f;
 }
 
-const float violetland::LifeForm::HealthRegen() const {
+const float LifeForm::HealthRegen() const {
 	return getVitality() > 1.0f ? (getVitality() - 1.0f) * 0.000005f : 0.0f;
 }
 
-const float violetland::LifeForm::ReloadSpeedMod() const {
+const float LifeForm::ReloadSpeedMod() const {
 	return 1.0f / getAgility();
 }
 
-const float violetland::LifeForm::WeaponRetForceMod() const {
+const float LifeForm::WeaponRetForceMod() const {
 	return getStrength() > 1.0f ? 1.0f - (getStrength() - 1.0f) * 1.1f : 1.0f;
 }
 
-const float violetland::LifeForm::fixHealth(float health) const {
+const float LifeForm::fixHealth(float health) const {
 	if (health > MaxHealth())
 		return MaxHealth();
 	else if (health < 0)
 		return 0;
 	else
 		return health;
+}
+
+LifeForm::~LifeForm()
+{
+	// nothing
 }

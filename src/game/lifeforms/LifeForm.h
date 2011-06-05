@@ -9,8 +9,6 @@
 #include "../../system/sound/Sound.h"
 #include "../../system/utility/UidGenerator.h"
 
-using namespace std;
-
 namespace violetland {
 enum LifeFormType {
 	LIFEFORM_PLAYER = 0, LIFEFORM_MONSTER
@@ -35,7 +33,9 @@ protected:
 	int m_walkTime;
 	int m_walkDelay;
 public:
+	LifeFormType Type;
 	LifeForm(float x, float y, int w, int h);
+
 	virtual void process(int deltaTime);
 	virtual void draw();
 	virtual Sound* hit(float damage, bool poison);
@@ -44,27 +44,25 @@ public:
 
 	std::string Id;
 	std::string Name;
+	float TargetX, TargetY;
+	LifeFormState State;
+
+	// Attributes
+
 	int Level;
 	float Strength;
 	float Agility;
 	float Vitality;
-	float TargetX, TargetY;
-	LifeFormState State;
-	void setHealth(float value) {
-		m_health = fixHealth(value);
-	}
-	const float getHealth() {
-		return m_health = fixHealth(m_health);
-	}
-	virtual float getStrength() const {
-		return Strength;
-	}
-	virtual float getAgility() const {
-		return Agility;
-	}
-	virtual float getVitality() const {
-		return Vitality;
-	}
+
+	bool Poisoned;
+	bool Burning;
+	int Frozen;
+
+	void setHealth(float value) { m_health = fixHealth(value); }
+	const float getHealth() { return m_health = fixHealth(m_health); }
+	virtual float getStrength() const { return Strength; }
+	virtual float getAgility() const { return Agility; }
+	virtual float getVitality() const { return Vitality; }
 	const float MaxHealth() const;
 	const float MaxSpeed() const;
 	const float ChanceToEvade() const;
@@ -74,11 +72,8 @@ public:
 	const float ReloadSpeedMod() const;
 	const float WeaponRetForceMod() const;
 	const float HealthRegen() const;
-	LifeFormType Type;
 	virtual StaticObject* getCorpse() = 0;
-	bool Poisoned;
-	bool Burning;
-	int Frozen;
+	virtual ~LifeForm();
 };
 }
 

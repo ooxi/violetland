@@ -22,6 +22,8 @@ enum PlayerBonusType {
 
 class Player: public LifeForm {
 private:
+	static const unsigned TELEKINESIS_DELAY = 2000;
+
 	Sprite *m_deathSprite;
 	StaticObject *m_arms;
 	std::vector<DynamicObject*> m_shells;
@@ -30,13 +32,45 @@ private:
 	Weapon *m_weapon;
 	bool m_light, m_laser;
 	int m_hitSndPlaying;
+	int m_telekinesisDelay;
+
 	void processBonus(int deltaTime);
 	void processState(int deltaTime);
 	void processArms(int deltaTime);
 public:
+	bool Empty;
+	float AccuracyDeviation;
+	int LevelPoints;
+	int Xp;
+	int NextLevelXp;
+	int LastLevelXp;
+	int Kills;
+	int Grenades;
+	int Teleports;
+
+	// Perks
+
+	bool Unstoppable;
+	bool PoisonBullets;
+	bool BigCalibre;
+	bool Telekinesis;
+	bool Magneto;
+	bool NightVision;
+	bool Looting;
+	bool WideSight;
+
+	// Fire with gun or use teleport
+	PlayerActionMode ActionMode;
+
+	int bonusTimes[PLAYER_BONUS_COUNT];
+
 	Player();
-	Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
-			std::vector<Sound*> hitSounds, Sound* dyingSound);
+	Player(float x, float y,
+			Sprite *legsSprite,
+			Sprite *deathSprite,
+			std::vector<Sound*> hitSounds,
+			Sound* dyingSound);
+	virtual ~Player();
 
 	virtual void process(int deltaTime);
 	virtual void draw();
@@ -47,55 +81,23 @@ public:
 	virtual float getVitality() const;
 
 	void hit();
-	void reload();
-	void toggleLight() {
-		m_light = !m_light;
-	}
-	void toggleLaser() {
-		m_laser = !m_laser;
-	}	
-	const float getLegsAngle() const {
-		return m_body->Angle;
-	}
-	const float getArmsAngle() const {
-		return m_arms->Angle;
-	}
 	void setX(float value);
 	void setY(float value);
-	const bool getLight() const {
-        return m_light;
-	}
-	const bool getLaser() const {
-		return m_laser;
-	}
-	const Weapon* getWeapon() const {
-		return m_weapon;
-	}
+	const float getLegsAngle() const { return m_body->Angle; }
+	const float getArmsAngle() const { return m_arms->Angle; }
 	void setWeapon(Weapon *value);
+	const Weapon* getWeapon() const { return m_weapon; }
 	std::vector<Bullet*> *fire();
+	void reload();
+	void toggleLight() { m_light = !m_light; }
+	const bool getLight() const { return m_light; }
+	void toggleLaser() { m_laser = !m_laser; }
+	const bool getLaser() const { return m_laser; }
 	Bullet* throwGrenade(Sprite* grenadeSprite);
 	virtual StaticObject* getCorpse();
-	~Player();
-	float AccuracyDeviation;
-	int LevelPoints;
-	int Xp;
-	int NextLevelXp;
-	int LastLevelXp;
-	int Kills;
-	int Grenades;
-	int Teleports;
-	bool Unstoppable;
-	bool PoisonBullets;
-	bool BigCalibre;
-	bool Telekinesis;
-	bool NightVision;
-	bool Looting;
-	bool WideSight;
-	int bonusTimes[PLAYER_BONUS_COUNT];
 	void teleport();
 	void fadeColor(int deltaTime);
-	bool Empty;
-	PlayerActionMode ActionMode;
+	unsigned processTelekinesis(int deltaTime, bool reset);
 };
 
 }

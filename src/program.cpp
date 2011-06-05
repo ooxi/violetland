@@ -65,7 +65,6 @@
 #include "game/Highscores.h"
 #include "game/HUD.h"
 #include "windows/MainMenuWindow.h"
-#include "windows/HelpWindow.h"
 #include "windows/CharStatsWindow.h"
 
 using namespace std;
@@ -133,8 +132,8 @@ void createTerrain() {
 	for (unsigned i = 0; i < tilesCount; i++) {
 		oss.str("");
 		oss << baseTex << '/' << i << ".png";
-		SDL_Surface *tile = ImageUtility::loadImage(boost::filesystem::path(
-				tilesDir) /= oss.str(), 1);
+		SDL_Surface *tile = ImageUtility::loadImage(
+				boost::filesystem::path(tilesDir) /= oss.str(), 1);
 		tiles.push_back(tile);
 	}
 
@@ -166,8 +165,8 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 		break;
 	}
 
-	gameState->lifeForms.insert(map<string, LifeForm*>::value_type(
-			newMonster->Id, newMonster));
+	gameState->lifeForms.insert(
+			map<string, LifeForm*>::value_type(newMonster->Id, newMonster));
 }
 
 // The beginning of new game in selected mode
@@ -194,7 +193,10 @@ void startGame(void* sender, std::string elementName) {
 	clearVector<StaticObject*> (&bloodStains);
 	clearVector<ParticleSystem*> (&particleSystems);
 
-	Player* player = new Player(0, 0, resources->PlayerWalkSprite,
+	Player* player = new Player(
+			0,
+			0,
+			resources->PlayerWalkSprite,
 			resources->PlayerDeathSprites[(rand()
 					% (int) resources->PlayerDeathSprites.size())],
 			resources->PlayerHitSounds, resources->PlayerDeathSound);
@@ -203,8 +205,8 @@ void startGame(void* sender, std::string elementName) {
 	player->setWeapon(weaponManager->getWeaponByName("PM"));
 	player->HitR = 0.28f;
 
-	gameState->lifeForms.insert(map<string, LifeForm*>::value_type(player->Id,
-			player));
+	gameState->lifeForms.insert(
+			map<string, LifeForm*>::value_type(player->Id, player));
 
 	playerId = player->Id;
 
@@ -313,8 +315,9 @@ void initSystem() {
 
 	SDL_WM_SetCaption(getProjectTitle().c_str(), NULL);
 
-	SDL_Surface* icon = ImageUtility::loadImage(fileUtility->getFullPath(
-			FileUtility::common, "icon-light.png"), 1.0f);
+	SDL_Surface* icon = ImageUtility::loadImage(
+			fileUtility->getFullPath(FileUtility::common, "icon-light.png"),
+			1.0f);
 	SDL_WM_SetIcon(icon, NULL);
 	SDL_FreeSurface(icon);
 
@@ -333,8 +336,9 @@ void initSystem() {
 
 	ostringstream oss;
 	oss << "splash_" << rand() % 2 << ".png";
-	Texture* tex = new Texture(ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::image, oss.str())),
+	Texture* tex = new Texture(
+			ImageUtility::loadImage(
+					fileUtility->getFullPath(FileUtility::image, oss.str())),
 			GL_TEXTURE_2D, GL_LINEAR, true);
 
 	splash = new StaticObject(0, 0, tex->getWidth(), tex->getHeight(), tex,
@@ -416,12 +420,14 @@ void switchGamePause() {
 }
 
 void refreshCharStatsWindow() {
-	CharStatsWindow* charStats = (CharStatsWindow*)windows.find("charstats")->second;
+	CharStatsWindow* charStats =
+			(CharStatsWindow*) windows.find("charstats")->second;
 	charStats->refresh();
 }
 
 void createCharStatWindow() {
-	CharStatsWindow *charStats = new CharStatsWindow(config, videoManager, (Player*)gameState->getLifeForm(playerId));
+	CharStatsWindow *charStats = new CharStatsWindow(config, videoManager,
+			(Player*) gameState->getLifeForm(playerId));
 	windows["charstats"] = charStats;
 }
 
@@ -474,18 +480,18 @@ void refreshOptionsWindow() {
 
 	ostringstream oss;
 	oss << tempConfig->Screen.Width << 'x' << tempConfig->Screen.Height;
-	w->addElement("+resolution", oss.str(), videoManager->RegularText, r + 8
-			* h, 7 * h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("+resolution", oss.str(), videoManager->RegularText,
+			r + 8 * h, 7 * h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << config->SoundVolume * 10 << '%';
-	w->addElement("+soundvolume", oss.str(), videoManager->RegularText, l, 12
-			* h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("+soundvolume", oss.str(), videoManager->RegularText, l,
+			12 * h, TextManager::LEFT, TextManager::MIDDLE);
 
 	oss.str("");
 	oss << config->MusicVolume * 10 << '%';
-	w->addElement("+musicvolume", oss.str(), videoManager->RegularText, l, 13
-			* h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("+musicvolume", oss.str(), videoManager->RegularText, l,
+			13 * h, TextManager::LEFT, TextManager::MIDDLE);
 }
 
 void switchGameOption(void* sender, std::string elementName) {
@@ -748,8 +754,8 @@ void createOptionsWindow() {
 	gameplayLabels.push_back(Label("autopickup", _("Weapon autotaking")));
 	gameplayLabels.push_back(Label("friendlyfire", _("Friendly fire")));
 
-	w->addElement("sectiongame", _("Gameplay"), videoManager->RegularText, l, 4
-			* h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("sectiongame", _("Gameplay"), videoManager->RegularText, l,
+			4 * h, TextManager::LEFT, TextManager::MIDDLE);
 	w->addElements(gameplayLabels, videoManager->RegularText, l + 2 * h, 6 * h,
 			h, TextManager::LEFT, TextManager::MIDDLE);
 
@@ -766,8 +772,8 @@ void createOptionsWindow() {
 	soundLabels.push_back(Label("soundvolume", _("Sound volume")));
 	soundLabels.push_back(Label("musicvolume", _("Music volume")));
 
-	w->addElement("sectionsound", _("Sound"), videoManager->RegularText, l, 10
-			* h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("sectionsound", _("Sound"), videoManager->RegularText, l,
+			10 * h, TextManager::LEFT, TextManager::MIDDLE);
 	w->addElements(soundLabels, videoManager->RegularText, l + 3 * h, 12 * h,
 			h, TextManager::LEFT, TextManager::MIDDLE);
 
@@ -814,10 +820,6 @@ void resumeGame(void* sender, std::string elementName) {
 	switchGamePause();
 }
 
-void endGame(void* sender, std::string elementName) {
-	gameState->end();
-}
-
 void refreshMainMenuWindow() {
 	Window* w = windows.find("mainmenu")->second;
 
@@ -862,7 +864,6 @@ void createMainMenuWindow() {
 	mainMenu->addHandler(Window::hdl_lclick, "gamemode", switchGameMode);
 	mainMenu->addHandler(Window::hdl_lclick, "options", showOptions);
 	mainMenu->addHandler(Window::hdl_lclick, "highscores", showHighScores);
-	mainMenu->addHandler(Window::hdl_lclick, "exit", endGame);
 
 	std::map<std::string, Window*>::iterator it = windows.find("mainmenu");
 	if (it != windows.end())
@@ -914,16 +915,16 @@ void createHighscoresWindow() {
 
 		oss1 << "xp" << i;
 		oss2 << it->Xp;
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, l, (5
-				+ i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, l,
+				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
 		oss1.str("");
 		oss2.str("");
 		oss1 << "params" << i;
 		oss2 << (int) (it->Strength * 100) << '/' << (int) (it->Agility * 100)
 				<< '/' << (int) (it->Vitality * 100);
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, r2, (5
-				+ i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, r2,
+				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
 		const int minutes = it->Time / 60000;
 		const int seconds = (it->Time - minutes * 60000) / 1000;
@@ -932,20 +933,20 @@ void createHighscoresWindow() {
 		oss2.str("");
 		oss1 << "time" << i;
 		oss2 << minutes << "m " << seconds << 's';
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, r3, (5
-				+ i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, r3,
+				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 
 		oss1.str("");
 		oss1 << "name" << i;
-		w->addElement(oss1.str(), it->Name, videoManager->RegularText, r4, (5
-				+ i) * h, TextManager::LEFT, TextManager::MIDDLE);
+		w->addElement(oss1.str(), it->Name, videoManager->RegularText, r4,
+				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
 	}
 
 	w->addElement("back", _("Back to main menu"), videoManager->RegularText, l,
 			16 * h, TextManager::LEFT, TextManager::MIDDLE);
 
-	w->addElement("reset", _("Reset list"), videoManager->RegularText, r3, 16
-			* h, TextManager::LEFT, TextManager::MIDDLE);
+	w->addElement("reset", _("Reset list"), videoManager->RegularText, r3,
+			16 * h, TextManager::LEFT, TextManager::MIDDLE);
 
 	w->addHandler(Window::hdl_lclick, "back", highScoresWindowController);
 
@@ -993,11 +994,6 @@ void backFromOptionsAndSave(void* sender, std::string elementName) {
 	createMainMenuWindow();
 }
 
-void createHelpWindow() {
-	Window *help = new HelpWindow(config, videoManager->RegularText);
-	windows["helpscreen"] = help;
-}
-
 void handleCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
 		map<string, Window*>::iterator it = windows.find("charstats");
@@ -1017,26 +1013,6 @@ void handleCommonControls() {
 			switchGamePause();
 		}
 	}
-
-	/* Currently the help screen is unneeded as it contains only controls tips.
-	 * Controls tips are equivalent to controls menu.
-	 */
-
-	//	if (input->getPressInput(InputHandler::Help)) {
-	//		map<string, Window*>::iterator it = windows.find("helpscreen");
-	//		if (it == windows.end()) {
-	//			clearMap<std::string, Window*> (&windows);
-	//
-	//			createHelpWindow();
-	//
-	//			if (!gameState->Paused)
-	//				switchGamePause();
-	//		} else {
-	//			Window* w = it->second;
-	//			w->CloseFlag = true;
-	//			switchGamePause();
-	//		}
-	//	}
 
 	if (input->getPressInput(InputHandler::Menu)) {
 		map<string, Window*>::iterator it = windows.find("mainmenu");
@@ -1086,10 +1062,10 @@ void addExplosion(float x, float y, float damage, float range) {
 			for (unsigned int k = 0; k < 6; k++) {
 				int angleDev = 90 + (rand() % 90) - 45;
 				float distance = (rand() % 200);
-				float x = vBlood[i].x + distance * -cos((vBlood[i].angle
-						- angleDev) * M_PI / 180.0f);
-				float y = vBlood[i].y + distance * -sin((vBlood[i].angle
-						- angleDev) * M_PI / 180.0f);
+				float x = vBlood[i].x + distance * -cos(
+						(vBlood[i].angle - angleDev) * M_PI / 180.0f);
+				float y = vBlood[i].y + distance * -sin(
+						(vBlood[i].angle - angleDev) * M_PI / 180.0f);
 				addBloodStain(x, y, (rand() % 6300) / 1000.0f, vBlood[i].scale,
 						vBlood[i].poisoned);
 			}
@@ -1153,16 +1129,17 @@ void handleMonster(LifeForm* lf) {
 
 	if (lf->Frozen <= 0) {
 		if (enemy->isBleeding() && bloodStains.size() < 12) {
-			addBloodStain(enemy->X, enemy->Y, enemy->Angle, (rand() % 10)
-					/ 50.0f + 0.1f, enemy->Poisoned);
+			addBloodStain(enemy->X, enemy->Y, enemy->Angle,
+					(rand() % 10) / 50.0f + 0.1f, enemy->Poisoned);
 		}
 	}
 
 	if (lf->Burning) {
 		ParticleSystem* partSys = new ParticleSystem();
 		for (unsigned int k = 0; k < 5; k++) {
-			Particle * p = new Particle(enemy->X + (rand() % 50) - 25, enemy->Y
-					+ (rand() % 50) - 25, 128, 128, resources->ExplTex[0]);
+			Particle * p = new Particle(enemy->X + (rand() % 50) - 25,
+					enemy->Y + (rand() % 50) - 25, 128, 128,
+					resources->ExplTex[0]);
 			p->RMask = 1.0;
 			p->GMask = (float) (rand() % 50) / 100 + 0.4;
 			p->BMask = 0.3;
@@ -1231,12 +1208,12 @@ void handleMonster(LifeForm* lf) {
 			enemy->TargetX = targetLifeForm->X;
 			enemy->TargetY = targetLifeForm->Y;
 		} else {
-			enemy->TargetX = targetLifeForm->X - cos((targetLifeForm->Angle
-					+ 90) * M_PI / 180) * range / 2.0f / enemy->Speed
-					* targetLifeForm->Speed;
-			enemy->TargetY = targetLifeForm->Y - sin((targetLifeForm->Angle
-					+ 90) * M_PI / 180) * range / 2.0f / enemy->Speed
-					* targetLifeForm->Speed;
+			enemy->TargetX = targetLifeForm->X - cos(
+					(targetLifeForm->Angle + 90) * M_PI / 180) * range / 2.0f
+					/ enemy->Speed * targetLifeForm->Speed;
+			enemy->TargetY = targetLifeForm->Y - sin(
+					(targetLifeForm->Angle + 90) * M_PI / 180) * range / 2.0f
+					/ enemy->Speed * targetLifeForm->Speed;
 		}
 
 		if (enemy->detectCollide(targetLifeForm)) {
@@ -1414,8 +1391,8 @@ void handlePlayer(LifeForm* lf) {
 
 	if (input->getPressInput(InputHandler::ThrowGrenade) && player->Grenades
 			> 0) {
-		gameState->bullets.push_back(player->throwGrenade(
-				resources->GrenadeSprite));
+		gameState->bullets.push_back(
+				player->throwGrenade(resources->GrenadeSprite));
 	}
 }
 
@@ -1567,10 +1544,10 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 		for (unsigned int k = 0; k < 10 / 3; k++) {
 			int angleDev = 90 + (rand() % 60) - 30;
 			float distance = (rand() % 100);
-			float bX = enemy->X - cos((bullet->Angle + angleDev) * M_PI
-					/ 180.0f) * distance;
-			float bY = enemy->Y - sin((bullet->Angle + angleDev) * M_PI
-					/ 180.0f) * distance;
+			float bX = enemy->X - cos(
+					(bullet->Angle + angleDev) * M_PI / 180.0f) * distance;
+			float bY = enemy->Y - sin(
+					(bullet->Angle + angleDev) * M_PI / 180.0f) * distance;
 
 			addBloodStain(bX, bY, enemy->Angle, enemy->Scale * 0.5f,
 					enemy->Poisoned);
@@ -1643,9 +1620,9 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 
 		if (hitSound != NULL) {
 			hitSound->play(7, 0, 0);
-			hitSound->setPos(Object::calc_angle(enemy->X, enemy->Y, player->X,
-					player->Y), Object::calc_dist(enemy->X, enemy->Y,
-					player->X, player->Y));
+			hitSound->setPos(
+					Object::calc_angle(enemy->X, enemy->Y, player->X, player->Y),
+					Object::calc_dist(enemy->X, enemy->Y, player->X, player->Y));
 		}
 
 		if (bullet->BigCalibre && !bullet->Penetrating) {
@@ -1729,32 +1706,47 @@ void setGuiCameraMode() {
 
 void handlePowerups() {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
+	bool looksAtAnyBonus = false;
 
 	for (int i = gameState->powerups.size() - 1; i >= 0; i--) {
 		bool deletePowerup = false;
 		gameState->powerups[i]->process(videoManager->getFrameDeltaTime());
 
+		if (player->Magneto) {
+			float a = Object::calc_angle(gameState->powerups[i]->X,
+					gameState->powerups[i]->Y, player->X, player->Y);
+			gameState->powerups[i]->X -= cos((a + 90) * M_PI / 180)
+					* videoManager->getFrameDeltaTime() * 0.05;
+			gameState->powerups[i]->Y -= sin((a + 90) * M_PI / 180)
+					* videoManager->getFrameDeltaTime() * 0.05;
+		}
+
 		if (gameState->powerups[i]->Time <= 0)
 			deletePowerup = true;
 
-		if (!gameState->Lost && gameState->powerups[i]->detectCollide(
-				player->TargetX, player->TargetY)) {
+		if (!deletePowerup && !gameState->Lost) {
+			if (gameState->powerups[i]->detectCollide(player->TargetX, player->TargetY)) {
+				looksAtAnyBonus = true;
 
-			hud->Info = gameState->powerups[i]->getHudInfo();
+				ostringstream hudStr;
+				hudStr << gameState->powerups[i]->getHudInfo();
 
-			if (player->Telekinesis) {
-				float a = Object::calc_angle(gameState->powerups[i]->X,
-						gameState->powerups[i]->Y, player->X, player->Y);
-				gameState->powerups[i]->X -= cos((a + 90) * M_PI / 180)
-						* videoManager->getFrameDeltaTime()
-						* player->MaxSpeed() * 2;
-				gameState->powerups[i]->Y -= sin((a + 90) * M_PI / 180)
-						* videoManager->getFrameDeltaTime()
-						* player->MaxSpeed() * 2;
+				if (player->Telekinesis) {
+					unsigned telekinesisState = player->processTelekinesis(videoManager->getFrameDeltaTime(), false);
+					hudStr << " (" << telekinesisState << "%)" << endl;
+
+					if (telekinesisState >= 100) {
+						player->processTelekinesis(0, true);
+						deletePowerup = gameState->powerups[i]->modify(game, player);
+					}
+				}
+
+				hud->Info = hudStr.str();
 			}
 		}
 
-		if (!gameState->Lost && (gameState->powerups[i]->detectCollide(player))) {
+		if (!deletePowerup && !gameState->Lost
+				&& gameState->powerups[i]->detectCollide(player)) {
 			deletePowerup = gameState->powerups[i]->modify(game, player);
 		}
 
@@ -1763,6 +1755,9 @@ void handlePowerups() {
 			gameState->powerups.erase(gameState->powerups.begin() + i);
 		}
 	}
+
+	if (!looksAtAnyBonus)
+		player->processTelekinesis(0, true);
 }
 
 void processTerrain() {
@@ -1788,8 +1783,9 @@ void processGame() {
 			Player* player = (Player*) gameState->getLifeForm(playerId);
 			input->setInputMode(InputHandler::Direct);
 			Highscores s(fileUtility);
-			s.add(HighscoresEntry(player, gameState->PlayerName,
-					gameState->Time));
+			s.add(
+					HighscoresEntry(player, gameState->PlayerName,
+							gameState->Time));
 			gameState->HighScore = false;
 		} else {
 			gameState->PlayerName = input->getTextToShow();
@@ -1934,8 +1930,8 @@ void drawGame() {
 			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
 			glVertex3f(wpnX, wpnY, 0);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
-			glVertex3f(player->X + maxLen * cos(rad), player->Y + maxLen * sin(
-					rad), 0);
+			glVertex3f(player->X + maxLen * cos(rad),
+					player->Y + maxLen * sin(rad), 0);
 			glEnd();
 		}
 		if (player->getLight()) {
@@ -1953,17 +1949,19 @@ void drawGame() {
 			if (width < 0.25)
 				width = 0.25;
 			glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
-			glVertex3f(player->X + len * cos(rad - width), player->Y + len
-					* sin(rad - width), 0.0f);
-			glVertex3f(player->X + len * cos(rad + width), player->Y + len
-					* sin(rad + width), 0.0f);
+			glVertex3f(player->X + len * cos(rad - width),
+					player->Y + len * sin(rad - width), 0.0f);
+			glVertex3f(player->X + len * cos(rad + width),
+					player->Y + len * sin(rad + width), 0.0f);
 
 			glEnd();
 		}
 	}
 
 	if (!gameState->Lost && !gameState->Paused) {
-		aim->draw(player->TargetX, player->TargetY,
+		aim->draw(
+				player->TargetX,
+				player->TargetY,
 				1.0f + tan(player->AccuracyDeviation * M_PI / 180)
 						* Object::calc_dist(player->X, player->Y,
 								player->TargetX, player->TargetY) / 25.0f,
@@ -1977,10 +1975,10 @@ void drawGame() {
 void drawFps() {
 	ostringstream oss;
 	oss << boost::format(_("FPS: %i")) % videoManager->getFps();
-	videoManager->RegularText->draw(oss.str(), config->Screen.Width
-			- videoManager->RegularText->getIndent(), config->Screen.Height
-			- videoManager->RegularText->getIndent(), TextManager::RIGHT,
-			TextManager::BOTTOM);
+	videoManager->RegularText->draw(oss.str(),
+			config->Screen.Width - videoManager->RegularText->getIndent(),
+			config->Screen.Height - videoManager->RegularText->getIndent(),
+			TextManager::RIGHT, TextManager::BOTTOM);
 }
 
 void runMainLoop() {
