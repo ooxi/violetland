@@ -158,7 +158,7 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 	switch (gameState->Mode) {
 	case GAMEMODE_SURVIVAL:
 	case GAMEMODE_WAVES:
-		Player* player = (Player*) gameState->getLifeForm(playerId);
+		LifeForm* player = gameState->getLifeForm(playerId);
 
 		newMonster->TargetX = player->X;
 		newMonster->TargetY = player->Y;
@@ -169,8 +169,11 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 			map<string, LifeForm*>::value_type(newMonster->Id, newMonster));
 }
 
-// The beginning of new game in selected mode
+// Start the game in selected mode
 void startGame(void* sender, std::string elementName) {
+	hud->reset();
+
+	// TODO: encapsulate the aim in the HUD
 	if (aim)
 		delete aim;
 	aim = new Aim(config);
@@ -391,9 +394,6 @@ void initSystem() {
 	game = new Game(input, hud, config, gameState, resources, particleSystems);
 }
 
-// Operations at destruction of the player:
-// update of the list of the best results,
-// change of a state of objects
 void loseGame(Player* player) {
 	gameState->Lost = true;
 
@@ -997,9 +997,9 @@ void backFromOptionsAndSave(void* sender, std::string elementName) {
 void handleCommonControls() {
 	if (input->getPressInput(InputHandler::ShowChar)) {
 		map<string, Window*>::iterator it = windows.find("charstats");
-		if (it == windows.end()) {
+		if (it == windows.end()) { // if window not exists, create one
 			if (gameState->Begun && !gameState->Lost) { // it is possible to remove second check to show charstats window after player death
-				clearMap<std::string, Window*> (&windows);
+				clearMap<std::string, Window*> (&windows); // close all other windows
 
 				createCharStatWindow();
 				refreshCharStatsWindow();
@@ -1007,7 +1007,7 @@ void handleCommonControls() {
 				if (!gameState->Paused)
 					switchGamePause();
 			}
-		} else {
+		} else { // if window exists, close it
 			Window* w = it->second;
 			w->CloseFlag = true;
 			switchGamePause();
@@ -1016,14 +1016,14 @@ void handleCommonControls() {
 
 	if (input->getPressInput(InputHandler::Menu)) {
 		map<string, Window*>::iterator it = windows.find("mainmenu");
-		if (it == windows.end()) {
-			clearMap<std::string, Window*> (&windows);
+		if (it == windows.end()) { // if window not exists, create one
+			clearMap<std::string, Window*> (&windows); // close all other windows
 
 			createMainMenuWindow();
 
 			if (!gameState->Paused)
 				switchGamePause();
-		} else if (gameState->Begun) {
+		} else if (gameState->Begun) { // if window exists and game state was begun, close it
 			Window* w = it->second;
 			w->CloseFlag = true;
 			switchGamePause();
@@ -1114,7 +1114,7 @@ void handleParticles() {
 }
 
 void handleMonster(LifeForm* lf) {
-	Player* player = (Player*) gameState->getLifeForm(playerId);
+	LifeForm* player = gameState->getLifeForm(playerId);
 	Monster* enemy = (Monster*) lf;
 
 	// HUD related
@@ -1467,9 +1467,12 @@ void dropPowerup(float x, float y, float chance, bool forceWeapon) {
 }
 
 void handleLifeForms() {
-	Player* player = (Player*) gameState->getLifeForm(playerId);
+	LifeForm* player = gameState->getLifeForm(playerId);
 
 	if (!gameState->Lost) {
+
+		// Spawn monsters by the selected game rules
+
 		switch (gameState->Mode) {
 		case GAMEMODE_SURVIVAL:
 			for (int i = 0; i < videoManager->getFrameDeltaTime(); i++) {
@@ -1498,24 +1501,29 @@ void handleLifeForms() {
 			}
 			break;
 		}
+
+		// Check state of the user controlled hero
+
+		if (player->State == LIFEFORM_STATE_DIED ||
+			player->State == LIFEFORM_STATE_BURST)
+		{
+			loseGame((Player*)player);
+		}
+		else if (player->State == LIFEFORM_STATE_ALIVE)
+		{
+			// Give controls to the user
+			handlePlayer(player);
+		}
 	}
+
+	// Process all lifeforms in the game
 
 	map<string, LifeForm*>::iterator it = gameState->lifeForms.begin();
 	while (it != gameState->lifeForms.end()) {
 		LifeForm* lifeForm = it->second;
 
-		if (lifeForm->Type == LIFEFORM_PLAYER) {
-			if (!gameState->Lost) {
-				if (lifeForm->State == LIFEFORM_STATE_DIED || lifeForm->State
-						== LIFEFORM_STATE_BURST)
-					loseGame(player);
-				else if (lifeForm->State == LIFEFORM_STATE_ALIVE)
-					handlePlayer(lifeForm);
-			}
-		} else if (lifeForm->Type == LIFEFORM_MONSTER) {
-			if (lifeForm->State == LIFEFORM_STATE_ALIVE)
-				handleMonster(lifeForm);
-		}
+		if (lifeForm->Type == LIFEFORM_MONSTER && lifeForm->State == LIFEFORM_STATE_ALIVE)
+			handleMonster(lifeForm);
 
 		lifeForm->process(videoManager->getFrameDeltaTime());
 
@@ -1537,8 +1545,6 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 		enemy->Frozen = 0;
 		enemy->Burning = true;
 	}
-
-	Player* player = (Player*) gameState->getLifeForm(bullet->OwnerId);
 
 	if (bullet->Type == BULLET_STANDARD && bloodStains.size() < 10) {
 		for (unsigned int k = 0; k < 10 / 3; k++) {
@@ -1611,6 +1617,8 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 			particleSystems.push_back(expl);
 		}
 	}
+
+	Player* player = (Player*) gameState->getLifeForm(bullet->OwnerId);
 
 	if (!bypassDirectDamage) {
 		float damageLoss = enemy->getHealth();
@@ -1769,7 +1777,6 @@ void processTerrain() {
 
 		clearVector<StaticObject*> (&bloodStains);
 	}
-
 	terrain->endDrawOn();
 }
 
@@ -1923,15 +1930,39 @@ void drawGame() {
 				+ player->getWeapon()->YDiff * sin(-rad);
 		const float wpnY = player->Y + player->getWeapon()->XDiff * sin(rad)
 				+ player->getWeapon()->YDiff * cos(-rad);
-		const float maxLen = cam->getH() * 0.75f;
+
 		if (player->getLaser()) {
+			float len = (float)cam->getW();
+			float tX = player->X + len * cos(rad);
+			float tY = player->Y + len * sin(rad);
+
+			for (iter = gameState->lifeForms.begin(); iter != gameState->lifeForms.end(); ++iter) {
+				LifeForm* lf = iter->second;
+
+				if (lf->Type == LIFEFORM_PLAYER || lf->State
+						!= LIFEFORM_STATE_ALIVE)
+					continue;
+
+				Monster* enemy = (Monster*) lf;
+
+				if (enemy->detectCollide(wpnX, wpnY, tX, tY))
+				{
+					float nlen = Object::calc_dist(wpnX, wpnY, enemy->X, enemy->Y) + enemy->getWidth() / 2;
+					if (nlen < len)
+					{
+						len = nlen;
+						tX = player->X + len * cos(rad);
+						tY = player->Y + len * sin(rad);
+					}
+				}
+			}
+
 			glLineWidth(0.5f);
 			glBegin(GL_LINES);
 			glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
 			glVertex3f(wpnX, wpnY, 0);
-			glColor4f(1.0f, 0.0f, 0.0f, 0.0f);
-			glVertex3f(player->X + maxLen * cos(rad),
-					player->Y + maxLen * sin(rad), 0);
+			glColor4f(1.0f, 0.0f, 0.0f, (cam->getW() - len) / cam->getW() * 0.75f);
+			glVertex3f(tX, tY, 0);
 			glEnd();
 		}
 		if (player->getLight()) {
