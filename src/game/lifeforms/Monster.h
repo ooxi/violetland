@@ -16,6 +16,7 @@ private:
 	int m_bleedCount;
 public:
 	Monster(MonsterTemplate* base, int lvl);
+	virtual ~Monster();
 	virtual void process(int deltaTime);
 	virtual void draw();
 	virtual Sound* hit(float damage, bool poison, bool stop);
@@ -26,7 +27,6 @@ public:
 	bool isBleeding();
 	virtual StaticObject* getCorpse();
 	void destroy();
-	virtual ~Monster();
 	bool Angry;
 	string targetId;
 	MonsterTemplate* Base;

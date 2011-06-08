@@ -65,7 +65,7 @@ void LifeForm::process(int deltaTime) {
 			if (AMask > 1)
 				AMask = 1;
 
-			setHealth(getHealth() - 0.0004 * deltaTime);
+			setHealth(getHealth() - 0.0004f * deltaTime);
 		}
 
 		if (!m_walking) {

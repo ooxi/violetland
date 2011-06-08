@@ -117,6 +117,7 @@ void Window::process(InputHandler* input) {
 	int gmx = input->mouseX;
 	int gmy = input->mouseY;
 
+	// Mouse hover handlers
 	std::map<std::string, void(*)(void* sender, std::string)>::const_iterator iter;
 	for (iter = m_mvHandlers.begin(); iter != m_mvHandlers.end(); ++iter) {
 		std::map<std::string, TextObject*>::iterator it = m_elements.find(iter->first);
@@ -125,11 +126,14 @@ void Window::process(InputHandler* input) {
 			if (gmx > o->getLeft() && gmx < o->getRight() && gmy > o->getTop()
 					&& gmy < o->getBottom()) {
 				iter->second(this, iter->first);
+
+				// Be careful, callback function (iter->second) can change set of handlers or even replace all handlers and iter will be not incrementable anymore!
+				break;
 			}
 		}
 	}
 
-	//TODO: refactor next two copypasted cycles
+	// Left click handlers
 	for (iter = m_lcHandlers.begin(); iter != m_lcHandlers.end(); ++iter) {
 		std::map<std::string, TextObject*>::iterator it = m_elements.find(iter->first);
 		if (it != m_elements.end()) {
@@ -139,6 +143,9 @@ void Window::process(InputHandler* input) {
 				o->GMask = 0.3f;
 				if (input->getPressInput(InputHandler::MenuClickA)) {
 					iter->second(this, iter->first);
+					
+					// Be careful, callback function (iter->second) can change set of handlers or even replace all handlers and iter will be not incrementable anymore!
+					break;
 				}
 			} else {
 				o->GMask = 1.0f;
@@ -146,6 +153,7 @@ void Window::process(InputHandler* input) {
 		}
 	}
 
+	// Right click handlers
 	for (iter = m_rcHandlers.begin(); iter != m_rcHandlers.end(); ++iter) {
 		std::map<std::string, TextObject*>::iterator it = m_elements.find(iter->first);
 		if (it != m_elements.end()) {
@@ -155,6 +163,9 @@ void Window::process(InputHandler* input) {
 				o->RMask = 0.3f;
 				if (input->getPressInput(InputHandler::MenuClickB)) {
 					iter->second(this, iter->first);
+
+					// Be careful, callback function (iter->second) can change set of handlers or even replace all handlers and iter will be not incrementable anymore!
+					break;
 				}
 			} else {
 				o->RMask = 1.0f;

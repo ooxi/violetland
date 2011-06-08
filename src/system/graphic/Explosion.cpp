@@ -21,10 +21,10 @@ Explosion::Explosion(bool nuclear, float x, float y, int range,
 			gruel->XSpeed = (float) ((rand() % 100) - 50) / 1000;
 			gruel->YSpeed = (float) ((rand() % 100) - 50) / 1000;
 			gruel->TSpeed = (float) ((rand() % 20) - 10) / 100;
-			gruel->RMod = -0.0001;
-			gruel->GMod = -0.0001;
-			gruel->AMod = -0.0003;
-			gruel->ScaleMod = 0.0001;
+			gruel->RMod = -0.0001f;
+			gruel->GMod = -0.0001f;
+			gruel->AMod = -0.0003f;
+			gruel->ScaleMod = 0.0001f;
 			Particles.push_back(gruel);
 		}
 		for (int i = 0; i < 10; i++) {
@@ -37,8 +37,8 @@ Explosion::Explosion(bool nuclear, float x, float y, int range,
 			spark->Scale = (float) (rand() % (int) (range * 0.4f)) / range;
 			spark->XSpeed = (float) ((rand() % 250) - 125) / 1000;
 			spark->YSpeed = (float) ((rand() % 250) - 125) / 1000;
-			spark->AMod = -0.001;
-			spark->ScaleMod = -0.0002;
+			spark->AMod = -0.001f;
+			spark->ScaleMod = -0.0002f;
 			Particles.push_back(spark);
 		}
 	}
@@ -50,8 +50,8 @@ Explosion::Explosion(bool nuclear, float x, float y, int range,
 		baseSpark->GMask = 1.0f;
 		baseSpark->AMask = 0.8f;
 		baseSpark->Scale = range * 0.02f;
-		baseSpark->AMod = -0.0002;
-		baseSpark->ScaleMod = -0.0002;
+		baseSpark->AMod = -0.0002f;
+		baseSpark->ScaleMod = -0.0002f;
 		Particles.push_back(baseSpark);
 	} else {
 		Particle* baseSpark = new Particle(x, y, 128, 128, sparkTex);
@@ -59,7 +59,7 @@ Explosion::Explosion(bool nuclear, float x, float y, int range,
 		baseSpark->BMask = 0.8f;
 		baseSpark->AMask = 0.5f;
 		baseSpark->Scale = range * 0.01f;
-		baseSpark->AMod = -0.0003;
+		baseSpark->AMod = -0.0003f;
 		Particles.push_back(baseSpark);
 	}
 }

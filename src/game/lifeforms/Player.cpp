@@ -6,10 +6,10 @@
 
 namespace violetland {
 
-Player::Player() :
-	LifeForm(0, 0, 128, 128) {
+Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
+		std::vector<Sound*> hitSounds, Sound* dyingSound) :
+	LifeForm(x, y, 128, 128) {
 	Id = "20-" + Id;
-	Empty = true;
 	Xp = 0;
 	LastLevelXp = 0;
 	NextLevelXp = 100;
@@ -36,25 +36,17 @@ Player::Player() :
 		bonusTimes[i] = 0;
 
 	processTelekinesis(0, true);
-}
 
-Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
-		std::vector<Sound*> hitSounds, Sound* dyingSound) :
-	LifeForm(x, y, 128, 128) {
-	*this = Player();
-
-	X = x;
-	Y = y;
 	TargetX = x;
 	TargetY = y;
 
+	m_weapon = NULL;
+	m_arms = NULL;
 	m_body = new DynamicObject(x, y, legsSprite);
 	m_body->Frame = 8;
 	m_deathSprite = deathSprite;
 	m_hitSounds = hitSounds;
 	m_dyingSound = dyingSound;
-
-	Empty = false;
 }
 
 float Player::getStrength() const {
@@ -111,7 +103,7 @@ std::vector<Bullet*>* Player::fire() {
 			bullet->BigCalibre = m_weapon->Type == BULLET_STANDARD
 					&& BigCalibre;
 			if (BigCalibre) {
-				bullet->Damage *= 1.1;
+				bullet->Damage *= 1.1f;
 			}
 			bullet->Penetrating = m_weapon->Type == BULLET_STANDARD
 					&& bonusTimes[PLAYER_BONUS_PENBULLETS] > 0;
@@ -192,7 +184,7 @@ void Player::processState(int deltaTime) {
 void Player::processArms(int deltaTime) {
 	m_arms->Angle = Object::calc_angle(X, Y, TargetX, TargetY);
 	m_weapon->process(deltaTime);
-	AccuracyDeviation -= deltaTime * 0.01;
+	AccuracyDeviation -= deltaTime * 0.01f;
 	if (AccuracyDeviation < 0)
 		AccuracyDeviation = 0;
 
@@ -275,15 +267,15 @@ void Player::teleport() {
 }
 
 void Player::setWeapon(Weapon *value) {
-	float Angle = 0;
+	float angle = 0;
 	if (m_weapon) {
-		Angle = getArmsAngle();
+		angle = getArmsAngle();
 		delete m_arms;
 		delete m_weapon;
 	}
 	m_weapon = new Weapon(*value);
 	m_arms = new StaticObject(X, Y, 128, 128, m_weapon->getPlayerTex(), false);
-	m_arms->Angle = Angle;
+	m_arms->Angle = angle;
 	AccuracyDeviation = 0;
 }
 
@@ -305,11 +297,15 @@ unsigned Player::processTelekinesis(int deltaTime, bool reset)
 }
 
 Player::~Player() {
-	if (!Empty) {
+	if (m_body)
 		delete m_body;
+
+	if (m_arms)
 		delete m_arms;
+
+	if (m_weapon)
 		delete m_weapon;
-	}
+
 	clearVector<DynamicObject*> (&m_shells);
 }
 

@@ -11,11 +11,12 @@ protected:
 	int m_width, m_height;
 	float m_left, m_right, m_top, m_bottom;
 public:
+	Object(float x, float y, int width, int height);
+	virtual ~Object();
 	void move(int deltaTime);
 	static float fixAngle(float angle);
 	static float calc_angle(float x1, float y1, float x2, float y2);
 	static float calc_dist(float x1, float y1, float x2, float y2);
-	Object(float x, float y, int width, int height);
 	void turn(float targetAngle, float angleSpeed, int deltaTime);
 	const float getWidth() const {
 		return m_width;

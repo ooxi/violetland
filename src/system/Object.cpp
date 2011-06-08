@@ -17,6 +17,11 @@ Object::Object(float x, float y, int width, int height) {
 	Speed = 0.0f;
 }
 
+Object::~Object()
+{
+	//nothing
+}
+
 float Object::fixAngle(float angle) {
 	if (angle < 0)
 		angle += 360;

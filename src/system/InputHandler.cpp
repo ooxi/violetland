@@ -57,14 +57,14 @@ void InputHandler::initEventNames() {
 		_("Reload"), 
 		_("Teleport"), 
 	};
-	BOOST_STATIC_ASSERT(sizeof(names)/sizeof(string) == GameInputEventsCount);
+	BOOST_STATIC_ASSERT(sizeof(names) / sizeof(string) == GameInputEventsCount);
 	
 	for (unsigned i = 0; i < GameInputEventsCount; ++i)
 		m_eventNames[i] = names[i];
 }
 
 InputHandler::InputHandler(Binding* binding) {
-	BOOST_STATIC_ASSERT(sizeof(m_eventNames)/sizeof(string) == GameInputEventsCount);
+	BOOST_STATIC_ASSERT(sizeof(m_eventNames) / sizeof(string) == GameInputEventsCount);
 	
 	std::cout << "InputHandler..." << std::endl;
 

@@ -210,10 +210,6 @@ void startGame(void* sender, std::string elementName) {
 
 	playerId = player->Id;
 
-	hud->addMessage(_("Try to survive as long as you can."));
-	hud->addMessage(
-			_("Shoot monsters to receive experience and other bonuses."));
-
 	createTerrain();
 
 	SDL_ShowCursor(0);
@@ -223,6 +219,10 @@ void startGame(void* sender, std::string elementName) {
 	}
 
 	windows["mainmenu"]->CloseFlag = true;
+
+	hud->addMessage(_("Try to survive as long as you can."));
+	hud->addMessage(
+			_("Shoot monsters to receive experience and other bonuses."));
 }
 
 // Creation of a string for the window title
@@ -1349,7 +1349,7 @@ void handlePlayer(LifeForm* lf) {
 			spark->Scale = (float) (rand() % 60) / 300 + 0.05f;
 			spark->XSpeed = -(float) ((rand() % 250) - 125) / 1000;
 			spark->YSpeed = -(float) ((rand() % 250) - 125) / 1000;
-			spark->AMod = -0.0003;
+			spark->AMod = -0.0003f;
 			partSys->Particles.push_back(spark);
 		}
 
@@ -1566,7 +1566,7 @@ void collideBulletAndEnemy(Bullet* bullet, Monster* enemy) {
 				p->Scale = (rand() % 50) / 100.0f * enemy->Scale;
 				p->XSpeed = ((rand() % 400) - 200) / 1000.0f;
 				p->YSpeed = ((rand() % 400) - 200) / 1000.0f;
-				p->AMod = -0.002;
+				p->AMod = -0.002f;
 				partSys->Particles.push_back(p);
 			}
 
@@ -2043,7 +2043,7 @@ void loadResources() {
 	weaponManager = new WeaponManager(fileUtility, sndManager);
 }
 
-void parsePreferences(int argc, char *argv[]) {
+void parsePreferences(int argc, char** argv) {
 	fileUtility = new FileUtility(argv[0]);
 	config = new Configuration(fileUtility);
 	config->read();
@@ -2114,7 +2114,7 @@ void parsePreferences(int argc, char *argv[]) {
 	}
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char** argv) {
 	printVersion();
 
 	parsePreferences(argc, argv);

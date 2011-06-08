@@ -38,7 +38,6 @@ private:
 	void processState(int deltaTime);
 	void processArms(int deltaTime);
 public:
-	bool Empty;
 	float AccuracyDeviation;
 	int LevelPoints;
 	int Xp;
@@ -64,7 +63,6 @@ public:
 
 	int bonusTimes[PLAYER_BONUS_COUNT];
 
-	Player();
 	Player(float x, float y,
 			Sprite *legsSprite,
 			Sprite *deathSprite,
