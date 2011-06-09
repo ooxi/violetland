@@ -3,6 +3,15 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.4.1]
+
+[+] new perk "magneto"
+[*] game messages are written to stdout
+[*] telekinesis perk now behaves like in original crimsonland, a status (percentage) can be seen on top-center of the screen
+[*] more realistic laser aim will be helpful at night
+[!] bug with changing the controls
+[!] few errors in game messages
+
 [0.4.0]
 
 [+] new graphics for flamethrower and sawed-off shotgun
