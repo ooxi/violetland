@@ -74,7 +74,6 @@ set(srcFileList
 	${srcSoundDir}/Sound.cpp
 	${srcSoundDir}/SoundManager.cpp
 	${srcWindowsDir}/MainMenuWindow.cpp
-	${srcWindowsDir}/HelpWindow.cpp
 	${srcWindowsDir}/CharStatsWindow.cpp
 )
 
