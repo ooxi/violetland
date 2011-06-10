@@ -207,7 +207,7 @@ void Player::process(int deltaTime) {
 }
 
 void Player::processBonus(int deltaTime) {
-	for (int i = PLAYER_BONUS_FIRST; i <= PLAYER_BONUS_COUNT; i++) {
+	for (int i = PLAYER_BONUS_FIRST; i < PLAYER_BONUS_COUNT; i++) {
 		bonusTimes[i] -= deltaTime;
 		if (bonusTimes[i] < 0)
 			bonusTimes[i] = 0;
