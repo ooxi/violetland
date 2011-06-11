@@ -49,7 +49,7 @@ void LifeForm::process(int deltaTime) {
 		setHealth(getHealth() + HealthRegen() * deltaTime);
 
 		if (Poisoned)
-			setHealth(getHealth() - 0.0002 * deltaTime);
+			setHealth(getHealth() - 0.0004f * deltaTime);
 
 		if (Burning) {
 			RMask -= 0.02 / MaxHealth();
@@ -65,7 +65,7 @@ void LifeForm::process(int deltaTime) {
 			if (AMask > 1)
 				AMask = 1;
 
-			setHealth(getHealth() - 0.0004f * deltaTime);
+			setHealth(getHealth() - 0.0005f * deltaTime);
 		}
 
 		if (!m_walking) {

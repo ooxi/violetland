@@ -5,7 +5,7 @@
 
 class Camera {
 private:
-	float m_w, m_h, m_halfW, m_halfH;
+	int m_w, m_h, m_halfW, m_halfH;
 public:
 	Camera();
 	~Camera();

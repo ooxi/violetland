@@ -171,6 +171,9 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 
 // Start the game in selected mode
 void startGame(void* sender, std::string elementName) {
+	cam->setW(1600);
+	cam->setH(1200);
+
 	hud->reset();
 
 	// TODO: encapsulate the aim in the HUD
@@ -1304,17 +1307,8 @@ void handlePlayer(LifeForm* lf) {
 	if (lf->Y > gameState->GameAreaSize)
 		player->setY(gameState->GameAreaSize);
 
-	if (player->WideSight) {
-		lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW()
-				+ player->X;
-		lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH()
-				+ player->Y;
-	} else {
-		lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW()
-				+ cam->X;
-		lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH()
-				+ cam->Y;
-	}
+	lf->TargetX = input->mouseX / videoManager->WK - cam->getHalfW() + cam->X;
+	lf->TargetY = input->mouseY / videoManager->HK - cam->getHalfH() + cam->Y;
 
 	if (lf->TargetX < -gameState->GameAreaSize)
 		player->TargetX = -gameState->GameAreaSize;
@@ -1808,13 +1802,15 @@ void processGame() {
 void drawGame() {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
 
-	if (player->WideSight) {
-		cam->X = (player->TargetX + player->X) / 2;
-		cam->Y = (player->TargetY + player->Y) / 2;
-	} else {
-		cam->X = player->X;
-		cam->Y = player->Y;
-	}
+	if (player->WideSight)
+		if (cam->getW() == 1600)
+		{
+			cam->setW(1920);
+			cam->setH(1440);
+		}
+
+	cam->X = player->X;
+	cam->Y = player->Y;
 
 	if (cam->X < -gameState->GameAreaSize + cam->getHalfW())
 		cam->X = -gameState->GameAreaSize + cam->getHalfW();
