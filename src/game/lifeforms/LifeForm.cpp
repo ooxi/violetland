@@ -99,7 +99,9 @@ const float LifeForm::MaxHealth() const {
 }
 
 const float LifeForm::ChanceToEvade() const {
-	return getAgility() > 1.0f ? (getAgility() - 1.0f) / 2.0f : 0.0f;
+	float chance = (getAgility() - 1.0f) / 4.0f + (getStrength() - 1.0f) / 4.0f;
+	if (chance < 0) chance = 0;
+	return chance;
 }
 
 const bool LifeForm::Attack() {
@@ -126,7 +128,7 @@ const float LifeForm::MaxSpeed() const {
 }
 
 const float LifeForm::HealthRegen() const {
-	return getVitality() > 1.0f ? (getVitality() - 1.0f) * 0.000005f : 0.0f;
+	return getVitality() > 1.0f ? (getVitality() - 1.0f) * 0.000006f : 0.0f;
 }
 
 const float LifeForm::ReloadSpeedMod() const {
