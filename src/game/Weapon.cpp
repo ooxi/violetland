@@ -21,6 +21,7 @@ Weapon::Weapon(Texture* droppedTex, Texture* playerTex, Sound* shotSound,
 	m_reload = 0;
 	m_reloadSndCh = -1;
 	m_bulletTex = NULL;
+	ShellSprite = NULL;
 }
 
 void Weapon::process(int deltaTime) {

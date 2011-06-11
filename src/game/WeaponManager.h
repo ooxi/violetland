@@ -9,12 +9,15 @@
 namespace violetland {
 
 class WeaponManager {
-public:
+private:
 	FileUtility* m_fileUtility;
 	SoundManager* m_sndManager;
+public:
+	std::vector<Weapon*> Weapons;
+
 	WeaponManager(FileUtility* fileUtility, SoundManager* sndManager);
 	~WeaponManager();
-	std::vector<Weapon*> Weapons;
+	void loadShellSprite(Weapon* _weapon, std::string& _shellName);
 	Weapon* getWeaponByName(std::string name);
 };
 

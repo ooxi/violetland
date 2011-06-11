@@ -83,32 +83,39 @@ WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager)
 
 		in.close();
 
-		std::vector<SDL_Surface*> animSurfaces;
-
-		boost::filesystem::path shellDir = 
-				fileUtility->getFullPath(FileUtility::anima, "shells");
-		shellDir /= shellName;
-		unsigned framesCount = 
-			fileUtility->getFilesCountFromDir(shellDir);
-
-		std::cout << "Shell animation of " << weapons[j] << " - " << shellName
-				<< ", frames count: " << framesCount << '.' << std::endl;
-
-		for (unsigned i = 0; i < framesCount; i++) {
-			std::ostringstream filename;
-			filename << i << ".png";
-
-			SDL_Surface *surface = 
-					ImageUtility::loadImage(boost::filesystem::path(shellDir) /= filename.str());
-
-			animSurfaces.push_back(surface);
-		}
-		weapon->ShellSprite = new Sprite(animSurfaces);
+		if (shellName != "no")
+			loadShellSprite(weapon, shellName);
 
 		Weapons.push_back(weapon);
 	}
 
 	std::cout << "Loading of weapons is completed." << std::endl;
+}
+
+void WeaponManager::loadShellSprite(Weapon* _weapon, std::string& _shellName)
+{
+	std::vector<SDL_Surface*> animSurfaces;
+
+	boost::filesystem::path shellDir =
+			m_fileUtility->getFullPath(FileUtility::anima, "shells");
+	shellDir /= _shellName;
+	unsigned framesCount =
+			m_fileUtility->getFilesCountFromDir(shellDir);
+
+	std::cout << "Shell animation of " << _weapon->Name << " - " << _shellName
+			<< ", frames count: " << framesCount << '.' << std::endl;
+
+	for (unsigned i = 0; i < framesCount; i++) {
+		std::ostringstream filename;
+		filename << i << ".png";
+
+		SDL_Surface *surface =
+				ImageUtility::loadImage(boost::filesystem::path(shellDir) /= filename.str());
+
+		animSurfaces.push_back(surface);
+	}
+
+	_weapon->ShellSprite = new Sprite(animSurfaces);
 }
 
 Weapon* WeaponManager::getWeaponByName(std::string name) {

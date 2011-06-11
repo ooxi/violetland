@@ -116,9 +116,12 @@ std::vector<Bullet*>* Player::fire() {
 		if (m_weapon->BulletsAtOnce > 1)
 			AccuracyDeviation = 0;
 
-		DynamicObject* shell = new DynamicObject(X, Y, m_weapon->ShellSprite);
-		shell->Angle = m_arms->Angle;
-		m_shells.push_back(shell);
+		if (m_weapon->ShellSprite)
+		{
+			DynamicObject* shell = new DynamicObject(X, Y, m_weapon->ShellSprite);
+			shell->Angle = m_arms->Angle;
+			m_shells.push_back(shell);
+		}
 	}
 
 	return newBullets;

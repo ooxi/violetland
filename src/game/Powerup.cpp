@@ -88,11 +88,11 @@ const std::string violetland::NukePowerup::getHudInfo() const {
 void addExplosion(float x, float y, float damage, float range);
 bool violetland::NukePowerup::modify(Game* game, Player* player) {
 	game->hud->addMessage(_("Boom!"));
-	addExplosion(player->X, player->Y, 12.0f, 400.0f);
+	addExplosion(X, Y, 12.0f, 400.0f);
 
 	game->resources->ExplSounds[1]->play(8, 0, 0);
 
-	Explosion * expl = new Explosion(true, player->X, player->Y,
+	Explosion * expl = new Explosion(true, X, Y,
 			400.0f, game->resources->ExplTex[0], game->resources->ExplTex[1]);
 	game->particleSystems.push_back(expl);
 
