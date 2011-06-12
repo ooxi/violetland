@@ -71,7 +71,7 @@ using namespace std;
 using namespace violetland;
 
 const string PROJECT = "violetland";
-const string VERSION = "0.4.1";
+const string VERSION = "0.4.2";
 const string DEFAULT_CHAR_NAME = "Violet";
 
 Configuration* config;
@@ -172,7 +172,6 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 // Start the game in selected mode
 void startGame(void* sender, std::string elementName) {
 	cam->setW(1600);
-	cam->setH(1200);
 
 	hud->reset();
 
@@ -1804,10 +1803,7 @@ void drawGame() {
 
 	if (player->WideSight)
 		if (cam->getW() == 1600)
-		{
 			cam->setW(1920);
-			cam->setH(1440);
-		}
 
 	cam->X = player->X;
 	cam->Y = player->Y;

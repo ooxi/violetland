@@ -4,6 +4,7 @@ Camera::Camera() {
 	X = Y = 0;
 	setW(1600);
 	setH(1200);
+	m_aspect = (float)getW() / getH();
 }
 
 void Camera::applyGLOrtho() {

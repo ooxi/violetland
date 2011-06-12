@@ -82,8 +82,7 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 
 	std::cout << "Calculating aspect size..." << std::endl;
 
-	float aspect = (float) mode.Width / mode.Height;
-	cam->setH((int) (cam->getW() / aspect));
+	cam->setAspect((float) mode.Width / mode.Height);
 	WK = (float) mode.Width / cam->getW();
 	HK = (float) mode.Height / cam->getH();
 	Scale = (float) mode.Width / 800;
