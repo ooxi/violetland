@@ -29,6 +29,9 @@ violetland::HUD::HUD(VideoManager* videoManager, Resources* resources) {
 			PLAYER_BONUS_FREEZE, new StaticObject(0, 0, 128, 128,
 					m_resources->PowerupTex[BONUS_FREEZE], false)));
 
+	m_inventoryImg.push_back(new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[BONUS_GRENADES], false));
+	m_inventoryImg.push_back(new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[BONUS_TELEPORTS], false));
+
 	m_bounce = 0;
 	reset();
 }
@@ -158,7 +161,7 @@ void violetland::HUD::drawBar(int x, int y, int width, int height, float value,
 	glEnable(GL_TEXTURE_2D);
 }
 
-void violetland::HUD::drawBonusStack(int* bonusTimes) {
+void violetland::HUD::drawInventory(Player* player) {
 	int topBasePoint = m_videoManager->RegularText->getIndent()
 			+ (m_videoManager->RegularText->getHeight()) * 4;
 
@@ -173,14 +176,58 @@ void violetland::HUD::drawBonusStack(int* bonusTimes) {
 
 	const float baseScale = m_videoManager->Scale * 0.2;
 
+	const int dataLeft = barLeft + 25 * m_videoManager->Scale;
+
+	// TODO: cache weapon image inside this class
+	StaticObject* wpnImg = new StaticObject(barLeft,
+		m_videoManager->RegularText->getIndent() + m_videoManager->RegularText->getHeight(),
+		128, 128,
+		player->getWeapon()->getDroppedTex(), false);
+	wpnImg->Scale = baseScale;
+
+	glDisable(GL_TEXTURE_2D);
+	wpnImg->RMask = wpnImg->GMask = wpnImg->BMask = 1.0f;
+	wpnImg->draw(false, false);
+	glEnable(GL_TEXTURE_2D);
+	wpnImg->RMask = wpnImg->GMask = wpnImg->BMask = 0;
+	wpnImg->draw(false, false);
+
+	delete wpnImg;
+
+	ostringstream oss;
+	oss << player->getWeapon()->Ammo << '/' << player->getWeapon()->AmmoClipSize;
+	m_videoManager->RegularText->draw(oss.str(), dataLeft,
+		m_videoManager->RegularText->getIndent() + m_videoManager->RegularText->getHeight(),
+		TextManager::LEFT, TextManager::MIDDLE);
+
+	m_inventoryImg[0]->draw(false, false, barLeft,
+		m_videoManager->RegularText->getIndent() + m_videoManager->RegularText->getHeight() * 2,
+		0.0f, baseScale);
+
+	oss.str("");
+	oss << player->Grenades;
+	m_videoManager->RegularText->draw(oss.str(), dataLeft,
+		m_videoManager->RegularText->getIndent() + m_videoManager->RegularText->getHeight() * 2,
+		TextManager::LEFT, TextManager::MIDDLE);
+
+	m_inventoryImg[1]->draw(false, false, barLeft,
+		m_videoManager->RegularText->getIndent() + m_videoManager->RegularText->getHeight() * 3,
+		0.0f, baseScale);
+
+	oss.str("");
+	oss << player->Teleports;
+	m_videoManager->RegularText->draw(oss.str(), dataLeft,
+		m_videoManager->RegularText->getIndent() + m_videoManager->RegularText->getHeight() * 3,
+		TextManager::LEFT, TextManager::MIDDLE);
+
 	int bonusN = 0;
 	for (int i = PLAYER_BONUS_FIRST; i < PLAYER_BONUS_COUNT; i++) {
-		if (bonusTimes[i] > 0) {
+		if (player->bonusTimes[i] > 0) {
 			const int y = topBasePoint + bonusN * 132 * baseScale;
 			m_bonusImg[(PlayerBonusType) i]->draw(false, false, barLeft, y, 0,
 					baseScale);
 			drawBar(barLeft + 25 * m_videoManager->Scale, y, barLen, barHeight,
-					bonusTimes[i] / 15000.0f, bcolor, fcolor1, fcolor2);
+					player->bonusTimes[i] / 15000.0f, bcolor, fcolor1, fcolor2);
 			bonusN++;
 		}
 	}
@@ -263,34 +310,10 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 	drawHealth(health, bottomBasePoint);
 	drawExperience(experience, player->LevelPoints, bottomBasePoint);
 
-	drawBonusStack(player->bonusTimes);
+	drawInventory(player);
 
 	if (gameState->Lost && !gameState->Paused)
 		drawEndGameScreen(gameState, player->Xp);
-
-	ostringstream oss;
-	oss << player->getWeapon()->Name << ": " << player->getWeapon()->Ammo
-			<< '/' << player->getWeapon()->AmmoClipSize;
-	m_videoManager->RegularText->draw(oss.str(),
-			m_videoManager->RegularText->getIndent(),
-			m_videoManager->RegularText->getIndent(), TextManager::LEFT,
-			TextManager::TOP);
-
-	oss.str("");
-	oss << boost::format(_("Grenades: %i")) % player->Grenades;
-	m_videoManager->RegularText->draw(oss.str(),
-			m_videoManager->RegularText->getIndent(),
-			m_videoManager->RegularText->getIndent()
-					+ m_videoManager->RegularText->getHeight(),
-			TextManager::LEFT, TextManager::TOP);
-
-	oss.str("");
-	oss << boost::format(_("Teleports: %i")) % player->Teleports;
-	m_videoManager->RegularText->draw(oss.str(),
-			m_videoManager->RegularText->getIndent(),
-			m_videoManager->RegularText->getIndent()
-					+ m_videoManager->RegularText->getHeight() * 2,
-			TextManager::LEFT, TextManager::TOP);
 
 	if (!gameState->Lost)
 		if (Info != "")
@@ -324,4 +347,5 @@ void violetland::HUD::reset() {
 violetland::HUD::~HUD() {
 	reset();
 	clearMap<PlayerBonusType, StaticObject*> (&m_bonusImg);
+	clearVector(&m_inventoryImg);
 }

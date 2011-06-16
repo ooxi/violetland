@@ -17,12 +17,15 @@ private:
 	// References to resources and managers
 	VideoManager* m_videoManager;
 	Resources* m_resources;
-	// Objects to store images of bonuses
+	// Object to store images of temporary bonuses
 	std::map<PlayerBonusType, StaticObject*> m_bonusImg;
+	// Object to store images of permanent indicators
+	std::vector<StaticObject*> m_inventoryImg;
 	// Console messages
 	std::vector<TextObject*> m_messages;
 	// HUD effects timer
 	int m_bounce;
+
 	// Apply HUD effects
 	void applyEffects(float health, int levelPoints);
 	// Drawing of the messages console
@@ -30,7 +33,7 @@ private:
 	// Draw the health bar
 	void drawHealth(float health, int bottomBasePoint);
 	// Draw remaining times of bonuses
-	void drawBonusStack(int* bonusTimes);
+	void drawInventory(Player* player);
 	// Draw the experience bar
 	void drawExperience(float experience, int levelPoints, int bottomBasePoint);
 	// Draw the ammo counter (not implemented)

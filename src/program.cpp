@@ -1801,6 +1801,7 @@ void processGame() {
 void drawGame() {
 	Player* player = (Player*) gameState->getLifeForm(playerId);
 
+	// Actually enable widesight perk
 	if (player->WideSight)
 		if (cam->getW() == 1600)
 			cam->setW(1920);
