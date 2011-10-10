@@ -3,6 +3,11 @@ Legend:
 [*] - some changes in existing features were made
 [!] - a bug was fixed
 
+[0.4.3] [2011-10-10]
+
+[+] integrated inventory sidebar (additional to HUD)
+[!] image of nuke bonus
+
 [0.4.2]
 
 [*] significant changes in strength-agility-vitality balance
