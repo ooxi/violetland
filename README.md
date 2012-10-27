@@ -61,7 +61,7 @@ An universal way to play violetland on linux is to build the program with help o
 Also your system must have the SDL packages (`SDL`, `SDL_image`, `SDL_ttf`, `SDL_mixer`), the same devel packages and gcc.
 
 ### NOTE FOR UBUNTU USERS
-You should execute command like `sudo apt-get install cmake libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev` to install required packages.
+You should execute command like `sudo apt-get install cmake libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev` to install required packages (tested with Ubuntu 12.04).
 
 Besides, some additional steps are required.
 
