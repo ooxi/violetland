@@ -25,6 +25,15 @@ Violetland is an open source cross-platform game similar to Crimsonland. In this
  * [IRC](irc://irc.freenode.net/#violetland)
  * [Google Groups](http://groups.google.com/group/violetland)
 
+SCREENSHOTS
+-----------
+
+[![Violetland uses an advanced illumination system](http://violetland.github.com/images/screenshots/thumbnail/violetland-illumination-200x150.png)](http://violetland.github.com/images/screenshots/original/violetland-illumination.png)
+[![Violet shooting a laser](http://violetland.github.com/images/screenshots/thumbnail/violetland-laser-200x150.png)](http://violetland.github.com/images/screenshots/original/violetland-laser.png)
+[![Death is the only way out ;)](http://violetland.github.com/images/screenshots/thumbnail/violetland-death-200x150.png)](http://violetland.github.com/images/screenshots/original/violetland-death.png)
+[![Lighting up the dark](http://violetland.github.com/images/screenshots/thumbnail/violetland-flashlight-200x150.png)](http://violetland.github.com/images/screenshots/original/violetland-flashlight.png)
+[![You cannot say manslaughter without laughter](http://violetland.github.com/images/screenshots/thumbnail/violetland-massacre-200x150.jpg)](http://violetland.github.com/images/screenshots/original/violetland-massacre.jpg)
+
 SYSTEM REQUIREMENTS
 -------------------
 
