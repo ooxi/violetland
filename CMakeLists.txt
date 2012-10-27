@@ -92,7 +92,7 @@ endif(DEFINED DATA_INSTALL_DIR)
 
 install(TARGETS violetland DESTINATION bin)
 install(FILES
-	README_EN.TXT
+	README.md
 	README_RU.TXT
 	icon-light.png
 DESTINATION ${relResPath})
