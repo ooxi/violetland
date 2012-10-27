@@ -19,9 +19,11 @@ Violetland is an open source cross-platform game similar to Crimsonland. In this
 
 ### Community
 
- * (irc://irc.freenode.net/#violetland)
- * (http://code.google.com/p/violetland/)
- * (http://groups.google.com/group/violetland)
+ * [Git source repository](https://github.com/ooxi/violetland)
+ * [Issue tracker](https://github.com/ooxi/violetland/issues)
+ * [Wiki](https://github.com/ooxi/violetland/wiki)
+ * [IRC](irc://irc.freenode.net/#violetland)
+ * [Google Groups](http://groups.google.com/group/violetland)
 
 SYSTEM REQUIREMENTS
 -------------------
@@ -35,7 +37,7 @@ WINDOWS
 
 CAUTION! Now a hot switching of video modes from options screen isn't finalized. When you will apply changes in the options screen, the program will shut down. You must manually restart the program.
 
-The executable was created with help of MSVC++ 2010, thus the Microsoft Visual C++ 2010 Redistributable Package may be needed. Download it at http://www.microsoft.com/downloads/en/details.aspx?FamilyID=a7b7a05e-6de6-4d3a-a423-37bf0912db84&displaylang=en.
+The executable was created with help of MSVC++ 2010, thus the Microsoft Visual C++ 2010 Redistributable Package may be needed. You can download it from [Microsoft](http://www.microsoft.com/downloads/en/details.aspx?FamilyID=a7b7a05e-6de6-4d3a-a423-37bf0912db84&displaylang=en).
 
 The program can't be started (because it can't load resources) if the path to the executable contains cyrillic symbols.
 
@@ -44,7 +46,7 @@ There is a workaround for this problem. Run the program by the command shell scr
 LINUX
 -----
 
-Check for violetland package in main repositories of your linux distro. If there is nothing, check related wiki page  http://code.google.com/p/violetland/wiki/ThirdParyPackages.
+Check for violetland package in main repositories of your linux distro. If there is nothing, check related wiki page for [third party packages](https://github.com/ooxi/violetland/wiki/Third-Pary-Packages).
 
 An universal way to play violetland on linux is to build the program with help of the cmake build system. You probably can install it from the main repository of your linux distribution.
 Also your system must have the SDL packages (`SDL`, `SDL_image`, `SDL_ttf`, `SDL_mixer`), the same devel packages and gcc.
