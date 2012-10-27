@@ -19,7 +19,7 @@ Violetland is an open source cross-platform game similar to Crimsonland. In this
 
 ### Community
 
- * [Git source repository](https://github.com/ooxi/violetland)
+ * [Git source repository](https://github.com/ooxi/violetland) [![Build Status](https://travis-ci.org/ooxi/violetland.png)](https://travis-ci.org/ooxi/violetland)
  * [Issue tracker](https://github.com/ooxi/violetland/issues)
  * [Wiki](https://github.com/ooxi/violetland/wiki)
  * IRC irc.freenode.net #violetland
