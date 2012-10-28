@@ -6,6 +6,11 @@ Legend
  * `[!]` a bug was fixed
 
 
+Upcoming release
+----------------
+
+ * `[!]` Fixed i18n support in [issue 62](https://github.com/ooxi/violetland/pull/62)
+
 Release 0.4.3 (2011-10-10)
 --------------------------
 
