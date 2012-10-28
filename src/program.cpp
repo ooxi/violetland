@@ -36,7 +36,6 @@
 #include <libintl.h>
 #include <locale.h>
 #define _(STRING)			gettext(STRING)
-#define TRANSLATION_PATH 	"./po"
 
 // The Game
 #include "game/Game.h"
@@ -284,7 +283,7 @@ void initInternationlization() {
 	setlocale(LC_ALL, "");
 
 	//~ i18n: Indicate the path of the i18n catalog file
-	bindtextdomain("violetland", TRANSLATION_PATH);
+	bindtextdomain("violetland", LOCALE_DIR);
 
 	//~ i18n: sets the message domain
 	textdomain("violetland");

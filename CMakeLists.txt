@@ -9,6 +9,7 @@ find_package(SDL_mixer REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Boost COMPONENTS filesystem system REQUIRED)
 add_definitions(-DBOOST_FILESYSTEM_VERSION=2)
+set(LOCALEDIR "${CMAKE_INSTALL_PREFIX}/locale")
 
 if(${MINGW})
 	set(INTL_LIBRARY intl)
@@ -17,6 +18,7 @@ endif(${MINGW})
 set(incDirList  ${SDL_INCLUDE_DIR}  ${SDLIMAGE_INCLUDE_DIR} ${SDLTTF_INCLUDE_DIR} ${SDLMIXER_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 set(libList ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${SDLMIXER_LIBRARY} ${OPENGL_LIBRARIES} ${Boost_LIBRARIES} ${INTL_LIBRARY})
 
+add_subdirectory(po)
 include_directories(${incDirList})
 
 set(srcDir src)
@@ -78,6 +80,7 @@ set(srcFileList
 )
 
 add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
+add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
 
 add_executable(violetland ${srcFileList})
 
