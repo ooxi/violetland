@@ -1,1 +1,7 @@
+# Temporary files
 *~
+
+# Build and distribution directories
+build
+dist
+
