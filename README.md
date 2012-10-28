@@ -12,9 +12,9 @@ Violetland is an open source cross-platform game similar to Crimsonland. In this
  * graphic is based on opengl.
  * dynamic change of day and night.
  * not disappearing corpses.
- * improves with experience ñharacter.
+ * character improves with experience.
  * firearms, hand grenades, teleports, bonuses.
- * languages: english, french, russian, galician, spain.
+ * [languages](http://www.getlocalization.com/violetland/): english, [french](http://www.getlocalization.com/violetland/m_translate/8553/), [russian](http://www.getlocalization.com/violetland/m_translate/8551/), [galician](http://www.getlocalization.com/violetland/m_translate/8554/), [spain](http://www.getlocalization.com/violetland/m_translate/8552/).
  * works on gnu/linux, freebds, windows, mac.
 
 ### Community
