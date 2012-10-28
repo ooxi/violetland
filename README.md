@@ -91,7 +91,7 @@ In addition you can install the executable and the game data to the separate dir
 
     $ mkdir build
     $ cd build
-    $ cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DDATA_INSTALL_DIR=/usr/share/games/violetland ..
+    $ cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DDATA_INSTALL_DIR=/usr/share/games/violetland -DLOCALE_INSTALL_DIR=/usr/share/locale ..
     $ sudo make install
 
 Controls
