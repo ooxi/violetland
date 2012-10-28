@@ -17,6 +17,13 @@ endif(${MINGW})
 set(incDirList  ${SDL_INCLUDE_DIR}  ${SDLIMAGE_INCLUDE_DIR} ${SDLTTF_INCLUDE_DIR} ${SDLMIXER_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 set(libList ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${SDLMIXER_LIBRARY} ${OPENGL_LIBRARIES} ${Boost_LIBRARIES} ${INTL_LIBRARY})
 
+if (DEFINED LOCALE_INSTALL_DIR)
+	set(LOCALEDIR "${LOCALE_INSTALL_DIR}")
+else(DEFINED LOCALE_INSTALL_DIR)
+	set(LOCALEDIR "${CMAKE_INSTALL_PREFIX}/locale")
+endif(DEFINED LOCALE_INSTALL_DIR)
+
+add_subdirectory(po)
 include_directories(${incDirList})
 
 set(srcDir src)
@@ -78,6 +85,7 @@ set(srcFileList
 )
 
 add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
+add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
 
 add_executable(violetland ${srcFileList})
 
