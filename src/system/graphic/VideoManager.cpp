@@ -47,15 +47,27 @@ bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 }
 
 std::vector<SDL_Rect> VideoManager::GetAvailableModes() {
-	/* This way is better than SDL_ListModes because of
-	 * SDL_ListModes returns not all possible modes
-	 */
 
-	// Number of possible modes
-	int wL[] = { 400, 640, 800, 1024, 1280, 1280, 1280, 1280, 1366, 1600, 1600,
-			1680, 1920, 1920 };
-	int hL[] = { 300, 480, 600, 768, 720, 768, 800, 1024, 768, 900, 1200, 1050,
-			1080, 1200 };
+	/* All possible width
+	 */
+	#define EXPAND_VIDEO_MODE(name, width, height)			\
+		width,
+
+	static int wL[] = {
+		#include "VideoModes.h"
+	};
+	#undef EXPAND_VIDEO_MODE
+
+	/* All possible height
+	 */
+	#define EXPAND_VIDEO_MODE(name, width, height)			\
+		height,
+
+	static int hL[] = {
+		#include "VideoModes.h"
+	};
+	#undef EXPAND_VIDEO_MODE
+
 
 	// If the mode is supported, it will be added to the return list
 	std::vector<SDL_Rect> modes;
