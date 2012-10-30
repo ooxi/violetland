@@ -62,6 +62,7 @@ set(srcFileList
 	${srcSystemDir}/InputHandler.cpp
 	${srcSystemDir}/ConfigFile.cpp
 	${srcSystemDir}/Configuration.cpp
+	${srcSystemDir}/ControlStyle.cpp
 	${srcUtilityDir}/FileUtility.cpp
 	${srcUtilityDir}/ImageUtility.cpp
 	${srcUtilityDir}/UidGenerator.cpp

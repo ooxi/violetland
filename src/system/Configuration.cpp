@@ -18,6 +18,7 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	AimColorB = 0xFFFFFF;
 	AutoWeaponPickup = true;
 	FriendlyFire = false;
+	Control = violetland::E_CONTROL_STYLE_MODERN;
 
 	PlayerInputBinding[InputHandler::Teleport].Value = SDLK_q;
 	PlayerInputBinding[InputHandler::MoveLeft].Value = SDLK_a;
@@ -46,8 +47,9 @@ Configuration::Configuration(FileUtility* fileUtility) {
 
 void Configuration::read() {
 	try {
-		ConfigFile cFile(
-				m_fileUtility->getFullPath(FileUtility::user, "config"));
+		ConfigFile cFile(m_fileUtility->getFullPath(
+			FileUtility::user, "config"
+		));
 
 		cFile.readInto(Screen.Width, "screenWidth");
 		cFile.readInto(Screen.Height, "screenHeight");
@@ -62,6 +64,10 @@ void Configuration::read() {
 		cFile.readInto(AimColorB, "aimColorB");
 		cFile.readInto(AutoWeaponPickup, "autoWeaponPickup");
 		cFile.readInto(FriendlyFire, "friendlyFire");
+
+		int controlStyle = 0;
+		cFile.readInto(controlStyle, "controlStyle");
+		Control = violetland::ControlStyleFromInt(controlStyle);
 
 		for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
 			ReadPlayerBinding(&cFile, &PlayerInputBinding[i],
@@ -111,6 +117,7 @@ void Configuration::write() {
 	cFile.add("screenWidth", Screen.Width);
 	cFile.add("autoWeaponPickup", AutoWeaponPickup);
 	cFile.add("friendlyFire", FriendlyFire);
+	cFile.add("controlStyle", Control);
 
 	for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
 		WritePlayerBinding(&cFile, &PlayerInputBinding[i],
@@ -128,3 +135,4 @@ void Configuration::write() {
 Configuration::~Configuration() {
 	// nothing
 }
+

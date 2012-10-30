@@ -5,6 +5,7 @@
 
 #include "utility/FileUtility.h"
 #include "ConfigFile.h"
+#include "ControlStyle.h"
 #include "InputHandler.h"
 
 struct VideoMode {
@@ -33,6 +34,7 @@ public:
 	int AimColorA, AimColorB;
 	bool AutoWeaponPickup;
 	bool FriendlyFire;
+	violetland::ControlStyle Control;
 	InputHandler::Binding
 			PlayerInputBinding[InputHandler::GameInputEventsCount];
 	void ReadPlayerBinding(ConfigFile* cFile, InputHandler::Binding* binding,

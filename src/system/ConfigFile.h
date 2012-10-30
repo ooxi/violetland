@@ -1,4 +1,6 @@
 // Copyright (c) 2004 Richard J. Wagner
+#ifndef CONFIGFILE_H_
+#define CONFIGFILE_H_
 
 #include <string>
 #include <map>
@@ -7,11 +9,6 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-
-#ifndef CONFIGFILE_H_
-#define CONFIGFILE_H_
-
-
 
 class ConfigFile {
 protected:
