@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[*]` Added more available video modes, since auto detection doesn't seam to work
  * `[!]` Fixed i18n support in [issue 62](https://github.com/ooxi/violetland/pull/62)
 
 Release 0.4.3 (2011-10-10)
