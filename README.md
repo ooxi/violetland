@@ -69,6 +69,7 @@ First download and unpack the distribution package or get files from the reposit
 
 Next go to the root distribution directory and make the program using cmake (the default install prefix is `/usr/local`):
 
+    $ git submodule update
     $ mkdir build
     $ cd build
     $ cmake ..
@@ -80,6 +81,7 @@ Then run the program:
 
 Instead of installing the program to `/usr/local` you can install it in your home folder or everywhere you want. Then probably the root password to access `/usr/local` will be not necessary. To do that you can use next example:
 
+    $ git submodule update
     $ mkdir build
     $ cd build
     $ cmake -DCMAKE_INSTALL_PREFIX=../dist ..
@@ -89,6 +91,7 @@ Instead of installing the program to `/usr/local` you can install it in your hom
 
 In addition you can install the executable and the game data to the separate directory trees:
 
+    $ git submodule update
     $ mkdir build
     $ cd build
     $ cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DDATA_INSTALL_DIR=/usr/share/games/violetland -DLOCALE_INSTALL_DIR=/usr/share/locale ..
