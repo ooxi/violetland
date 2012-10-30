@@ -605,6 +605,18 @@ void switchResolutionUp(void* sender, std::string elementName) {
 	refreshOptionsWindow();
 }
 
+void refreshControlsMenuWindow();
+
+void changeControlStyle(void* sender, std::string elementName) {
+	enum ControlStyle style = GetNextControlStyle(config->Control);
+	config->Control = style;
+	
+	std::cout << (boost::format(_("Changed control style to %s.")) % ControlStyleToString(style)) << std::endl;
+	config->write();
+
+	refreshControlsMenuWindow();
+}
+
 void controlsMenuWindowController(void* sender, std::string elementName);
 
 inline void addControlElement(Window* w, unsigned i, unsigned strN,
@@ -629,20 +641,36 @@ void refreshControlsMenuWindow() {
 	const int col1_l = videoManager->getVideoMode().Width * 0.1f;
 	const int col1_r = videoManager->getVideoMode().Width * 0.45f;
 
-	w->addElement("controls", _("Controls"), videoManager->RegularText, col1_l,
-			videoManager->RegularText->getHeight() * 2.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-
+	w->addElement("controls", _("Controls"), videoManager->RegularText,
+			col1_l, videoManager->RegularText->getHeight() * 2.0f,
+			TextManager::LEFT, TextManager::MIDDLE
+	);
 	const int col2_l = videoManager->getVideoMode().Width * 0.55f;
 	const int col2_r = videoManager->getVideoMode().Width * 0.9f;
+
+
+	/* Change the control style
+	 */
+	w->addElement("control-style", _("Control style"),
+			videoManager->RegularText,
+			col1_l,  (videoManager->RegularText->getHeight() + 35) * 2.0f,
+			TextManager::LEFT, TextManager::MIDDLE
+	);
+	w->addElement("control-style-value", ControlStyleToString(config->Control),
+			videoManager->RegularText,
+			col1_r,  (videoManager->RegularText->getHeight() + 35) * 2.0f,
+			TextManager::RIGHT, TextManager::MIDDLE
+	);
+	w->addHandler(Window::hdl_lclick, "control-style", changeControlStyle);
+
 
 	unsigned col1_items = (InputHandler::GameInputEventsCount + 1) / 2;
 
 	for (unsigned i = 0; i < col1_items; i++)
-		addControlElement(w, i, i + 4, col1_l, col1_r);
+		addControlElement(w, i, i + 6, col1_l, col1_r);
 
 	for (unsigned i = col1_items; i < InputHandler::GameInputEventsCount; i++)
-		addControlElement(w, i, i - col1_items + 4, col2_l, col2_r);
+		addControlElement(w, i, i - col1_items + 6, col2_l, col2_r);
 }
 
 void drawWindows() {
@@ -1272,13 +1300,25 @@ void levelUp(Player* player) {
 	player->setHealth(player->MaxHealth());
 }
 
-void handlePlayer(LifeForm* lf) {
-	Player* player = (Player*) lf;
-
-	if (player->Xp >= player->NextLevelXp) {
-		levelUp(player);
+static float fixFuckedupAngle(float angle) {
+	if (angle > 180.1f) {
+		return fixFuckedupAngle(angle - 360.f);
+	} else if (angle < -180.1f) {
+		return fixFuckedupAngle(angle + 360.f);
+	} else {
+		return angle;
 	}
+}
 
+
+
+
+
+/**
+ * Classic controller where the player's direction is absolute (press arrow up
+ * and Violet will go north)
+ */
+static void handlePlayerClassicStyle(Player* player) {
 	char movementX = 0;
 	char movementY = 0;
 
@@ -1295,6 +1335,100 @@ void handlePlayer(LifeForm* lf) {
 
 	if (movementX != 0 || movementY != 0)
 		player->move(movementDirection, videoManager->getFrameDeltaTime());
+}
+
+
+/**
+ * New controls where the directions are relative to the player's looking
+ * direction
+ *
+ * @warning All angles are in degree with 0 equals north, 180 = -180 equals
+ *     south, -90 equals west and 90 equals east
+ */
+static void handlePlayerModernStyle(Player* player) {
+
+	/* Movement in the direction where the player is looking
+	 */
+	int parallel = 0;
+
+	if (input->getDownInput(InputHandler::MoveUp)) {
+		parallel += 1;
+	}
+	if (input->getDownInput(InputHandler::MoveDown)) {
+		parallel -= 1;
+	}
+
+
+	/* Movement perpendicular to the direction where the player is looking
+	 * (negative means left, positive means right -- just as in politics, as
+	 * my physics prof used to say ;)
+	 */
+	int perpendicular = 0;
+
+	if (input->getDownInput(InputHandler::MoveLeft)) {
+		perpendicular -= 1;
+	}
+	if (input->getDownInput(InputHandler::MoveRight)) {
+		perpendicular += 1;
+	}
+
+
+	/* Calculate angle relative to the direction, the player is
+	 * looking at
+	 */
+	if (parallel != 0 || perpendicular != 0) {
+
+		/* Base direction is always where the player is looking at
+		 */
+		float direction = player->getArmsAngle();
+
+		/* Backwards means the opposite direction of where the user is
+		 * going
+		 */
+		if (-1 == parallel) {
+			direction = fixFuckedupAngle(direction + 180.f);
+		}
+		
+		/* Strafe left
+		 */
+		if (-1 == perpendicular) {
+			direction = fixFuckedupAngle(direction - 90.f);
+		} else if (1 == perpendicular) {
+			direction = fixFuckedupAngle(direction + 90.f);
+		}
+			
+		/* Go in the desired direction :-)
+		 */
+		player->move(
+			direction,
+			videoManager->getFrameDeltaTime()
+		);
+	}
+}
+
+
+
+void handlePlayer(LifeForm* lf) {
+	Player* player = (Player*) lf;
+
+	if (player->Xp >= player->NextLevelXp) {
+		levelUp(player);
+	}
+
+
+	/* Use controller configured by the player
+	 */
+	switch (config->Control) {
+		case E_CONTROL_STYLE_CLASSIC:
+			handlePlayerClassicStyle(player);
+			break;
+		case E_CONTROL_STYLE_MODERN:
+			handlePlayerModernStyle(player);
+			break;
+		default:
+			std::cout << (boost::format(_("Unknown control style to %s.")) % ControlStyleToString(config->Control)) << std::endl;
+	}
+
 
 	if (lf->X < -gameState->GameAreaSize)
 		player->setX(-gameState->GameAreaSize);
@@ -1387,6 +1521,10 @@ void handlePlayer(LifeForm* lf) {
 				player->throwGrenade(resources->GrenadeSprite));
 	}
 }
+
+
+
+
 
 //Choice and creation of bonus
 void dropPowerup(float x, float y, float chance, bool forceWeapon) {
