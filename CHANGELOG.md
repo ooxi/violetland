@@ -9,7 +9,7 @@ Legend
 Upcoming release
 ----------------
 
- * `[+]` Control style can now be toggled between "classic" and "modern"
+ * `[+]` As of [issue 64](https://github.com/ooxi/violetland/pull/64) the control style can be toggled between "classic" and "modern"
  * `[*]` Added more available video modes in [issue 63](https://github.com/ooxi/violetland/pull/63), since auto detection doesn't seam to work
  * `[!]` Fixed i18n support in [issue 62](https://github.com/ooxi/violetland/pull/62)
 
