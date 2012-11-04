@@ -56,6 +56,7 @@ Check for violetland package in main repositories of your linux distro. If there
 An universal way to play violetland on linux is to build the program with help of the cmake build system. You probably can install it from the main repository of your linux distribution.
 Also your system must have the SDL packages (`SDL`, `SDL_image`, `SDL_ttf`, `SDL_mixer`), the same devel packages and gcc.
 
+
 ### NOTE FOR UBUNTU USERS
 You should execute command like `sudo apt-get install cmake libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev` to install required packages (tested with Ubuntu 12.04).
 
@@ -92,6 +93,16 @@ In addition you can install the executable and the game data to the separate dir
     $ cd build
     $ cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DDATA_INSTALL_DIR=/usr/share/games/violetland -DLOCALE_INSTALL_DIR=/usr/share/locale ..
     $ sudo make install
+
+
+### NOTE FOR FEDORA USERS
+
+In order to build Violetland on Fedora 17, you need to install the following packages
+
+    # yum install boost-devel cmake gcc-c++ SDL-devel SDL_image-devel SDL_mixer-devel SDL_ttf-devel
+
+The rest of the build and installation procedure is identical to Ubuntu.
+
 
 OpenBSD
 -------
