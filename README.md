@@ -97,9 +97,11 @@ OpenBSD
 -------
 
     # pkg_add boost sdl sdl-image sdl-mixer sdl-ttf
+    $ git clone https://github.com/ooxi/violetland.git; cd violetland
     $ git submodule init; git submodule update
     $ mkdir build; cd build
     $ cmake -DCMAKE_INSTALL_PREFIX=../dist ..
+    $ make install
 
 
 Controls
