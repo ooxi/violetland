@@ -96,6 +96,8 @@ In addition you can install the executable and the game data to the separate dir
 OpenBSD
 -------
 
+[OpenBSD](http://www.openbsd.org/) support was tested with OpenBSD 5.2
+
     # pkg_add boost sdl sdl-image sdl-mixer sdl-ttf
     $ git clone https://github.com/ooxi/violetland.git; cd violetland
     $ git submodule init; git submodule update
