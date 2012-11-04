@@ -77,7 +77,7 @@ Then run the program:
 
 Instead of installing the program to `/usr/local` you can install it in your home folder or everywhere you want. Then probably the root password to access `/usr/local` will be not necessary. To do that you can use next example:
 
-    $ git submodule update
+    $ git submodule init; git submodule update
     $ mkdir build
     $ cd build
     $ cmake -DCMAKE_INSTALL_PREFIX=../dist ..
@@ -87,11 +87,24 @@ Instead of installing the program to `/usr/local` you can install it in your hom
 
 In addition you can install the executable and the game data to the separate directory trees:
 
-    $ git submodule update
+    $ git submodule init; git submodule update
     $ mkdir build
     $ cd build
     $ cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DDATA_INSTALL_DIR=/usr/share/games/violetland -DLOCALE_INSTALL_DIR=/usr/share/locale ..
     $ sudo make install
+
+OpenBSD
+-------
+
+[OpenBSD](http://www.openbsd.org/) support was tested with OpenBSD 5.2
+
+    # pkg_add boost sdl sdl-image sdl-mixer sdl-ttf
+    $ git clone https://github.com/ooxi/violetland.git; cd violetland
+    $ git submodule init; git submodule update
+    $ mkdir build; cd build
+    $ cmake -DCMAKE_INSTALL_PREFIX=../dist ..
+    $ make install
+
 
 Controls
 --------
