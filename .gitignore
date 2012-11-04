@@ -1,5 +1,6 @@
 # Temporary files
 *~
+*.swp
 
 # Build and distribution directories
 build
