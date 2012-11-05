@@ -9,7 +9,7 @@ find_package(SDL_mixer REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Gettext REQUIRED)
 find_package(Boost COMPONENTS filesystem system REQUIRED)
-add_definitions(-DBOOST_FILESYSTEM_VERSION=2)
+add_definitions(-DBOOST_FILESYSTEM_VERSION=3)
 
 # Searching for libintl using bundled CMake script
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib/fcitx/cmake")
