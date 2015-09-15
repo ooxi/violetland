@@ -1,0 +1,19 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+	config.vm.box = "ubuntu/vivid64"
+
+	config.vm.provision "shell", inline: <<-SHELL
+		sudo apt-get update
+		sudo apt-get install -y git gzip tar 
+		sudo apt-get install -y build-essential cmake gettext libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev
+		echo "ubuntu-15.04-amd64" > TARGET
+	SHELL
+
+	config.vm.provision "file", source: "../build.sh", destination: "build.sh"
+	config.vm.synced_folder "../../", "/violetland"
+end
+
