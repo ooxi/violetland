@@ -256,7 +256,19 @@ string getDefaultName() {
 #ifdef _WIN32
 	return DEFAULT_CHAR_NAME;
 #else
-	string name = getenv("USER");
+	
+	// Try to read username from system environment
+	char* user = getenv("USER");
+	
+	// `user' can be null if `USER' environment property not found
+	//
+	// @see http://linux.die.net/man/3/getenv
+	// @see https://github.com/ooxi/violetland/issues/71
+	if (!user) {
+		return DEFAULT_CHAR_NAME;
+	}
+	
+	string name = user;
 	if (name.empty()) {
 		struct passwd *p;
 		uid_t uid;
