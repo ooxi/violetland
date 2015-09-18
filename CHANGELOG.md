@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[!]` Fixed game startup crash when `USER` environment variable is not found in [issue 71](https://github.com/ooxi/violetland/issues/71)
  * `[!]` Improved OpenBSD Support
  * `[+]` As of [issue 64](https://github.com/ooxi/violetland/pull/64) the control style can be toggled between "classic" and "modern"
  * `[*]` Added more available video modes in [issue 63](https://github.com/ooxi/violetland/pull/63), since auto detection doesn't seam to work
