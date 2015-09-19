@@ -4,33 +4,19 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-	config.vm.box = "debian/jessie64"
-	
-	# @see http://mxe.cc/#requirements
-	config.vm.provider "virtualbox" do |v|
-		v.memory = 2048
-		v.cpus = 2
-	end
 
-	# @see http://mxe.cc/#requirements-debian
+	# Rebuilding everything from scratch takes far too long, therefore we use
+	# `mxe-violetland' which provides a preconfigured mxe cross building
+	# environment
+	config.vm.box = "mxe-violetland"
+	
 	config.vm.provision "shell", inline: <<-SHELL
-		sudo apt-get update
-		sidp apt-get install zip
-		sudo apt-get install -y \
-			autoconf automake autopoint bash bison bzip2 cmake flex gettext git g++ gperf intltool libffi-dev libtool libltdl-dev libssl-dev libxml-parser-perl make openssl p7zip-full patch perl pkg-config python ruby scons sed unzip wget xz-utils
-		sudo apt-get install -y \
-			g++-multilib libc6-dev-i386
-		sudo apt-get install -y \
-			libtool-bin
-			
-		git clone https://github.com/mxe/mxe.git
-		cd mxe
-		echo "MXE_TARGETS := i686-w64-mingw32.static x86_64-w64-mingw32.static" >> settings.mk
-		make gcc boost sdl sdl_image sdl_ttf sdl_mixer gettext intltool
-		chown -R vagrant:vagrant .
+		apt-get update
+		apt-get install -y git zip
 	SHELL
 
-	config.vm.provision "file", source: "build.sh", destination: "build.sh"
+	config.vm.provision "file", source: "build-amd64.sh", destination: "build-amd64.sh"
+	config.vm.provision "file", source: "build-x86.sh", destination: "build-x86.sh"
 	config.vm.synced_folder "../../", "/violetland"
 end
 
