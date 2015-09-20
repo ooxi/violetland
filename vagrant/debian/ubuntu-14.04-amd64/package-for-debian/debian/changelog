@@ -1,0 +1,163 @@
+violetland (0.5-rc1) UNRELEASED; urgency=medium
+
+  * New upstream version
+
+ -- Anton Goncharov <violetland@mail.ru>  Sat, 19 Sep 2015 19:29:46 +0000
+
+violetland (0.4.3-1~getdeb4~vivid) vivid; urgency=medium
+
+  * Rebuild for vivid
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Tue, 21 Apr 2015 20:50:41 +0200
+
+violetland (0.4.3-1~getdeb3~trusty) trusty; urgency=low
+
+  * Rebuild for trusty
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Sun, 06 Apr 2014 22:12:45 +0200
+
+violetland (0.4.3-1~getdeb2~quantal) quantal; urgency=low
+
+  * Rebuild for quantal
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Sat, 20 Oct 2012 15:29:00 +0200
+
+violetland (0.4.3-1~getdeb1~oneiric) oneiric; urgency=low
+
+  * New upstream version
+    [+] integrated inventory sidebar (additional to HUD)
+    [!] image of nuke bonus
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Wed, 09 Nov 2011 18:28:14 +0100
+
+violetland (0.4.2-1~getdeb1) natty; urgency=low
+
+  * New upstream version
+    [*] significant changes in strength-agility-vitality balance
+    [*] widesight now fairy increase sight area by 20%
+    [*] poison perk is 2 times stronger
+    [!] few major bugz
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Sun, 12 Jun 2011 11:42:58 +0200
+
+violetland (0.4.1-1~getdeb2~natty) natty; urgency=low
+
+  * New upstream version
+    [+] new perk "magneto"
+    [*] game messages are written to stdout
+    [*] telekinesis perk now behaves like in original crimsonland,
+        a status (percentage) can be seen on top-center of the screen
+    [*] more realistic laser aim will be helpful at night
+    [!] bug with changing the controls
+    [!] few errors in game messages
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Fri, 10 Jun 2011 13:05:59 +0200
+
+violetland (0.4.0-1~getdeb2~natty) natty; urgency=low
+
+  * New upstream version
+    [+] new graphics for flamethrower and sawed-off shotgun
+    [*] moved to boost library
+    [*] small performance improvements
+    [!] issue 49 (changing bindings is broken)
+    [!] issue 51 (vitality does not affect health regeneration)
+    [!] issue 52 (controls definitions not loads when starting program)
+    [!] issue 53 (wrong values in highscores screen)
+    [!] issue with path to resources after install with cmake
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Thu, 12 May 2011 21:45:24 +0200
+
+violetland (0.3.2-1~getdeb1) lucid; urgency=low
+
+  * New upstream version
+    [+] support of internationalization:
+        english, french, russian, galician, spain
+    [+] new game mode "attack waves"
+    [+] new weapon "flamethrower"
+    [+] new perk "wide sight"
+    [*] new font
+    [*] more animations: teleportation, nuclear explosion
+    [*] some monsters have now the parameter "stamina"
+        - they can't run all the time
+    [*] default player name is the system user name on
+        linux platform
+    [*] issue 19 (xp and item will drop out immediately
+        after kill monster)
+    [!] issue 36 and other fixes around movements of
+        player and monsters
+    [!] issue 38 (light is placed wrong for sawed-off shotgun)
+    [!] issue 40 (blue cursor after death in teleportation mode)
+    [!] issues 45, 48 and other undocumented fixes to
+        improve performance and reliability
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Tue, 12 Apr 2011 19:05:18 +0200
+
+violetland (0.3.1-1~getdeb1) lucid; urgency=low
+
+  * New upstream version
+    [+] new weapon "SawedOff-Shotgun"
+    [+] game controls are changeable from game menu
+    [+] new perk "looting"
+    [+] support of 1366*768 resolution
+    [*] strength affects maximum health
+    [*] new HUD animation
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Sun, 12 Sep 2010 18:44:09 +0200
+
+violetland (0.3.0-1~getdeb2) lucid; urgency=low
+
+  * Fixed debian/watch file
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Wed, 21 Jul 2010 21:31:35 +0200
+
+violetland (0.3.0-1~getdeb1) lucid; urgency=low
+
+  * New upstream version
+    [+] bonuses timers
+    [!] invalid volume of sound at options screen
+    [!] extra shot after teleportation
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Wed, 05 May 2010 21:04:20 +0200
+
+violetland (0.2.10-1~getdeb1) lucid; urgency=low
+
+  * New upstream version
+    [+] new perk "night vision"
+    [+] new bonus "nuke"
+    [+] new bonus "strength boost"
+    [+] new bonus "agility boost"
+    [+] new bonus "vitality boost"
+    [+] new bonus "teleport" and a possibility to switch action mode
+    (fire/teleport)
+    [+] possibility to change some input binding (now in test mode, see
+    comment for the commit r198)
+    [*] new HUD (Head-Up Display)
+    [!] fixed issue 32 (pressing C when the player is dead will crash the
+    game)
+    [!] fixed issues 29 and 33 (problems with adding of new weapons)
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Thu, 29 Apr 2010 20:21:01 +0200
+
+violetland (0.2.9-1~getdeb1) karmic; urgency=low
+
+  * New upstream version
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Sat, 27 Feb 2010 00:20:24 +0100
+
+violetland (0.2.8-1~getdeb1) karmic; urgency=low
+
+  * New upstream version
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Fri, 26 Feb 2010 18:31:48 +0100
+
+violetland (0.2.4-1~getdeb2) karmic; urgency=low
+
+  * Added debian/watch file
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Fri, 26 Feb 2010 18:27:21 +0100
+
+violetland (0.2.4-1~getdeb1) karmic; urgency=low
+
+  * Initial release (LP: #500289)
+
+ -- Christoph Korn <christoph.korn@getdeb.net>  Sat, 26 Dec 2009 21:41:15 +0100

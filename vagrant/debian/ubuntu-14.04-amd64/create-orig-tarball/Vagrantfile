@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+	config.vm.box = "ubuntu/trusty64"
+
+	config.vm.provision "file", source: "../../../../", destination: "/home/vagrant/violetland"
+
+	config.vm.provision "shell", inline: <<-SHELL
+	
+		# Install necessary utilities
+		sudo apt-get update
+		sudo apt-get install -y git gzip tar
+
+		# Download submodules
+		cd violetland
+		git submodule init
+		git submodule update
+		cd ..
+
+		# Remove build system and SCM files
+		rm -rf violetland/.git
+		rm -rf violetland/lib/CMake-Gettext/.git
+		rm -rf violetland/lib/fcitx/.git
+		rm -rf violetland/vagrant
+
+		# Package and export upstream tarball
+		tar -czf violetland_0.5.orig.tar.gz violetland
+		mv violetland_0.5.orig.tar.gz /vagrant
+	SHELL
+
+end
+

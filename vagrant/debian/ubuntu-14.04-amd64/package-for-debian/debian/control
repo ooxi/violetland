@@ -1,0 +1,29 @@
+Source: violetland
+Section: games
+Priority: optional
+Maintainer: Christoph Korn <christoph.korn@getdeb.net>
+Build-Depends: debhelper (>= 9),
+               cmake,
+               libsdl-image1.2-dev,
+               libsdl-mixer1.2-dev,
+               libsdl-ttf2.0-dev,
+               libsdl1.2-dev,
+               libboost-dev,
+               libboost-filesystem-dev,
+               libboost-system-dev
+Standards-Version: 3.9.5
+Homepage: https://github.com/ooxi/violetland/
+
+Package: violetland
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+Description: Open source cross-platform game similar to Crimsonland
+ In this game the player should help a girl by name of
+ Violet to struggle with hordes of monsters. For this
+ purpose the various weapon, and also the special abilities
+ of the heroine which are opening with experience can be used.
+ In game there are elements of RPG in the form of
+ strength-agility-vitality and derivatives. Also there is an
+ unique feature: dynamic change of day and night.
+
