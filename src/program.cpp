@@ -70,7 +70,7 @@ using namespace std;
 using namespace violetland;
 
 const string PROJECT = "violetland";
-const string VERSION = "0.4.4~SNAPSHOT";
+const string VERSION = VIOLETLAND_VERSION;
 const string DEFAULT_CHAR_NAME = "Violet";
 
 Configuration* config;
