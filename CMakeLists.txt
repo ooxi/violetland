@@ -31,6 +31,10 @@ endif(DEFINED LOCALE_INSTALL_DIR)
 add_subdirectory(po)
 include_directories(${incDirList})
 
+# Read build version from `VERSION' file
+file(STRINGS "VERSION" VIOLETLAND_VERSION LIMIT_COUNT 1)
+add_definitions(-DVIOLETLAND_VERSION="${VIOLETLAND_VERSION}")
+
 set(srcDir src)
 set(srcWindowsDir ${srcDir}/windows)
 set(srcGameDir ${srcDir}/game)
