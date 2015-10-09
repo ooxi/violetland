@@ -5,13 +5,21 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	config.vm.box = "debian/jessie64"
+
+
+	# Access to full sources necessary in order to read `VERSION' file
+	config.vm.synced_folder "../../", "/home/vagrant/violetland"
+
 	
+	# Install nodejs and generate flavours
 	config.vm.provision "shell", inline: <<-SHELL
 		apt-get update
 		apt-get install -y nodejs
-		echo "ABC" > /home/vagrant/debian/XYZ
+		
+		cd /home/vagrant/violetland/vagrant/debian
+		nodejs build.js
 	SHELL
 
-	config.vm.synced_folder ".", "/home/vagrant/debian"
+
 end
 
