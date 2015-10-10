@@ -19,7 +19,7 @@ violetland contributors (sorted alphabeticaly)
 	* Core developing
 	* Gameplay improvements
 
-* **Sergey Fedoseev**
+* **[Sergey Fedoseev](https://github.com/sir-sigurd)**
 
 	* Core developing
 
