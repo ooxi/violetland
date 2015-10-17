@@ -49,6 +49,18 @@ var base_build_dependencies = [
  */
 var debian_flavours = [
 
+//	// Debian 8
+//	{	name:		"debian-8-amd64",
+//		image:		"debian/jessie64",
+//		dependencies:	base_build_dependencies
+//	},
+
+	// Debian 7
+	{	name:		"debian-7-amd64",
+		image:		"debian/wheezy64",
+		dependencies:	base_build_dependencies
+	},
+
 	// Ubuntu 15.04
 	{	name:		"ubuntu-15.04-amd64",
 		image:		"ubuntu/vivid64",
