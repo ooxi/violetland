@@ -4,19 +4,64 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+	config.vm.box = "debian/jessie64"
 
-	# Rebuilding everything from scratch takes far too long, therefore we use
-	# `mxe-violetland' which provides a preconfigured mxe cross building
-	# environment
-	config.vm.box = "mxe-violetland"
 	
+	# SHA-512 checksums are provided for file integrity
+	config.vm.provision "file", source: "mxe-violetland.boxes.sha512", destination: "mxe-violetland.boxes.sha512"
+
+
 	config.vm.provision "shell", inline: <<-SHELL
 		apt-get update
-		apt-get install -y git zip
+		apt-get install -y wget coreutils
+
+
+		# Prepare resulting binary
+		touch "mxe-violetland.box"
+
+
+		# Extract files to download from checksum file
+		readarray parts < mxe-violetland.boxes.sha512
+
+
+		# Download and check every part
+		for part in "${parts[@]}"
+		do
+			expected_checksum=${part:0:128}
+			filename=${part:130:21}
+
+			echo "Will download \\`${filename}'"
+			wget --output-document="part.bin" --no-verbose "https://dl.bintray.com/ooxi/generic/${filename}" || exit 1
+
+			actual_checksum=`sha512sum -b part.bin`
+			actual_checksum=${actual_checksum:0:128}
+
+			if [[ "${expected_checksum}" == "${actual_checksum}" ]]; then
+				echo "\tChecksum match ✓"
+				cat "part.bin" >> "mxe-violetland.box"
+				rm "part.bin"
+			else
+				echo "Checksum missmatch! Expected \\`${expected_checksum}' got \\`${actual_checksum}'"
+				exit 1
+			fi
+		done
+
+
+		# Check resulting box before export
+		expected_checksum="71dc0168d701eab2767e338a8dfc24356dcdd3878891b55b4465b3cfd581229e25e8629562801bb0a3f3db5beb3025cafe012b06ae9ba0c395c20053b7c4983b"
+
+		actual_checksum=`sha512sum -b mxe-violetland.box`
+		actual_checksum=${actual_checksum:0:128}
+
+		if [[ "${expected_checksum}" == "${actual_checksum}" ]]; then
+			echo "Download finished successfully, will export box…"
+			mv "mxe-violetland.box" "/vagrant/mxe-violetland.box"
+			echo "Box exported!"
+		else
+			echo "Checksum missmatch! Expected \\`${expected_checksum}' got \\`${actual_checksum}'"
+			exit 1
+		fi
 	SHELL
 
-	config.vm.provision "file", source: "build-amd64.sh", destination: "build-amd64.sh"
-	config.vm.provision "file", source: "build-x86.sh", destination: "build-x86.sh"
-	config.vm.synced_folder "../../", "/violetland"
 end
 

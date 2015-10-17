@@ -1,0 +1,56 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+	# Rebuilding everything from scratch takes far too long, therefore we use
+	# `mxe-violetland' which provides a preconfigured mxe cross building
+	# environment
+	config.vm.box = "mxe-violetland-bec5b6c734756f981e98666ec52343277f4fbd2e"
+	config.vm.box_url = "file://../../mxe-violetland.box"
+
+
+	# Access to violetland sources is necessary
+	config.vm.synced_folder "../../../..", "/violetland"
+
+
+	# Copy violetland sources (everything except /violetland/vagrant) to
+	# home directory for a local build
+	config.vm.provision "shell", inline: <<-SHELL
+		apt-get update
+		apt-get install -y git rsync zip
+
+
+		# Copy sources
+		rsync -av --progress /violetland /home/vagrant --exclude vagrant
+		cd /home/vagrant/violetland
+
+
+		# Update dependencies
+		git submodule init || exit 1
+		git submodule update || exit 1
+
+
+		# Build
+		mkdir build-amd64
+		cd build-amd64
+		cmake -DCMAKE_TOOLCHAIN_FILE=/home/vagrant/mxe/usr/x86_64-w64-mingw32.static/share/cmake/mxe-conf.cmake -DCMAKE_INSTALL_PREFIX="../tmp-amd64" ".." || exit 1
+		make install || exit 1
+		cd ..
+
+
+		# Package
+		mkdir windows-amd64
+		cp "tmp-amd64/bin/violetland.exe" "windows-amd64" || exit 1
+		cp -r tmp-amd64/share/violetland/* "windows-amd64" || exit 1
+		zip -r "violetland-windows-amd64.zip" "windows-amd64" || exit 1
+
+
+		# Export to synced folder
+		cp "violetland-windows-amd64.zip" "/vagrant/"
+	SHELL
+
+end
+
