@@ -10,7 +10,7 @@ Violetland is an open source cross-platform game similar to Crimsonland. In this
  * not disappearing corpses.
  * character improves with experience.
  * firearms, hand grenades, teleports, bonuses.
- * [languages](http://www.getlocalization.com/violetland/): english, [french](http://www.getlocalization.com/violetland/m_translate/8553/), [russian](http://www.getlocalization.com/violetland/m_translate/8551/), [galician](http://www.getlocalization.com/violetland/m_translate/8554/), [spain](http://www.getlocalization.com/violetland/m_translate/8552/).
+ * [languages](http://www.getlocalization.com/violetland/): english, [french](https://www.getlocalization.com/violetland/editor/8553/), [russian](https://www.getlocalization.com/violetland/editor/8551/), [galician](https://www.getlocalization.com/violetland/editor/8554/), [spain](https://www.getlocalization.com/violetland/editor/8552/).
  * works on gnu/linux, freebds, windows, mac.
 
 ### Community
