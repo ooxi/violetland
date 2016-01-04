@@ -1,20 +1,21 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# German translations.
 #
-#, fuzzy
+# Copyright © 2016 Violetland Project
+# This file is distributed under the same license as the Violetland package.
+#
+# ooxi <violetland@mail.ru>, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: violetland 5.0\n"
+"Report-Msgid-Bugs-To: violetland@mail.ru\n"
 "POT-Creation-Date: 2011-03-29 22:06+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2016-01-04 22:24+0200\n"
+"Last-Translator: ooxi <violetland@mail.ru>\n"
+"Language-Team: de <violetland@mail.ru>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 ""
 
 #: ../src/program.cpp:183 ../src/program.cpp:346
