@@ -9,7 +9,7 @@ Legend
 Upcoming release
 ----------------
 
- * `[+]` Added german translation as requested by [issue 74](https://github.com/ooxi/violetland/pull/79)
+ * `[+]` [Added german translation](https://github.com/ooxi/violetland/pull/80)
 
 Release 0.5 (2016-01-04)
 ------------------------
