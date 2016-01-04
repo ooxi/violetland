@@ -6,8 +6,8 @@ Legend
  * `[!]` a bug was fixed
 
 
-Upcoming release
-----------------
+Release 0.5 (2016-01-04)
+------------------------
 
  * `[!]` Fixed game startup crash when `USER` environment variable is not found in [issue 71](https://github.com/ooxi/violetland/issues/71)
  * `[!]` Improved OpenBSD Support
