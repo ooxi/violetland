@@ -6,6 +6,11 @@ Legend
  * `[!]` a bug was fixed
 
 
+Upcoming release
+----------------
+
+ * `[+]` Added german translation as requested by [issue 74](https://github.com/ooxi/violetland/pull/79)
+
 Release 0.5 (2016-01-04)
 ------------------------
 
