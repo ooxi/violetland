@@ -67,7 +67,7 @@ msgstr "Bereite Soundsystem vor...\n"
 
 #: ../src/program.cpp:390
 msgid "You are gobbled up."
-msgstr ""
+msgstr "Du wurdest zermalmt."
 
 
 #: ../src/program.cpp:423
@@ -121,13 +121,13 @@ msgstr "Blockchance: %i%%"
 #: ../src/program.cpp:475
 #, c-format
 msgid "Reloading speed modifier: %i%%"
-msgstr ""
+msgstr "Verbesserung der Nachladegeschwindigkeit: %i%%"
 
 
 #: ../src/program.cpp:482
 #, c-format
 msgid "Accuracy deviation modifier: %i%%"
-msgstr ""
+msgstr "Verbesserung der Zielgenauigkeit: %i%%"
 
 
 #: ../src/program.cpp:488
@@ -185,7 +185,7 @@ msgstr "Drück endlich eine Taste..."
 #, c-format
 msgid "Bind action %s to %s.\n"
 ""
-msgstr "\n"
+msgstr "Verknüpfe Aktion %s mit %s.\n"
 ""
 
 
@@ -201,12 +201,12 @@ msgstr "Gameplay"
 
 #: ../src/program.cpp:1042
 msgid "Weapon autoreloading"
-msgstr ""
+msgstr "Waffen automatisch nachladen"
 
 
 #: ../src/program.cpp:1047
 msgid "Weapon autotaking"
-msgstr ""
+msgstr "Waffen automatisch aufheben"
 
 
 #: ../src/program.cpp:1052
@@ -266,7 +266,7 @@ msgstr "Unbekannt"
 
 #: ../src/program.cpp:1147
 msgid "Violetland Survival"
-msgstr ""
+msgstr "Violetland Überlebenskampf"
 
 
 #: ../src/program.cpp:1150
@@ -286,7 +286,7 @@ msgstr "XP"
 
 #: ../src/program.cpp:1220
 msgid "Str/Agil/Vital"
-msgstr ""
+msgstr "Stä/Bew/Ges"
 
 
 #: ../src/program.cpp:1224
@@ -306,23 +306,23 @@ msgstr "Zurück zum Hauptmenü"
 
 #: ../src/program.cpp:1281
 msgid "Reset list"
-msgstr ""
+msgstr "Liste zurücksetzen"
 
 
 #: ../src/program.cpp:1320
 #, c-format
 msgid "Hot video mode changing is not supported on windows now. You should restart the game."
-msgstr ""
+msgstr "Änderungen des Videomodus sind unter Windows nur nach einem Neustart des Spiels möglich."
 
 
 #: ../src/program.cpp:1611
 msgid "You have reached new level."
-msgstr ""
+msgstr "Du hast das nächste Level erreicht."
 
 
 #: ../src/program.cpp:1883
 msgid "Get ready to new wave!"
-msgstr ""
+msgstr "Bereite dich auf die nächste Welle vor!"
 
 
 #: ../src/program.cpp:2129
@@ -352,22 +352,22 @@ msgstr "Vollmantelgeschoß"
 
 #: ../src/program.cpp:2144
 msgid "vitality boost"
-msgstr ""
+msgstr "Erhöhte Gesundheit"
 
 
 #: ../src/program.cpp:2147
 msgid "strength boost"
-msgstr ""
+msgstr "Erhöhte Stärke"
 
 
 #: ../src/program.cpp:2150
 msgid "agility boost"
-msgstr ""
+msgstr "Erhöhte Beweglichkeit"
 
 
 #: ../src/program.cpp:2153
 msgid "a teleport"
-msgstr ""
+msgstr "Ein Teleporter"
 
 
 #: ../src/program.cpp:2176
@@ -377,7 +377,7 @@ msgstr "Erste Hilfe erfolgreich"
 
 #: ../src/program.cpp:2184
 msgid "All have been frozen around you."
-msgstr ""
+msgstr "Alles um dich herum erstarrt zu Eis."
 
 
 #: ../src/program.cpp:2203
@@ -392,17 +392,17 @@ msgstr "Vollmantelgeschoße aufgehoben"
 
 #: ../src/program.cpp:2223
 msgid "You got a vitality boost."
-msgstr ""
+msgstr "Du profitierst von erhöhter Gesundheit."
 
 
 #: ../src/program.cpp:2230
 msgid "You got a strength boost."
-msgstr ""
+msgstr "Du profitierst von erhöhter Stärke."
 
 
 #: ../src/program.cpp:2237
 msgid "You got a agility boost."
-msgstr ""
+msgstr "Du profitierst von erhöhter Beweglichkeit."
 
 
 #: ../src/program.cpp:2244
@@ -412,13 +412,13 @@ msgstr "Handgranate aufgehoben"
 
 #: ../src/program.cpp:2250
 msgid "You have taken a teleport."
-msgstr ""
+msgstr "Du hast einen Teleporter verwendet."
 
 
 #: ../src/program.cpp:2260
 #, c-format
 msgid "You have taken the %s."
-msgstr ""
+msgstr "Du verwendest %s."
 
 
 #: ../src/program.cpp:2485
@@ -497,7 +497,7 @@ msgstr "Laster an/aus"
 
 #: ../src/system/InputHandler.cpp:169
 msgid "Show Char"
-msgstr ""
+msgstr "Zeige Charakter"
 
 
 #: ../src/system/InputHandler.cpp:172
@@ -552,7 +552,7 @@ msgstr "Nachladen"
 
 #: ../src/system/InputHandler.cpp:202
 msgid "Teleport"
-msgstr ""
+msgstr "Teleporter"
 
 
 #: ../src/system/InputHandler.cpp:208
@@ -562,7 +562,7 @@ msgstr "Unbekanntes Ereignis"
 
 #: ../src/windows/CharStatsWindow.cpp:12
 msgid "Perks:"
-msgstr ""
+msgstr "Boni:"
 
 
 #: ../src/windows/CharStatsWindow.cpp:17
