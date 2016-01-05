@@ -19,6 +19,8 @@ public:
 	virtual ~Monster();
 	virtual void process(int deltaTime);
 	virtual void draw();
+	
+	using LifeForm::hit;
 	virtual Sound* hit(float damage, bool poison, bool stop);
 
 	void setAppearance(float scale, float rMask, float gMask, float bMask,
