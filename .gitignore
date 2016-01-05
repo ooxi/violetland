@@ -6,3 +6,6 @@
 build
 dist
 
+# IDE directories
+/nbproject/
+
