@@ -9,6 +9,8 @@ Legend
 Upcoming release
 ----------------
 
+ * `[!]` [Changing the font to Xolonium-Regular](https://github.com/ooxi/violetland/pull/82) fixed [display issues of german umlauts](https://github.com/ooxi/violetland/issues/81)
+ * `[*]` [Changing the font to Xolonium-Regular](https://github.com/ooxi/violetland/pull/82) resolved [probable licensing issues](https://github.com/ooxi/violetland/issues/73)
  * `[+]` [Added german translation](https://github.com/ooxi/violetland/pull/80)
 
 Release 0.5 (2016-01-04)

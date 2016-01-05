@@ -116,9 +116,9 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 
 	std::cout << "Preparing fonts..." << std::endl;
 	boost::filesystem::path fontPath = m_fileUtility->getFullPath(
-			FileUtility::common, "fonts/archangelsk.ttf");
+			FileUtility::common, "fonts/xolonium/Xolonium-Regular.ttf");
 
-	RegularText = new TextManager(fontPath, 46 * WK);
+	RegularText = new TextManager(fontPath, 35 * WK);
 	SmallText = new TextManager(fontPath, 30 * WK);
 }
 
