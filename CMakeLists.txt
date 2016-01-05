@@ -1,6 +1,11 @@
 PROJECT(violetland)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR) 
+# CMake 2.8.10 documents the `CMAKE_<LANG>_COMPILER_ID' variable necessary to
+# identify Clang, otherwise we can go back to 2.6.0
+#
+# @see https://cmake.org/cmake/help/v2.8.10/cmake.html#variable:CMAKE_LANG_COMPILER_ID
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 find_package(SDL REQUIRED)
 find_package(SDL_image REQUIRED)
@@ -96,6 +101,17 @@ set(srcFileList
 
 add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
 add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
+
+
+# Compiler diagnostics are most useful
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wno-ignored-qualifiers -Wno-unused-parameter")
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	# clang++ does not boost_static_assert_typedef's unused attribute
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef")
+endif()
+
 
 add_executable(violetland ${srcFileList})
 

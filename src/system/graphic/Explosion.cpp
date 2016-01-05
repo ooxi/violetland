@@ -63,3 +63,6 @@ Explosion::Explosion(bool nuclear, float x, float y, int range,
 		Particles.push_back(baseSpark);
 	}
 }
+
+Explosion::~Explosion() {
+}

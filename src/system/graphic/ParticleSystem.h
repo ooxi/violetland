@@ -11,7 +11,7 @@ public:
 	virtual void draw();
 	bool isEmpty();
 	std::vector<Particle*> Particles;
-	~ParticleSystem();
+	virtual ~ParticleSystem();
 };
 
 #endif /* PARTICLESYSTEM_H_ */
