@@ -2073,6 +2073,9 @@ void drawGame() {
 		const float wpnY = player->Y + player->getWeapon()->XDiff * sin(rad)
 				+ player->getWeapon()->YDiff * cos(-rad);
 
+		/* Red laser pointer should be drawn until it collides with
+		 * first obstacle
+		 */
 		if (player->getLaser()) {
 			float len = (float)cam->getW();
 			float tX = player->X + len * cos(rad);
