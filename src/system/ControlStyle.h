@@ -36,8 +36,6 @@ enum ControlStyle {
 	E_CONTROL_STYLE_##id = serialVersionUid,
 #include "ControlStyles.h"
 #undef EXPAND_CONTROL_STYLE
-
-	_E_CONTROL_STYLE
 };
 
 
