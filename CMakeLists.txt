@@ -5,7 +5,7 @@ PROJECT(violetland)
 #
 # @see https://cmake.org/cmake/help/v2.8.10/cmake.html#variable:CMAKE_LANG_COMPILER_ID
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 find_package(SDL REQUIRED)
 find_package(SDL_image REQUIRED)
