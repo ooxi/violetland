@@ -1,0 +1,153 @@
+When possible, please distribute this file along with the Xolonium fonts.
+
+
+OpenType Feature Implementations
+
+	Kerning (kern)
+		Xolonium provides kerning tables for the
+		Latin, Greek, and Cyrillic scripts.
+
+	Case Sensitive Forms (case)
+		Replaces or repositions punctuation marks, brackets, and
+		mathematical operators, to better suit all-uppercase text.
+
+	Discretionary Ligatures (dlig)
+		Joins the crossbars of consecutive "f" glyphs.
+		Joins the crossbars of consecutive "t" glyphs.
+		Replaces "fi" and "fj" sequences with ligatures.
+
+	Fractions (frac)
+		Replaces "number/number" sequences with diagonal fractions.
+		No number should exceed 10 digits or touch more than one slash,
+		otherwise the sequence might be ignored or replaced incorrectly.
+
+	Localized Forms (locl)
+		For the Romanian and Moldovan languages, replaces
+		the oldstyle encoded glyphs "ŞşŢţ" (using cedilla)
+		with the preferred glyphs "ȘșȚț" (using commaaccent).
+		For the Sami languages, replaces the n-form Eng glyph
+		with the preferred N-form version.
+
+	Proportional Figures (pnum)
+		Replaces monospaced figures with versions of proportional width.
+
+	Scientific Inferiors (sinf)
+		Replaces figures with subscript versions, placed below the baseline.
+
+	Subscript (subs)
+		Replaces figures with subscript versions, placed on the baseline.
+
+	Superscript (sups)
+		Replaces figures with superscript versions.
+
+	Slashed Zero (zero)
+		Replaces all variants of the "0" figure with slashed versions
+
+
+Completed Glyph Sets
+
+	ISO 8859-1  (Western European)
+	ISO 8859-2  (Central European)
+	ISO 8859-3  (South European, Esperanto)
+	ISO 8859-4  (North European)
+	ISO 8859-5  (Cyrillic)
+	ISO 8859-7  (Greek)
+	ISO 8859-9  (Turkish)
+	ISO 8859-10 (Nordic)
+	ISO 8859-13 (Baltic Rim)
+	ISO 8859-14 (Celtic)
+	ISO 8859-15 (Western European)
+	ISO 8859-16 (South-Eastern European)
+	OpenType World Glyph Set 1 (W1G)
+	Adobe Latin 3
+	Ghostscript Standard (ghostscript-fonts-std-8.11)
+
+
+Available Glyphs
+
+	Basic Latin
+		 !"#$%&'()*+,-./0123456789:;<=>?
+		@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_
+		`abcdefghijklmnopqrstuvwxyz{|}~
+
+	Latin-1 Supplement
+		 ¡¢£¤¥¦§¨©ª«¬ ®¯°±²³´µ¶·¸¹º»¼½¾¿
+		ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß
+		àáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ
+
+	Latin Extended-A
+		ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğ
+		ĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿ
+		ŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞş
+		ŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ
+
+	Latin Extended-B
+		ƒǺǻǼǽǾǿȘșȚțȷ
+
+	Spacing Modifier Letters
+		ʼˆˇˉ˘˙˚˛˜˝
+
+	Combining Diacritical Marks
+		̒	◌̓	̦
+
+	Greek
+		ͺ;΄΅Ά·ΈΉΊΌΎΏΐ
+		ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰ
+		αβγδεζηθικλμνξοπρςστυφχψωϊϋόύώ
+
+	Cyrillic
+		ЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏАБВГДЕЖЗИЙКЛМНОП
+		РСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмноп
+		рстуфхцчшщъыьэюяѐёђѓєѕіїјљњћќѝўџ
+		ѢѣѲѳѴѵҌҍҎҏҐґҒғҔҕҖҗҘҙҚқҜҝҞҟҠҡҢңҤҥ
+		ҦҧҨҩҪҫҬҭҮүҰұҲҳҴҵҶҷҸҹҺһҼҽҾҿӀӁӂӃӄӇ
+		ӈӋӌӐӑӒӓӔӕӖӗӘәӚӛӜӝӞӟӠӡӢӣӤӥӦӧӨөӪӫӬ
+		ӭӮӯӰӱӲӳӴӵӶӷӸӹԤԥ
+
+	Latin Extended Additional
+		ḂḃḊḋḞḟṀṁṖṗṠṡṪṫẀẁẂẃẄẅỲỳ
+
+	General Punctuation
+		‒–—―‘’‚‛“”„‟†‡•…‰′″‹›‽‾⁄
+
+	Superscripts and Subscripts
+		⁰⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿ₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎
+
+	Currency Symbols
+		₤₦₩₫€₯₱₹₺₽
+
+	Letterlike Symbols
+		℅ℓ№℗™Ω℮
+
+	Number Forms
+		⅛⅜⅝⅞
+
+	Arrows
+		←↑→↓
+
+	Mathematical Operators
+		∂∆∏∑−∕∙√∞∟∫≈≠≤≥
+
+	Miscellaneous Technical
+		⌖
+
+	Geometric Shapes
+		■▬▮▰▲▶▼◀◆◊●◢◣◤◥
+
+	Miscellaneous Symbols
+		☄★☠☢☣⚙⚛⚠⚡⛔
+
+	Dingbats
+		❇❈❌❤❰❱❲❳
+
+	Alphabetic Presentation Forms
+		ﬀﬁﬂﬃﬄ
+
+	Miscellaneous Symbols and Pictographs
+		🌌🌍🌎🌏👽💣🔥🔫
+
+	Emoticons
+		😁😃😄😆😇😈😉😊😎😐😒😕😘😛😝😞😟😠😣😭😮😲😴😵
+
+	Transport and Map Symbols
+		🚀
