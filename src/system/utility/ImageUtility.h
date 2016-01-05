@@ -15,8 +15,10 @@ public:
 		solid, shaded, blended
 	};
 	static SDL_Surface *loadImage(boost::filesystem::path, float prescale = 1.0);
-	static SDL_Surface *createImage(TTF_Font *font, char fgR, char fgG,
-			char fgB, char fgA, char bgR, char bgG, char bgB, char bgA,
+	static SDL_Surface *createImage(
+			TTF_Font *font,
+			char fgR, char fgG, char fgB, char fgA,
+			char bgR, char bgG, char bgB, char bgA,
 			std::string text, FontRenderingFlag quality);
 	static SDL_Surface *scaleSurface(SDL_Surface *Surface, int width,
 			int height);
