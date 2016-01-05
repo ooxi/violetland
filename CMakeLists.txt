@@ -97,6 +97,11 @@ set(srcFileList
 add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
 add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
 
+
+# Compiler diagnostics are most useful
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+
+
 add_executable(violetland ${srcFileList})
 
 target_link_libraries(violetland ${libList})
