@@ -240,9 +240,9 @@ void printVersion() {
 #ifdef _WIN32
 	env = "WINDOWS";
 #endif //_WIN32W
-#ifdef linux
+#ifdef __linux__
 	env = "GNU/LINUX";
-#endif //linux
+#endif //__linux__
 #ifdef __FreeBSD__
 	env = "BSD";
 #endif //__FreeBSD__

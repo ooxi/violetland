@@ -66,7 +66,7 @@ FileUtility::FileUtility(char *argPath) {
 	m_resPath = m_appPath;
 	m_usrPath = m_resPath;
 #endif //_WIN32
-#if defined linux || defined __FreeBSD__ || defined __OpenBSD__
+#if defined __linux__ || defined __FreeBSD__ || defined __OpenBSD__
 #ifndef INSTALL_PREFIX
 #define INSTALL_PREFIX "/usr/local";
 #endif //INSTALL_PREFIX
@@ -83,7 +83,7 @@ FileUtility::FileUtility(char *argPath) {
 	mkdir(m_usrPath.string().c_str(), S_IRWXU | S_IRGRP | S_IROTH);
 	m_usrPath /= "violetland";
 	mkdir(m_usrPath.string().c_str(), S_IRWXU | S_IRGRP | S_IROTH);
-#endif //linux || __FreeBSD__
+#endif //__linux__ || __FreeBSD__ || defined __OpenBSD__
 	traceResPath();
 }
 
