@@ -82,7 +82,7 @@ Aim* aim;
 HUD* hud;
 StaticObject* splash;
 
-FileUtility* fileUtility;
+FileUtility* fileUtility = NULL;
 InputHandler* input;
 SoundManager* sndManager;
 Resources* resources;
@@ -2220,7 +2220,7 @@ void loadResources() {
 }
 
 void parsePreferences(int argc, char** argv) {
-	fileUtility = new FileUtility(argv[0]);
+	fileUtility = FileUtility::ofOs(argv[0]);
 	config = new Configuration(fileUtility);
 	config->read();
 
@@ -2255,12 +2255,12 @@ void parsePreferences(int argc, char** argv) {
 		}
 
 #ifdef __APPLE__
-		fileUtility->setFullResPath(getMacBundlePath()+"/Contents/Resources");
+		fileUtility->setResourcePath(getMacBundlePath()+"/Contents/Resources");
 #endif
 
 		else if (arg == "-r") {
 			if (++i < argc)
-				fileUtility->setFullResPath(argv[i]);
+				fileUtility->setResourcePath(argv[i]);
 		} else if (arg == "-f") {
 			config->Screen.Full = true;
 		} else if (arg == "-i") {

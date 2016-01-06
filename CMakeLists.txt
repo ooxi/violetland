@@ -52,6 +52,7 @@ set(srcSoundDir ${srcSystemDir}/sound)
 set(srcUtilityDir ${srcSystemDir}/utility)
 
 set(srcFileList	
+	${srcUtilityDir}/FileUtility.cpp
 	${srcDir}/program.cpp
 	${srcGameDir}/Weapon.cpp 
 	${srcGameDir}/WeaponManager.cpp
@@ -77,7 +78,7 @@ set(srcFileList
 	${srcSystemDir}/ConfigFile.cpp
 	${srcSystemDir}/Configuration.cpp
 	${srcSystemDir}/ControlStyle.cpp
-	${srcUtilityDir}/FileUtility.cpp
+#	${srcUtilityDir}/FileUtility.cpp
 	${srcUtilityDir}/ImageUtility.cpp
 	${srcUtilityDir}/UidGenerator.cpp
 	${srcGraphicDir}/Texture.cpp
