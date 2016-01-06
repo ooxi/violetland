@@ -125,14 +125,14 @@ void createTerrain() {
 	oss.str("");
 	oss << "base_" << baseTex << ".png";
 	SDL_Surface *terrainSurface = ImageUtility::loadImage(
-			boost::filesystem::path(tilesDir) /= oss.str(), 1);
+			boost::filesystem::path(tilesDir) /= oss.str());
 
 	vector<SDL_Surface*> tiles;
 	for (unsigned i = 0; i < tilesCount; i++) {
 		oss.str("");
 		oss << baseTex << '/' << i << ".png";
 		SDL_Surface *tile = ImageUtility::loadImage(
-				boost::filesystem::path(tilesDir) /= oss.str(), 1);
+				boost::filesystem::path(tilesDir) /= oss.str());
 		tiles.push_back(tile);
 	}
 
@@ -332,8 +332,7 @@ void initSystem() {
 	SDL_WM_SetCaption(getProjectTitle().c_str(), NULL);
 
 	SDL_Surface* icon = ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::common, "icon-light.png"),
-			1.0f);
+			fileUtility->getFullPath(FileUtility::common, "icon-light.png"));
 	SDL_WM_SetIcon(icon, NULL);
 	SDL_FreeSurface(icon);
 
