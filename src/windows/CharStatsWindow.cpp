@@ -181,11 +181,16 @@ void CharStatsWindow::refresh() {
 		const char* str;
 	};
 
-	BoolString perks[] = { { m_player->Unstoppable, "+unstoppable" }, {
-			m_player->PoisonBullets, "+poisonbullets" }, { m_player->BigCalibre,
-			"+bigcalibre" }, { m_player->Telekinesis, "+telekinesis" }, {
-			m_player->NightVision, "+nightvision" }, { m_player->Looting,
-			"+looting" }, { m_player->WideSight, "+widesight" }, { m_player->Magneto, "+magneto" } };
+	BoolString perks[] = {
+		{ m_player->Unstoppable,	"+unstoppable" },
+		{ m_player->PoisonBullets,	"+poisonbullets" },
+		{ m_player->BigCalibre,		"+bigcalibre" },
+		{ m_player->Telekinesis,	"+telekinesis" },
+		{ m_player->NightVision,	"+nightvision" },
+		{ m_player->Looting,		"+looting" },
+		{ m_player->WideSight,		"+widesight" },
+		{ m_player->Magneto,		"+magneto" }
+	};
 
 	for (unsigned i = 0; i < sizeof(perks) / sizeof(BoolString); ++i)
 		if (perks[i].f)
