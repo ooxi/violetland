@@ -86,7 +86,6 @@ set(srcFileList
 	${srcGraphicDir}/DynamicObject.cpp
 	${srcGraphicDir}/Aim.cpp
 	${srcGraphicDir}/Camera.cpp
-	${srcGraphicDir}/Window.cpp
 	${srcGraphicDir}/Particle.cpp
 	${srcGraphicDir}/ParticleSystem.cpp
 	${srcGraphicDir}/Explosion.cpp
@@ -95,6 +94,7 @@ set(srcFileList
 	${srcTextDir}/TextObject.cpp 
 	${srcSoundDir}/Sound.cpp
 	${srcSoundDir}/SoundManager.cpp
+	${srcWindowsDir}/Window.cpp
 	${srcWindowsDir}/MainMenuWindow.cpp
 	${srcWindowsDir}/CharStatsWindow.cpp
 )

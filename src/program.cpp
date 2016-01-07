@@ -48,7 +48,6 @@
 #include "system/graphic/Aim.h"
 #include "system/graphic/Camera.h"
 #include "system/graphic/Particle.h"
-#include "system/graphic/Window.h"
 #include "system/graphic/VideoManager.h"
 #include "system/graphic/Explosion.h"
 #include "system/sound/SoundManager.h"
@@ -63,6 +62,7 @@
 #include "game/WeaponManager.h"
 #include "game/Highscores.h"
 #include "game/HUD.h"
+#include "windows/Window.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/CharStatsWindow.h"
 
@@ -82,7 +82,7 @@ Aim* aim;
 HUD* hud;
 StaticObject* splash;
 
-FileUtility* fileUtility;
+FileUtility* fileUtility = NULL;
 InputHandler* input;
 SoundManager* sndManager;
 Resources* resources;
@@ -125,14 +125,14 @@ void createTerrain() {
 	oss.str("");
 	oss << "base_" << baseTex << ".png";
 	SDL_Surface *terrainSurface = ImageUtility::loadImage(
-			boost::filesystem::path(tilesDir) /= oss.str(), 1);
+			boost::filesystem::path(tilesDir) /= oss.str());
 
 	vector<SDL_Surface*> tiles;
 	for (unsigned i = 0; i < tilesCount; i++) {
 		oss.str("");
 		oss << baseTex << '/' << i << ".png";
 		SDL_Surface *tile = ImageUtility::loadImage(
-				boost::filesystem::path(tilesDir) /= oss.str(), 1);
+				boost::filesystem::path(tilesDir) /= oss.str());
 		tiles.push_back(tile);
 	}
 
@@ -169,7 +169,7 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 }
 
 // Start the game in selected mode
-void startGame(void* sender, std::string elementName) {
+void startGame(Window* sender, std::string elementName) {
 	cam->setW(1600);
 
 	hud->reset();
@@ -332,8 +332,7 @@ void initSystem() {
 	SDL_WM_SetCaption(getProjectTitle().c_str(), NULL);
 
 	SDL_Surface* icon = ImageUtility::loadImage(
-			fileUtility->getFullPath(FileUtility::common, "icon-light.png"),
-			1.0f);
+			fileUtility->getFullPath(FileUtility::common, "icon-light.png"));
 	SDL_WM_SetIcon(icon, NULL);
 	SDL_FreeSurface(icon);
 
@@ -458,7 +457,7 @@ void shutdownSystem() {
 	delete splash;
 }
 
-void backFromOptionsAndSave(void* sender, std::string elementName);
+void backFromOptionsAndSave(Window* sender, std::string elementName);
 
 void refreshOptionsWindow() {
 	const int l = videoManager->getVideoMode().Width * 0.1f;
@@ -507,7 +506,7 @@ void refreshOptionsWindow() {
 			13 * h, TextManager::LEFT, TextManager::MIDDLE);
 }
 
-void switchGameOption(void* sender, std::string elementName) {
+void switchGameOption(Window* sender, std::string elementName) {
 	map<string, bool*> m;
 	m["autoreload"] = &config->AutoReload;
 	m["autopickup"] = &config->AutoWeaponPickup;
@@ -521,7 +520,7 @@ void switchGameOption(void* sender, std::string elementName) {
 	}
 }
 
-void switchVolumeDown(void* sender, std::string elementName) {
+void switchVolumeDown(Window* sender, std::string elementName) {
 	if (elementName == "musicvolume") {
 		if (config->MusicVolume > 0) {
 			config->MusicVolume--;
@@ -548,7 +547,7 @@ void switchVolumeDown(void* sender, std::string elementName) {
 	refreshOptionsWindow();
 }
 
-void switchVolumeUp(void* sender, std::string elementName) {
+void switchVolumeUp(Window* sender, std::string elementName) {
 	if (elementName == "musicvolume") {
 		if (config->MusicVolume <= 9) {
 			config->MusicVolume++;
@@ -575,7 +574,7 @@ void switchVolumeUp(void* sender, std::string elementName) {
 	refreshOptionsWindow();
 }
 
-void switchResolutionDown(void* sender, std::string elementName) {
+void switchResolutionDown(Window* sender, std::string elementName) {
 	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
 
 	bool set = false;
@@ -596,7 +595,7 @@ void switchResolutionDown(void* sender, std::string elementName) {
 	refreshOptionsWindow();
 }
 
-void switchResolutionUp(void* sender, std::string elementName) {
+void switchResolutionUp(Window* sender, std::string elementName) {
 	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
 
 	bool set = false;
@@ -619,7 +618,7 @@ void switchResolutionUp(void* sender, std::string elementName) {
 
 void refreshControlsMenuWindow();
 
-void changeControlStyle(void* sender, std::string elementName) {
+void changeControlStyle(Window* sender, std::string elementName) {
 	enum ControlStyle style = GetNextControlStyle(config->Control);
 	config->Control = style;
 	
@@ -629,7 +628,7 @@ void changeControlStyle(void* sender, std::string elementName) {
 	refreshControlsMenuWindow();
 }
 
-void controlsMenuWindowController(void* sender, std::string elementName);
+void controlsMenuWindowController(Window* sender, std::string elementName);
 
 inline void addControlElement(Window* w, unsigned i, unsigned strN,
 		unsigned lx, unsigned rx) {
@@ -705,7 +704,7 @@ void drawWindows() {
 	}
 }
 
-void controlsMenuWindowController(void* sender, std::string elementName) {
+void controlsMenuWindowController(Window* sender, std::string elementName) {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -758,9 +757,9 @@ void controlsMenuWindowController(void* sender, std::string elementName) {
 }
 
 void drawWindows();
-void showHighScores(void* sender, std::string);
+void showHighScores(Window* sender, std::string);
 
-void createControlsMenuWindow(void* sender, std::string elementName) {
+void createControlsMenuWindow(Window* sender, std::string elementName) {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -771,7 +770,7 @@ void createControlsMenuWindow(void* sender, std::string elementName) {
 	windows["options"]->CloseFlag = true;
 }
 
-void resetControls(void* sender, std::string elementName) {
+void resetControls(Window* sender, std::string elementName) {
 	Configuration* config_default = new Configuration(fileUtility);
 	for (int i = 0; i < InputHandler::GameInputEventsCount; i++)
 		config->PlayerInputBinding[i] = config_default->PlayerInputBinding[i];
@@ -850,12 +849,12 @@ void createOptionsWindow() {
 	refreshOptionsWindow();
 }
 
-void showOptions(void* sender, std::string elementName) {
+void showOptions(Window* sender, std::string elementName) {
 	windows["mainmenu"]->CloseFlag = true;
 	createOptionsWindow();
 }
 
-void resumeGame(void* sender, std::string elementName) {
+void resumeGame(Window* sender, std::string elementName) {
 	Window* w = windows.find("mainmenu")->second;
 	w->CloseFlag = true;
 	switchGamePause();
@@ -881,7 +880,7 @@ void refreshMainMenuWindow() {
 			TextManager::MIDDLE);
 }
 
-void switchGameMode(void* sender, std::string elementName) {
+void switchGameMode(Window* sender, std::string elementName) {
 	switch (gameMode) {
 	case GAMEMODE_SURVIVAL:
 		gameMode = GAMEMODE_WAVES;
@@ -914,7 +913,7 @@ void createMainMenuWindow() {
 	refreshMainMenuWindow();
 }
 
-void highScoresWindowController(void* sender, std::string elementName) {
+void highScoresWindowController(Window* sender, std::string elementName) {
 	if (elementName == "back") {
 		windows["highscores"]->CloseFlag = true;
 		createMainMenuWindow();
@@ -996,7 +995,7 @@ void createHighscoresWindow() {
 	windows["highscores"] = w;
 }
 
-void showHighScores(void* sender, std::string elementName) {
+void showHighScores(Window* sender, std::string elementName) {
 	windows["mainmenu"]->CloseFlag = true;
 	createHighscoresWindow();
 }
@@ -1013,7 +1012,7 @@ void unloadResources() {
 	delete config;
 }
 
-void backFromOptionsAndSave(void* sender, std::string elementName) {
+void backFromOptionsAndSave(Window* sender, std::string elementName) {
 	bool changeVideoMode = config->Screen.Width != tempConfig->Screen.Width
 			|| config->Screen.Height != tempConfig->Screen.Height;
 
@@ -2220,7 +2219,7 @@ void loadResources() {
 }
 
 void parsePreferences(int argc, char** argv) {
-	fileUtility = new FileUtility(argv[0]);
+	fileUtility = FileUtility::ofOs(argv[0]);
 	config = new Configuration(fileUtility);
 	config->read();
 
@@ -2255,12 +2254,12 @@ void parsePreferences(int argc, char** argv) {
 		}
 
 #ifdef __APPLE__
-		fileUtility->setFullResPath(getMacBundlePath()+"/Contents/Resources");
+		fileUtility->setResourcePath(getMacBundlePath()+"/Contents/Resources");
 #endif
 
 		else if (arg == "-r") {
 			if (++i < argc)
-				fileUtility->setFullResPath(argv[i]);
+				fileUtility->setResourcePath(argv[i]);
 		} else if (arg == "-f") {
 			config->Screen.Full = true;
 		} else if (arg == "-i") {
