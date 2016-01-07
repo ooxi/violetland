@@ -1,7 +1,7 @@
 #ifndef CHARSTATSWINDOW_H_
 #define CHARSTATSWINDOW_H_
 
-#include "../system/graphic/Window.h"
+#include "Window.h"
 #include "../system/graphic/VideoManager.h"
 #include "../game/lifeforms/Player.h"
 
@@ -27,7 +27,7 @@ public:
 	CharStatsWindow(Configuration* config, VideoManager* videoManager,
 			Player* player);
 	void refresh();
-	~CharStatsWindow();
+	virtual ~CharStatsWindow();
 };
 }
 

@@ -48,7 +48,6 @@
 #include "system/graphic/Aim.h"
 #include "system/graphic/Camera.h"
 #include "system/graphic/Particle.h"
-#include "system/graphic/Window.h"
 #include "system/graphic/VideoManager.h"
 #include "system/graphic/Explosion.h"
 #include "system/sound/SoundManager.h"
@@ -63,6 +62,7 @@
 #include "game/WeaponManager.h"
 #include "game/Highscores.h"
 #include "game/HUD.h"
+#include "windows/Window.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/CharStatsWindow.h"
 

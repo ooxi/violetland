@@ -1,5 +1,5 @@
 #include "Window.h"
-#include "../utility/Templates.h"
+#include "../system/utility/Templates.h"
 
 Window::Window(float x, float y, int w, int h, float r, float g, float b,
 		float a) {

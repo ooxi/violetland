@@ -3,9 +3,9 @@
 
 #include <map>
 #include <string>
-#include "text/TextObject.h"
-#include "text/TextManager.h"
-#include "../InputHandler.h"
+#include "../system/graphic/text/TextObject.h"
+#include "../system/graphic/text/TextManager.h"
+#include "../system/InputHandler.h"
 
 class Window {
 protected:
@@ -37,7 +37,7 @@ public:
 	void process(InputHandler* input);
 	void draw();
 	bool CloseFlag;
-	~Window();
+	virtual ~Window();
 };
 
 #endif /* WINDOW_H_ */
