@@ -20,9 +20,9 @@ public:
 	static const char* paramIds[];
 	static const unsigned paramIdsNumber;
 
-	static void onPlayerParamClickEvent(void* sender, std::string paramName);
-	static void onPerkHoverEvent(void* sender, std::string perkName);
-	static void onPerkClickEvent(void* sender, std::string perkName);
+	static void onPlayerParamClickEvent(Window* sender, std::string paramName);
+	static void onPerkHoverEvent(Window* sender, std::string perkName);
+	static void onPerkClickEvent(Window* sender, std::string perkName);
 
 	CharStatsWindow(Configuration* config, VideoManager* videoManager,
 			Player* player);

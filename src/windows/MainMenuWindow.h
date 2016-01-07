@@ -14,7 +14,7 @@ private:
 	void exitGame();
 
 public:
-	static void onMenuItemClick(void* sender, std::string menuItem);
+	static void onMenuItemClick(Window* sender, std::string menuItem);
 
 	MainMenuWindow(Configuration* config, GameState* gameState,
 			TextManager* text);

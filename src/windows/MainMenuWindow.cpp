@@ -35,9 +35,14 @@ void MainMenuWindow::exitGame()
 	m_gameState->end();
 }
 
-void MainMenuWindow::onMenuItemClick(void* sender, string menuItem)
+void MainMenuWindow::onMenuItemClick(Window* sender, string menuItem)
 {
-	MainMenuWindow* window = (MainMenuWindow*)sender;
+	MainMenuWindow* window = dynamic_cast<MainMenuWindow*>(sender);
+		
+	if (NULL == window) {
+		std::cerr << "onMenuItemClick was called with unexpected sender" << std::endl;
+		return;
+	}
 
 	if (menuItem == "exit")
 		window->exitGame();
