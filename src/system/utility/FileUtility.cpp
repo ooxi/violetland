@@ -35,6 +35,7 @@ FileUtility* FileUtility::ofWindows(char const* argvZero) {
  *
  * @return Initialized FileUtility instance for UNIX
  */
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
 FileUtility* FileUtility::ofUnix() {
 	
 	/* Application binary
@@ -67,6 +68,7 @@ FileUtility* FileUtility::ofUnix() {
 	
 	return new FileUtility(resources, user);
 }
+#endif
 
 
 
