@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[*]` [Refactored window handlers to use `boost::function`](https://github.com/ooxi/violetland/pull/91)
  * `[+]` [Automatic Windows build using Travis CI and MXE](https://github.com/ooxi/violetland/pull/90)
  * `[*]` [Misc code cleanup](https://github.com/ooxi/violetland/pull/87)
  * `[!]` [Fixed minor bugs](https://github.com/ooxi/violetland/pull/83) enabling Violetland to be build by both GCC and Clang with extra warnings enabled
