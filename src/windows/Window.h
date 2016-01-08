@@ -1,6 +1,7 @@
 #ifndef WINDOW_H_
 #define WINDOW_H_
 
+#include <boost/function.hpp>
 #include <map>
 #include <string>
 #include "../system/graphic/text/TextObject.h"
@@ -11,9 +12,10 @@ class Window {
 protected:
 	float m_left, m_top, m_right, m_bottom, m_r, m_g, m_b, m_a;
 	std::map<std::string, TextObject*> m_elements;
-	std::map<std::string, void(*)(Window* sender, std::string elementName)> m_lcHandlers;
-	std::map<std::string, void(*)(Window* sender, std::string elementName)> m_rcHandlers;
-	std::map<std::string, void(*)(Window* sender, std::string elementName)> m_mvHandlers;
+
+	std::map<std::string, boost::function<void (std::string)> > m_lcHandlers;
+	std::map<std::string, boost::function<void (std::string)> > m_rcHandlers;
+	std::map<std::string, boost::function<void (std::string)> > m_mvHandlers;
 public:
 	enum HandlerType {
 		hdl_all = 0, hdl_click, hdl_lclick, hdl_rclick, hdl_move
@@ -30,8 +32,7 @@ public:
 			TextManager* manager, int x, int y, int vstep, 
 			TextManager::TextHAlignFlag halign, TextManager::TextVAlignFlag valign);
 	void removeElement(std::string name, bool remainHandler);
-	//	void addHandler(HandlerType hdl, std::string elementName, void(*func)());
-	void addHandler(HandlerType hdl, std::string elementName, void(*func)(Window* sender, std::string elementName));
+	void addHandler(HandlerType hdl, std::string elementName, boost::function<void(std::string)> handler);
 	void removeHandler(HandlerType hdl, std::string elementName);
 	void process(InputHandler* input);
 	void draw();
