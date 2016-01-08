@@ -1,10 +1,16 @@
 language: cpp
-compiler:
-  - clang
-  - gcc
+
+dist: trusty
+
+env:
+  matrix:
+    - PACKAGES='g++ cmake libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev' CMAKE=cmake CXX=g++
+    - PACKAGES='clang-3.6 cmake libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev' CMAKE=cmake CXX=clang++
+
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -y cmake libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev
+  - sudo apt-get install -y $PACKAGES
+
 script:
-  - mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=../dist .. && make install && cd ..
+  - mkdir build && cd build && $CMAKE -DCMAKE_INSTALL_PREFIX=../dist .. && make install && cd ..
 
