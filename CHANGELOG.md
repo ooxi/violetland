@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[+]` [Automatic Windows build using Travis CI and MXE](https://github.com/ooxi/violetland/pull/90)
  * `[*]` [Misc code cleanup](https://github.com/ooxi/violetland/pull/87)
  * `[!]` [Fixed minor bugs](https://github.com/ooxi/violetland/pull/83) enabling Violetland to be build by both GCC and Clang with extra warnings enabled
  * `[!]` [Changing the font to Xolonium-Regular](https://github.com/ooxi/violetland/pull/82) fixed [display issues of german umlauts](https://github.com/ooxi/violetland/issues/81)
