@@ -1,3 +1,4 @@
+#include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <boost/math/special_functions/round.hpp>
 #include <libintl.h>
@@ -28,40 +29,19 @@ const char* CharStatsWindow::paramIds[] = {
 
 const unsigned CharStatsWindow::paramIdsNumber = sizeof(CharStatsWindow::paramIds) / sizeof(char*);
 
-void CharStatsWindow::onPlayerParamClickEvent(Window* sender, string paramName)
+void CharStatsWindow::onPlayerParamClickEvent(string paramName)
 {
-	CharStatsWindow* window = dynamic_cast<CharStatsWindow*>(sender);
-	
-	if (NULL == window) {
-		std::cerr << "onPlayerParamClickEvent was called with unexpected sender" << std::endl;
-		return;
-	}
-	
-	window->increasePlayerParam(paramName);
+	increasePlayerParam(paramName);
 }
 
-void CharStatsWindow::onPerkHoverEvent(Window* sender, string perkName)
+void CharStatsWindow::onPerkHoverEvent(string perkName)
 {
-	CharStatsWindow* window = dynamic_cast<CharStatsWindow*>(sender);
-	
-	if (NULL == window) {
-		std::cerr << "onPerkHoverEvent was called with unexpected sender" << std::endl;
-		return;
-	}
-	
-	window->showPerkDetails(perkName);
+	showPerkDetails(perkName);
 }
 
-void CharStatsWindow::onPerkClickEvent(Window* sender, string perkName)
+void CharStatsWindow::onPerkClickEvent(string perkName)
 {
-	CharStatsWindow* window = dynamic_cast<CharStatsWindow*>(sender);
-	
-	if (NULL == window) {
-		std::cerr << "onPerkClickEvent was called with unexpected sender" << std::endl;
-		return;
-	}
-	
-	window->givePerkToPlayer(perkName);
+	givePerkToPlayer(perkName);
 }
 
 CharStatsWindow::CharStatsWindow(Configuration* config,
@@ -107,12 +87,13 @@ CharStatsWindow::CharStatsWindow(Configuration* config,
 	m_perkDetails["magneto"] = _("Magneto: useful things slowly move "
 			"towards you.");
 
-	for (unsigned i = 0; i < paramIdsNumber; ++i)
-			addHandler(Window::hdl_lclick, paramIds[i], onPlayerParamClickEvent);
+	for (unsigned i = 0; i < paramIdsNumber; ++i) {
+		addHandler(Window::hdl_lclick, paramIds[i], boost::bind(&CharStatsWindow::onPlayerParamClickEvent, this, _1));
+	}
 
 	for (unsigned i = 0; i < perkIdsNumber; ++i) {
-		addHandler(Window::hdl_move, perkIds[i], onPerkHoverEvent);
-		addHandler(Window::hdl_lclick, perkIds[i], onPerkClickEvent);
+		addHandler(Window::hdl_move, perkIds[i], boost::bind(&CharStatsWindow::onPerkHoverEvent, this, _1));
+		addHandler(Window::hdl_lclick, perkIds[i], boost::bind(&CharStatsWindow::onPerkClickEvent, this, _1));
 	}
 }
 

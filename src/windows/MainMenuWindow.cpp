@@ -1,3 +1,5 @@
+#include <boost/bind.hpp>
+
 #include "MainMenuWindow.h"
 #include <libintl.h>
 #include <locale.h>
@@ -27,7 +29,7 @@ MainMenuWindow::MainMenuWindow(Configuration* config, GameState* gameState,
 	addElements(labels, text, 
 			l, 7*h, h, TextManager::LEFT, TextManager::MIDDLE);
 
-	addHandler(Window::hdl_lclick, "exit", onMenuItemClick);
+	addHandler(Window::hdl_lclick, "exit", boost::bind(&MainMenuWindow::onMenuItemClick, this, _1));
 }
 
 void MainMenuWindow::exitGame()
@@ -35,17 +37,10 @@ void MainMenuWindow::exitGame()
 	m_gameState->end();
 }
 
-void MainMenuWindow::onMenuItemClick(Window* sender, string menuItem)
+void MainMenuWindow::onMenuItemClick(string menuItem)
 {
-	MainMenuWindow* window = dynamic_cast<MainMenuWindow*>(sender);
-		
-	if (NULL == window) {
-		std::cerr << "onMenuItemClick was called with unexpected sender" << std::endl;
-		return;
-	}
-
 	if (menuItem == "exit")
-		window->exitGame();
+		exitGame();
 }
 
 MainMenuWindow::~MainMenuWindow() {

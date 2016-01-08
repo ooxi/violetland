@@ -11,10 +11,10 @@ class MainMenuWindow: public Window {
 private:
 	GameState* m_gameState;
 
+	void onMenuItemClick(std::string menuItem);
 	void exitGame();
 
 public:
-	static void onMenuItemClick(Window* sender, std::string menuItem);
 
 	MainMenuWindow(Configuration* config, GameState* gameState,
 			TextManager* text);

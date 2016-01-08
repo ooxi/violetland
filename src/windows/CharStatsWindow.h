@@ -14,15 +14,16 @@ class CharStatsWindow: public Window {
 	void increasePlayerParam(std::string paramName);
 	void showPerkDetails(std::string perkName);
 	void givePerkToPlayer(std::string perkName);
+	
+	void onPlayerParamClickEvent(std::string paramName);
+	void onPerkHoverEvent(std::string perkName);
+	void onPerkClickEvent(std::string perkName);
+	
 public:
 	static const char* perkIds[];
 	static const unsigned perkIdsNumber;
 	static const char* paramIds[];
 	static const unsigned paramIdsNumber;
-
-	static void onPlayerParamClickEvent(Window* sender, std::string paramName);
-	static void onPerkHoverEvent(Window* sender, std::string perkName);
-	static void onPerkClickEvent(Window* sender, std::string perkName);
 
 	CharStatsWindow(Configuration* config, VideoManager* videoManager,
 			Player* player);
