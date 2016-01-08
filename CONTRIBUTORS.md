@@ -27,10 +27,11 @@ violetland contributors (sorted alphabeticaly)
 
 	* Mac OS X support
 
-* **Vinko Magecic**
+* **[Vinko Magecic](https://github.com/sakuramboo)**
 
 	* Gameplay improvements
 	* Sound optimizations
+	* Rewrote audio stack
 
 * **kleinepanzer**
 
