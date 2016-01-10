@@ -7,6 +7,8 @@ PROJECT(violetland)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
+
+
 find_package(SDL REQUIRED)
 find_package(SDL_image REQUIRED)
 find_package(SDL_ttf REQUIRED)
@@ -27,6 +29,8 @@ endif(${MINGW})
 set(incDirList  ${SDL_INCLUDE_DIR}  ${SDLIMAGE_INCLUDE_DIR} ${SDLTTF_INCLUDE_DIR} ${SDLMIXER_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${LIBINTL_INCLUDE_DIR})
 set(libList ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${SDLMIXER_LIBRARY} ${OPENGL_LIBRARIES} ${Boost_LIBRARIES} ${LIBINTL_LIBRARIES})
 
+
+
 if (DEFINED LOCALE_INSTALL_DIR)
 	set(LOCALEDIR "${LOCALE_INSTALL_DIR}")
 else(DEFINED LOCALE_INSTALL_DIR)
@@ -34,11 +38,13 @@ else(DEFINED LOCALE_INSTALL_DIR)
 endif(DEFINED LOCALE_INSTALL_DIR)
 
 add_subdirectory(po)
-include_directories(${incDirList})
+
+
 
 # Read build version from `VERSION' file
 file(STRINGS "VERSION" VIOLETLAND_VERSION LIMIT_COUNT 1)
 add_definitions(-DVIOLETLAND_VERSION="${VIOLETLAND_VERSION}")
+
 
 
 # Sources, ordered by
@@ -139,10 +145,15 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 
-add_executable(violetland ${srcFileList})
 
+# Build executable
+include_directories(${incDirList})
+add_executable(violetland ${srcFileList})
 target_link_libraries(violetland ${libList})
 
+
+
+# Install executable and assets
 if(DEFINED DATA_INSTALL_DIR)
 	set(relResPath ${DATA_INSTALL_DIR})
 	add_definitions(-DDATA_INSTALL_DIR="${DATA_INSTALL_DIR}/")
