@@ -9,14 +9,44 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 
 
+
+
+# SDL
 find_package(SDL REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDL_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDL_LIBRARY})
+
+
+# SDL_image
 find_package(SDL_image REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDLIMAGE_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDLIMAGE_LIBRARY})
+
+
+# SDL_ttf
 find_package(SDL_ttf REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDLTTF_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDLTTF_LIBRARY})
+
+
+# SDL_mixer
 find_package(SDL_mixer REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDLMIXER_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDLMIXER_LIBRARY})
+
+
+# OpenGL
 find_package(OpenGL REQUIRED)
-find_package(Gettext REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${OPENGL_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${OPENGL_LIBRARIES})
+
+
+# Boost
 find_package(Boost COMPONENTS filesystem system REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${Boost_INCLUDE_DIRS})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${Boost_LIBRARIES})
 add_definitions(-DBOOST_FILESYSTEM_VERSION=3)
+
 
 # Searching for libintl using bundled CMake script
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib/fcitx/cmake")
@@ -26,16 +56,22 @@ if(${MINGW})
 	set(LIBINTL_LIBRARIES intl)
 endif(${MINGW})
 
-set(incDirList  ${SDL_INCLUDE_DIR}  ${SDLIMAGE_INCLUDE_DIR} ${SDLTTF_INCLUDE_DIR} ${SDLMIXER_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${LIBINTL_INCLUDE_DIR})
-set(libList ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${SDLMIXER_LIBRARY} ${OPENGL_LIBRARIES} ${Boost_LIBRARIES} ${LIBINTL_LIBRARIES})
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${LIBINTL_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${LIBINTL_LIBRARIES})
 
 
 
+
+
+# LOCALEDIR must be set up before including po/CMakeLists.txt
 if (DEFINED LOCALE_INSTALL_DIR)
 	set(LOCALEDIR "${LOCALE_INSTALL_DIR}")
 else(DEFINED LOCALE_INSTALL_DIR)
 	set(LOCALEDIR "${CMAKE_INSTALL_PREFIX}/locale")
 endif(DEFINED LOCALE_INSTALL_DIR)
+
+add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
+add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
 
 add_subdirectory(po)
 
@@ -55,7 +91,7 @@ add_definitions(-DVIOLETLAND_VERSION="${VIOLETLAND_VERSION}")
 #
 set(VS_SOURCE src)
 
-set(srcFileList
+set(VIOLET_SOURCES
 	# src/
 	${VS_SOURCE}/program.cpp
 
@@ -123,9 +159,6 @@ set(srcFileList
 )
 
 
-add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
-add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
-
 
 # Specify C++ standard, I would love to use C++11 but at least on Ubuntu boost
 # is compiled with C++98 which will result in linking errors. Seems to be fixed
@@ -147,9 +180,9 @@ endif()
 
 
 # Build executable
-include_directories(${incDirList})
-add_executable(violetland ${srcFileList})
-target_link_libraries(violetland ${libList})
+include_directories(${VIOLET_INCLUDE_DIRS})
+add_executable(violetland ${VIOLET_SOURCES})
+target_link_libraries(violetland ${VIOLET_LIBRARIES})
 
 
 
