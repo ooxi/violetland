@@ -104,8 +104,11 @@ add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
 
 
 # Specify C++ standard, I would love to use C++11 but at least on Ubuntu boost
-# is compiled with C++98 which will result in linking errors
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
+# is compiled with C++98 which will result in linking errors. Seems to be fixed
+# in boost 1.57 but Ubuntu before wily does not ship that version.
+#
+# @see https://svn.boost.org/trac/boost/ticket/6779
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # Compiler diagnostics are most useful
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
