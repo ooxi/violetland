@@ -89,73 +89,73 @@ add_definitions(-DVIOLETLAND_VERSION="${VIOLETLAND_VERSION}")
 #  2) alphabetically, case insensitive
 #  3) shorter file names first
 #
-set(VS_SOURCE src)
+set(VIOLET_SOURCE_DIR src)
 
 set(VIOLET_SOURCES
 	# src/
-	${VS_SOURCE}/program.cpp
+	${VIOLET_SOURCE_DIR}/program.cpp
 
 	# src/game
-	${VS_SOURCE}/game/GameState.cpp
-	${VS_SOURCE}/game/Highscores.cpp
-	${VS_SOURCE}/game/HUD.cpp
-	${VS_SOURCE}/game/MusicManager.cpp
-	${VS_SOURCE}/game/Powerup.cpp
-	${VS_SOURCE}/game/Resources.cpp
-	${VS_SOURCE}/game/Terrain.cpp
-	${VS_SOURCE}/game/Weapon.cpp
-	${VS_SOURCE}/game/WeaponManager.cpp
+	${VIOLET_SOURCE_DIR}/game/GameState.cpp
+	${VIOLET_SOURCE_DIR}/game/Highscores.cpp
+	${VIOLET_SOURCE_DIR}/game/HUD.cpp
+	${VIOLET_SOURCE_DIR}/game/MusicManager.cpp
+	${VIOLET_SOURCE_DIR}/game/Powerup.cpp
+	${VIOLET_SOURCE_DIR}/game/Resources.cpp
+	${VIOLET_SOURCE_DIR}/game/Terrain.cpp
+	${VIOLET_SOURCE_DIR}/game/Weapon.cpp
+	${VIOLET_SOURCE_DIR}/game/WeaponManager.cpp
 
 	# src/game/bullets
-	${VS_SOURCE}/game/bullets/Bullet.cpp
-	${VS_SOURCE}/game/bullets/Flame.cpp
-	${VS_SOURCE}/game/bullets/GrenadeBullet.cpp
-	${VS_SOURCE}/game/bullets/LaserBullet.cpp
-	${VS_SOURCE}/game/bullets/StandardBullet.cpp
+	${VIOLET_SOURCE_DIR}/game/bullets/Bullet.cpp
+	${VIOLET_SOURCE_DIR}/game/bullets/Flame.cpp
+	${VIOLET_SOURCE_DIR}/game/bullets/GrenadeBullet.cpp
+	${VIOLET_SOURCE_DIR}/game/bullets/LaserBullet.cpp
+	${VIOLET_SOURCE_DIR}/game/bullets/StandardBullet.cpp
 
 	# src/game/lifeforms
-	${VS_SOURCE}/game/lifeforms/LifeForm.cpp
-	${VS_SOURCE}/game/lifeforms/Monster.cpp
-	${VS_SOURCE}/game/lifeforms/MonsterFactory.cpp
-	${VS_SOURCE}/game/lifeforms/MonsterTemplate.cpp
-	${VS_SOURCE}/game/lifeforms/Player.cpp
+	${VIOLET_SOURCE_DIR}/game/lifeforms/LifeForm.cpp
+	${VIOLET_SOURCE_DIR}/game/lifeforms/Monster.cpp
+	${VIOLET_SOURCE_DIR}/game/lifeforms/MonsterFactory.cpp
+	${VIOLET_SOURCE_DIR}/game/lifeforms/MonsterTemplate.cpp
+	${VIOLET_SOURCE_DIR}/game/lifeforms/Player.cpp
 
 	# src/system
-	${VS_SOURCE}/system/ConfigFile.cpp
-	${VS_SOURCE}/system/Configuration.cpp
-	${VS_SOURCE}/system/ControlStyle.cpp
-	${VS_SOURCE}/system/InputHandler.cpp
-	${VS_SOURCE}/system/Object.cpp
+	${VIOLET_SOURCE_DIR}/system/ConfigFile.cpp
+	${VIOLET_SOURCE_DIR}/system/Configuration.cpp
+	${VIOLET_SOURCE_DIR}/system/ControlStyle.cpp
+	${VIOLET_SOURCE_DIR}/system/InputHandler.cpp
+	${VIOLET_SOURCE_DIR}/system/Object.cpp
 
 	# src/system/graphic
-	${VS_SOURCE}/system/graphic/Aim.cpp
-	${VS_SOURCE}/system/graphic/Camera.cpp
-	${VS_SOURCE}/system/graphic/DynamicObject.cpp	
-	${VS_SOURCE}/system/graphic/Explosion.cpp
-	${VS_SOURCE}/system/graphic/Particle.cpp
-	${VS_SOURCE}/system/graphic/ParticleSystem.cpp
-	${VS_SOURCE}/system/graphic/Sprite.cpp
-	${VS_SOURCE}/system/graphic/StaticObject.cpp
-	${VS_SOURCE}/system/graphic/Texture.cpp
-	${VS_SOURCE}/system/graphic/VideoManager.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/Aim.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/Camera.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/DynamicObject.cpp	
+	${VIOLET_SOURCE_DIR}/system/graphic/Explosion.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/Particle.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/ParticleSystem.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/Sprite.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/StaticObject.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/Texture.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/VideoManager.cpp
 
 	# src/system/graphic/text
-	${VS_SOURCE}/system/graphic/text/TextManager.cpp
-	${VS_SOURCE}/system/graphic/text/TextObject.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/text/TextManager.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/text/TextObject.cpp
 
 	# src/system/sound
-	${VS_SOURCE}/system/sound/Sound.cpp
-	${VS_SOURCE}/system/sound/SoundManager.cpp
+	${VIOLET_SOURCE_DIR}/system/sound/Sound.cpp
+	${VIOLET_SOURCE_DIR}/system/sound/SoundManager.cpp
 
 	# src/system/utility
-	${VS_SOURCE}/system/utility/FileUtility.cpp
-	${VS_SOURCE}/system/utility/ImageUtility.cpp
-	${VS_SOURCE}/system/utility/UidGenerator.cpp
+	${VIOLET_SOURCE_DIR}/system/utility/FileUtility.cpp
+	${VIOLET_SOURCE_DIR}/system/utility/ImageUtility.cpp
+	${VIOLET_SOURCE_DIR}/system/utility/UidGenerator.cpp
 
 	# src/windows
-	${VS_SOURCE}/windows/CharStatsWindow.cpp
-	${VS_SOURCE}/windows/MainMenuWindow.cpp
-	${VS_SOURCE}/windows/Window.cpp
+	${VIOLET_SOURCE_DIR}/windows/CharStatsWindow.cpp
+	${VIOLET_SOURCE_DIR}/windows/MainMenuWindow.cpp
+	${VIOLET_SOURCE_DIR}/windows/Window.cpp
 )
 
 
