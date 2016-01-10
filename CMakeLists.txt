@@ -40,55 +40,82 @@ include_directories(${incDirList})
 file(STRINGS "VERSION" VIOLETLAND_VERSION LIMIT_COUNT 1)
 add_definitions(-DVIOLETLAND_VERSION="${VIOLETLAND_VERSION}")
 
+
+# Sources, ordered by
+#
+#  1) first files, than directories
+#  2) alphabetically, case insensitive
+#  3) shorter file names first
+#
 set(VS_SOURCE src)
 
-set(srcFileList	
+set(srcFileList
+	# src/
 	${VS_SOURCE}/program.cpp
-	${VS_SOURCE}/game/Weapon.cpp 
-	${VS_SOURCE}/game/WeaponManager.cpp
-	${VS_SOURCE}/game/Powerup.cpp 
-	${VS_SOURCE}/game/Terrain.cpp
-	${VS_SOURCE}/game/MusicManager.cpp
-	${VS_SOURCE}/game/Highscores.cpp
-	${VS_SOURCE}/game/Resources.cpp
+
+	# src/game
 	${VS_SOURCE}/game/GameState.cpp
+	${VS_SOURCE}/game/Highscores.cpp
 	${VS_SOURCE}/game/HUD.cpp
+	${VS_SOURCE}/game/MusicManager.cpp
+	${VS_SOURCE}/game/Powerup.cpp
+	${VS_SOURCE}/game/Resources.cpp
+	${VS_SOURCE}/game/Terrain.cpp
+	${VS_SOURCE}/game/Weapon.cpp
+	${VS_SOURCE}/game/WeaponManager.cpp
+
+	# src/game/bullets
+	${VS_SOURCE}/game/bullets/Bullet.cpp
+	${VS_SOURCE}/game/bullets/Flame.cpp
+	${VS_SOURCE}/game/bullets/GrenadeBullet.cpp
+	${VS_SOURCE}/game/bullets/LaserBullet.cpp
+	${VS_SOURCE}/game/bullets/StandardBullet.cpp
+
+	# src/game/lifeforms
 	${VS_SOURCE}/game/lifeforms/LifeForm.cpp
-	${VS_SOURCE}/game/lifeforms/Player.cpp 
 	${VS_SOURCE}/game/lifeforms/Monster.cpp
 	${VS_SOURCE}/game/lifeforms/MonsterFactory.cpp
 	${VS_SOURCE}/game/lifeforms/MonsterTemplate.cpp
-	${VS_SOURCE}/game/bullets/Bullet.cpp
-	${VS_SOURCE}/game/bullets/StandardBullet.cpp
-	${VS_SOURCE}/game/bullets/LaserBullet.cpp
-	${VS_SOURCE}/game/bullets/GrenadeBullet.cpp
-	${VS_SOURCE}/game/bullets/Flame.cpp
-	${VS_SOURCE}/system/Object.cpp
-	${VS_SOURCE}/system/InputHandler.cpp
+	${VS_SOURCE}/game/lifeforms/Player.cpp
+
+	# src/system
 	${VS_SOURCE}/system/ConfigFile.cpp
 	${VS_SOURCE}/system/Configuration.cpp
 	${VS_SOURCE}/system/ControlStyle.cpp
+	${VS_SOURCE}/system/InputHandler.cpp
+	${VS_SOURCE}/system/Object.cpp
+
+	# src/system/graphic
+	${VS_SOURCE}/system/graphic/Aim.cpp
+	${VS_SOURCE}/system/graphic/Camera.cpp
+	${VS_SOURCE}/system/graphic/DynamicObject.cpp	
+	${VS_SOURCE}/system/graphic/Explosion.cpp
+	${VS_SOURCE}/system/graphic/Particle.cpp
+	${VS_SOURCE}/system/graphic/ParticleSystem.cpp
+	${VS_SOURCE}/system/graphic/Sprite.cpp
+	${VS_SOURCE}/system/graphic/StaticObject.cpp
+	${VS_SOURCE}/system/graphic/Texture.cpp
+	${VS_SOURCE}/system/graphic/VideoManager.cpp
+
+	# src/system/graphic/text
+	${VS_SOURCE}/system/graphic/text/TextManager.cpp
+	${VS_SOURCE}/system/graphic/text/TextObject.cpp
+
+	# src/system/sound
+	${VS_SOURCE}/system/sound/Sound.cpp
+	${VS_SOURCE}/system/sound/SoundManager.cpp
+
+	# src/system/utility
 	${VS_SOURCE}/system/utility/FileUtility.cpp
 	${VS_SOURCE}/system/utility/ImageUtility.cpp
 	${VS_SOURCE}/system/utility/UidGenerator.cpp
-	${VS_SOURCE}/system/graphic/Texture.cpp
-	${VS_SOURCE}/system/graphic/Sprite.cpp 
-	${VS_SOURCE}/system/graphic/StaticObject.cpp
-	${VS_SOURCE}/system/graphic/DynamicObject.cpp
-	${VS_SOURCE}/system/graphic/Aim.cpp
-	${VS_SOURCE}/system/graphic/Camera.cpp
-	${VS_SOURCE}/system/graphic/Particle.cpp
-	${VS_SOURCE}/system/graphic/ParticleSystem.cpp
-	${VS_SOURCE}/system/graphic/Explosion.cpp
-	${VS_SOURCE}/system/graphic/VideoManager.cpp
-	${VS_SOURCE}/system/graphic/text/TextManager.cpp 
-	${VS_SOURCE}/system/graphic/text/TextObject.cpp 
-	${VS_SOURCE}/system/sound/Sound.cpp
-	${VS_SOURCE}/system/sound/SoundManager.cpp
-	${VS_SOURCE}/windows/Window.cpp
-	${VS_SOURCE}/windows/MainMenuWindow.cpp
+
+	# src/windows
 	${VS_SOURCE}/windows/CharStatsWindow.cpp
+	${VS_SOURCE}/windows/MainMenuWindow.cpp
+	${VS_SOURCE}/windows/Window.cpp
 )
+
 
 add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
 add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
