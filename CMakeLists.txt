@@ -115,7 +115,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wno-ignored-qualifiers -Wno-unused-parameter")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-	# clang++ does not boost_static_assert_typedef's unused attribute
+	# clang++ does not understand boost_static_assert_typedef's unused
+	# attribute
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef")
 endif()
 
