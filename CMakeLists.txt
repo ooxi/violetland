@@ -108,7 +108,7 @@ add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
 # in boost 1.57 but Ubuntu before wily does not ship that version.
 #
 # @see https://svn.boost.org/trac/boost/ticket/6779
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
 
 # Compiler diagnostics are most useful
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
