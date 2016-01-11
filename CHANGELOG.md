@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[*]` [Improved `CMakeLists.txt` readability](https://github.com/ooxi/violetland/pull/93)
  * `[*]` [Refactored window handlers to use `boost::function`](https://github.com/ooxi/violetland/pull/91)
  * `[+]` [Automatic Windows build using Travis CI and MXE](https://github.com/ooxi/violetland/pull/90)
  * `[*]` [Misc code cleanup](https://github.com/ooxi/violetland/pull/87)

@@ -7,14 +7,46 @@ PROJECT(violetland)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
+
+
+
+
+# SDL
 find_package(SDL REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDL_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDL_LIBRARY})
+
+
+# SDL_image
 find_package(SDL_image REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDLIMAGE_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDLIMAGE_LIBRARY})
+
+
+# SDL_ttf
 find_package(SDL_ttf REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDLTTF_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDLTTF_LIBRARY})
+
+
+# SDL_mixer
 find_package(SDL_mixer REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDLMIXER_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDLMIXER_LIBRARY})
+
+
+# OpenGL
 find_package(OpenGL REQUIRED)
-find_package(Gettext REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${OPENGL_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${OPENGL_LIBRARIES})
+
+
+# Boost
 find_package(Boost COMPONENTS filesystem system REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${Boost_INCLUDE_DIRS})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${Boost_LIBRARIES})
 add_definitions(-DBOOST_FILESYSTEM_VERSION=3)
+
 
 # Searching for libintl using bundled CMake script
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib/fcitx/cmake")
@@ -24,83 +56,108 @@ if(${MINGW})
 	set(LIBINTL_LIBRARIES intl)
 endif(${MINGW})
 
-set(incDirList  ${SDL_INCLUDE_DIR}  ${SDLIMAGE_INCLUDE_DIR} ${SDLTTF_INCLUDE_DIR} ${SDLMIXER_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${LIBINTL_INCLUDE_DIR})
-set(libList ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLTTF_LIBRARY} ${SDLMIXER_LIBRARY} ${OPENGL_LIBRARIES} ${Boost_LIBRARIES} ${LIBINTL_LIBRARIES})
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${LIBINTL_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${LIBINTL_LIBRARIES})
 
+
+
+
+
+# LOCALEDIR must be set up before including po/CMakeLists.txt
 if (DEFINED LOCALE_INSTALL_DIR)
 	set(LOCALEDIR "${LOCALE_INSTALL_DIR}")
 else(DEFINED LOCALE_INSTALL_DIR)
 	set(LOCALEDIR "${CMAKE_INSTALL_PREFIX}/locale")
 endif(DEFINED LOCALE_INSTALL_DIR)
 
+add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
+add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
+
 add_subdirectory(po)
-include_directories(${incDirList})
+
+
 
 # Read build version from `VERSION' file
 file(STRINGS "VERSION" VIOLETLAND_VERSION LIMIT_COUNT 1)
 add_definitions(-DVIOLETLAND_VERSION="${VIOLETLAND_VERSION}")
 
-set(srcDir src)
-set(srcWindowsDir ${srcDir}/windows)
-set(srcGameDir ${srcDir}/game)
-set(srcBulletsDir ${srcGameDir}/bullets)
-set(srcLifeFormsDir ${srcGameDir}/lifeforms)
-set(srcSystemDir ${srcDir}/system)
-set(srcGraphicDir ${srcSystemDir}/graphic)
-set(srcTextDir ${srcGraphicDir}/text)
-set(srcSoundDir ${srcSystemDir}/sound)
-set(srcUtilityDir ${srcSystemDir}/utility)
 
-set(srcFileList	
-	${srcDir}/program.cpp
-	${srcGameDir}/Weapon.cpp 
-	${srcGameDir}/WeaponManager.cpp
-	${srcGameDir}/Powerup.cpp 
-	${srcGameDir}/Terrain.cpp
-	${srcGameDir}/MusicManager.cpp
-	${srcGameDir}/Highscores.cpp
-	${srcGameDir}/Resources.cpp
-	${srcGameDir}/GameState.cpp
-	${srcGameDir}/HUD.cpp
-	${srcLifeFormsDir}/LifeForm.cpp
-	${srcLifeFormsDir}/Player.cpp 
-	${srcLifeFormsDir}/Monster.cpp
-	${srcLifeFormsDir}/MonsterFactory.cpp
-	${srcLifeFormsDir}/MonsterTemplate.cpp
-	${srcBulletsDir}/Bullet.cpp
-	${srcBulletsDir}/StandardBullet.cpp
-	${srcBulletsDir}/LaserBullet.cpp
-	${srcBulletsDir}/GrenadeBullet.cpp
-	${srcBulletsDir}/Flame.cpp
-	${srcSystemDir}/Object.cpp
-	${srcSystemDir}/InputHandler.cpp
-	${srcSystemDir}/ConfigFile.cpp
-	${srcSystemDir}/Configuration.cpp
-	${srcSystemDir}/ControlStyle.cpp
-	${srcUtilityDir}/FileUtility.cpp
-	${srcUtilityDir}/ImageUtility.cpp
-	${srcUtilityDir}/UidGenerator.cpp
-	${srcGraphicDir}/Texture.cpp
-	${srcGraphicDir}/Sprite.cpp 
-	${srcGraphicDir}/StaticObject.cpp
-	${srcGraphicDir}/DynamicObject.cpp
-	${srcGraphicDir}/Aim.cpp
-	${srcGraphicDir}/Camera.cpp
-	${srcGraphicDir}/Particle.cpp
-	${srcGraphicDir}/ParticleSystem.cpp
-	${srcGraphicDir}/Explosion.cpp
-	${srcGraphicDir}/VideoManager.cpp
-	${srcTextDir}/TextManager.cpp 
-	${srcTextDir}/TextObject.cpp 
-	${srcSoundDir}/Sound.cpp
-	${srcSoundDir}/SoundManager.cpp
-	${srcWindowsDir}/Window.cpp
-	${srcWindowsDir}/MainMenuWindow.cpp
-	${srcWindowsDir}/CharStatsWindow.cpp
+
+# Sources, ordered by
+#
+#  1) first files, than directories
+#  2) alphabetically, case insensitive
+#  3) shorter file names first
+#
+set(VIOLET_SOURCE_DIR src)
+
+set(VIOLET_SOURCES
+	# src/
+	${VIOLET_SOURCE_DIR}/program.cpp
+
+	# src/game
+	${VIOLET_SOURCE_DIR}/game/GameState.cpp
+	${VIOLET_SOURCE_DIR}/game/Highscores.cpp
+	${VIOLET_SOURCE_DIR}/game/HUD.cpp
+	${VIOLET_SOURCE_DIR}/game/MusicManager.cpp
+	${VIOLET_SOURCE_DIR}/game/Powerup.cpp
+	${VIOLET_SOURCE_DIR}/game/Resources.cpp
+	${VIOLET_SOURCE_DIR}/game/Terrain.cpp
+	${VIOLET_SOURCE_DIR}/game/Weapon.cpp
+	${VIOLET_SOURCE_DIR}/game/WeaponManager.cpp
+
+	# src/game/bullets
+	${VIOLET_SOURCE_DIR}/game/bullets/Bullet.cpp
+	${VIOLET_SOURCE_DIR}/game/bullets/Flame.cpp
+	${VIOLET_SOURCE_DIR}/game/bullets/GrenadeBullet.cpp
+	${VIOLET_SOURCE_DIR}/game/bullets/LaserBullet.cpp
+	${VIOLET_SOURCE_DIR}/game/bullets/StandardBullet.cpp
+
+	# src/game/lifeforms
+	${VIOLET_SOURCE_DIR}/game/lifeforms/LifeForm.cpp
+	${VIOLET_SOURCE_DIR}/game/lifeforms/Monster.cpp
+	${VIOLET_SOURCE_DIR}/game/lifeforms/MonsterFactory.cpp
+	${VIOLET_SOURCE_DIR}/game/lifeforms/MonsterTemplate.cpp
+	${VIOLET_SOURCE_DIR}/game/lifeforms/Player.cpp
+
+	# src/system
+	${VIOLET_SOURCE_DIR}/system/ConfigFile.cpp
+	${VIOLET_SOURCE_DIR}/system/Configuration.cpp
+	${VIOLET_SOURCE_DIR}/system/ControlStyle.cpp
+	${VIOLET_SOURCE_DIR}/system/InputHandler.cpp
+	${VIOLET_SOURCE_DIR}/system/Object.cpp
+
+	# src/system/graphic
+	${VIOLET_SOURCE_DIR}/system/graphic/Aim.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/Camera.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/DynamicObject.cpp	
+	${VIOLET_SOURCE_DIR}/system/graphic/Explosion.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/Particle.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/ParticleSystem.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/Sprite.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/StaticObject.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/Texture.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/VideoManager.cpp
+
+	# src/system/graphic/text
+	${VIOLET_SOURCE_DIR}/system/graphic/text/TextManager.cpp
+	${VIOLET_SOURCE_DIR}/system/graphic/text/TextObject.cpp
+
+	# src/system/sound
+	${VIOLET_SOURCE_DIR}/system/sound/Sound.cpp
+	${VIOLET_SOURCE_DIR}/system/sound/SoundManager.cpp
+
+	# src/system/utility
+	${VIOLET_SOURCE_DIR}/system/utility/FileUtility.cpp
+	${VIOLET_SOURCE_DIR}/system/utility/ImageUtility.cpp
+	${VIOLET_SOURCE_DIR}/system/utility/UidGenerator.cpp
+
+	# src/windows
+	${VIOLET_SOURCE_DIR}/windows/CharStatsWindow.cpp
+	${VIOLET_SOURCE_DIR}/windows/MainMenuWindow.cpp
+	${VIOLET_SOURCE_DIR}/windows/Window.cpp
 )
 
-add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
-add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
 
 
 # Specify C++ standard, I would love to use C++11 but at least on Ubuntu boost
@@ -108,22 +165,28 @@ add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
 # in boost 1.57 but Ubuntu before wily does not ship that version.
 #
 # @see https://svn.boost.org/trac/boost/ticket/6779
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
 
 # Compiler diagnostics are most useful
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wno-ignored-qualifiers -Wno-unused-parameter")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-	# clang++ does not boost_static_assert_typedef's unused attribute
+	# clang++ does not understand boost_static_assert_typedef's unused
+	# attribute
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef")
 endif()
 
 
-add_executable(violetland ${srcFileList})
 
-target_link_libraries(violetland ${libList})
+# Build executable
+include_directories(${VIOLET_INCLUDE_DIRS})
+add_executable(violetland ${VIOLET_SOURCES})
+target_link_libraries(violetland ${VIOLET_LIBRARIES})
 
+
+
+# Install executable and assets
 if(DEFINED DATA_INSTALL_DIR)
 	set(relResPath ${DATA_INSTALL_DIR})
 	add_definitions(-DDATA_INSTALL_DIR="${DATA_INSTALL_DIR}/")
