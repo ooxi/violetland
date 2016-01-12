@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[!]` [Ensured all files except `start.cmd` use UNIX line endings](https://github.com/ooxi/violetland/pull/94)
  * `[*]` [Improved `CMakeLists.txt` readability](https://github.com/ooxi/violetland/pull/93)
  * `[*]` [Refactored window handlers to use `boost::function`](https://github.com/ooxi/violetland/pull/91)
  * `[+]` [Automatic Windows build using Travis CI and MXE](https://github.com/ooxi/violetland/pull/90)
