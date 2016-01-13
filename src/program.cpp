@@ -101,8 +101,6 @@ string playerId;
 
 map<string, Window*> windows;
 
-GameMode gameMode;
-
 bool roulette(float eventProbability) {
 	return (float) (rand() % 100000) < eventProbability * 100000.0f;
 }
@@ -193,7 +191,7 @@ void startGame(std::string elementName) {
 
 	SDL_GL_SwapBuffers();
 
-	gameState->start(gameMode);
+	gameState->start();
 
 	clearVector<StaticObject*> (&bloodStains);
 	clearVector<ParticleSystem*> (&particleSystems);
@@ -867,7 +865,7 @@ void refreshMainMenuWindow() {
 	const int r = videoManager->getVideoMode().Width * 0.3f;
 
 	string strGameMode = _("Unknown");
-	switch (gameMode) {
+	switch (gameState->Mode) {
 	case GAMEMODE_SURVIVAL:
 		strGameMode = _("Violetland Survival");
 		break;
@@ -882,12 +880,12 @@ void refreshMainMenuWindow() {
 }
 
 void switchGameMode(std::string elementName) {
-	switch (gameMode) {
+	switch (gameState->Mode) {
 	case GAMEMODE_SURVIVAL:
-		gameMode = GAMEMODE_WAVES;
+		gameState->Mode = GAMEMODE_WAVES;
 		break;
 	case GAMEMODE_WAVES:
-		gameMode = GAMEMODE_SURVIVAL;
+		gameState->Mode = GAMEMODE_SURVIVAL;
 		break;
 	}
 
@@ -895,8 +893,6 @@ void switchGameMode(std::string elementName) {
 }
 
 void createMainMenuWindow() {
-	gameMode = gameState->Mode;
-
 	Window *mainMenu = new MainMenuWindow(config, gameState,
 			videoManager->RegularText);
 

@@ -26,7 +26,7 @@ enum GameMode {
 class GameState {
 public:
 	GameState();
-	void start(GameMode mode);
+	void start();
 	void end();
 	
 	std::vector<violet::Blood> processExplosion(

@@ -15,17 +15,16 @@ violet::GameState::GameState() {
 	Mode = GAMEMODE_SURVIVAL;
 }
 
-void violet::GameState::start(GameMode mode) {
+void violet::GameState::start() {
 	reset();
 
-	Mode = mode;
 	Lost = false;
 	Paused = false;
 	Begun = true;
 	JustBegun = true;
 	Time = 0;
 
-	switch (mode) {
+	switch (Mode) {
 	case GAMEMODE_SURVIVAL:
 		Hardness = 9995.0;
 		GameAreaSize = 2048;
