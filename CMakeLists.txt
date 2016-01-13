@@ -156,6 +156,7 @@ set(VIOLET_SOURCES
 	${VIOLET_SOURCE_DIR}/windows/CharStatsWindow.cpp
 	${VIOLET_SOURCE_DIR}/windows/MainMenuWindow.cpp
 	${VIOLET_SOURCE_DIR}/windows/Window.cpp
+	${VIOLET_SOURCE_DIR}/windows/WindowManager.cpp
 )
 
 

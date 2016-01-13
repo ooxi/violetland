@@ -34,7 +34,7 @@ public:
 			TextManager* manager, int x, int y, int vstep, 
 			TextManager::TextHAlignFlag halign, TextManager::TextVAlignFlag valign);
 	void removeElement(std::string name, bool remainHandler);
-	void addHandler(HandlerType hdl, std::string elementName, boost::function<void(std::string)> handler);
+	void addHandler(HandlerType hdl, std::string elementName, boost::function<void (std::string)> handler);
 	void removeHandler(HandlerType hdl, std::string elementName);
 	void process(InputHandler* input);
 	void draw();

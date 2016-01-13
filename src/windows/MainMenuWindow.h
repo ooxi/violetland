@@ -2,23 +2,36 @@
 #define VIOLET_MAINMENUWINDOW_H_
 
 #include "Window.h"
-#include "../system/Configuration.h"
-#include "../game/GameState.h"
-#include "../system/graphic/text/TextManager.h"
 
 namespace violet {
 
-class MainMenuWindow: public Window {
-private:
-	GameState* m_gameState;
+class Configuration;
+class GameState;
+class TextManager;
 
-	void onMenuItemClick(std::string menuItem);
-	void exitGame();
+class MainMenuWindow: public Window {
+
+private:
+	Configuration* const m_config;
+	GameState* const m_state;
+	TextManager* const m_text;
+
+	void onResumeClick();
+	void onStartClick();
+	void onOptionsClick();
+	void onHighScoresClick();
+	void onExitClick();
+	void onGameModeClick();
+	
+	void refresh();
 
 public:
 
-	MainMenuWindow(Configuration* config, GameState* gameState,
-			TextManager* text);
+	MainMenuWindow(	Configuration* config,
+			GameState* state,
+			TextManager* text
+		);
+	
 	virtual ~MainMenuWindow();
 };
 }

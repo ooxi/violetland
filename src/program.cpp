@@ -168,7 +168,7 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 }
 
 // Start the game in selected mode
-void startGame(std::string elementName) {
+void MainMenuWindow::onStartClick() {
 	cam->setW(1600);
 
 	hud->reset();
@@ -221,7 +221,7 @@ void startGame(std::string elementName) {
 		spawnEnemy(0, 0, (float) cam->getW(), 1, 1);
 	}
 
-	windows["mainmenu"]->CloseFlag = true;
+	CloseFlag = true;
 
 	hud->addMessage(_("Try to survive as long as you can."));
 	hud->addMessage(
@@ -848,66 +848,31 @@ void createOptionsWindow() {
 	refreshOptionsWindow();
 }
 
-void showOptions(std::string elementName) {
-	windows["mainmenu"]->CloseFlag = true;
+void MainMenuWindow::onOptionsClick() {
+	CloseFlag = true;
 	createOptionsWindow();
 }
 
-void resumeGame(std::string elementName) {
-	Window* w = windows.find("mainmenu")->second;
-	w->CloseFlag = true;
+void MainMenuWindow::onResumeClick() {
+	CloseFlag = true;
 	switchGamePause();
 }
 
-void refreshMainMenuWindow() {
-	Window* w = windows.find("mainmenu")->second;
-
-	const int r = videoManager->getVideoMode().Width * 0.3f;
-
-	string strGameMode = _("Unknown");
-	switch (gameState->Mode) {
-	case GAMEMODE_SURVIVAL:
-		strGameMode = _("Violetland Survival");
-		break;
-	case GAMEMODE_WAVES:
-		strGameMode = _("Attack waves");
-		break;
-	}
-
-	w->addElement("gamemode", strGameMode, videoManager->RegularText, r,
-			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-}
-
-void switchGameMode(std::string elementName) {
-	switch (gameState->Mode) {
-	case GAMEMODE_SURVIVAL:
-		gameState->Mode = GAMEMODE_WAVES;
-		break;
-	case GAMEMODE_WAVES:
-		gameState->Mode = GAMEMODE_SURVIVAL;
-		break;
-	}
-
-	refreshMainMenuWindow();
-}
-
 void createMainMenuWindow() {
-	Window *mainMenu = new MainMenuWindow(config, gameState,
-			videoManager->RegularText);
-
-	mainMenu->addHandler(Window::hdl_lclick, "resume", boost::bind(resumeGame, _1));
-	mainMenu->addHandler(Window::hdl_lclick, "start", boost::bind(startGame, _1));
-	mainMenu->addHandler(Window::hdl_lclick, "gamemode", boost::bind(switchGameMode, _1));
-	mainMenu->addHandler(Window::hdl_lclick, "options", boost::bind(showOptions, _1));
-	mainMenu->addHandler(Window::hdl_lclick, "highscores", boost::bind(showHighScores, _1));
-
+	
+	/* Remove main window, if existing
+	 */
 	std::map<std::string, Window*>::iterator it = windows.find("mainmenu");
+	
 	if (it != windows.end())
 		delete it->second;
-	windows["mainmenu"] = mainMenu;
-
-	refreshMainMenuWindow();
+	
+	/* Create and open main window
+	 */
+	windows["mainmenu"] = new MainMenuWindow(
+		config, gameState,
+		videoManager->RegularText
+	);
 }
 
 void highScoresWindowController(std::string elementName) {
@@ -992,8 +957,8 @@ void createHighscoresWindow() {
 	windows["highscores"] = w;
 }
 
-void showHighScores(std::string elementName) {
-	windows["mainmenu"]->CloseFlag = true;
+void MainMenuWindow::onHighScoresClick() {
+	CloseFlag = true;
 	createHighscoresWindow();
 }
 
