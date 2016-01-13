@@ -1,3 +1,6 @@
+#include <sstream>
+#include <string>
+
 #include "MonsterFactory.h"
 
 violet::MonsterFactory::MonsterFactory(FileUtility* fileUtility,
@@ -57,7 +60,7 @@ violet::Sprite* violet::MonsterFactory::loadMonsterSprite(std::string name,
 		", frames count: " << framesCount << '.' << std::endl;
 
 	for (unsigned i = 0; i < framesCount; i++) {
-		ostringstream oss;
+		std::ostringstream oss;
 		oss << i << ".png";
 		SDL_Surface *surface = 
 			ImageUtility::loadImage(boost::filesystem::path(animPath) /= oss.str());
@@ -70,7 +73,7 @@ violet::Sprite* violet::MonsterFactory::loadMonsterSprite(std::string name,
 
 violet::Sound* violet::MonsterFactory::loadMonsterSound(std::string soundType,
 		std::string monsterName, std::string soundName) {
-	string buf = monsterName + "/sounds/" + soundType + '/' + soundName;
+	std::string buf = monsterName + "/sounds/" + soundType + '/' + soundName;
 	Sound* snd = m_sndManager->create(m_fileUtility->getFullPath(
 			FileUtility::monsters, buf));
 	return snd;
@@ -79,7 +82,7 @@ violet::Sound* violet::MonsterFactory::loadMonsterSound(std::string soundType,
 void violet::MonsterFactory::fillMonsterStats(MonsterTemplate* t,
 		std::string name) {
 	boost::filesystem::ifstream in;
-	string buf = name + "/stats";
+	std::string buf = name + "/stats";
 	in.open(m_fileUtility->getFullPath(FileUtility::monsters, buf));
 	if (!in) {
 		std::cout << "Couldn't load monster stats." << std::endl;

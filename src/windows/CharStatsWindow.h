@@ -1,6 +1,9 @@
 #ifndef VIOLET_CHARSTATSWINDOW_H_
 #define VIOLET_CHARSTATSWINDOW_H_
 
+#include <map>
+#include <string>
+
 #include "Window.h"
 #include "../system/graphic/VideoManager.h"
 #include "../game/lifeforms/Player.h"
@@ -10,7 +13,7 @@ namespace violet {
 class CharStatsWindow: public Window {
 	VideoManager* m_videoManager;
 	Player* m_player;
-	map<std::string, std::string> m_perkDetails;
+	std::map<std::string, std::string> m_perkDetails;
 
 	void increasePlayerParam(std::string paramName);
 	void showPerkDetails(std::string perkName);

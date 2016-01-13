@@ -45,10 +45,10 @@ void violet::MusicManager::play(std::string name, bool now) {
 	if(m_current) 
 	{
 		if(Mix_PlayMusic(m_current, -1) == -1)
-			cout << "Mix_PlayMusic: " << Mix_GetError() << endl;
+			std::cout << "Mix_PlayMusic: " << Mix_GetError() << std::endl;
 	}
 	else
-		cout << "Mix_LoadMUS: " << Mix_GetError() << endl;
+		std::cout << "Mix_LoadMUS: " << Mix_GetError() << std::endl;
 }
 
 violet::MusicManager::~MusicManager() {

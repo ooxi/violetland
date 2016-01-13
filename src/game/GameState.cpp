@@ -1,3 +1,7 @@
+#include <map>
+#include <string>
+#include <vector>
+
 #include "GameState.h"
 
 violet::GameState::GameState() {
@@ -37,22 +41,26 @@ void violet::GameState::end() {
 	Works = false;
 }
 
-violet::LifeForm* violet::GameState::getLifeForm(string id) {
-	map<string, LifeForm*>::iterator it = lifeForms.find(id);
+violet::LifeForm* violet::GameState::getLifeForm(std::string id) {
+	std::map<std::string, LifeForm*>::iterator it = lifeForms.find(id);
 	if (it == lifeForms.end())
 		return NULL;
 	else
 		return it->second;
 }
 
-vector<violet::Blood> violet::GameState::processExplosion(float x,
-		float y, float damage, float range, bool affectPlayer) {
-	vector<Blood> vBlood;
+std::vector<violet::Blood> violet::GameState::processExplosion(
+			float x, float y,
+			float damage, float range,
+			bool affectPlayer
+		) {
+	
+	std::vector<Blood> vBlood;
 
 	if (lifeForms.empty())
 		return vBlood;
 
-	map<string, LifeForm*>::const_iterator iter;
+	std::map<std::string, LifeForm*>::const_iterator iter;
 	for (iter = lifeForms.begin(); iter != lifeForms.end(); ++iter) {
 		LifeForm* lifeForm = iter->second;
 		if (lifeForm->Type == LIFEFORM_PLAYER && !affectPlayer)
@@ -95,7 +103,7 @@ void violet::GameState::process(int deltaTime) {
 }
 
 void violet::GameState::reset() {
-	clearMap<string, LifeForm*> (&lifeForms);
+	clearMap<std::string, LifeForm*> (&lifeForms);
 	clearVector<BasePowerup*> (&powerups);
 	clearVector<Bullet*> (&bullets);
 }

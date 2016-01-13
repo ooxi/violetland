@@ -3,6 +3,10 @@
 #include <boost/math/special_functions/round.hpp>
 #include <libintl.h>
 #include <locale.h>
+#include <map>
+#include <sstream>
+#include <string>
+#include <vector>
 #include "CharStatsWindow.h"
 #define _(STRING)            gettext(STRING)
 
@@ -29,17 +33,17 @@ const char* CharStatsWindow::paramIds[] = {
 
 const unsigned CharStatsWindow::paramIdsNumber = sizeof(CharStatsWindow::paramIds) / sizeof(char*);
 
-void CharStatsWindow::onPlayerParamClickEvent(string paramName)
+void CharStatsWindow::onPlayerParamClickEvent(std::string paramName)
 {
 	increasePlayerParam(paramName);
 }
 
-void CharStatsWindow::onPerkHoverEvent(string perkName)
+void CharStatsWindow::onPerkHoverEvent(std::string perkName)
 {
 	showPerkDetails(perkName);
 }
 
-void CharStatsWindow::onPerkClickEvent(string perkName)
+void CharStatsWindow::onPerkClickEvent(std::string perkName)
 {
 	givePerkToPlayer(perkName);
 }
@@ -102,8 +106,8 @@ void CharStatsWindow::refresh() {
 	const int r = (int) (m_videoManager->getVideoMode().Width * 0.6f);
 	const int h = m_videoManager->RegularText->getHeight();
 
-	ostringstream oss;
-	vector<Label> stats;
+	std::ostringstream oss;
+	std::vector<Label> stats;
 
 	oss << boost::format(_("Current player level: %i")) % m_player->Level;
 	stats.push_back(Label("level", oss.str()));
@@ -197,20 +201,20 @@ void CharStatsWindow::increasePlayerParam(std::string elementName) {
 	}
 }
 
-void CharStatsWindow::showPerkDetails(string perkName) {
+void CharStatsWindow::showPerkDetails(std::string perkName) {
 	int x = m_videoManager->getVideoMode().Width / 2;
 	int y = m_videoManager->RegularText->getHeight();
 
-	map<string, string>::iterator it = m_perkDetails.find(perkName);
+	std::map<std::string, std::string>::iterator it = m_perkDetails.find(perkName);
 	if (it != m_perkDetails.end())
 		addElement("explanation", it->second,
 				m_videoManager->SmallText, x, y, TextManager::CENTER,
 				TextManager::MIDDLE);
 }
 
-void CharStatsWindow::givePerkToPlayer(string perkName) {
+void CharStatsWindow::givePerkToPlayer(std::string perkName) {
 	if (m_player->LevelPoints > 0) {
-		map<string, bool*> m;
+		std::map<std::string, bool*> m;
 		m["unstoppable"] = &m_player->Unstoppable;
 		m["poisonbullets"] = &m_player->PoisonBullets;
 		m["bigcalibre"] = &m_player->BigCalibre;
@@ -220,7 +224,7 @@ void CharStatsWindow::givePerkToPlayer(string perkName) {
 		m["widesight"] = &m_player->WideSight;
 		m["magneto"] = &m_player->Magneto;
 
-		map<string, bool*>::iterator it = m.find(perkName);
+		std::map<std::string, bool*>::iterator it = m.find(perkName);
 
 		if (it != m.end()) {
 			if (!*it->second) {

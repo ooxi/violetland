@@ -11,8 +11,6 @@
 #include "Powerup.h"
 #include "../system/graphic/Explosion.h"
 
-using namespace std;
-
 namespace violet {
 class BasePowerup;
 
@@ -30,11 +28,16 @@ public:
 	GameState();
 	void start(GameMode mode);
 	void end();
-	vector<violet::Blood> processExplosion(float x, float y, float damage,
-			float range, bool affectPlayer);
+	
+	std::vector<violet::Blood> processExplosion(
+			float x, float y,
+			float damage, float range,
+			bool affectPlayer
+		);
+	
 	void reset();
 	void process(int deltaTime);
-	LifeForm* getLifeForm(string id);
+	LifeForm* getLifeForm(std::string id);
 	~GameState();
 
 	GameMode Mode;
@@ -50,9 +53,9 @@ public:
 	int Time;
 	int GameAreaSize;
 
-	map<string, LifeForm*> lifeForms;
-	vector<BasePowerup*> powerups;
-	vector<Bullet*> bullets;
+	std::map<std::string, LifeForm*> lifeForms;
+	std::vector<BasePowerup*> powerups;
+	std::vector<Bullet*> bullets;
 };
 }
 

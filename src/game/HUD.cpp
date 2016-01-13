@@ -1,6 +1,9 @@
 #include "HUD.h"
+
 #include <libintl.h>
 #include <locale.h>
+#include <sstream>
+
 #define _(STRING)            gettext(STRING)
 
 violet::HUD::HUD(VideoManager* videoManager, Resources* resources) {
@@ -194,7 +197,7 @@ void violet::HUD::drawInventory(Player* player) {
 
 	delete wpnImg;
 
-	ostringstream oss;
+	std::ostringstream oss;
 	oss << player->getWeapon()->Ammo << '/' << player->getWeapon()->AmmoClipSize;
 	m_videoManager->RegularText->draw(oss.str(), dataLeft,
 		m_videoManager->RegularText->getIndent() + m_videoManager->RegularText->getHeight(),
@@ -260,8 +263,8 @@ void violet::HUD::drawTime(GameState* gameState) {
 	const int minutes = gameState->Time / 60000;
 	const int seconds = (gameState->Time - minutes * 60000) / 1000;
 
-	ostringstream oss;
-	oss << setfill('0') << setw(2) << minutes << ':' << setfill('0') << setw(2)
+	std::ostringstream oss;
+	oss << std::setfill('0') << std::setw(2) << minutes << ':' << std::setfill('0') << std::setw(2)
 			<< seconds;
 	m_videoManager->RegularText->draw(oss.str(),
 			m_videoManager->getVideoMode().Width / 2, bottomBasePoint,
@@ -275,7 +278,7 @@ void violet::HUD::drawEndGameScreen(GameState* gameState, int xp) {
 	m_videoManager->RegularText->draw(_("They have overcome..."), screen.Width
 			/ 2, y, TextManager::CENTER, TextManager::MIDDLE);
 
-	ostringstream oss;
+	std::ostringstream oss;
 	oss << boost::format(_("You have earned %i points.")) % xp;
 	m_videoManager->RegularText->draw(oss.str(), screen.Width / 2, y
 			+ m_videoManager->RegularText->getHeight(), TextManager::CENTER,

@@ -1,6 +1,8 @@
 #ifndef VIOLET_GAME_H_
 #define VIOLET_GAME_H_
 
+#include <vector>
+
 #include "GameState.h"
 #include "HUD.h"
 #include "../system/InputHandler.h"
@@ -13,10 +15,10 @@ public:
 	Configuration*& config;
 	GameState*& gameState;
 	Resources*& resources;
-	vector<ParticleSystem*>& particleSystems;
+	std::vector<ParticleSystem*>& particleSystems;
 	Game(InputHandler*& input, HUD*& hud, Configuration*& config, 
 		GameState*& gameState, Resources*& resources, 
-		vector<ParticleSystem*>& particleSystems):
+		std::vector<ParticleSystem*>& particleSystems):
 		input(input), hud(hud), config(config), gameState(gameState),
 		resources(resources), particleSystems(particleSystems) {}
 };
