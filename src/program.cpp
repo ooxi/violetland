@@ -65,6 +65,7 @@
 #include "game/HUD.h"
 #include "windows/CharStatsWindow.h"
 #include "windows/ControlsMenuWindow.h"
+#include "windows/HighscoresWindow.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/OptionsWindow.h"
 #include "windows/Window.h"
@@ -700,91 +701,20 @@ void createMainMenuWindow() {
 	);
 }
 
-void highScoresWindowController(std::string elementName) {
-	if (elementName == "back") {
-		windows["highscores"]->CloseFlag = true;
-		createMainMenuWindow();
-	} else if (elementName == "reset") {
-		Highscores s(fileUtility);
-		s.clear();
-		highScoresWindowController("back");
-	}
+void HighscoresWindow::onBackClick() {
+	CloseFlag = true;
+	createMainMenuWindow();
 }
 
-void createHighscoresWindow() {
-	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
-			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
-
-	const int l = videoManager->getVideoMode().Width * 0.1f;
-	const int r2 = l * 2.0f;
-	const int r3 = l * 5.0f;
-	const int r4 = l * 7.0f;
-	const int h = videoManager->RegularText->getHeight();
-
-	w->addElement("highscores", _("Highscores"), videoManager->RegularText, l,
-			2 * h, TextManager::LEFT, TextManager::MIDDLE);
-
-	w->addElement("headerXp", _("XP"), videoManager->RegularText, l, 4 * h,
-			TextManager::LEFT, TextManager::MIDDLE);
-	w->addElement("headerParams", _("Str/Agil/Vital"),
-			videoManager->RegularText, r2, 4 * h, TextManager::LEFT,
-			TextManager::MIDDLE);
-	w->addElement("headerTime", _("Time"), videoManager->RegularText, r3,
-			4 * h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElement("headerName", _("Name"), videoManager->RegularText, r4,
-			4 * h, TextManager::LEFT, TextManager::MIDDLE);
-
+void HighscoresWindow::onResetClick() {
 	Highscores s(fileUtility);
-	set<HighscoresEntry> highscores = s.getData();
-	set<HighscoresEntry>::reverse_iterator it = highscores.rbegin();
-	for (unsigned i = 0; it != highscores.rend(); ++it, ++i) {
-		ostringstream oss1, oss2;
-
-		oss1 << "xp" << i;
-		oss2 << it->Xp;
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, l,
-				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
-
-		oss1.str("");
-		oss2.str("");
-		oss1 << "params" << i;
-		oss2 << (int) (it->Strength * 100) << '/' << (int) (it->Agility * 100)
-				<< '/' << (int) (it->Vitality * 100);
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, r2,
-				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
-
-		const int minutes = it->Time / 60000;
-		const int seconds = (it->Time - minutes * 60000) / 1000;
-
-		oss1.str("");
-		oss2.str("");
-		oss1 << "time" << i;
-		oss2 << minutes << "m " << seconds << 's';
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, r3,
-				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
-
-		oss1.str("");
-		oss1 << "name" << i;
-		w->addElement(oss1.str(), it->Name, videoManager->RegularText, r4,
-				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
-	}
-
-	w->addElement("back", _("Back to main menu"), videoManager->RegularText, l,
-			16 * h, TextManager::LEFT, TextManager::MIDDLE);
-
-	w->addElement("reset", _("Reset list"), videoManager->RegularText, r3,
-			16 * h, TextManager::LEFT, TextManager::MIDDLE);
-
-	w->addHandler(Window::hdl_lclick, "back", boost::bind(highScoresWindowController, _1));
-
-	w->addHandler(Window::hdl_lclick, "reset", boost::bind(highScoresWindowController, _1));
-
-	windows["highscores"] = w;
+	s.clear();
+	onBackClick();
 }
 
 void MainMenuWindow::onHighScoresClick() {
 	CloseFlag = true;
-	createHighscoresWindow();
+	windows["highscores"] = new HighscoresWindow(config, videoManager->RegularText, Highscores(fileUtility));
 }
 
 void unloadResources() {

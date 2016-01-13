@@ -18,15 +18,14 @@ private:
 	
 	void onControlStyleClick();
 	void onEventClick(std::string eventId);
+	
+	void refresh();
 
 public:
 
 	ControlsMenuWindow(Configuration const* config, TextManager const* text);
 	virtual ~ControlsMenuWindow();
 
-	/* @todo Should be private
-	 */
-	void refresh();
 };
 }
 
