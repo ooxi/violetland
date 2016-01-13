@@ -3,7 +3,7 @@
 #include <boost/bind.hpp>
 #include <libintl.h>
 #include <locale.h>
-#define _(STRING)            gettext(STRING)
+#define _(STRING) gettext(STRING)
 
 #include "../game/GameState.h"
 #include "../system/Configuration.h"
@@ -26,12 +26,6 @@ MainMenuWindow::MainMenuWindow(
 			m_text(text)
 	{
 	
-	refresh();
-}
-
-
-
-void MainMenuWindow::refresh() {
 	const int l = m_config->Screen.Width * 0.1f;
 	const int h = m_text->getHeight();
 
@@ -45,8 +39,21 @@ void MainMenuWindow::refresh() {
 	
 	addElements(labels, m_text, 
 			l, 7*h, h, TextManager::LEFT, TextManager::MIDDLE);
-
 	
+	
+	addHandler(Window::hdl_lclick, "resume", boost::bind(&MainMenuWindow::onResumeClick, this));
+	addHandler(Window::hdl_lclick, "start", boost::bind(&MainMenuWindow::onStartClick, this));
+	addHandler(Window::hdl_lclick, "options", boost::bind(&MainMenuWindow::onOptionsClick, this));
+	addHandler(Window::hdl_lclick, "highscores", boost::bind(&MainMenuWindow::onHighScoresClick, this));
+	addHandler(Window::hdl_lclick, "exit", boost::bind(&MainMenuWindow::onExitClick, this));
+	
+	
+	refresh();
+}
+
+
+
+void MainMenuWindow::refresh() {
 	const int r = m_config->Screen.Width * 0.3f;
 
 	string strGameMode = _("Unknown");
@@ -63,12 +70,6 @@ void MainMenuWindow::refresh() {
 			m_text->getHeight() * 8.0f, TextManager::LEFT,
 			TextManager::MIDDLE);
 	
-	
-	addHandler(Window::hdl_lclick, "resume", boost::bind(&MainMenuWindow::onResumeClick, this));
-	addHandler(Window::hdl_lclick, "start", boost::bind(&MainMenuWindow::onStartClick, this));
-	addHandler(Window::hdl_lclick, "options", boost::bind(&MainMenuWindow::onOptionsClick, this));
-	addHandler(Window::hdl_lclick, "highscores", boost::bind(&MainMenuWindow::onHighScoresClick, this));
-	addHandler(Window::hdl_lclick, "exit", boost::bind(&MainMenuWindow::onExitClick, this));
 	addHandler(Window::hdl_lclick, "gamemode", boost::bind(&MainMenuWindow::onGameModeClick, this));
 }
 

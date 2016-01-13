@@ -9,7 +9,7 @@ class Configuration;
 class GameState;
 class TextManager;
 
-class MainMenuWindow: public Window {
+class MainMenuWindow : public Window {
 
 private:
 	Configuration* const m_config;
