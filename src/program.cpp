@@ -64,6 +64,7 @@
 #include "game/Highscores.h"
 #include "game/HUD.h"
 #include "windows/CharStatsWindow.h"
+#include "windows/ControlsMenuWindow.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/OptionsWindow.h"
 #include "windows/Window.h"
@@ -457,8 +458,6 @@ void shutdownSystem() {
 	delete splash;
 }
 
-void backFromOptionsAndSave(std::string elementName);
-
 void OptionsWindow::onAutoReloadClick() {
 	config->AutoReload = !config->AutoReload;
 	refresh(tempConfig);
@@ -575,72 +574,14 @@ void OptionsWindow::onResolutionUpClick() {
 	refresh(tempConfig);
 }
 
-void refreshControlsMenuWindow();
-
-void changeControlStyle(std::string elementName) {
+void ControlsMenuWindow::onControlStyleClick() {
 	enum ControlStyle style = GetNextControlStyle(config->Control);
 	config->Control = style;
 	
 	std::cout << (boost::format(_("Changed control style to %s.")) % ControlStyleToString(style)) << std::endl;
 	config->write();
 
-	refreshControlsMenuWindow();
-}
-
-void controlsMenuWindowController(std::string elementName);
-
-inline void addControlElement(Window* w, unsigned i, unsigned strN,
-		unsigned lx, unsigned rx) {
-	unsigned y = videoManager->RegularText->getHeight() * strN;
-	string eventId = InputHandler::getEventIdentifier(i);
-	string eventName = InputHandler::getEventName(i);
-	string keyName = InputHandler::getKeyName(config->PlayerInputBinding[i]);
-
-	w->addElement(eventId, eventName, videoManager->RegularText, lx, y,
-			TextManager::LEFT, TextManager::MIDDLE);
-
-	w->addElement(eventId + "key", keyName, videoManager->RegularText, rx, y,
-			TextManager::RIGHT, TextManager::MIDDLE);
-
-	w->addHandler(Window::hdl_lclick, eventId, boost::bind(&controlsMenuWindowController, _1));
-}
-
-void refreshControlsMenuWindow() {
-	Window* w = windows.find("controls")->second;
-
-	const int col1_l = videoManager->getVideoMode().Width * 0.1f;
-	const int col1_r = videoManager->getVideoMode().Width * 0.45f;
-
-	w->addElement("controls", _("Controls"), videoManager->RegularText,
-			col1_l, videoManager->RegularText->getHeight() * 2.0f,
-			TextManager::LEFT, TextManager::MIDDLE
-	);
-	const int col2_l = videoManager->getVideoMode().Width * 0.55f;
-	const int col2_r = videoManager->getVideoMode().Width * 0.9f;
-
-
-	/* Change the control style
-	 */
-	w->addElement("control-style", _("Control style"),
-			videoManager->RegularText,
-			col1_l,  (videoManager->RegularText->getHeight() + 35) * 2.0f,
-			TextManager::LEFT, TextManager::MIDDLE
-	);
-	w->addElement("control-style-value", ControlStyleToString(config->Control),
-			videoManager->RegularText,
-			col1_r,  (videoManager->RegularText->getHeight() + 35) * 2.0f,
-			TextManager::RIGHT, TextManager::MIDDLE
-	);
-	w->addHandler(Window::hdl_lclick, "control-style", boost::bind(changeControlStyle, _1));
-
-
-	unsigned col1_items = (InputHandler::GameInputEventsCount + 1) / 2;
-
-	for (unsigned i = 0; i < col1_items; i++)
-		addControlElement(w, i, i + 6, col1_l, col1_r);
-
-	for (unsigned i = col1_items; i < InputHandler::GameInputEventsCount; i++)
-		addControlElement(w, i, i - col1_items + 6, col2_l, col2_r);
+	refresh();
 }
 
 void drawWindows() {
@@ -663,7 +604,7 @@ void drawWindows() {
 	}
 }
 
-void controlsMenuWindowController(std::string elementName) {
+void ControlsMenuWindow::onEventClick(std::string elementName) {
 	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
 			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -712,19 +653,11 @@ void controlsMenuWindowController(std::string elementName) {
 
 	windows["pressakey"]->CloseFlag = true;
 
-	refreshControlsMenuWindow();
+	refresh();
 }
 
-void drawWindows();
-void showHighScores(std::string);
-
 void OptionsWindow::onControlsMenuClick() {
-	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
-			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
-
-	windows["controls"] = w;
-
-	refreshControlsMenuWindow();
+	windows["controls"] = new ControlsMenuWindow(config, videoManager->RegularText);
 
 	CloseFlag = true;
 }

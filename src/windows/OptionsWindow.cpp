@@ -8,6 +8,8 @@
 #include <vector>
 
 #include "../system/Configuration.h"
+#include "../system/graphic/text/TextManager.h"
+
 
 
 

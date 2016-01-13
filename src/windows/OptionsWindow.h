@@ -8,6 +8,7 @@
 namespace violet {
 
 class Configuration;
+class TextManager;
 
 class OptionsWindow : public Window {
 
