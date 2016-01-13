@@ -2,7 +2,7 @@
 
 #include "LifeForm.h"
 
-using namespace violetland;
+using namespace violet;
 
 LifeForm::LifeForm(float x, float y, int w, int h) :
 	Object(x, y, w, h) {

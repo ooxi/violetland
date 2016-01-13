@@ -9,7 +9,7 @@
 #include "../../system/sound/Sound.h"
 #include "../../system/utility/UidGenerator.h"
 
-namespace violetland {
+namespace violet {
 enum LifeFormType {
 	LIFEFORM_PLAYER = 0, LIFEFORM_MONSTER
 };

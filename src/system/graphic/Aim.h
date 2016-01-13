@@ -4,6 +4,8 @@
 #include "StaticObject.h"
 #include "../Configuration.h"
 
+namespace violet {
+
 class Aim {
 private:
 	GLuint m_aimDListId;
@@ -17,5 +19,6 @@ public:
 	void draw(float x, float y, float scale, float pointScale);
 	virtual ~Aim();
 };
+}
 
 #endif /* AIM_H_ */

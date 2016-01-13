@@ -4,7 +4,7 @@
 #include "../../system/graphic/Sprite.h"
 #include "../../system/sound/Sound.h"
 
-namespace violetland {
+namespace violet {
 class MonsterTemplate {
 public:
 	MonsterTemplate(Sprite* walkSprite, Sprite* deathSprite);

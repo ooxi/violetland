@@ -17,7 +17,7 @@
  * 
  * @return Initialized FileUtility instance for Windows
  */
-FileUtility* FileUtility::ofWindows(char const* argvZero) {
+violet::FileUtility* violet::FileUtility::ofWindows(char const* argvZero) {
 	boost::filesystem::path const executable = argvZero;
 	boost::filesystem::path const directoryOfExecutable = executable.parent_path();
 	
@@ -36,7 +36,7 @@ FileUtility* FileUtility::ofWindows(char const* argvZero) {
  * @return Initialized FileUtility instance for UNIX
  */
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
-FileUtility* FileUtility::ofUnix() {
+violet::FileUtility* violet::FileUtility::ofUnix() {
 	
 	/* Application binary
 	 */
@@ -74,7 +74,7 @@ FileUtility* FileUtility::ofUnix() {
 
 
 
-void FileUtility::traceResPath() {
+void violet::FileUtility::traceResPath() {
 	std::cout << "Path to resources is set to:" << std::endl;
 	std::cout << '\t' << m_resPath << std::endl;
 	std::cout << "To change the path use -r <path> key" << std::endl;
@@ -90,7 +90,7 @@ void FileUtility::traceResPath() {
  * @param argv[0] of main
  * @return Initialized FileUtility instance for actual OS environment
  */
-FileUtility* FileUtility::ofOs(char const* argvZero) {
+violet::FileUtility* violet::FileUtility::ofOs(char const* argvZero) {
 	
 	/* Windows
 	 */
@@ -113,7 +113,7 @@ FileUtility* FileUtility::ofOs(char const* argvZero) {
  * @param resources Path to game resources (common to all users)
  * @param user Path to user resources
  */
-FileUtility::FileUtility(
+violet::FileUtility::FileUtility(
 			const boost::filesystem::path& resources,
 			const boost::filesystem::path& user
 		) :	m_resPath(resources),
@@ -129,14 +129,14 @@ FileUtility::FileUtility(
  * 
  * @param path New path to game resources
  */
-void FileUtility::setResourcePath(boost::filesystem::path const& path) {
+void violet::FileUtility::setResourcePath(boost::filesystem::path const& path) {
 	m_resPath = path;
 	traceResPath();
 }
 
 
 
-unsigned int FileUtility::getFilesCountFromDir(boost::filesystem::path dir)  {
+unsigned int violet::FileUtility::getFilesCountFromDir(boost::filesystem::path dir)  {
 	unsigned int count = 0;
 	boost::filesystem::directory_iterator dir_it(dir);
 
@@ -148,7 +148,7 @@ unsigned int FileUtility::getFilesCountFromDir(boost::filesystem::path dir)  {
 	return count;
 }
 
-std::vector<std::string> FileUtility::getFilesFromDir(boost::filesystem::path dir) {
+std::vector<std::string> violet::FileUtility::getFilesFromDir(boost::filesystem::path dir) {
 	std::vector<std::string> files;
 	boost::filesystem::directory_iterator dir_it(dir);
 
@@ -161,7 +161,7 @@ std::vector<std::string> FileUtility::getFilesFromDir(boost::filesystem::path di
 	return files;
 }
 
-std::vector<std::string> FileUtility::getSubDirsFromDir(boost::filesystem::path dir) {
+std::vector<std::string> violet::FileUtility::getSubDirsFromDir(boost::filesystem::path dir) {
 	std::vector<std::string> subDirs;
 	boost::filesystem::directory_iterator dir_it(dir);
 
@@ -174,7 +174,7 @@ std::vector<std::string> FileUtility::getSubDirsFromDir(boost::filesystem::path 
 	return subDirs;
 }
 
-unsigned int FileUtility::getSubDirsCountFromDir(boost::filesystem::path dir) {
+unsigned int violet::FileUtility::getSubDirsCountFromDir(boost::filesystem::path dir) {
 	boost::filesystem::directory_iterator dir_it(dir);
 	unsigned int count = 0;
 
@@ -189,7 +189,7 @@ unsigned int FileUtility::getSubDirsCountFromDir(boost::filesystem::path dir) {
 
 
 
-boost::filesystem::path FileUtility::getFullPath(PathType type, std::string resource) const {
+boost::filesystem::path violet::FileUtility::getFullPath(PathType type, std::string resource) const {
 	boost::filesystem::path path(m_resPath);
 	boost::filesystem::path usrPath(m_usrPath);
 

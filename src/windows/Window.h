@@ -8,6 +8,8 @@
 #include "../system/graphic/text/TextManager.h"
 #include "../system/InputHandler.h"
 
+namespace violet {
+
 class Window {
 protected:
 	float m_left, m_top, m_right, m_bottom, m_r, m_g, m_b, m_a;
@@ -39,5 +41,6 @@ public:
 	bool CloseFlag;
 	virtual ~Window();
 };
+}
 
 #endif /* WINDOW_H_ */

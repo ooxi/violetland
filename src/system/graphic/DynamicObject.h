@@ -7,6 +7,8 @@
 #include "../Object.h"
 #include "Sprite.h"
 
+namespace violet {
+
 class DynamicObject: public Object {
 private:
 	int m_lastFrameRollTime;
@@ -26,5 +28,6 @@ public:
 	int Frame;
 	Sprite* AnimSprite;
 };
+}
 
 #endif /* DYNAMICOBJECT_H_ */

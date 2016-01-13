@@ -4,7 +4,7 @@
 #include <string>
 #include "../../system/Object.h"
 
-namespace violetland {
+namespace violet {
 
 enum BulletType {
 	BULLET_STANDARD = 0, BULLET_LASER, BULLET_GRENADE, BULLET_FLAME

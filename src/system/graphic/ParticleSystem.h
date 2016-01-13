@@ -4,6 +4,8 @@
 #include <vector>
 #include "Particle.h"
 
+namespace violet {
+
 class ParticleSystem {
 public:
 	ParticleSystem();
@@ -13,5 +15,6 @@ public:
 	std::vector<Particle*> Particles;
 	virtual ~ParticleSystem();
 };
+}
 
 #endif /* PARTICLESYSTEM_H_ */

@@ -7,7 +7,7 @@
 #include "../../system/graphic/DynamicObject.h"
 #include "Bullet.h"
 
-namespace violetland {
+namespace violet {
 
 class GrenadeBullet: public Bullet {
 private:

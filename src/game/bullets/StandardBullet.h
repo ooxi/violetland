@@ -4,7 +4,7 @@
 #include "SDL_opengl.h"
 #include "Bullet.h"
 
-namespace violetland {
+namespace violet {
 
 class StandardBullet: public Bullet {
 private:

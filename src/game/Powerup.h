@@ -12,7 +12,7 @@
 #include "../system/InputHandler.h"
 
 
-namespace violetland {
+namespace violet {
 class Game;
 	
 enum BonusType {

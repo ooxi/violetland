@@ -10,6 +10,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+namespace violet {
+
 class ConfigFile {
 protected:
 	std::string myDelimiter;
@@ -78,6 +80,9 @@ public:
 		}
 	};
 };
+
+std::ostream& operator<<(std::ostream& os, const ConfigFile& cf);
+std::istream& operator>>(std::istream& is, ConfigFile& cf);
 
 /* static */
 template<class T>
@@ -175,6 +180,7 @@ void ConfigFile::add(std::string key, const T& value) {
 	trim(v);
 	myContents[key] = v;
 	return;
+}
 }
 
 #endif /* CONFIGFILE_H_ */

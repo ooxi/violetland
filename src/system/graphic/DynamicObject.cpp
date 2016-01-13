@@ -1,6 +1,6 @@
 #include "DynamicObject.h"
 
-DynamicObject::DynamicObject(float x, float y, Sprite *sprite) :
+violet::DynamicObject::DynamicObject(float x, float y, Sprite *sprite) :
 	Object(x, y, 128, 128) {
 	AnimSprite = sprite;
 	Speed = 0;
@@ -8,7 +8,7 @@ DynamicObject::DynamicObject(float x, float y, Sprite *sprite) :
 	m_lastFrameRollTime = SDL_GetTicks();
 }
 
-void DynamicObject::rollFrame(bool forward) {
+void violet::DynamicObject::rollFrame(bool forward) {
 	if (AnimSprite->getFramesCount() == 1)
 		return;
 
@@ -29,7 +29,7 @@ void DynamicObject::rollFrame(bool forward) {
 	}
 }
 
-void DynamicObject::draw(float x, float y, float angle, float scale,
+void violet::DynamicObject::draw(float x, float y, float angle, float scale,
 		float rMask, float gMask, float bMask, float aMask) {
 	Texture* frameTex = AnimSprite->getFrame(Frame);
 
@@ -57,10 +57,10 @@ void DynamicObject::draw(float x, float y, float angle, float scale,
 	glPopMatrix();
 }
 
-void DynamicObject::draw() {
+void violet::DynamicObject::draw() {
 	DynamicObject::draw(X, Y, Angle, Scale, RMask, GMask, BMask, AMask);
 }
 
-DynamicObject::~DynamicObject() {
+violet::DynamicObject::~DynamicObject() {
 	//nothing
 }

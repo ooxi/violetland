@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace violetland {
+namespace violet {
 class Monster: public LifeForm {
 private:
 	int m_hitSoundChannel;

@@ -1,11 +1,11 @@
 #include "TextObject.h"
 
-TextObject::TextObject(float x, float y, int w, int h, Texture *texture) :
+violet::TextObject::TextObject(float x, float y, int w, int h, Texture *texture) :
 	Object(x, y, w, h) {
 	m_texture = texture;
 }
 
-void TextObject::drawQuad() {
+void violet::TextObject::drawQuad() {
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(m_left, m_top, 0.0f);
@@ -18,7 +18,7 @@ void TextObject::drawQuad() {
 	glEnd();
 }
 
-void TextObject::draw(bool outlined, float x, float y) {
+void violet::TextObject::draw(bool outlined, float x, float y) {
 	glEnable(0x84F5); //GL_TEXTURE_RECTANGLE_NV = GL_TEXTURE_RECTANGLE_ARB = 0x84F5
 
 	glBindTexture(m_texture->getType(), m_texture->getTextureId());
@@ -81,6 +81,6 @@ void TextObject::draw(bool outlined, float x, float y) {
 	glDisable(0x84F5); //GL_TEXTURE_RECTANGLE_NV = GL_TEXTURE_RECTANGLE_ARB = 0x84F5
 }
 
-TextObject::~TextObject() {
+violet::TextObject::~TextObject() {
 	delete m_texture;
 }

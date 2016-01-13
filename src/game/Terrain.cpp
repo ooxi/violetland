@@ -4,7 +4,7 @@ using namespace std;
 
 #include "Terrain.h"
 
-Terrain::Terrain(SDL_Surface *surface, std::vector<SDL_Surface*> tiles,
+violet::Terrain::Terrain(SDL_Surface *surface, std::vector<SDL_Surface*> tiles,
 		int gameAreaSize) : m_gameAreaSize(gameAreaSize),
 		m_tileWidth(surface->w), m_tileHeight(surface->h) {
 	m_xTilesCount = (unsigned) ceil(m_gameAreaSize * 2.0 / m_tileWidth);
@@ -54,12 +54,12 @@ Terrain::Terrain(SDL_Surface *surface, std::vector<SDL_Surface*> tiles,
 	std::cout << "Terrain has been generated successfully." << std::endl;
 }
 
-void Terrain::beginDrawOn() {
+void violet::Terrain::beginDrawOn() {
 	glGetIntegerv(GL_VIEWPORT, (GLint*) m_viewport);
 	glViewport(0, 0, m_tileWidth, m_tileHeight);
 }
 
-void Terrain::drawOn(StaticObject *piece) {
+void violet::Terrain::drawOn(StaticObject *piece) {
 	const float right = piece->getRight();
 	const float left = piece->getLeft();
 	const float bottom = piece->getBottom();
@@ -102,11 +102,11 @@ void Terrain::drawOn(StaticObject *piece) {
 		}
 }
 
-void Terrain::endDrawOn() {
+void violet::Terrain::endDrawOn() {
 	glViewport(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
 }
 
-void Terrain::draw(Camera* cam) {
+void violet::Terrain::draw(Camera* cam) {
 	const float right = cam->X + cam->getHalfW();
 	const float left = cam->X - cam->getHalfW();
 	const float bottom = cam->Y + cam->getHalfH();
@@ -122,7 +122,7 @@ void Terrain::draw(Camera* cam) {
 			m_tiles[i*m_yTilesCount+j]->draw(m_tileDList);
 }
 
-Terrain::~Terrain() {
+violet::Terrain::~Terrain() {
 	for (unsigned i = 0; i < m_tiles.size(); ++i) {
 		delete m_tiles[i];
 	}

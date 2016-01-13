@@ -4,6 +4,8 @@
 #include "../Texture.h"
 #include "../../Object.h"
 
+namespace violet {
+
 struct Label {
     std::string id;
     std::string text;
@@ -21,5 +23,6 @@ public:
 	void draw(bool outlined, float x, float y);
 	virtual ~TextObject();
 };
+}
 
 #endif /* TEXTOBJECT_H_ */

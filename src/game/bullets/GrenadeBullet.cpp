@@ -1,6 +1,6 @@
 #include "GrenadeBullet.h"
 
-namespace violetland {
+namespace violet {
 
 GrenadeBullet::GrenadeBullet(float x, float y, float targetX, float targetY,
 		Sprite* sprite) :

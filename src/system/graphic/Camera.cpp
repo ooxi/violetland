@@ -1,13 +1,13 @@
 #include "Camera.h"
 
-Camera::Camera() {
+violet::Camera::Camera() {
 	X = Y = 0;
 	setW(1600);
 	setH(1200);
 	m_aspect = (float)getW() / getH();
 }
 
-void Camera::applyGLOrtho() {
+void violet::Camera::applyGLOrtho() {
 	glMatrixMode( GL_PROJECTION);
 	glLoadIdentity();
 
@@ -16,6 +16,6 @@ void Camera::applyGLOrtho() {
 	glMatrixMode( GL_MODELVIEW);
 }
 
-Camera::~Camera() {
+violet::Camera::~Camera() {
 	// nothing
 }

@@ -5,7 +5,7 @@
 #include <math.h> 
 #endif
 
-namespace violetland {
+namespace violet {
 
 LaserBullet::LaserBullet(float x, float y, float dX, float dY) :
 	Bullet(x, y, dX, dY, BULLET_LASER) {

@@ -6,7 +6,7 @@
 #include "../system/sound/SoundManager.h"
 #include "Weapon.h"
 
-namespace violetland {
+namespace violet {
 
 class WeaponManager {
 private:

@@ -9,6 +9,8 @@
 
 
 
+namespace violet {
+
 class ImageUtility {
 public:
 	enum FontRenderingFlag {
@@ -24,5 +26,6 @@ public:
 	static float getColorChG(int color);
 	static float getColorChB(int color);
 };
+}
 
 #endif /* IMAGEUTILITY_H_ */

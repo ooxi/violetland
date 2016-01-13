@@ -3,6 +3,8 @@
 
 #include "SDL_mixer.h"
 
+namespace violet {
+
 class Sound {
 private:
 	bool m_enabled;
@@ -18,5 +20,6 @@ public:
 	void stop(int fade);
 	~Sound();
 };
+}
 
 #endif /* SOUND_H_ */

@@ -5,6 +5,8 @@
 #include "../system/graphic/StaticObject.h"
 #include "../system/graphic/Camera.h"
 
+namespace violet {
+
 class Terrain {
 private:
 	int m_viewport[4];
@@ -28,5 +30,6 @@ public:
 	}
 	~Terrain();
 };
+}
 
 #endif /* TERRAIN_H_ */

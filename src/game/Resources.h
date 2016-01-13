@@ -10,7 +10,7 @@
 #include "../system/utility/Templates.h"
 #include "Powerup.h"
 
-namespace violetland {
+namespace violet {
 class Resources {
 private:
 	FileUtility* m_fileUtil;

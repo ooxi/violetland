@@ -5,7 +5,7 @@
 #include <math.h> 
 #endif
 
-namespace violetland {
+namespace violet {
 
 StandardBullet::StandardBullet(float x, float y, float dX, float dY,
 		bool explosive) :

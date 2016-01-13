@@ -7,6 +7,8 @@
 
 
 
+namespace violet {
+
 class TextManager {
 private:
 	TTF_Font *m_font;
@@ -31,5 +33,6 @@ public:
 			TextHAlignFlag halign, TextVAlignFlag valign);
 	virtual ~TextManager();
 };
+}
 
 #endif /* TEXTMANAGER_H_ */

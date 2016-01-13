@@ -1,6 +1,6 @@
 #include "Explosion.h"
 
-Explosion::Explosion(bool nuclear, float x, float y, int range,
+violet::Explosion::Explosion(bool nuclear, float x, float y, int range,
 		Texture* sparkTex, Texture* gruelTex) :
 	ParticleSystem() {
 
@@ -64,5 +64,5 @@ Explosion::Explosion(bool nuclear, float x, float y, int range,
 	}
 }
 
-Explosion::~Explosion() {
+violet::Explosion::~Explosion() {
 }

@@ -3,6 +3,8 @@
 
 #include "../../system/utility/ImageUtility.h"
 
+namespace violet {
+
 class Texture {
 private:
 	GLuint m_textureId;
@@ -27,5 +29,6 @@ public:
 
 	virtual ~Texture();
 };
+}
 
 #endif /* TEXTURE_H_ */

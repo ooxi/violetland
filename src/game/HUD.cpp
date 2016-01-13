@@ -3,7 +3,7 @@
 #include <locale.h>
 #define _(STRING)            gettext(STRING)
 
-violetland::HUD::HUD(VideoManager* videoManager, Resources* resources) {
+violet::HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
 
 	m_resources = resources;
@@ -36,7 +36,7 @@ violetland::HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	reset();
 }
 
-void violetland::HUD::applyEffects(float health, int levelPoints) {
+void violet::HUD::applyEffects(float health, int levelPoints) {
 	m_bounce += m_videoManager->getFrameDeltaTime();
 
 	int lMultiplier = std::min<int>(levelPoints, 4);
@@ -74,7 +74,7 @@ void violetland::HUD::applyEffects(float health, int levelPoints) {
 	}
 }
 
-void violetland::HUD::drawMessages() {
+void violet::HUD::drawMessages() {
 	if (!m_messages.empty()) {
 		int m_bottomBasePoint = m_videoManager->getVideoMode().Height
 				- m_videoManager->RegularText->getIndent();
@@ -106,7 +106,7 @@ void violetland::HUD::drawMessages() {
 	}
 }
 
-void violetland::HUD::drawExperience(float experience, int levelPoints,
+void violet::HUD::drawExperience(float experience, int levelPoints,
 		int bottomBasePoint) {
 	VideoMode screen = m_videoManager->getVideoMode();
 	const int barLen = screen.Width / 4;
@@ -127,7 +127,7 @@ void violetland::HUD::drawExperience(float experience, int levelPoints,
 			fcolor1, fcolor2);
 }
 
-void violetland::HUD::drawBar(int x, int y, int width, int height, float value,
+void violet::HUD::drawBar(int x, int y, int width, int height, float value,
 		GLfloat* bcolor, GLfloat* fcolor1, GLfloat* fcolor2) {
 	glDisable(GL_TEXTURE_2D);
 
@@ -161,7 +161,7 @@ void violetland::HUD::drawBar(int x, int y, int width, int height, float value,
 	glEnable(GL_TEXTURE_2D);
 }
 
-void violetland::HUD::drawInventory(Player* player) {
+void violet::HUD::drawInventory(Player* player) {
 	int topBasePoint = m_videoManager->RegularText->getIndent()
 			+ (m_videoManager->RegularText->getHeight()) * 4;
 
@@ -233,7 +233,7 @@ void violetland::HUD::drawInventory(Player* player) {
 	}
 }
 
-void violetland::HUD::drawHealth(float health, int bottomBasePoint) {
+void violet::HUD::drawHealth(float health, int bottomBasePoint) {
 	VideoMode screen = m_videoManager->getVideoMode();
 	const int barLeft = screen.Width / 12;
 	const int barLen = screen.Width / 4;
@@ -253,7 +253,7 @@ void violetland::HUD::drawHealth(float health, int bottomBasePoint) {
 			fcolor1, fcolor2);
 }
 
-void violetland::HUD::drawTime(GameState* gameState) {
+void violet::HUD::drawTime(GameState* gameState) {
 	int bottomBasePoint = m_videoManager->getVideoMode().Height
 			- m_videoManager->RegularText->getIndent();
 
@@ -268,7 +268,7 @@ void violetland::HUD::drawTime(GameState* gameState) {
 			TextManager::CENTER, TextManager::MIDDLE);
 }
 
-void violetland::HUD::drawEndGameScreen(GameState* gameState, int xp) {
+void violet::HUD::drawEndGameScreen(GameState* gameState, int xp) {
 	VideoMode screen = m_videoManager->getVideoMode();
 
 	int y = screen.Height / 4;
@@ -292,7 +292,7 @@ void violetland::HUD::drawEndGameScreen(GameState* gameState, int xp) {
 	}
 }
 
-void violetland::HUD::draw(GameState* gameState, Player* player) {
+void violet::HUD::draw(GameState* gameState, Player* player) {
 	float health = player->getHealth() / player->MaxHealth();
 	float experience = (float) (player->Xp - player->LastLevelXp)
 			/ (player->NextLevelXp - player->LastLevelXp);
@@ -327,7 +327,7 @@ void violetland::HUD::draw(GameState* gameState, Player* player) {
 				screen.Height / 2, TextManager::CENTER, TextManager::MIDDLE);
 }
 
-void violetland::HUD::addMessage(std::string message) {
+void violet::HUD::addMessage(std::string message) {
 	std::cout << message << std::endl;
 
 	TextObject* msg = m_videoManager->SmallText->getObject(message, 0, 0,
@@ -339,12 +339,12 @@ void violetland::HUD::addMessage(std::string message) {
 	m_messages.push_back(msg);
 }
 
-void violetland::HUD::reset() {
+void violet::HUD::reset() {
 	Info = "";
 	clearVector<TextObject*> (&m_messages);
 }
 
-violetland::HUD::~HUD() {
+violet::HUD::~HUD() {
 	reset();
 	clearMap<PlayerBonusType, StaticObject*> (&m_bonusImg);
 	clearVector(&m_inventoryImg);

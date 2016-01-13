@@ -6,6 +6,8 @@
 #endif //_WIN32W
 #include <cmath>
 
+namespace violet {
+
 class Object {
 protected:
 	int m_width, m_height;
@@ -49,5 +51,6 @@ public:
 	float HitR;
 	float Acceleration, Speed;
 };
+}
 
 #endif /* OBJECT_H_ */

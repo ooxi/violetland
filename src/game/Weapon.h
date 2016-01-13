@@ -7,7 +7,7 @@
 #include "bullets/GrenadeBullet.h"
 #include "bullets/Flame.h"
 
-namespace violetland {
+namespace violet {
 
 class Weapon {
 private:

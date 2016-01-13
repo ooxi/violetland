@@ -11,7 +11,7 @@
 #include "Resources.h"
 #include "lifeforms/Player.h"
 
-namespace violetland {
+namespace violet {
 class HUD {
 private:
 	// References to resources and managers

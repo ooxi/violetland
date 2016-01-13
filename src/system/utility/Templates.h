@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 
+namespace violet {
+
 template<typename T1, typename T2> void clearMap(std::map<T1, T2>* _map) {
 	typename std::map<T1, T2>::const_iterator i;
 	for (i = _map->begin(); i != _map->end(); ++i) {
@@ -21,6 +23,7 @@ template<typename T> void clearVector(std::vector<T>* _vector) {
 
 template<typename T> size_t getStructSize(const T& _t) {
 	return sizeof(_t) / sizeof(*_t);
+}
 }
 
 #endif /* TEMPLATES_H_ */

@@ -10,11 +10,13 @@
 #include "../system/utility/Templates.h"
 #include "lifeforms/Player.h"
 
+namespace violet {
+
 class HighscoresEntry {
 public:
 	HighscoresEntry(float Strength, float Agility, float Vitality, 
 			unsigned Xp, std::string Name, unsigned Time);
-	HighscoresEntry(violetland::Player* player, std::string Name, 
+	HighscoresEntry(violet::Player* player, std::string Name, 
 			unsigned Time);
 	const float Strength;
 	const float Agility;
@@ -42,5 +44,6 @@ public:
 	bool add(HighscoresEntry entry);
 	const std::set<HighscoresEntry>& getData() { return m_data; }
 };
+}
 
 #endif /* HIGHSCORES_H_ */

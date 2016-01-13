@@ -5,7 +5,8 @@
 #include "../system/graphic/VideoManager.h"
 #include "../game/lifeforms/Player.h"
 
-namespace violetland {
+namespace violet {
+
 class CharStatsWindow: public Window {
 	VideoManager* m_videoManager;
 	Player* m_player;

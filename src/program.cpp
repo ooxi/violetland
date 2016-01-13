@@ -68,7 +68,7 @@
 #include "windows/CharStatsWindow.h"
 
 using namespace std;
-using namespace violetland;
+using namespace violet;
 
 const string PROJECT = "violetland";
 const string VERSION = VIOLETLAND_VERSION;

@@ -1,6 +1,6 @@
 #include "Configuration.h"
 
-Configuration::Configuration(FileUtility* fileUtility) {
+violet::Configuration::Configuration(FileUtility* fileUtility) {
 	m_fileUtility = fileUtility;
 
 	Screen.Width = 800;
@@ -18,7 +18,7 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	AimColorB = 0xFFFFFF;
 	AutoWeaponPickup = true;
 	FriendlyFire = false;
-	Control = violetland::E_CONTROL_STYLE_MODERN;
+	Control = violet::E_CONTROL_STYLE_MODERN;
 
 	PlayerInputBinding[InputHandler::Teleport].Value = SDLK_q;
 	PlayerInputBinding[InputHandler::MoveLeft].Value = SDLK_a;
@@ -45,7 +45,7 @@ Configuration::Configuration(FileUtility* fileUtility) {
 	PlayerInputBinding[InputHandler::Reload].Type = InputHandler::Mouse;
 }
 
-void Configuration::read() {
+void violet::Configuration::read() {
 	try {
 		ConfigFile cFile(m_fileUtility->getFullPath(
 			FileUtility::user, "config"
@@ -67,7 +67,7 @@ void Configuration::read() {
 
 		int controlStyle = 0;
 		cFile.readInto(controlStyle, "controlStyle");
-		Control = violetland::ControlStyleFromInt(controlStyle);
+		Control = violet::ControlStyleFromInt(controlStyle);
 
 		for (int i = 0; i < InputHandler::GameInputEventsCount; i++) {
 			ReadPlayerBinding(&cFile, &PlayerInputBinding[i],
@@ -79,7 +79,7 @@ void Configuration::read() {
 	}
 }
 
-void Configuration::ReadPlayerBinding(ConfigFile* cFile,
+void violet::Configuration::ReadPlayerBinding(ConfigFile* cFile,
 		InputHandler::Binding* binding, std::string eventIdentifier) {
 	int type;
 	std::string keyType = "playerInputBinding_" + eventIdentifier + "Type";
@@ -92,7 +92,7 @@ void Configuration::ReadPlayerBinding(ConfigFile* cFile,
 	}
 }
 
-void Configuration::WritePlayerBinding(ConfigFile* cFile,
+void violet::Configuration::WritePlayerBinding(ConfigFile* cFile,
 		InputHandler::Binding* binding, std::string eventIdentifier) {
 	std::string keyType = "playerInputBinding_" + eventIdentifier + "Type";
 	std::string keyValue = "playerInputBinding_" + eventIdentifier + "Value";
@@ -101,7 +101,7 @@ void Configuration::WritePlayerBinding(ConfigFile* cFile,
 	cFile->add(keyValue, binding->Value);
 }
 
-void Configuration::write() {
+void violet::Configuration::write() {
 	ConfigFile cFile;
 
 	cFile.add("aimColorB", AimColorB);
@@ -132,7 +132,6 @@ void Configuration::write() {
 	}
 }
 
-Configuration::~Configuration() {
+violet::Configuration::~Configuration() {
 	// nothing
 }
-

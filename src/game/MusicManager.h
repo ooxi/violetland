@@ -5,7 +5,7 @@
 #include "GameState.h"
 #include "lifeforms/Player.h"
 
-namespace violetland {
+namespace violet {
 class MusicManager {
 private:
 	FileUtility* m_fileUtility;

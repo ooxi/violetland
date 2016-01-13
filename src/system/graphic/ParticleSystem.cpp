@@ -1,9 +1,9 @@
 #include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem() {
+violet::ParticleSystem::ParticleSystem() {
 }
 
-void ParticleSystem::process(int deltaTime) {
+void violet::ParticleSystem::process(int deltaTime) {
 	for (int i = Particles.size() - 1; i >= 0; i--) {
 		Particles[i]->process(deltaTime);
 		if (Particles[i]->checkFinish()) {
@@ -13,17 +13,17 @@ void ParticleSystem::process(int deltaTime) {
 	}
 }
 
-void ParticleSystem::draw() {
+void violet::ParticleSystem::draw() {
 	for (unsigned int i = 0; i < Particles.size(); i++) {
 		Particles[i]->draw(false, false);
 	}
 }
 
-bool ParticleSystem::isEmpty() {
+bool violet::ParticleSystem::isEmpty() {
 	return Particles.empty();
 }
 
-ParticleSystem::~ParticleSystem() {
+violet::ParticleSystem::~ParticleSystem() {
 	for (unsigned int i = 0; i < Particles.size(); i++) {
 		delete Particles[i];
 	}

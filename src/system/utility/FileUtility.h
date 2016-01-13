@@ -7,6 +7,8 @@
 
 
 
+namespace violet {
+
 class FileUtility {
 private:
 	boost::filesystem::path m_resPath;
@@ -46,5 +48,6 @@ public:
 	void setResourcePath(boost::filesystem::path const& path);
 	boost::filesystem::path getFullPath(PathType type, std::string resource) const;
 };
+}
 
 #endif /* FILEUTILITY_H_ */

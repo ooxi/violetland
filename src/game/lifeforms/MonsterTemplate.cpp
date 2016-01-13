@@ -1,6 +1,6 @@
 #include "MonsterTemplate.h"
 
-violetland::MonsterTemplate::MonsterTemplate(Sprite* walkSprite,
+violet::MonsterTemplate::MonsterTemplate(Sprite* walkSprite,
 		Sprite* deathSprite) {
 	WalkSprite = walkSprite;
 	DeathSprite = deathSprite;
@@ -11,7 +11,7 @@ violetland::MonsterTemplate::MonsterTemplate(Sprite* walkSprite,
 	WalkDelay = 0;
 }
 
-violetland::MonsterTemplate::~MonsterTemplate() {
+violet::MonsterTemplate::~MonsterTemplate() {
 	delete WalkSprite;
 	delete DeathSprite;
 	for (unsigned int i = 0; i < HitSounds.size(); i++) {

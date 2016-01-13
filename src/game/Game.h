@@ -5,7 +5,7 @@
 #include "HUD.h"
 #include "../system/InputHandler.h"
 
-namespace violetland {
+namespace violet {
 class Game {
 public:
 	InputHandler*& input;

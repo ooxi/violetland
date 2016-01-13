@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-TextManager::TextManager(boost::filesystem::path fontPath, int fontSize) {
+violet::TextManager::TextManager(boost::filesystem::path fontPath, int fontSize) {
 	m_font = TTF_OpenFont(fontPath.string().c_str(), fontSize);
 	if (!m_font) {
 		std::cerr << "Couldn't initialize font: " << TTF_GetError() << std::endl;
@@ -12,7 +12,7 @@ TextManager::TextManager(boost::filesystem::path fontPath, int fontSize) {
 	m_ident = (int) (m_height * 0.5);
 }
 
-void TextManager::draw(const std::string& textBuf, float x, float y,
+void violet::TextManager::draw(const std::string& textBuf, float x, float y,
 		TextHAlignFlag halign, TextVAlignFlag valign) {
 	if (textBuf.size() == 0)
 		return;
@@ -24,7 +24,7 @@ void TextManager::draw(const std::string& textBuf, float x, float y,
 	delete textObject;
 }
 
-TextObject* TextManager::getObject(const std::string& textBuf, float x, float y,
+violet::TextObject* violet::TextManager::getObject(const std::string& textBuf, float x, float y,
 		TextHAlignFlag halign, TextVAlignFlag valign) {
 
 	SDL_Surface *textImage = ImageUtility::createImage(m_font, 255, 255, 255,
@@ -64,6 +64,6 @@ TextObject* TextManager::getObject(const std::string& textBuf, float x, float y,
 	return NULL;
 }
 
-TextManager::~TextManager() {
+violet::TextManager::~TextManager() {
 	TTF_CloseFont( m_font);
 }

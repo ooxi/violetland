@@ -1,6 +1,6 @@
 #include "Resources.h"
 
-violetland::Resources::Resources(FileUtility* fileUtility,
+violet::Resources::Resources(FileUtility* fileUtility,
 		SoundManager* sndManager) {
 	m_fileUtil = fileUtility;
 	m_sndManager = sndManager;
@@ -44,7 +44,7 @@ violetland::Resources::Resources(FileUtility* fileUtility,
 	loadPowerupTex(BONUS_TELEPORTS, "teleport.png");
 }
 
-Sprite* violetland::Resources::loadSprite(unsigned int frames,
+violet::Sprite* violet::Resources::loadSprite(unsigned int frames,
 		std::string pattern) {
 	std::vector<SDL_Surface*> animSurfaces;
 	for (unsigned i = 0; i < frames; i++) {
@@ -57,17 +57,17 @@ Sprite* violetland::Resources::loadSprite(unsigned int frames,
 	return new Sprite(animSurfaces);
 }
 
-Sound* violetland::Resources::loadSnd(std::string fileName) {
+violet::Sound* violet::Resources::loadSnd(std::string fileName) {
 	return m_sndManager->create(m_fileUtil->getFullPath(FileUtility::sound,
 			fileName));
 }
 
-Texture* violetland::Resources::loadTex(std::string fileName) {
+violet::Texture* violet::Resources::loadTex(std::string fileName) {
 	return new Texture(ImageUtility::loadImage(m_fileUtil->getFullPath(
 			FileUtility::image, fileName)), GL_TEXTURE_2D, GL_LINEAR, true);
 }
 
-void violetland::Resources::loadPowerupTex(BonusType type,
+void violet::Resources::loadPowerupTex(BonusType type,
 		std::string fileName) {
 	PowerupTex.insert(std::map<BonusType, Texture*>::value_type(type,
 			new Texture(ImageUtility::loadImage(m_fileUtil->getFullPath(
@@ -75,7 +75,7 @@ void violetland::Resources::loadPowerupTex(BonusType type,
 					true)));
 }
 
-violetland::Resources::~Resources() {
+violet::Resources::~Resources() {
 	delete HealthIndicator;
 	delete LevelUpIndicator;
 	delete Crystal;

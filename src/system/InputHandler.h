@@ -7,6 +7,8 @@
 
 using namespace std;
 
+namespace violet {
+
 class InputHandler {
 public:
 	enum BindingType {
@@ -79,5 +81,6 @@ private:
 	int m_curTextPos;
 	Binding* m_binding;
 };
+}
 
 #endif /* INPUTHANDLER_H_ */

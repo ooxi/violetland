@@ -6,6 +6,8 @@
 #include "text/TextManager.h"
 #include "../utility/Templates.h"
 
+namespace violet {
+
 class VideoManager {
 private:
 	int m_framesCount;
@@ -76,5 +78,6 @@ public:
 
 	~VideoManager();
 };
+}
 
 #endif /* VIDEOMANAGER_H_ */

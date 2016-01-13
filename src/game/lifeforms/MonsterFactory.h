@@ -8,7 +8,7 @@
 #include "../../system/sound/SoundManager.h"
 #include "Monster.h"
 
-namespace violetland {
+namespace violet {
 class MonsterFactory {
 private:
 	FileUtility* m_fileUtility;

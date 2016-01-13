@@ -3,6 +3,8 @@
 
 #include "SDL_opengl.h"
 
+namespace violet {
+
 class Camera {
 private:
 	int m_w, m_h, m_halfW, m_halfH;
@@ -48,5 +50,6 @@ public:
 
 	void applyGLOrtho();
 };
+}
 
 #endif /* CAMERA_H_ */

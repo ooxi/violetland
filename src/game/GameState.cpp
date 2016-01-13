@@ -1,6 +1,6 @@
 #include "GameState.h"
 
-violetland::GameState::GameState() {
+violet::GameState::GameState() {
 	TimeOfDay = 1.0;
 	Begun = false;
 	Works = true;
@@ -11,7 +11,7 @@ violetland::GameState::GameState() {
 	Mode = GAMEMODE_SURVIVAL;
 }
 
-void violetland::GameState::start(GameMode mode) {
+void violet::GameState::start(GameMode mode) {
 	reset();
 
 	Mode = mode;
@@ -33,11 +33,11 @@ void violetland::GameState::start(GameMode mode) {
 	}
 }
 
-void violetland::GameState::end() {
+void violet::GameState::end() {
 	Works = false;
 }
 
-violetland::LifeForm* violetland::GameState::getLifeForm(string id) {
+violet::LifeForm* violet::GameState::getLifeForm(string id) {
 	map<string, LifeForm*>::iterator it = lifeForms.find(id);
 	if (it == lifeForms.end())
 		return NULL;
@@ -45,7 +45,7 @@ violetland::LifeForm* violetland::GameState::getLifeForm(string id) {
 		return it->second;
 }
 
-vector<violetland::Blood> violetland::GameState::processExplosion(float x,
+vector<violet::Blood> violet::GameState::processExplosion(float x,
 		float y, float damage, float range, bool affectPlayer) {
 	vector<Blood> vBlood;
 
@@ -87,19 +87,19 @@ vector<violetland::Blood> violetland::GameState::processExplosion(float x,
 	return vBlood;
 }
 
-void violetland::GameState::process(int deltaTime) {
+void violet::GameState::process(int deltaTime) {
 	if (!Lost) {
 		Hardness -= deltaTime * 0.00012;
 		Time += deltaTime;
 	}
 }
 
-void violetland::GameState::reset() {
+void violet::GameState::reset() {
 	clearMap<string, LifeForm*> (&lifeForms);
 	clearVector<BasePowerup*> (&powerups);
 	clearVector<Bullet*> (&bullets);
 }
 
-violetland::GameState::~GameState() {
+violet::GameState::~GameState() {
 	reset();
 }

@@ -4,6 +4,8 @@
 #include "../Object.h"
 #include "Texture.h"
 
+namespace violet {
+
 class StaticObject: public Object {
 private:
 	Texture* m_texture;
@@ -24,5 +26,6 @@ public:
 	}
 	virtual ~StaticObject();
 };
+}
 
 #endif /* STATICOBJECT_H_ */

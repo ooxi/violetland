@@ -6,7 +6,7 @@
 #include "CharStatsWindow.h"
 #define _(STRING)            gettext(STRING)
 
-using namespace violetland;
+using namespace violet;
 
 const char* CharStatsWindow::perkIds[] = {
 	"unstoppable",

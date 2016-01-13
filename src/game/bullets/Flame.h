@@ -5,7 +5,7 @@
 #include "../../system/graphic/Texture.h"
 #include "../../system/graphic/StaticObject.h"
 
-namespace violetland {
+namespace violet {
 
 class Flame: public Bullet {
 private:

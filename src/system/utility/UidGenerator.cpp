@@ -1,3 +1,3 @@
 #include "UidGenerator.h"
 
-UidGenerator* UidGenerator::m_instance = 0;
+violet::UidGenerator* violet::UidGenerator::m_instance = 0;

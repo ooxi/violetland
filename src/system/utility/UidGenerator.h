@@ -3,6 +3,8 @@
 
 #include <limits.h>
 
+namespace violet {
+
 class UidGenerator {
 
 private:
@@ -26,5 +28,6 @@ public:
 		return m_val++;
 	}
 };
+}
 
 #endif /* UIDGENERATOR_H_ */

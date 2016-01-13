@@ -4,6 +4,8 @@
 #include <vector>
 #include "Texture.h"
 
+namespace violet {
+
 class Sprite {
 private:
 	std::vector<Texture*> m_frames;
@@ -17,5 +19,6 @@ public:
 	}
 	virtual ~Sprite();
 };
+}
 
 #endif /* SPRITE_H_ */

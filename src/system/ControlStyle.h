@@ -22,11 +22,12 @@
  */
 #ifndef CONTROL_STYLE_H_
 #define CONTROL_STYLE_H_
-namespace violetland {
 
 
 
 
+
+namespace violet {
 
 /**
  * Enumerates all implemented control styles
@@ -55,10 +56,7 @@ char* ControlStyleToString(enum ControlStyle style);
  */
 enum ControlStyle GetNextControlStyle(enum ControlStyle);
 
-
-
-
-
 }
+
 #endif
 

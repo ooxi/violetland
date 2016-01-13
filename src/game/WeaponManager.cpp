@@ -2,7 +2,7 @@
 
 #include "WeaponManager.h"
 
-namespace violetland {
+namespace violet {
 
 WeaponManager::WeaponManager(FileUtility* fileUtility, SoundManager* sndManager) {
 	std::cout << "Loading weapons..." << std::endl;

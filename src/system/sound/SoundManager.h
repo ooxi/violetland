@@ -8,6 +8,8 @@
 
 
 
+namespace violet {
+
 class SoundManager {
 private:
 	bool m_enabled;
@@ -18,5 +20,6 @@ public:
 	Sound* create(boost::filesystem::path name);
 	~SoundManager();
 };
+}
 
 #endif /* SOUNDMANAGER_H_ */

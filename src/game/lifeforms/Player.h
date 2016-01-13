@@ -4,7 +4,7 @@
 #include "LifeForm.h"
 #include "../Weapon.h"
 
-namespace violetland {
+namespace violet {
 
 enum PlayerActionMode {
 	PLAYER_ACT_MODE_FIRE = 0, PLAYER_ACT_MODE_TELEPORT

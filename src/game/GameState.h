@@ -13,7 +13,7 @@
 
 using namespace std;
 
-namespace violetland {
+namespace violet {
 class BasePowerup;
 
 struct Blood {
@@ -30,7 +30,7 @@ public:
 	GameState();
 	void start(GameMode mode);
 	void end();
-	vector<violetland::Blood> processExplosion(float x, float y, float damage,
+	vector<violet::Blood> processExplosion(float x, float y, float damage,
 			float range, bool affectPlayer);
 	void reset();
 	void process(int deltaTime);

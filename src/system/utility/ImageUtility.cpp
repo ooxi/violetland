@@ -1,6 +1,6 @@
 #include "ImageUtility.h"
 
-SDL_Surface *ImageUtility::loadImage(boost::filesystem::path fileName) {
+SDL_Surface* violet::ImageUtility::loadImage(boost::filesystem::path fileName) {
 	SDL_Surface *image = IMG_Load(fileName.string().c_str());
 	if (image == NULL) {
 		std::cerr << "Couldn't load " << fileName << ": " << SDL_GetError() << std::endl;
@@ -16,7 +16,7 @@ SDL_Surface *ImageUtility::loadImage(boost::filesystem::path fileName) {
 	return optimizedImage;
 }
 
-SDL_Surface *ImageUtility::createImage(
+SDL_Surface* violet::ImageUtility::createImage(
 		TTF_Font *font,
 		Uint8 fgR, Uint8 fgG, Uint8 fgB, Uint8 fgA,
 		Uint8 bgR, Uint8 bgG, Uint8 bgB, Uint8 bgA,
@@ -40,15 +40,15 @@ SDL_Surface *ImageUtility::createImage(
 	return optimizedImage;
 }
 
-float ImageUtility::getColorChR(int color) {
+float violet::ImageUtility::getColorChR(int color) {
 	return (color / 65536) / 255.0;
 }
 
-float ImageUtility::getColorChG(int color) {
+float violet::ImageUtility::getColorChG(int color) {
 	return ((color - (color / 65536) * 65536) / 256) / 255.0;
 }
 
-float ImageUtility::getColorChB(int color) {
+float violet::ImageUtility::getColorChB(int color) {
 	return (color - (color / 65536) * 65536
 			- ((color - (color / 65536) * 65536) / 256) * 256) / 255.0;
 }

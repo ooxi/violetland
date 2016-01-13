@@ -1,6 +1,6 @@
 #include "VideoManager.h"
 
-VideoManager::VideoManager(FileUtility* fileUtility) {
+violet::VideoManager::VideoManager(FileUtility* fileUtility) {
 	m_fileUtility = fileUtility;
 
 	std::cout << "SDL_GL_SetAttribute SDL_GL_DOUBLEBUFFER..." << std::endl;
@@ -17,7 +17,7 @@ VideoManager::VideoManager(FileUtility* fileUtility) {
 	// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 }
 
-void VideoManager::countFrame(int frameDelay) {
+void violet::VideoManager::countFrame(int frameDelay) {
 	m_framesCount++;
 
 	int now = SDL_GetTicks();
@@ -35,7 +35,7 @@ void VideoManager::countFrame(int frameDelay) {
 		SDL_Delay(frameDelay - m_frameDeltaTime);
 }
 
-bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
+bool violet::VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 		int* true_bpp) {
 	Uint32 flags = SDL_OPENGL;
 	if (fullscreen)
@@ -46,7 +46,7 @@ bool VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 	return (r != 0);
 }
 
-std::vector<SDL_Rect> VideoManager::GetAvailableModes() {
+std::vector<SDL_Rect> violet::VideoManager::GetAvailableModes() {
 
 	/* All possible width
 	 */
@@ -83,7 +83,7 @@ std::vector<SDL_Rect> VideoManager::GetAvailableModes() {
 	return modes;
 }
 
-void VideoManager::setMode(VideoMode mode, Camera* cam) {
+void violet::VideoManager::setMode(VideoMode mode, Camera* cam) {
 	std::cout << "SDL_SetVideoMode " << mode.Width << 'x' << mode.Height << '('
 			<< (mode.Full ? 'f' : 'w') << ")..." << std::endl;
 
@@ -122,7 +122,7 @@ void VideoManager::setMode(VideoMode mode, Camera* cam) {
 	SmallText = new TextManager(fontPath, 30 * WK);
 }
 
-VideoManager::~VideoManager() {
+violet::VideoManager::~VideoManager() {
 	delete RegularText;
 	delete SmallText;
 }
