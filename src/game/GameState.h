@@ -1,5 +1,5 @@
-#ifndef GAMESTATE_H_
-#define GAMESTATE_H_
+#ifndef VIOLET_GAMESTATE_H_
+#define VIOLET_GAMESTATE_H_
 
 #include <string>
 #include <map>
@@ -56,4 +56,4 @@ public:
 };
 }
 
-#endif /* GAMESTATE_H_ */
+#endif /* VIOLET_GAMESTATE_H_ */

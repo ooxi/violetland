@@ -1,5 +1,5 @@
-#ifndef TEXTOBJECT_H_
-#define TEXTOBJECT_H_
+#ifndef VIOLET_TEXTOBJECT_H_
+#define VIOLET_TEXTOBJECT_H_
 
 #include "../Texture.h"
 #include "../../Object.h"
@@ -25,4 +25,4 @@ public:
 };
 }
 
-#endif /* TEXTOBJECT_H_ */
+#endif /* VIOLET_TEXTOBJECT_H_ */

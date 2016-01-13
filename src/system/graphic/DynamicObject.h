@@ -1,5 +1,5 @@
-#ifndef DYNAMICOBJECT_H_
-#define DYNAMICOBJECT_H_
+#ifndef VIOLET_DYNAMICOBJECT_H_
+#define VIOLET_DYNAMICOBJECT_H_
 
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
@@ -30,4 +30,4 @@ public:
 };
 }
 
-#endif /* DYNAMICOBJECT_H_ */
+#endif /* VIOLET_DYNAMICOBJECT_H_ */

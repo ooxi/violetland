@@ -1,5 +1,5 @@
-#ifndef CHARSTATSWINDOW_H_
-#define CHARSTATSWINDOW_H_
+#ifndef VIOLET_CHARSTATSWINDOW_H_
+#define VIOLET_CHARSTATSWINDOW_H_
 
 #include "Window.h"
 #include "../system/graphic/VideoManager.h"
@@ -33,4 +33,4 @@ public:
 };
 }
 
-#endif /* CHARSTATSWINDOW_H_ */
+#endif /* VIOLET_CHARSTATSWINDOW_H_ */

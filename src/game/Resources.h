@@ -1,5 +1,5 @@
-#ifndef RESOURCES_H_
-#define RESOURCES_H_
+#ifndef VIOLET_RESOURCES_H_
+#define VIOLET_RESOURCES_H_
 
 #include <sstream>
 
@@ -37,4 +37,4 @@ public:
 };
 }
 
-#endif /* RESOURCES_H_ */
+#endif /* VIOLET_RESOURCES_H_ */

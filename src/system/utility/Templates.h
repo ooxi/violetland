@@ -1,5 +1,5 @@
-#ifndef TEMPLATES_H_
-#define TEMPLATES_H_
+#ifndef VIOLET_TEMPLATES_H_
+#define VIOLET_TEMPLATES_H_
 
 #include <map>
 #include <vector>
@@ -26,4 +26,4 @@ template<typename T> size_t getStructSize(const T& _t) {
 }
 }
 
-#endif /* TEMPLATES_H_ */
+#endif /* VIOLET_TEMPLATES_H_ */

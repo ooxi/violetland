@@ -1,5 +1,5 @@
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#ifndef VIOLET_CONFIGURATION_H_
+#define VIOLET_CONFIGURATION_H_
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -46,4 +46,4 @@ public:
 };
 }
 
-#endif /* CONFIGURATION_H_ */
+#endif /* VIOLET_CONFIGURATION_H_ */

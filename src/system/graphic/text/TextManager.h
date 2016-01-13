@@ -1,5 +1,5 @@
-#ifndef TEXTMANAGER_H_
-#define TEXTMANAGER_H_
+#ifndef VIOLET_TEXTMANAGER_H_
+#define VIOLET_TEXTMANAGER_H_
 
 #include <boost/filesystem.hpp>
 
@@ -35,4 +35,4 @@ public:
 };
 }
 
-#endif /* TEXTMANAGER_H_ */
+#endif /* VIOLET_TEXTMANAGER_H_ */

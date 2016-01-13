@@ -1,5 +1,5 @@
-#ifndef TERRAIN_H_
-#define TERRAIN_H_
+#ifndef VIOLET_TERRAIN_H_
+#define VIOLET_TERRAIN_H_
 
 #include <vector>
 #include "../system/graphic/StaticObject.h"
@@ -32,4 +32,4 @@ public:
 };
 }
 
-#endif /* TERRAIN_H_ */
+#endif /* VIOLET_TERRAIN_H_ */

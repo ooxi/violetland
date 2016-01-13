@@ -1,5 +1,5 @@
-#ifndef LASERBULLET_H_
-#define LASERBULLET_H_
+#ifndef VIOLET_LASERBULLET_H_
+#define VIOLET_LASERBULLET_H_
 
 #include "SDL_opengl.h"
 #include "Bullet.h"
@@ -19,4 +19,4 @@ public:
 
 }
 
-#endif /* LASERBULLET_H_ */
+#endif /* VIOLET_LASERBULLET_H_ */

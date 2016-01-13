@@ -1,5 +1,5 @@
-#ifndef TEXTURE_H_
-#define TEXTURE_H_
+#ifndef VIOLET_TEXTURE_H_
+#define VIOLET_TEXTURE_H_
 
 #include "../../system/utility/ImageUtility.h"
 
@@ -31,4 +31,4 @@ public:
 };
 }
 
-#endif /* TEXTURE_H_ */
+#endif /* VIOLET_TEXTURE_H_ */

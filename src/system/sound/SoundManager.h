@@ -1,5 +1,5 @@
-#ifndef SOUNDMANAGER_H_
-#define SOUNDMANAGER_H_
+#ifndef VIOLET_SOUNDMANAGER_H_
+#define VIOLET_SOUNDMANAGER_H_
 
 #include <boost/filesystem.hpp>
 
@@ -22,4 +22,4 @@ public:
 };
 }
 
-#endif /* SOUNDMANAGER_H_ */
+#endif /* VIOLET_SOUNDMANAGER_H_ */

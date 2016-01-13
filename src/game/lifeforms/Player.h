@@ -1,5 +1,5 @@
-#ifndef PLAYER_H_
-#define PLAYER_H_
+#ifndef VIOLET_PLAYER_H_
+#define VIOLET_PLAYER_H_
 
 #include "LifeForm.h"
 #include "../Weapon.h"
@@ -100,4 +100,4 @@ public:
 
 }
 
-#endif /* PLAYER_H_ */
+#endif /* VIOLET_PLAYER_H_ */

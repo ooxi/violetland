@@ -1,5 +1,5 @@
-#ifndef MONSTERFACTORY_H_
-#define MONSTERFACTORY_H_
+#ifndef VIOLET_MONSTERFACTORY_H_
+#define VIOLET_MONSTERFACTORY_H_
 
 #include <sstream>
 
@@ -25,4 +25,4 @@ public:
 };
 }
 
-#endif /* MONSTERFACTORY_H_ */
+#endif /* VIOLET_MONSTERFACTORY_H_ */

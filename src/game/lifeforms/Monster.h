@@ -1,5 +1,5 @@
-#ifndef ENEMY_H_
-#define ENEMY_H_
+#ifndef VIOLET_ENEMY_H_
+#define VIOLET_ENEMY_H_
 
 #include "../../system/graphic/DynamicObject.h"
 #include "../bullets/Bullet.h"
@@ -35,4 +35,4 @@ public:
 };
 }
 
-#endif /* ENEMY_H_ */
+#endif /* VIOLET_ENEMY_H_ */

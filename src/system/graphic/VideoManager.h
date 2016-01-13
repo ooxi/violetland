@@ -1,5 +1,5 @@
-#ifndef VIDEOMANAGER_H_
-#define VIDEOMANAGER_H_
+#ifndef VIOLET_VIDEOMANAGER_H_
+#define VIOLET_VIDEOMANAGER_H_
 
 #include "../Configuration.h"
 #include "Camera.h"
@@ -80,4 +80,4 @@ public:
 };
 }
 
-#endif /* VIDEOMANAGER_H_ */
+#endif /* VIOLET_VIDEOMANAGER_H_ */

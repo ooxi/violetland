@@ -1,5 +1,5 @@
-#ifndef HIGHSCORES_H_
-#define HIGHSCORES_H_
+#ifndef VIOLET_HIGHSCORES_H_
+#define VIOLET_HIGHSCORES_H_
 
 #include <set>
 
@@ -46,4 +46,4 @@ public:
 };
 }
 
-#endif /* HIGHSCORES_H_ */
+#endif /* VIOLET_HIGHSCORES_H_ */

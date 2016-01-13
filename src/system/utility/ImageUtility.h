@@ -1,5 +1,5 @@
-#ifndef IMAGEUTILITY_H_
-#define IMAGEUTILITY_H_
+#ifndef VIOLET_IMAGEUTILITY_H_
+#define VIOLET_IMAGEUTILITY_H_
 
 #include <iostream>
 #include <boost/filesystem.hpp>
@@ -28,4 +28,4 @@ public:
 };
 }
 
-#endif /* IMAGEUTILITY_H_ */
+#endif /* VIOLET_IMAGEUTILITY_H_ */

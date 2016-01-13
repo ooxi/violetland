@@ -1,5 +1,5 @@
-#ifndef STATICOBJECT_H_
-#define STATICOBJECT_H_
+#ifndef VIOLET_STATICOBJECT_H_
+#define VIOLET_STATICOBJECT_H_
 
 #include "../Object.h"
 #include "Texture.h"
@@ -28,4 +28,4 @@ public:
 };
 }
 
-#endif /* STATICOBJECT_H_ */
+#endif /* VIOLET_STATICOBJECT_H_ */

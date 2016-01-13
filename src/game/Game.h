@@ -1,5 +1,5 @@
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef VIOLET_GAME_H_
+#define VIOLET_GAME_H_
 
 #include "GameState.h"
 #include "HUD.h"
@@ -22,4 +22,4 @@ public:
 };
 }
 
-#endif /* GAME_H_ */
+#endif /* VIOLET_GAME_H_ */

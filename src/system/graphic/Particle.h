@@ -1,5 +1,5 @@
-#ifndef PARTICLE_H_
-#define PARTICLE_H_
+#ifndef VIOLET_PARTICLE_H_
+#define VIOLET_PARTICLE_H_
 
 #include "StaticObject.h"
 
@@ -15,4 +15,4 @@ public:
 };
 }
 
-#endif /* PARTICLE_H_ */
+#endif /* VIOLET_PARTICLE_H_ */

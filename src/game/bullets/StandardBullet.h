@@ -1,5 +1,5 @@
-#ifndef STANDARDBULLET_H_
-#define STANDARDBULLET_H_
+#ifndef VIOLET_STANDARDBULLET_H_
+#define VIOLET_STANDARDBULLET_H_
 
 #include "SDL_opengl.h"
 #include "Bullet.h"
@@ -21,4 +21,4 @@ public:
 
 }
 
-#endif /* STANDARDBULLET_H_ */
+#endif /* VIOLET_STANDARDBULLET_H_ */

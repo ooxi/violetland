@@ -1,5 +1,5 @@
-#ifndef WEAPONMANAGER_H_
-#define WEAPONMANAGER_H_
+#ifndef VIOLET_WEAPONMANAGER_H_
+#define VIOLET_WEAPONMANAGER_H_
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -23,4 +23,4 @@ public:
 
 }
 
-#endif /* WEAPONMANAGER_H_ */
+#endif /* VIOLET_WEAPONMANAGER_H_ */

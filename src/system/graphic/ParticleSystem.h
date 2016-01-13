@@ -1,5 +1,5 @@
-#ifndef PARTICLESYSTEM_H_
-#define PARTICLESYSTEM_H_
+#ifndef VIOLET_PARTICLESYSTEM_H_
+#define VIOLET_PARTICLESYSTEM_H_
 
 #include <vector>
 #include "Particle.h"
@@ -17,4 +17,4 @@ public:
 };
 }
 
-#endif /* PARTICLESYSTEM_H_ */
+#endif /* VIOLET_PARTICLESYSTEM_H_ */

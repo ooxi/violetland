@@ -1,5 +1,5 @@
-#ifndef OBJECT_H_
-#define OBJECT_H_
+#ifndef VIOLET_OBJECT_H_
+#define VIOLET_OBJECT_H_
 
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
@@ -53,4 +53,4 @@ public:
 };
 }
 
-#endif /* OBJECT_H_ */
+#endif /* VIOLET_OBJECT_H_ */

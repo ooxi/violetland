@@ -1,5 +1,5 @@
-#ifndef MONSTERTEMPLATE_H_
-#define MONSTERTEMPLATE_H_
+#ifndef VIOLET_MONSTERTEMPLATE_H_
+#define VIOLET_MONSTERTEMPLATE_H_
 
 #include "../../system/graphic/Sprite.h"
 #include "../../system/sound/Sound.h"
@@ -21,4 +21,4 @@ public:
 };
 }
 
-#endif /* MONSTERTEMPLATE_H_ */
+#endif /* VIOLET_MONSTERTEMPLATE_H_ */

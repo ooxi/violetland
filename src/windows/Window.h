@@ -1,5 +1,5 @@
-#ifndef WINDOW_H_
-#define WINDOW_H_
+#ifndef VIOLET_WINDOW_H_
+#define VIOLET_WINDOW_H_
 
 #include <boost/function.hpp>
 #include <map>
@@ -43,4 +43,4 @@ public:
 };
 }
 
-#endif /* WINDOW_H_ */
+#endif /* VIOLET_WINDOW_H_ */

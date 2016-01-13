@@ -1,5 +1,5 @@
-#ifndef EXPLOSION_H_
-#define EXPLOSION_H_
+#ifndef VIOLET_EXPLOSION_H_
+#define VIOLET_EXPLOSION_H_
 
 #include "ParticleSystem.h"
 
@@ -13,4 +13,4 @@ public:
 };
 }
 
-#endif /* EXPLOSION_H_ */
+#endif /* VIOLET_EXPLOSION_H_ */

@@ -1,5 +1,5 @@
-#ifndef AIM_H_
-#define AIM_H_
+#ifndef VIOLET_AIM_H_
+#define VIOLET_AIM_H_
 
 #include "StaticObject.h"
 #include "../Configuration.h"
@@ -21,4 +21,4 @@ public:
 };
 }
 
-#endif /* AIM_H_ */
+#endif /* VIOLET_AIM_H_ */

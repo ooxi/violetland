@@ -1,5 +1,5 @@
-#ifndef MAINMENUWINDOW_H_
-#define MAINMENUWINDOW_H_
+#ifndef VIOLET_MAINMENUWINDOW_H_
+#define VIOLET_MAINMENUWINDOW_H_
 
 #include "Window.h"
 #include "../system/Configuration.h"
@@ -23,4 +23,4 @@ public:
 };
 }
 
-#endif /* MAINMENUWINDOW_H_ */
+#endif /* VIOLET_MAINMENUWINDOW_H_ */

@@ -1,5 +1,5 @@
-#ifndef HUD_H_
-#define HUD_H_
+#ifndef VIOLET_HUD_H_
+#define VIOLET_HUD_H_
 
 #include <sstream>
 #include <iomanip>
@@ -69,4 +69,4 @@ public:
 };
 }
 
-#endif /* HUD_H_ */
+#endif /* VIOLET_HUD_H_ */

@@ -1,5 +1,5 @@
-#ifndef LIFEFORM_H_
-#define LIFEFORM_H_
+#ifndef VIOLET_LIFEFORM_H_
+#define VIOLET_LIFEFORM_H_
 
 #ifdef _WIN32
 #include "windows.h"
@@ -77,4 +77,4 @@ public:
 };
 }
 
-#endif /* LIFEFORM_H_ */
+#endif /* VIOLET_LIFEFORM_H_ */

@@ -1,5 +1,5 @@
-#ifndef INPUTHANDLER_H_
-#define INPUTHANDLER_H_
+#ifndef VIOLET_INPUTHANDLER_H_
+#define VIOLET_INPUTHANDLER_H_
 
 #include <string>
 
@@ -83,4 +83,4 @@ private:
 };
 }
 
-#endif /* INPUTHANDLER_H_ */
+#endif /* VIOLET_INPUTHANDLER_H_ */

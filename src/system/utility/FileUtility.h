@@ -1,5 +1,5 @@
-#ifndef FILEUTILITY_H_
-#define FILEUTILITY_H_
+#ifndef VIOLET_FILEUTILITY_H_
+#define VIOLET_FILEUTILITY_H_
 
 #include <boost/filesystem.hpp>
 #include <string>
@@ -50,4 +50,4 @@ public:
 };
 }
 
-#endif /* FILEUTILITY_H_ */
+#endif /* VIOLET_FILEUTILITY_H_ */

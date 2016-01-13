@@ -1,6 +1,6 @@
 // Copyright (c) 2004 Richard J. Wagner
-#ifndef CONFIGFILE_H_
-#define CONFIGFILE_H_
+#ifndef VIOLET_CONFIGFILE_H_
+#define VIOLET_CONFIGFILE_H_
 
 #include <string>
 #include <map>
@@ -183,4 +183,4 @@ void ConfigFile::add(std::string key, const T& value) {
 }
 }
 
-#endif /* CONFIGFILE_H_ */
+#endif /* VIOLET_CONFIGFILE_H_ */

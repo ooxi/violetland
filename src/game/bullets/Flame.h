@@ -1,5 +1,5 @@
-#ifndef FLAME_H_
-#define FLAME_H_
+#ifndef VIOLET_FLAME_H_
+#define VIOLET_FLAME_H_
 
 #include "Bullet.h"
 #include "../../system/graphic/Texture.h"
@@ -20,4 +20,4 @@ public:
 
 }
 
-#endif /* FLAME_H_ */
+#endif /* VIOLET_FLAME_H_ */
