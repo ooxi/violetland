@@ -1,5 +1,5 @@
-#ifndef WINDOW_H_
-#define WINDOW_H_
+#ifndef VIOLET_WINDOW_H_
+#define VIOLET_WINDOW_H_
 
 #include <boost/function.hpp>
 #include <map>
@@ -7,6 +7,8 @@
 #include "../system/graphic/text/TextObject.h"
 #include "../system/graphic/text/TextManager.h"
 #include "../system/InputHandler.h"
+
+namespace violet {
 
 class Window {
 protected:
@@ -39,5 +41,6 @@ public:
 	bool CloseFlag;
 	virtual ~Window();
 };
+}
 
-#endif /* WINDOW_H_ */
+#endif /* VIOLET_WINDOW_H_ */

@@ -3,7 +3,7 @@
 #endif //_WIN32W
 #include "Monster.h"
 
-violetland::Monster::Monster(MonsterTemplate* base, int lvl) :
+violet::Monster::Monster(MonsterTemplate* base, int lvl) :
 	LifeForm(0, 0, 128, 128) {
 	Id = "10-" + Id;
 
@@ -57,11 +57,11 @@ violetland::Monster::Monster(MonsterTemplate* base, int lvl) :
 	Type = LIFEFORM_MONSTER;
 }
 
-void violetland::Monster::rollFrame(bool forward) {
+void violet::Monster::rollFrame(bool forward) {
 	m_body->rollFrame(forward);
 }
 
-Sound* violetland::Monster::hit(float damage, bool poison, bool stop) {
+violet::Sound* violet::Monster::hit(float damage, bool poison, bool stop) {
 	LifeForm::hit(damage, poison);
 
 	m_bleedCount += damage * 5;
@@ -83,7 +83,7 @@ Sound* violetland::Monster::hit(float damage, bool poison, bool stop) {
 	return NULL;
 }
 
-bool violetland::Monster::isBleeding() {
+bool violet::Monster::isBleeding() {
 	if (m_bleedCount > 0 && m_bleedDelay > 600) {
 		m_bleedDelay = 0;
 		m_bleedCount--;
@@ -93,7 +93,7 @@ bool violetland::Monster::isBleeding() {
 	}
 }
 
-void violetland::Monster::process(int deltaTime) {
+void violet::Monster::process(int deltaTime) {
 	LifeForm::process(deltaTime);
 
 	if (m_walkTime > 0) {
@@ -130,7 +130,7 @@ void violetland::Monster::process(int deltaTime) {
 	}
 }
 
-StaticObject* violetland::Monster::getCorpse() {
+violet::StaticObject* violet::Monster::getCorpse() {
 	StaticObject * corpse = new StaticObject(X, Y, m_width, m_height,
 			m_body->getFrame(), false);
 	corpse->Scale = Scale;
@@ -139,10 +139,10 @@ StaticObject* violetland::Monster::getCorpse() {
 	return corpse;
 }
 
-void violetland::Monster::draw() {
+void violet::Monster::draw() {
 	m_body->draw(X, Y, Angle, Scale, RMask, GMask, BMask, AMask);
 }
 
-violetland::Monster::~Monster() {
+violet::Monster::~Monster() {
 	delete m_body;
 }

@@ -1,9 +1,11 @@
-#ifndef TERRAIN_H_
-#define TERRAIN_H_
+#ifndef VIOLET_TERRAIN_H_
+#define VIOLET_TERRAIN_H_
 
 #include <vector>
 #include "../system/graphic/StaticObject.h"
 #include "../system/graphic/Camera.h"
+
+namespace violet {
 
 class Terrain {
 private:
@@ -28,5 +30,6 @@ public:
 	}
 	~Terrain();
 };
+}
 
-#endif /* TERRAIN_H_ */
+#endif /* VIOLET_TERRAIN_H_ */

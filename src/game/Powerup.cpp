@@ -6,14 +6,14 @@
 #include "Game.h"
 
 
-violetland::BasePowerup::BasePowerup(float x, float y, Texture *tex) : 
+violet::BasePowerup::BasePowerup(float x, float y, Texture *tex) : 
 		StaticObject(x, y, 128, 128, tex, false) {
 	Time = 15000;
 	Dir = 1;
 }
 
 
-void violetland::BasePowerup::process(int timeDelta) {
+void violet::BasePowerup::process(int timeDelta) {
 	Time -= timeDelta;
 	AMask = Time / 15000.0;
 	if (getType() != BONUS_WEAPON) {
@@ -27,17 +27,17 @@ void violetland::BasePowerup::process(int timeDelta) {
 }
 
 
-/*violetland::Powerup::~Powerup() {
+/*violet::Powerup::~Powerup() {
 	if(m_type != BONUS_WEAPON)
 		delete Object;
 }*/
 
 
-const std::string violetland::MedikitPowerup::getHudInfo() const {
+const std::string violet::MedikitPowerup::getHudInfo() const {
 	return _("a medikit");
 }
 
-bool violetland::MedikitPowerup::modify(Game* game, Player* player) {
+bool violet::MedikitPowerup::modify(Game* game, Player* player) {
 	if (player->getHealth() < player->MaxHealth()) {
 		game->hud->addMessage(_("You have taken a medical kit."));
 		player->setHealth(player->getHealth() + m_value);
@@ -46,22 +46,22 @@ bool violetland::MedikitPowerup::modify(Game* game, Player* player) {
 	return false;
 }
 
-const std::string violetland::GrenadePowerup::getHudInfo() const {
+const std::string violet::GrenadePowerup::getHudInfo() const {
 	return _("a hand grenade");
 }
 
-bool violetland::GrenadePowerup::modify(Game* game, Player* player) {
+bool violet::GrenadePowerup::modify(Game* game, Player* player) {
 	game->hud->addMessage(_("You have taken a grenade."));
 	++player->Grenades;
 	return true;
 }
 
 
-const std::string violetland::FreezePowerup::getHudInfo() const {
+const std::string violet::FreezePowerup::getHudInfo() const {
 	return _("a nitrogen bomb");
 }
 
-bool violetland::FreezePowerup::modify(Game* game, Player* player) {
+bool violet::FreezePowerup::modify(Game* game, Player* player) {
 	game->hud->addMessage(_("All have been frozen around you."));
 
 	std::map<std::string, LifeForm*>::const_iterator iter;
@@ -81,12 +81,12 @@ bool violetland::FreezePowerup::modify(Game* game, Player* player) {
 }
 
 
-const std::string violetland::NukePowerup::getHudInfo() const {
+const std::string violet::NukePowerup::getHudInfo() const {
 	return _("nuke!");
 }
 
 void addExplosion(float x, float y, float damage, float range);
-bool violetland::NukePowerup::modify(Game* game, Player* player) {
+bool violet::NukePowerup::modify(Game* game, Player* player) {
 	game->hud->addMessage(_("Boom!"));
 	addExplosion(X, Y, 12.0f, 400.0f);
 
@@ -100,11 +100,11 @@ bool violetland::NukePowerup::modify(Game* game, Player* player) {
 }
 
 
-const std::string violetland::PenetrationBulletsPowerup::getHudInfo() const {
+const std::string violet::PenetrationBulletsPowerup::getHudInfo() const {
 	return _("penetration bullets");
 }
 
-bool violetland::PenetrationBulletsPowerup::modify(Game* game, Player* player) {
+bool violet::PenetrationBulletsPowerup::modify(Game* game, Player* player) {
 	game->hud->addMessage(_("You got powerful penetration bullets."));
 	player->bonusTimes[PLAYER_BONUS_PENBULLETS] = 10000;
 
@@ -112,33 +112,33 @@ bool violetland::PenetrationBulletsPowerup::modify(Game* game, Player* player) {
 }
 
 
-const std::string violetland::VitalityPowerup::getHudInfo() const {
+const std::string violet::VitalityPowerup::getHudInfo() const {
 	return _("vitality boost");
 }
 
-bool violetland::VitalityPowerup::modify(Game* game, Player* player) {
+bool violet::VitalityPowerup::modify(Game* game, Player* player) {
 	game->hud->addMessage(_("You got a vitality boost."));
 	player->bonusTimes[PLAYER_BONUS_VITALITYBOOST] += 10000;
 
 	return true;
 }
 
-const std::string violetland::StrengthPowerup::getHudInfo() const {
+const std::string violet::StrengthPowerup::getHudInfo() const {
 	return _("strength boost");
 }
 
-bool violetland::StrengthPowerup::modify(Game* game, Player* player) {
+bool violet::StrengthPowerup::modify(Game* game, Player* player) {
 	game->hud->addMessage(_("You got a strength boost."));
 	player->bonusTimes[PLAYER_BONUS_STRENGTHBOOST] += 10000;
 
 	return true;
 }
 
-const std::string violetland::AgilityPowerup::getHudInfo() const {
+const std::string violet::AgilityPowerup::getHudInfo() const {
 	return _("agility boost");
 }
 
-bool violetland::AgilityPowerup::modify(Game* game, Player* player) {
+bool violet::AgilityPowerup::modify(Game* game, Player* player) {
 	game->hud->addMessage(_("You got a agility boost."));
 	player->bonusTimes[PLAYER_BONUS_AGILITYBOOST] += 10000;
 
@@ -146,11 +146,11 @@ bool violetland::AgilityPowerup::modify(Game* game, Player* player) {
 }
 
 
-const std::string violetland::TeleportPowerup::getHudInfo() const {
+const std::string violet::TeleportPowerup::getHudInfo() const {
 	return _("a teleport");
 }
 
-bool violetland::TeleportPowerup::modify(Game* game, Player* player) {
+bool violet::TeleportPowerup::modify(Game* game, Player* player) {
 	game->hud->addMessage(_("You have taken a teleport."));
 	++player->Teleports;
 
@@ -158,7 +158,7 @@ bool violetland::TeleportPowerup::modify(Game* game, Player* player) {
 }
 
 
-bool violetland::WeaponPowerup::modify(Game* game, Player* player) {
+bool violet::WeaponPowerup::modify(Game* game, Player* player) {
 	if (game->input->getDownInput(InputHandler::Pickup)
 						|| game->config->AutoWeaponPickup) {
 		player->setWeapon(weapon);

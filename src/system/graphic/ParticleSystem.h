@@ -1,8 +1,10 @@
-#ifndef PARTICLESYSTEM_H_
-#define PARTICLESYSTEM_H_
+#ifndef VIOLET_PARTICLESYSTEM_H_
+#define VIOLET_PARTICLESYSTEM_H_
 
 #include <vector>
 #include "Particle.h"
+
+namespace violet {
 
 class ParticleSystem {
 public:
@@ -13,5 +15,6 @@ public:
 	std::vector<Particle*> Particles;
 	virtual ~ParticleSystem();
 };
+}
 
-#endif /* PARTICLESYSTEM_H_ */
+#endif /* VIOLET_PARTICLESYSTEM_H_ */

@@ -1,5 +1,5 @@
-#ifndef IMAGEUTILITY_H_
-#define IMAGEUTILITY_H_
+#ifndef VIOLET_IMAGEUTILITY_H_
+#define VIOLET_IMAGEUTILITY_H_
 
 #include <iostream>
 #include <boost/filesystem.hpp>
@@ -8,6 +8,8 @@
 #include "SDL_opengl.h"
 
 
+
+namespace violet {
 
 class ImageUtility {
 public:
@@ -24,5 +26,6 @@ public:
 	static float getColorChG(int color);
 	static float getColorChB(int color);
 };
+}
 
-#endif /* IMAGEUTILITY_H_ */
+#endif /* VIOLET_IMAGEUTILITY_H_ */

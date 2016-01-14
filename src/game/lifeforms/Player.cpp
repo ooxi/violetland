@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "../../system/utility/Templates.h"
 
-namespace violetland {
+namespace violet {
 
 Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
 		std::vector<Sound*> hitSounds, Sound* dyingSound) :

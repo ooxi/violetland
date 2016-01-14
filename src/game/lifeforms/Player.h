@@ -1,10 +1,10 @@
-#ifndef PLAYER_H_
-#define PLAYER_H_
+#ifndef VIOLET_PLAYER_H_
+#define VIOLET_PLAYER_H_
 
 #include "LifeForm.h"
 #include "../Weapon.h"
 
-namespace violetland {
+namespace violet {
 
 enum PlayerActionMode {
 	PLAYER_ACT_MODE_FIRE = 0, PLAYER_ACT_MODE_TELEPORT
@@ -100,4 +100,4 @@ public:
 
 }
 
-#endif /* PLAYER_H_ */
+#endif /* VIOLET_PLAYER_H_ */

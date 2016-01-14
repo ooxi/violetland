@@ -1,7 +1,9 @@
-#ifndef SOUND_H_
-#define SOUND_H_
+#ifndef VIOLET_SOUND_H_
+#define VIOLET_SOUND_H_
 
 #include "SDL_mixer.h"
+
+namespace violet {
 
 class Sound {
 private:
@@ -18,5 +20,6 @@ public:
 	void stop(int fade);
 	~Sound();
 };
+}
 
-#endif /* SOUND_H_ */
+#endif /* VIOLET_SOUND_H_ */

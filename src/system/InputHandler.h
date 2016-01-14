@@ -1,11 +1,11 @@
-#ifndef INPUTHANDLER_H_
-#define INPUTHANDLER_H_
+#ifndef VIOLET_INPUTHANDLER_H_
+#define VIOLET_INPUTHANDLER_H_
 
 #include <string>
 
 #include "SDL.h"
 
-using namespace std;
+namespace violet {
 
 class InputHandler {
 public:
@@ -62,22 +62,23 @@ public:
 	bool getPressInput(GameInputEvents evnt);
 	void resetMouseButtons();
 	int mouseX, mouseY;
-	static string getEventName(int eventNumber);
-	static string getEventIdentifier(int eventNumber);
-	static const unsigned getEventNumber(string eventIdentifier);
-	static string getKeyName(Binding bind);
+	static std::string getEventName(int eventNumber);
+	static std::string getEventIdentifier(int eventNumber);
+	static const unsigned getEventNumber(std::string eventIdentifier);
+	static std::string getKeyName(Binding bind);
 	static void initEventNames();
 private:
 	void processEvent(BindingType type, bool down, int value);
 	void processTextInput(SDL_Event sdlEvent);
 	bool m_event[GameInputEventsCount];
-	static string m_eventNames[GameInputEventsCount];
-	static string m_eventIdentifiers[GameInputEventsCount];
+	static std::string m_eventNames[GameInputEventsCount];
+	static std::string m_eventIdentifiers[GameInputEventsCount];
 	InputMode m_mode;
 	bool m_textValidated;
-	string m_textContent;
+	std::string m_textContent;
 	int m_curTextPos;
 	Binding* m_binding;
 };
+}
 
-#endif /* INPUTHANDLER_H_ */
+#endif /* VIOLET_INPUTHANDLER_H_ */

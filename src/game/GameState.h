@@ -1,5 +1,5 @@
-#ifndef GAMESTATE_H_
-#define GAMESTATE_H_
+#ifndef VIOLET_GAMESTATE_H_
+#define VIOLET_GAMESTATE_H_
 
 #include <string>
 #include <map>
@@ -11,9 +11,7 @@
 #include "Powerup.h"
 #include "../system/graphic/Explosion.h"
 
-using namespace std;
-
-namespace violetland {
+namespace violet {
 class BasePowerup;
 
 struct Blood {
@@ -28,13 +26,18 @@ enum GameMode {
 class GameState {
 public:
 	GameState();
-	void start(GameMode mode);
+	void start();
 	void end();
-	vector<violetland::Blood> processExplosion(float x, float y, float damage,
-			float range, bool affectPlayer);
+	
+	std::vector<violet::Blood> processExplosion(
+			float x, float y,
+			float damage, float range,
+			bool affectPlayer
+		);
+	
 	void reset();
 	void process(int deltaTime);
-	LifeForm* getLifeForm(string id);
+	LifeForm* getLifeForm(std::string id);
 	~GameState();
 
 	GameMode Mode;
@@ -50,10 +53,10 @@ public:
 	int Time;
 	int GameAreaSize;
 
-	map<string, LifeForm*> lifeForms;
-	vector<BasePowerup*> powerups;
-	vector<Bullet*> bullets;
+	std::map<std::string, LifeForm*> lifeForms;
+	std::vector<BasePowerup*> powerups;
+	std::vector<Bullet*> bullets;
 };
 }
 
-#endif /* GAMESTATE_H_ */
+#endif /* VIOLET_GAMESTATE_H_ */

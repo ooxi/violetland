@@ -1,7 +1,7 @@
 #include "Sprite.h"
 #include "../utility/Templates.h"
 
-Sprite::Sprite(std::vector<SDL_Surface*> surfaces) {
+violet::Sprite::Sprite(std::vector<SDL_Surface*> surfaces) {
 	for (unsigned int i = 0; i < surfaces.size(); i++) {
 		Texture *tex = new Texture(surfaces[i], GL_TEXTURE_2D, GL_LINEAR, true);
 		m_frames.push_back(tex);
@@ -9,6 +9,6 @@ Sprite::Sprite(std::vector<SDL_Surface*> surfaces) {
 	surfaces.clear();
 }
 
-Sprite::~Sprite() {
+violet::Sprite::~Sprite() {
 	clearVector(&m_frames);
 }

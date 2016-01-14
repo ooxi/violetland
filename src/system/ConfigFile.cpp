@@ -1,6 +1,6 @@
 #include "ConfigFile.h"
 
-ConfigFile::ConfigFile(boost::filesystem::path filename, std::string delimiter,
+violet::ConfigFile::ConfigFile(boost::filesystem::path filename, std::string delimiter,
 		std::string comment, std::string sentry) :
 	myDelimiter(delimiter), myComment(comment), mySentry(sentry) {
 	// Construct a ConfigFile, getting keys and values from given file
@@ -13,41 +13,41 @@ ConfigFile::ConfigFile(boost::filesystem::path filename, std::string delimiter,
 	in >> (*this);
 }
 
-ConfigFile::ConfigFile() :
+violet::ConfigFile::ConfigFile() :
 	myDelimiter(std::string(1, '=')), myComment(std::string(1, '#')) {
 	// Construct a ConfigFile without a file; empty
 }
 
-void ConfigFile::remove(const std::string& key) {
+void violet::ConfigFile::remove(const std::string& key) {
 	// Remove key and its value
 	myContents.erase(myContents.find(key));
 	return;
 }
 
-bool ConfigFile::keyExists(const std::string& key) const {
+bool violet::ConfigFile::keyExists(const std::string& key) const {
 	// Indicate whether key is found
 	mapci p = myContents.find(key);
 	return (p != myContents.end());
 }
 
 /* static */
-void ConfigFile::trim(std::string& s) {
+void violet::ConfigFile::trim(std::string& s) {
 	// Remove leading and trailing whitespace
 	static const char whitespace[] = " \n\t\v\r\f";
 	s.erase(0, s.find_first_not_of(whitespace));
 	s.erase(s.find_last_not_of(whitespace) + 1U);
 }
 
-std::ostream& operator<<(std::ostream& os, const ConfigFile& cf) {
+std::ostream& violet::operator<<(std::ostream& os, const violet::ConfigFile& cf) {
 	// Save a ConfigFile to os
-	for (ConfigFile::mapci p = cf.myContents.begin(); p != cf.myContents.end(); ++p) {
+	for (violet::ConfigFile::mapci p = cf.myContents.begin(); p != cf.myContents.end(); ++p) {
 		os << p->first << " " << cf.myDelimiter << " ";
 		os << p->second << std::endl;
 	}
 	return os;
 }
 
-std::istream& operator>>(std::istream& is, ConfigFile& cf) {
+std::istream& violet::operator>>(std::istream& is, violet::ConfigFile& cf) {
 	// Load a ConfigFile from is
 	// Read in keys and values, keeping internal whitespace
 	typedef std::string::size_type pos;

@@ -1,12 +1,12 @@
-#ifndef WEAPONMANAGER_H_
-#define WEAPONMANAGER_H_
+#ifndef VIOLET_WEAPONMANAGER_H_
+#define VIOLET_WEAPONMANAGER_H_
 
 #include <boost/filesystem/fstream.hpp>
 
 #include "../system/sound/SoundManager.h"
 #include "Weapon.h"
 
-namespace violetland {
+namespace violet {
 
 class WeaponManager {
 private:
@@ -23,4 +23,4 @@ public:
 
 }
 
-#endif /* WEAPONMANAGER_H_ */
+#endif /* VIOLET_WEAPONMANAGER_H_ */

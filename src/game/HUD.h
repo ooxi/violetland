@@ -1,5 +1,5 @@
-#ifndef HUD_H_
-#define HUD_H_
+#ifndef VIOLET_HUD_H_
+#define VIOLET_HUD_H_
 
 #include <sstream>
 #include <iomanip>
@@ -11,7 +11,7 @@
 #include "Resources.h"
 #include "lifeforms/Player.h"
 
-namespace violetland {
+namespace violet {
 class HUD {
 private:
 	// References to resources and managers
@@ -69,4 +69,4 @@ public:
 };
 }
 
-#endif /* HUD_H_ */
+#endif /* VIOLET_HUD_H_ */

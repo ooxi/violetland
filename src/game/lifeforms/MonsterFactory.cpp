@@ -1,6 +1,9 @@
+#include <sstream>
+#include <string>
+
 #include "MonsterFactory.h"
 
-violetland::MonsterFactory::MonsterFactory(FileUtility* fileUtility,
+violet::MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 		SoundManager* sndManager) {
 	std::cout << "Loading monsters..." << std::endl;
 
@@ -43,7 +46,7 @@ violetland::MonsterFactory::MonsterFactory(FileUtility* fileUtility,
 	std::cout << "Loading of monsters is completed." << std::endl;
 }
 
-Sprite* violetland::MonsterFactory::loadMonsterSprite(std::string name,
+violet::Sprite* violet::MonsterFactory::loadMonsterSprite(std::string name,
 		std::string animType) {
 	std::vector<SDL_Surface*> animSurfaces;
 	
@@ -57,7 +60,7 @@ Sprite* violetland::MonsterFactory::loadMonsterSprite(std::string name,
 		", frames count: " << framesCount << '.' << std::endl;
 
 	for (unsigned i = 0; i < framesCount; i++) {
-		ostringstream oss;
+		std::ostringstream oss;
 		oss << i << ".png";
 		SDL_Surface *surface = 
 			ImageUtility::loadImage(boost::filesystem::path(animPath) /= oss.str());
@@ -68,18 +71,18 @@ Sprite* violetland::MonsterFactory::loadMonsterSprite(std::string name,
 	return monsterSprite;
 }
 
-Sound* violetland::MonsterFactory::loadMonsterSound(std::string soundType,
+violet::Sound* violet::MonsterFactory::loadMonsterSound(std::string soundType,
 		std::string monsterName, std::string soundName) {
-	string buf = monsterName + "/sounds/" + soundType + '/' + soundName;
+	std::string buf = monsterName + "/sounds/" + soundType + '/' + soundName;
 	Sound* snd = m_sndManager->create(m_fileUtility->getFullPath(
 			FileUtility::monsters, buf));
 	return snd;
 }
 
-void violetland::MonsterFactory::fillMonsterStats(MonsterTemplate* t,
+void violet::MonsterFactory::fillMonsterStats(MonsterTemplate* t,
 		std::string name) {
 	boost::filesystem::ifstream in;
-	string buf = name + "/stats";
+	std::string buf = name + "/stats";
 	in.open(m_fileUtility->getFullPath(FileUtility::monsters, buf));
 	if (!in) {
 		std::cout << "Couldn't load monster stats." << std::endl;
@@ -95,7 +98,7 @@ void violetland::MonsterFactory::fillMonsterStats(MonsterTemplate* t,
 	in.close();
 }
 
-violetland::Monster* violetland::MonsterFactory::create(int baseLvl, int lvl) {
+violet::Monster* violet::MonsterFactory::create(int baseLvl, int lvl) {
 	int monsterIndex = (rand() % m_monsters.size());
 
 	Monster *newMonster = new Monster(m_monsters[monsterIndex], lvl);
@@ -105,7 +108,7 @@ violetland::Monster* violetland::MonsterFactory::create(int baseLvl, int lvl) {
 	return newMonster;
 }
 
-violetland::MonsterFactory::~MonsterFactory() {
+violet::MonsterFactory::~MonsterFactory() {
 	for (unsigned int i = 0; i < m_monsters.size(); i++) {
 		delete m_monsters[i];
 	}

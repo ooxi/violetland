@@ -1,11 +1,11 @@
-#ifndef MUSICMANAGER_H_
-#define MUSICMANAGER_H_
+#ifndef VIOLET_MUSICMANAGER_H_
+#define VIOLET_MUSICMANAGER_H_
 
 #include "../system/sound/SoundManager.h"
 #include "GameState.h"
 #include "lifeforms/Player.h"
 
-namespace violetland {
+namespace violet {
 class MusicManager {
 private:
 	FileUtility* m_fileUtility;
@@ -23,4 +23,4 @@ public:
 };
 }
 
-#endif /* MUSICMANAGER_H_ */
+#endif /* VIOLET_MUSICMANAGER_H_ */

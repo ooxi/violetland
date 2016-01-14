@@ -1,5 +1,5 @@
-#ifndef POWERUP_H_
-#define POWERUP_H_
+#ifndef VIOLET_POWERUP_H_
+#define VIOLET_POWERUP_H_
 
 #include <sstream>
 
@@ -12,7 +12,7 @@
 #include "../system/InputHandler.h"
 
 
-namespace violetland {
+namespace violet {
 class Game;
 	
 enum BonusType {
@@ -191,4 +191,4 @@ public:
 
 }
 
-#endif /* POWERUP_H_ */
+#endif /* VIOLET_POWERUP_H_ */

@@ -1,11 +1,13 @@
-#ifndef DYNAMICOBJECT_H_
-#define DYNAMICOBJECT_H_
+#ifndef VIOLET_DYNAMICOBJECT_H_
+#define VIOLET_DYNAMICOBJECT_H_
 
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
 #endif //_WIN32W
 #include "../Object.h"
 #include "Sprite.h"
+
+namespace violet {
 
 class DynamicObject: public Object {
 private:
@@ -26,5 +28,6 @@ public:
 	int Frame;
 	Sprite* AnimSprite;
 };
+}
 
-#endif /* DYNAMICOBJECT_H_ */
+#endif /* VIOLET_DYNAMICOBJECT_H_ */

@@ -1,6 +1,6 @@
 #include "Weapon.h"
 
-namespace violetland {
+namespace violet {
 
 Weapon::Weapon(Texture* droppedTex, Texture* playerTex, Sound* shotSound,
 		Sound* reloadSound) {

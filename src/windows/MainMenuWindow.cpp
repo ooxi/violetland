@@ -5,7 +5,7 @@
 #include <locale.h>
 #define _(STRING)            gettext(STRING)
 
-using namespace violetland;
+using namespace violet;
 using namespace std;
 
 MainMenuWindow::MainMenuWindow(Configuration* config, GameState* gameState,

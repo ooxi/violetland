@@ -1,6 +1,6 @@
 #include "Aim.h"
 
-void Aim::constructCircle(float r) {
+void violet::Aim::constructCircle(float r) {
 	glBegin(GL_LINES);
 	for (int i = 0; i < 360; i += 4) {
 		const float radS = i * M_PI / 180;
@@ -11,7 +11,7 @@ void Aim::constructCircle(float r) {
 	glEnd();
 }
 
-void Aim::constructFilledCircle(float r) {
+void violet::Aim::constructFilledCircle(float r) {
 	glBegin(GL_TRIANGLES);
 	for (int i = 0; i < 360; i += 4) {
 		const float radS = i * M_PI / 180;
@@ -23,7 +23,7 @@ void Aim::constructFilledCircle(float r) {
 	glEnd();
 }
 
-void Aim::constructAim(float cDarkR, float cDarkG, float cDarkB, float cLightR,
+void violet::Aim::constructAim(float cDarkR, float cDarkG, float cDarkB, float cLightR,
 		float cLightG, float cLightB) {
 	m_aimDListId = glGenLists(1);
 
@@ -48,12 +48,12 @@ void Aim::constructAim(float cDarkR, float cDarkG, float cDarkB, float cLightR,
 	glEndList();
 }
 
-Aim::Aim(float cDarkR, float cDarkG, float cDarkB, float cLightR,
+violet::Aim::Aim(float cDarkR, float cDarkG, float cDarkB, float cLightR,
 		float cLightG, float cLightB) {
 	constructAim(cDarkR, cDarkG, cDarkB, cLightR, cLightG, cLightB);
 }
 
-Aim::Aim(Configuration* config) {
+violet::Aim::Aim(Configuration* config) {
 	float cDarkR = ImageUtility::getColorChR(config->AimColorA);
 	float cDarkG = ImageUtility::getColorChG(config->AimColorA);
 	float cDarkB = ImageUtility::getColorChB(config->AimColorA);
@@ -65,7 +65,7 @@ Aim::Aim(Configuration* config) {
 	constructAim(cDarkR, cDarkG, cDarkB, cLightR, cLightG, cLightB);
 }
 
-void Aim::draw(float x, float y, float scale, float pointScale) {
+void violet::Aim::draw(float x, float y, float scale, float pointScale) {
 	glPushMatrix();
 
 	glTranslatef(x, y, 0.0f);
@@ -86,7 +86,7 @@ void Aim::draw(float x, float y, float scale, float pointScale) {
 	glPopMatrix();
 }
 
-Aim::~Aim() {
+violet::Aim::~Aim() {
 	glDeleteLists(m_aimDListId, 1);
 	glDeleteLists(m_pointDListId, 1);
 }

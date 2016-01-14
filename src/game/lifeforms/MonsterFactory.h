@@ -1,5 +1,5 @@
-#ifndef MONSTERFACTORY_H_
-#define MONSTERFACTORY_H_
+#ifndef VIOLET_MONSTERFACTORY_H_
+#define VIOLET_MONSTERFACTORY_H_
 
 #include <sstream>
 
@@ -8,7 +8,7 @@
 #include "../../system/sound/SoundManager.h"
 #include "Monster.h"
 
-namespace violetland {
+namespace violet {
 class MonsterFactory {
 private:
 	FileUtility* m_fileUtility;
@@ -25,4 +25,4 @@ public:
 };
 }
 
-#endif /* MONSTERFACTORY_H_ */
+#endif /* VIOLET_MONSTERFACTORY_H_ */

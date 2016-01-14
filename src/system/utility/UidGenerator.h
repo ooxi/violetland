@@ -1,7 +1,9 @@
-#ifndef UIDGENERATOR_H_
-#define UIDGENERATOR_H_
+#ifndef VIOLET_UIDGENERATOR_H_
+#define VIOLET_UIDGENERATOR_H_
 
 #include <limits.h>
+
+namespace violet {
 
 class UidGenerator {
 
@@ -26,5 +28,6 @@ public:
 		return m_val++;
 	}
 };
+}
 
-#endif /* UIDGENERATOR_H_ */
+#endif /* VIOLET_UIDGENERATOR_H_ */

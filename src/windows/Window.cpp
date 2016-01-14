@@ -1,7 +1,7 @@
 #include "Window.h"
 #include "../system/utility/Templates.h"
 
-Window::Window(float x, float y, int w, int h, float r, float g, float b,
+violet::Window::Window(float x, float y, int w, int h, float r, float g, float b,
 		float a) {
 	m_left = x;
 	m_top = y;
@@ -14,13 +14,13 @@ Window::Window(float x, float y, int w, int h, float r, float g, float b,
 	CloseFlag = false;
 }
 
-void Window::addElement(std::string id, TextObject* element) 
+void violet::Window::addElement(std::string id, TextObject* element) 
 {
 	removeElement(id, true);
 	m_elements[id] = element;
 }
 
-void Window::addElement(std::string id, std::string text, 
+void violet::Window::addElement(std::string id, std::string text, 
 	TextManager* manager, int x, int y, TextManager::TextHAlignFlag halign, 
 	TextManager::TextVAlignFlag valign) {
 	removeElement(id, true);
@@ -28,14 +28,14 @@ void Window::addElement(std::string id, std::string text,
 	m_elements[id] = element;
 }
 
-inline void Window::addElement(Label label, TextManager* manager, int x, int y, 
+inline void violet::Window::addElement(Label label, TextManager* manager, int x, int y, 
 	TextManager::TextHAlignFlag halign, 
 	TextManager::TextVAlignFlag valign) {
 	addElement(label.id, label.text, manager, x, y, halign, valign);
 }
 
 
-void Window::addElements(const std::vector<Label>& labels, 
+void violet::Window::addElements(const std::vector<Label>& labels, 
 	TextManager* manager, int x, int y, int vstep, 
 	TextManager::TextHAlignFlag halign, TextManager::TextVAlignFlag valign) {
 	
@@ -43,7 +43,7 @@ void Window::addElements(const std::vector<Label>& labels,
 		addElement(labels[i], manager, x, y+i*vstep, halign, valign);
 }
 
-void Window::removeElement(std::string name, bool remainHandler) {
+void violet::Window::removeElement(std::string name, bool remainHandler) {
 	std::map<std::string, TextObject*>::iterator it = m_elements.find(name);
 	if (it != m_elements.end()) {
 		delete it->second;
@@ -53,7 +53,7 @@ void Window::removeElement(std::string name, bool remainHandler) {
 		removeHandler(hdl_click, name);
 }
 
-void Window::addHandler(HandlerType hdl, std::string elementName, boost::function<void (std::string)> handler) {
+void violet::Window::addHandler(HandlerType hdl, std::string elementName, boost::function<void (std::string)> handler) {
 	removeHandler(hdl, elementName);
 	if (hdl == hdl_click || hdl == hdl_lclick)
 		m_lcHandlers[elementName] = handler;
@@ -63,7 +63,7 @@ void Window::addHandler(HandlerType hdl, std::string elementName, boost::functio
 		m_mvHandlers[elementName] = handler;
 }
 
-void Window::removeHandler(HandlerType hdl, std::string elementName) {
+void violet::Window::removeHandler(HandlerType hdl, std::string elementName) {
 	if (hdl == hdl_all || hdl == hdl_click || hdl == hdl_lclick) {
 		std::map<std::string, boost::function<void (std::string)> >::iterator it = m_lcHandlers.find(elementName);
 		if (it != m_lcHandlers.end())
@@ -81,7 +81,7 @@ void Window::removeHandler(HandlerType hdl, std::string elementName) {
 	}
 }
 
-void Window::draw() {
+void violet::Window::draw() {
 	glDisable( GL_TEXTURE_2D);
 
 	glPushMatrix();
@@ -112,7 +112,7 @@ void Window::draw() {
 	}
 }
 
-void Window::process(InputHandler* input) {
+void violet::Window::process(InputHandler* input) {
 	int gmx = input->mouseX;
 	int gmy = input->mouseY;
 
@@ -174,7 +174,7 @@ void Window::process(InputHandler* input) {
 	}
 }
 
-Window::~Window() {
+violet::Window::~Window() {
 	clearMap(&m_elements);
 	m_lcHandlers.clear();
 	m_rcHandlers.clear();

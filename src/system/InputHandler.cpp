@@ -11,7 +11,7 @@
 #define MAX_CHARACTERS 20
 using namespace std;
 
-string InputHandler::m_eventIdentifiers[] = {
+string violet::InputHandler::m_eventIdentifiers[] = {
 	"Restart", 
 	"Exit", 
 	"Menu", 
@@ -33,9 +33,9 @@ string InputHandler::m_eventIdentifiers[] = {
 	"Teleport", 
 };
 
-string InputHandler::m_eventNames[GameInputEventsCount];
+string violet::InputHandler::m_eventNames[GameInputEventsCount];
 
-void InputHandler::initEventNames() {
+void violet::InputHandler::initEventNames() {
 	string names[] = {
 		_("Restart"), 
 		_("Exit"), 
@@ -63,7 +63,7 @@ void InputHandler::initEventNames() {
 		m_eventNames[i] = names[i];
 }
 
-InputHandler::InputHandler(Binding* binding) {
+violet::InputHandler::InputHandler(Binding* binding) {
 	BOOST_STATIC_ASSERT(sizeof(m_eventNames) / sizeof(string) == GameInputEventsCount);
 	
 	std::cout << "InputHandler..." << std::endl;
@@ -82,7 +82,7 @@ InputHandler::InputHandler(Binding* binding) {
 	m_curTextPos = 0;
 }
 
-void InputHandler::setInputMode(InputMode mode) {
+void violet::InputHandler::setInputMode(InputMode mode) {
 	if (m_mode == mode)
 		return;
 
@@ -95,7 +95,7 @@ void InputHandler::setInputMode(InputMode mode) {
 	m_mode = mode;
 }
 
-void InputHandler::setInputModeText(bool mandatory, std::string text) {
+void violet::InputHandler::setInputModeText(bool mandatory, std::string text) {
 	if ((!mandatory && m_mode == Text)
 			|| (mandatory && m_mode == TextMandatory))
 		return;
@@ -109,7 +109,7 @@ void InputHandler::setInputModeText(bool mandatory, std::string text) {
 	m_curTextPos = strlen(m_textContent.c_str());
 }
 
-bool InputHandler::getPressInput(GameInputEvents evnt) {
+bool violet::InputHandler::getPressInput(GameInputEvents evnt) {
 	if (m_event[evnt]) {
 		m_event[evnt] = false;
 		return true;
@@ -118,20 +118,20 @@ bool InputHandler::getPressInput(GameInputEvents evnt) {
 	}
 }
 
-void InputHandler::resetMouseButtons() {
+void violet::InputHandler::resetMouseButtons() {
 	processEvent(Mouse, false, SDL_BUTTON_LEFT);
 	processEvent(Mouse, false, SDL_BUTTON_RIGHT);
 	processEvent(Mouse, false, SDL_BUTTON_MIDDLE);
 }
 
-void InputHandler::processEvent(BindingType type, bool down, int value) {
+void violet::InputHandler::processEvent(BindingType type, bool down, int value) {
 	for (int i = 0; i < GameInputEventsCount; i++) {
 		if (m_binding[i].Type == type && m_binding[i].Value == value)
 			m_event[i] = down;
 	}
 }
 
-void InputHandler::processTextInput(SDL_Event sdlEvent) {
+void violet::InputHandler::processTextInput(SDL_Event sdlEvent) {
 	switch (sdlEvent.key.keysym.sym) {
 	case SDLK_ESCAPE:
 		setInputMode(Direct);
@@ -156,7 +156,7 @@ void InputHandler::processTextInput(SDL_Event sdlEvent) {
 	}
 }
 
-void InputHandler::process() {
+void violet::InputHandler::process() {
 	SDL_Event sdlEvent;
 
 	while (SDL_PollEvent(&sdlEvent)) {
@@ -190,21 +190,21 @@ void InputHandler::process() {
 	}
 }
 
-string InputHandler::getEventName(int eventNumber) {
+string violet::InputHandler::getEventName(int eventNumber) {
 	if (eventNumber > GameInputEventsCount)
 		throw exception();
 	else
 		return m_eventNames[eventNumber];
 }
 
-string InputHandler::getEventIdentifier(int eventNumber) {
+string violet::InputHandler::getEventIdentifier(int eventNumber) {
 	if (eventNumber > GameInputEventsCount)
 		throw exception();
 	else
 		return m_eventIdentifiers[eventNumber];
 }
 
-const unsigned InputHandler::getEventNumber(std::string eventIdentifier) {
+const unsigned violet::InputHandler::getEventNumber(std::string eventIdentifier) {
 	for (unsigned i = 0; i < GameInputEventsCount; ++i)
 		if (m_eventIdentifiers[i] == eventIdentifier)
 			return i;
@@ -212,7 +212,7 @@ const unsigned InputHandler::getEventNumber(std::string eventIdentifier) {
 	throw exception();
 }
 
-string InputHandler::getKeyName(Binding bind) {
+string violet::InputHandler::getKeyName(Binding bind) {
 	if (bind.Type == InputHandler::Keyboard)
 	{
 		string keyName = SDL_GetKeyName(SDLKey(bind.Value));

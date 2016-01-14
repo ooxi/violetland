@@ -1,6 +1,6 @@
 #include "Object.h"
 
-Object::Object(float x, float y, int width, int height) {
+violet::Object::Object(float x, float y, int width, int height) {
 	X = x;
 	Y = y;
 	m_width = width;
@@ -17,12 +17,12 @@ Object::Object(float x, float y, int width, int height) {
 	Speed = 0.0f;
 }
 
-Object::~Object()
+violet::Object::~Object()
 {
 	//nothing
 }
 
-float Object::fixAngle(float angle) {
+float violet::Object::fixAngle(float angle) {
 	if (angle < 0)
 		angle += 360;
 	else if (angle > 360)
@@ -31,7 +31,7 @@ float Object::fixAngle(float angle) {
 	return angle;
 }
 
-void Object::turn(float targetAngle, float angleSpeed, int deltaTime) {
+void violet::Object::turn(float targetAngle, float angleSpeed, int deltaTime) {
 	float arch1;
 	float arch2;
 
@@ -57,34 +57,34 @@ void Object::turn(float targetAngle, float angleSpeed, int deltaTime) {
 			Angle += delta;
 }
 
-float Object::calc_angle(float x1, float y1, float x2, float y2) {
+float violet::Object::calc_angle(float x1, float y1, float x2, float y2) {
 	return 180.0f / M_PI * atan2(x2 - x1, -y2 + y1);
 }
 
-float Object::calc_dist(float x1, float y1, float x2, float y2) {
+float violet::Object::calc_dist(float x1, float y1, float x2, float y2) {
 	return hypot(x2 - x1, -y2 + y1);
 }
 
-void Object::move(int deltaTime) {
+void violet::Object::move(int deltaTime) {
 	X -= cos((Angle + 90) * M_PI / 180) * deltaTime * Speed;
 	Y -= sin((Angle + 90) * M_PI / 180) * deltaTime * Speed;
 }
 
-const bool Object::detectCollide(Object *refObj) {
+const bool violet::Object::detectCollide(Object *refObj) {
 	return calc_dist(X, Y, refObj->X, refObj->Y) < HitR * Scale * m_width
 			+ refObj->HitR * refObj->Scale * refObj->getWidth();
 }
 
-const bool Object::detectCollide(float x, float y) {
+const bool violet::Object::detectCollide(float x, float y) {
 	return calc_dist(X, Y, x, y) < HitR * Scale * m_width;
 }
 
-const bool Object::detectCollide(float x1, float y1, float x2, float y2) {
+const bool violet::Object::detectCollide(float x1, float y1, float x2, float y2) {
 	float tx, ty;
 	return detectCollide(x1, y1, x2, y2, &tx, &ty);
 }
 
-const bool Object::detectCollide(float x1, float y1, float x2, float y2,
+const bool violet::Object::detectCollide(float x1, float y1, float x2, float y2,
 		float* ix, float* iy) {
 	float k = (y1 - y2) / (x1 - x2);
 	float b = y1 - k * x1;
@@ -122,7 +122,7 @@ const bool Object::detectCollide(float x1, float y1, float x2, float y2,
 
 	return false;
 }
-void Object::setMask(float _RMask, float _GMask, float _BMask, float _AMask) {
+void violet::Object::setMask(float _RMask, float _GMask, float _BMask, float _AMask) {
 	RMask = _RMask;
 	GMask = _GMask;
 	BMask = _BMask;

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-using namespace violetland;
+using namespace violet;
 
 HighscoresEntry::HighscoresEntry(float Strength, float Agility, 
 	float Vitality, unsigned Xp, string Name, unsigned Time):

@@ -1,14 +1,14 @@
-#ifndef ENEMY_H_
-#define ENEMY_H_
+#ifndef VIOLET_ENEMY_H_
+#define VIOLET_ENEMY_H_
+
+#include <string>
 
 #include "../../system/graphic/DynamicObject.h"
 #include "../bullets/Bullet.h"
 #include "LifeForm.h"
 #include "MonsterTemplate.h"
 
-using namespace std;
-
-namespace violetland {
+namespace violet {
 class Monster: public LifeForm {
 private:
 	int m_hitSoundChannel;
@@ -30,9 +30,9 @@ public:
 	virtual StaticObject* getCorpse();
 	void destroy();
 	bool Angry;
-	string targetId;
+	std::string targetId;
 	MonsterTemplate* Base;
 };
 }
 
-#endif /* ENEMY_H_ */
+#endif /* VIOLET_ENEMY_H_ */

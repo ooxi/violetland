@@ -26,7 +26,7 @@
 #include "ControlStyle.h"
 #include "utility/Templates.h"
 
-using namespace violetland;
+using namespace violet;
 
 
 
@@ -35,7 +35,7 @@ using namespace violetland;
 /**
  * @return ControlStyle represented by `serialVersionUid'
  */
-enum ControlStyle violetland::ControlStyleFromInt(int serialVersionUid) {
+enum ControlStyle violet::ControlStyleFromInt(int serialVersionUid) {
 	#define EXPAND_CONTROL_STYLE(id, name, serialVersionUid)	\
 		case serialVersionUid:					\
 			return E_CONTROL_STYLE_##id;
@@ -53,7 +53,7 @@ enum ControlStyle violetland::ControlStyleFromInt(int serialVersionUid) {
 /**
  * @return Static \0-terminated character buffer describing the control style
  */
-char* violetland::ControlStyleToString(enum ControlStyle style) {
+char* violet::ControlStyleToString(enum ControlStyle style) {
 	#define EXPAND_CONTROL_STYLE(id, name, serialVersionUid)	\
 		case E_CONTROL_STYLE_##id:				\
 			return gettext(name);
@@ -73,7 +73,7 @@ char* violetland::ControlStyleToString(enum ControlStyle style) {
  * @return The next available control style or the first, if no more are
  *     available
  */
-enum ControlStyle violetland::GetNextControlStyle(enum ControlStyle style) {
+enum ControlStyle violet::GetNextControlStyle(enum ControlStyle style) {
 	#define EXPAND_CONTROL_STYLE(id, name, serialVersionUid)	\
 		E_CONTROL_STYLE_##id,					\
 
@@ -94,4 +94,3 @@ enum ControlStyle violetland::GetNextControlStyle(enum ControlStyle style) {
 
 	return styles[0];
 }
-

@@ -1,7 +1,9 @@
-#ifndef PARTICLE_H_
-#define PARTICLE_H_
+#ifndef VIOLET_PARTICLE_H_
+#define VIOLET_PARTICLE_H_
 
 #include "StaticObject.h"
+
+namespace violet {
 
 class Particle: public StaticObject {
 public:
@@ -11,5 +13,6 @@ public:
 	float XSpeed, YSpeed, TSpeed;
 	float ScaleMod, RMod, GMod, BMod, AMod;
 };
+}
 
-#endif /* PARTICLE_H_ */
+#endif /* VIOLET_PARTICLE_H_ */

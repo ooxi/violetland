@@ -1,5 +1,5 @@
-#ifndef _MACBUNDLEPATH_H_
-#define _MACBUNDLEPATH_H_
+#ifndef VIOLET_MACBUNDLEPATH_H_
+#define VIOLET_MACBUNDLEPATH_H_
 
 #include <string>
 
@@ -13,4 +13,4 @@
 
 std::string getMacBundlePath();
 
-#endif
+#endif /* VIOLET_MACBUNDLEPATH_H_ */

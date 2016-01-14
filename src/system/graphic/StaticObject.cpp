@@ -1,13 +1,13 @@
 #include "StaticObject.h"
 
-StaticObject::StaticObject(float x, float y, int w, int h, Texture* texture,
+violet::StaticObject::StaticObject(float x, float y, int w, int h, Texture* texture,
 		bool takeCareOfTexture) :
 	Object(x, y, w, h) {
 	m_texture = texture;
 	m_takeCareOfTexture = takeCareOfTexture;
 }
 
-GLuint StaticObject::createComplexFace(int facesCount) {
+GLuint violet::StaticObject::createComplexFace(int facesCount) {
 	GLuint dListId = glGenLists(1);
 
 	glNewList(dListId, GL_COMPILE);
@@ -41,7 +41,7 @@ GLuint StaticObject::createComplexFace(int facesCount) {
 	return dListId;
 }
 
-void StaticObject::draw(bool hreflect, bool vreflect, float x, float y,
+void violet::StaticObject::draw(bool hreflect, bool vreflect, float x, float y,
 		float angle, float scale) {
 	GLfloat right = 1;
 	GLfloat bottom = 1;
@@ -82,11 +82,11 @@ void StaticObject::draw(bool hreflect, bool vreflect, float x, float y,
 		glDisable(0x84F5); //GL_TEXTURE_RECTANGLE_NV = GL_TEXTURE_RECTANGLE_ARB = 0x84F5
 }
 
-void StaticObject::draw(bool hreflect, bool vreflect) {
+void violet::StaticObject::draw(bool hreflect, bool vreflect) {
 	draw(hreflect, vreflect, X, Y, Angle, Scale);
 }
 
-void StaticObject::draw(GLuint dListId) {
+void violet::StaticObject::draw(GLuint dListId) {
 	glBindTexture(m_texture->getType(), m_texture->getTextureId());
 
 	glPushMatrix();
@@ -100,7 +100,7 @@ void StaticObject::draw(GLuint dListId) {
 	glPopMatrix();
 }
 
-void StaticObject::setTexture(Texture* texture, bool takeCareOfTexture) {
+void violet::StaticObject::setTexture(Texture* texture, bool takeCareOfTexture) {
 	if (m_takeCareOfTexture)
 		delete m_texture;
 
@@ -108,7 +108,7 @@ void StaticObject::setTexture(Texture* texture, bool takeCareOfTexture) {
 	m_takeCareOfTexture = takeCareOfTexture;
 }
 
-StaticObject::~StaticObject() {
+violet::StaticObject::~StaticObject() {
 	if (m_takeCareOfTexture)
 		delete m_texture;
 }

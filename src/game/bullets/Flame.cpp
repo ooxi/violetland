@@ -5,7 +5,7 @@
 #include <math.h> 
 #endif
 
-namespace violetland {
+namespace violet {
 
 Flame::Flame(float x, float y, Texture* tex) :
 	Bullet(x, y, x, y, BULLET_FLAME) {

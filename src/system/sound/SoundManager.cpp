@@ -4,7 +4,7 @@
 
 
 
-SoundManager::SoundManager(FileUtility* fileUtility, Configuration* config) {
+violet::SoundManager::SoundManager(FileUtility* fileUtility, Configuration* config) {
 	std::ostringstream oss;
 	
 	std::cout << "SoundManager..." << std::endl;
@@ -28,13 +28,13 @@ SoundManager::SoundManager(FileUtility* fileUtility, Configuration* config) {
 	}
 }
 
-Sound* SoundManager::create(boost::filesystem::path path) {
+violet::Sound* violet::SoundManager::create(boost::filesystem::path path) {
 	Mix_Chunk * chunk = m_enabled ? Mix_LoadWAV(path.string().c_str()) : NULL;
 	Sound* snd = new Sound(chunk, m_enabled);
 	return snd;
 }
 
-SoundManager::~SoundManager() {
+violet::SoundManager::~SoundManager() {
 	if (m_enabled)
 		Mix_CloseAudio();
 }

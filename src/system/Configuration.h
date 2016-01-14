@@ -1,5 +1,5 @@
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#ifndef VIOLET_CONFIGURATION_H_
+#define VIOLET_CONFIGURATION_H_
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -7,6 +7,8 @@
 #include "ConfigFile.h"
 #include "ControlStyle.h"
 #include "InputHandler.h"
+
+namespace violet {
 
 struct VideoMode {
 public:
@@ -34,7 +36,7 @@ public:
 	int AimColorA, AimColorB;
 	bool AutoWeaponPickup;
 	bool FriendlyFire;
-	violetland::ControlStyle Control;
+	violet::ControlStyle Control;
 	InputHandler::Binding
 			PlayerInputBinding[InputHandler::GameInputEventsCount];
 	void ReadPlayerBinding(ConfigFile* cFile, InputHandler::Binding* binding,
@@ -42,5 +44,6 @@ public:
 	void WritePlayerBinding(ConfigFile* cFile, InputHandler::Binding* binding,
 			std::string actionName);
 };
+}
 
-#endif /* CONFIGURATION_H_ */
+#endif /* VIOLET_CONFIGURATION_H_ */

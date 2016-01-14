@@ -1,6 +1,6 @@
 #include "Texture.h"
 
-Texture::Texture(int width, int height, GLenum type, GLint filter): 
+violet::Texture::Texture(int width, int height, GLenum type, GLint filter): 
 	m_type(type) {
 	m_width = width;
 	m_height = height;
@@ -19,7 +19,7 @@ Texture::Texture(int width, int height, GLenum type, GLint filter):
 	delete[] colorBits;
 }
 
-Texture::Texture(SDL_Surface *surface, GLenum type, GLint filter,
+violet::Texture::Texture(SDL_Surface *surface, GLenum type, GLint filter,
 		bool takeCareOfSurface): 
 	m_type(type) {
 	m_width = surface->w;
@@ -59,6 +59,6 @@ Texture::Texture(SDL_Surface *surface, GLenum type, GLint filter,
 	}
 }
 
-Texture::~Texture() {
+violet::Texture::~Texture() {
 	glDeleteTextures(1, &m_textureId);
 }

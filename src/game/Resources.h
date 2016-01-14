@@ -1,5 +1,5 @@
-#ifndef RESOURCES_H_
-#define RESOURCES_H_
+#ifndef VIOLET_RESOURCES_H_
+#define VIOLET_RESOURCES_H_
 
 #include <sstream>
 
@@ -10,7 +10,7 @@
 #include "../system/utility/Templates.h"
 #include "Powerup.h"
 
-namespace violetland {
+namespace violet {
 class Resources {
 private:
 	FileUtility* m_fileUtil;
@@ -37,4 +37,4 @@ public:
 };
 }
 
-#endif /* RESOURCES_H_ */
+#endif /* VIOLET_RESOURCES_H_ */

@@ -1,5 +1,5 @@
-#ifndef GRENADEBULLET_H_
-#define GRENADEBULLET_H_
+#ifndef VIOLET_GRENADEBULLET_H_
+#define VIOLET_GRENADEBULLET_H_
 
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
@@ -7,7 +7,7 @@
 #include "../../system/graphic/DynamicObject.h"
 #include "Bullet.h"
 
-namespace violetland {
+namespace violet {
 
 class GrenadeBullet: public Bullet {
 private:
@@ -25,4 +25,4 @@ public:
 
 }
 
-#endif /* GRENADEBULLET_H_ */
+#endif /* VIOLET_GRENADEBULLET_H_ */

@@ -1,7 +1,9 @@
-#ifndef CAMERA_H_
-#define CAMERA_H_
+#ifndef VIOLET_CAMERA_H_
+#define VIOLET_CAMERA_H_
 
 #include "SDL_opengl.h"
+
+namespace violet {
 
 class Camera {
 private:
@@ -48,5 +50,6 @@ public:
 
 	void applyGLOrtho();
 };
+}
 
-#endif /* CAMERA_H_ */
+#endif /* VIOLET_CAMERA_H_ */

@@ -1,10 +1,10 @@
-#ifndef BULLET_H_
-#define BULLET_H_
+#ifndef VIOLET_BULLET_H_
+#define VIOLET_BULLET_H_
 
 #include <string>
 #include "../../system/Object.h"
 
-namespace violetland {
+namespace violet {
 
 enum BulletType {
 	BULLET_STANDARD = 0, BULLET_LASER, BULLET_GRENADE, BULLET_FLAME
@@ -38,4 +38,4 @@ public:
 
 }
 
-#endif /* BULLET_H_ */
+#endif /* VIOLET_BULLET_H_ */

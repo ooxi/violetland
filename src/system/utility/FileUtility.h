@@ -1,11 +1,13 @@
-#ifndef FILEUTILITY_H_
-#define FILEUTILITY_H_
+#ifndef VIOLET_FILEUTILITY_H_
+#define VIOLET_FILEUTILITY_H_
 
 #include <boost/filesystem.hpp>
 #include <string>
 #include <vector>
 
 
+
+namespace violet {
 
 class FileUtility {
 private:
@@ -46,5 +48,6 @@ public:
 	void setResourcePath(boost::filesystem::path const& path);
 	boost::filesystem::path getFullPath(PathType type, std::string resource) const;
 };
+}
 
-#endif /* FILEUTILITY_H_ */
+#endif /* VIOLET_FILEUTILITY_H_ */

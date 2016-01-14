@@ -1,8 +1,10 @@
-#ifndef SPRITE_H_
-#define SPRITE_H_
+#ifndef VIOLET_SPRITE_H_
+#define VIOLET_SPRITE_H_
 
 #include <vector>
 #include "Texture.h"
+
+namespace violet {
 
 class Sprite {
 private:
@@ -17,5 +19,6 @@ public:
 	}
 	virtual ~Sprite();
 };
+}
 
-#endif /* SPRITE_H_ */
+#endif /* VIOLET_SPRITE_H_ */

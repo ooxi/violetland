@@ -1,10 +1,12 @@
-#ifndef VIDEOMANAGER_H_
-#define VIDEOMANAGER_H_
+#ifndef VIOLET_VIDEOMANAGER_H_
+#define VIOLET_VIDEOMANAGER_H_
 
 #include "../Configuration.h"
 #include "Camera.h"
 #include "text/TextManager.h"
 #include "../utility/Templates.h"
+
+namespace violet {
 
 class VideoManager {
 private:
@@ -76,5 +78,6 @@ public:
 
 	~VideoManager();
 };
+}
 
-#endif /* VIDEOMANAGER_H_ */
+#endif /* VIOLET_VIDEOMANAGER_H_ */

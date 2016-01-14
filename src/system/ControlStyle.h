@@ -20,13 +20,14 @@
  *
  *  3. This notice may not be removed or altered from any source distribution.
  */
-#ifndef CONTROL_STYLE_H_
-#define CONTROL_STYLE_H_
-namespace violetland {
+#ifndef VIOLET_CONTROL_STYLE_H_
+#define VIOLET_CONTROL_STYLE_H_
 
 
 
 
+
+namespace violet {
 
 /**
  * Enumerates all implemented control styles
@@ -55,10 +56,6 @@ char* ControlStyleToString(enum ControlStyle style);
  */
 enum ControlStyle GetNextControlStyle(enum ControlStyle);
 
-
-
-
-
 }
-#endif
 
+#endif /* VIOLET_CONTROL_STYLE_H_ */

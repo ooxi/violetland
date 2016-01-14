@@ -1,5 +1,5 @@
-#ifndef WEAPON_H_
-#define WEAPON_H_
+#ifndef VIOLET_WEAPON_H_
+#define VIOLET_WEAPON_H_
 
 #include "../system/sound/Sound.h"
 #include "bullets/StandardBullet.h"
@@ -7,7 +7,7 @@
 #include "bullets/GrenadeBullet.h"
 #include "bullets/Flame.h"
 
-namespace violetland {
+namespace violet {
 
 class Weapon {
 private:
@@ -58,4 +58,4 @@ public:
 
 }
 
-#endif /* WEAPON_H_ */
+#endif /* VIOLET_WEAPON_H_ */

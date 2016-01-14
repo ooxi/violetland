@@ -1,7 +1,9 @@
-#ifndef TEXTURE_H_
-#define TEXTURE_H_
+#ifndef VIOLET_TEXTURE_H_
+#define VIOLET_TEXTURE_H_
 
 #include "../../system/utility/ImageUtility.h"
+
+namespace violet {
 
 class Texture {
 private:
@@ -27,5 +29,6 @@ public:
 
 	virtual ~Texture();
 };
+}
 
-#endif /* TEXTURE_H_ */
+#endif /* VIOLET_TEXTURE_H_ */

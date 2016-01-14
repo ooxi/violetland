@@ -1,7 +1,9 @@
-#ifndef EXPLOSION_H_
-#define EXPLOSION_H_
+#ifndef VIOLET_EXPLOSION_H_
+#define VIOLET_EXPLOSION_H_
 
 #include "ParticleSystem.h"
+
+namespace violet {
 
 class Explosion: public ParticleSystem {
 public:
@@ -9,5 +11,6 @@ public:
 			Texture* gruelTex);
 	virtual ~Explosion();
 };
+}
 
-#endif /* EXPLOSION_H_ */
+#endif /* VIOLET_EXPLOSION_H_ */

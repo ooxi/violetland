@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-namespace violetland {
+namespace violet {
 
 Bullet::Bullet(float x, float y, float dX, float dY, BulletType type) :
 	Object(x, y, 1, 1) {

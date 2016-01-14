@@ -1,11 +1,13 @@
-#ifndef TEXTMANAGER_H_
-#define TEXTMANAGER_H_
+#ifndef VIOLET_TEXTMANAGER_H_
+#define VIOLET_TEXTMANAGER_H_
 
 #include <boost/filesystem.hpp>
 
 #include "TextObject.h"
 
 
+
+namespace violet {
 
 class TextManager {
 private:
@@ -31,5 +33,6 @@ public:
 			TextHAlignFlag halign, TextVAlignFlag valign);
 	virtual ~TextManager();
 };
+}
 
-#endif /* TEXTMANAGER_H_ */
+#endif /* VIOLET_TEXTMANAGER_H_ */

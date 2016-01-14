@@ -2,7 +2,7 @@
 
 const std::string DEFAULT = "04.ogg";
 
-violetland::MusicManager::MusicManager(FileUtility* fileUtility,
+violet::MusicManager::MusicManager(FileUtility* fileUtility,
 		SoundManager* soundManager, Configuration* config) {
 	std::cout << "MusicManager..." << std::endl;
 	m_fileUtility = fileUtility;
@@ -12,7 +12,7 @@ violetland::MusicManager::MusicManager(FileUtility* fileUtility,
 	m_currentPlaying = "null";
 }
 
-void violetland::MusicManager::process(Player* player, GameState* gameState) {
+void violet::MusicManager::process(Player* player, GameState* gameState) {
 	if (gameState->Paused) {
 		play();
 		return;
@@ -29,11 +29,11 @@ void violetland::MusicManager::process(Player* player, GameState* gameState) {
 	}
 }
 
-void violetland::MusicManager::play() {
+void violet::MusicManager::play() {
 	play(DEFAULT, false);
 }
 
-void violetland::MusicManager::play(std::string name, bool now) {
+void violet::MusicManager::play(std::string name, bool now) {
 	if (m_currentPlaying == name)
 		return;
 	
@@ -45,13 +45,13 @@ void violetland::MusicManager::play(std::string name, bool now) {
 	if(m_current) 
 	{
 		if(Mix_PlayMusic(m_current, -1) == -1)
-			cout << "Mix_PlayMusic: " << Mix_GetError() << endl;
+			std::cout << "Mix_PlayMusic: " << Mix_GetError() << std::endl;
 	}
 	else
-		cout << "Mix_LoadMUS: " << Mix_GetError() << endl;
+		std::cout << "Mix_LoadMUS: " << Mix_GetError() << std::endl;
 }
 
-violetland::MusicManager::~MusicManager() {
+violet::MusicManager::~MusicManager() {
 	if (m_currentPlaying != "null" && m_current)
 		Mix_FreeMusic(m_current);
 }

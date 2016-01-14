@@ -9,6 +9,8 @@ Legend
 Upcoming release
 ----------------
 
+ * `[*]` [Clearified `ConfigFile.h` origin and license](https://github.com/ooxi/violetland/commit/ebb4081312dbbfc076fe02f698cf89c057526b44)
+ * `[*]` [Unified namespace `violet` and include guard prefix `VIOLET_`](https://github.com/ooxi/violetland/pull/95)
  * `[!]` [Ensured all files except `start.cmd` use UNIX line endings](https://github.com/ooxi/violetland/pull/94)
  * `[*]` [Improved `CMakeLists.txt` readability](https://github.com/ooxi/violetland/pull/93)
  * `[*]` [Refactored window handlers to use `boost::function`](https://github.com/ooxi/violetland/pull/91)
