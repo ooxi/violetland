@@ -25,7 +25,7 @@ void violet::TextManager::draw(const std::string& textBuf, float x, float y,
 }
 
 violet::TextObject* violet::TextManager::getObject(const std::string& textBuf, float x, float y,
-		TextHAlignFlag halign, TextVAlignFlag valign) {
+		TextHAlignFlag halign, TextVAlignFlag valign) const {
 
 	SDL_Surface *textImage = ImageUtility::createImage(m_font, 255, 255, 255,
 			255, 0, 0, 0, 255, textBuf, ImageUtility::blended);

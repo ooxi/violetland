@@ -24,17 +24,17 @@ public:
 	};
 	Window(float x, float y, int w, int h, float r, float g, float b, float a);
 	void addElement(std::string id, TextObject* element);
-	void addElement(std::string id, std::string text, TextManager* manager, 
+	void addElement(std::string id, std::string text, TextManager const* manager, 
 			int x, int y, TextManager::TextHAlignFlag halign, 
 			TextManager::TextVAlignFlag valign);
-	void addElement(const Label label, TextManager* manager, 
+	void addElement(const Label label, TextManager const* manager, 
 			int x, int y, TextManager::TextHAlignFlag halign, 
 			TextManager::TextVAlignFlag valign);
 	void addElements(const std::vector<Label>& labels, 
-			TextManager* manager, int x, int y, int vstep, 
+			TextManager const* manager, int x, int y, int vstep, 
 			TextManager::TextHAlignFlag halign, TextManager::TextVAlignFlag valign);
 	void removeElement(std::string name, bool remainHandler);
-	void addHandler(HandlerType hdl, std::string elementName, boost::function<void(std::string)> handler);
+	void addHandler(HandlerType hdl, std::string elementName, boost::function<void (std::string)> handler);
 	void removeHandler(HandlerType hdl, std::string elementName);
 	void process(InputHandler* input);
 	void draw();

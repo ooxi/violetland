@@ -42,7 +42,10 @@ public:
 	void read();
 	bool isHighscore(unsigned Time);
 	bool add(HighscoresEntry entry);
-	const std::set<HighscoresEntry>& getData() { return m_data; }
+	
+	std::set<HighscoresEntry> const& getData() const {
+		return m_data;
+	}
 };
 }
 
