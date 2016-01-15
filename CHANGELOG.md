@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[+]` [bla-rs](https://github.com/bla-rs) added [weapon documentation](https://github.com/ooxi/violetland/pull/98)
  * `[*]` [Clearified `ConfigFile.h` origin and license](https://github.com/ooxi/violetland/commit/ebb4081312dbbfc076fe02f698cf89c057526b44)
  * `[*]` [Unified namespace `violet` and include guard prefix `VIOLET_`](https://github.com/ooxi/violetland/pull/95)
  * `[!]` [Ensured all files except `start.cmd` use UNIX line endings](https://github.com/ooxi/violetland/pull/94)
