@@ -53,6 +53,7 @@ public:
 	float Strength;
 	float Agility;
 	float Vitality;
+	float Weight;
 
 	bool Poisoned;
 	bool Burning;
@@ -63,6 +64,7 @@ public:
 	virtual float getStrength() const { return Strength; }
 	virtual float getAgility() const { return Agility; }
 	virtual float getVitality() const { return Vitality; }
+	virtual float getWeight() const { return Weight; }
 	const float MaxHealth() const;
 	const float MaxSpeed() const;
 	const float ChanceToEvade() const;
