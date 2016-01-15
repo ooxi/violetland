@@ -1298,7 +1298,7 @@ void levelUp(Player* player) {
 				player->Level * 2.0f + 15);
 
 	player->LastLevelXp = player->NextLevelXp;
-	player->NextLevelXp *= 2;
+	player->NextLevelXp *= 1.3;
 
 	player->Level += 1;
 	player->LevelPoints += 1;
