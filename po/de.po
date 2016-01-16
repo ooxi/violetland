@@ -74,13 +74,13 @@ msgstr "Du wurdest zermalmt."
 #: ../src/program.cpp:423
 #, c-format
 msgid "Current player level: %i"
-msgstr "Aktuelles Level des Spielers: %i"
+msgstr "Aktuelles Spielerlevel: %i"
 
 
 #: ../src/program.cpp:430
 #, c-format
 msgid "Available improvement points: %i"
-msgstr "Verfügbare Verbesserungspunkte: %i"
+msgstr "Freie Verbesserungspunkte: %i"
 
 
 #: ../src/program.cpp:437
@@ -92,7 +92,7 @@ msgstr "Stärke: %i"
 #: ../src/program.cpp:443
 #, c-format
 msgid "Agility: %i"
-msgstr "Geschicklichkeit: %i"
+msgstr "Geschick: %i"
 
 
 #: ../src/program.cpp:449
@@ -110,7 +110,7 @@ msgstr "LP: %i / Max LP: %i"
 #: ../src/program.cpp:463
 #, c-format
 msgid "Melee damage: %i"
-msgstr "Stichwaffen Schaden: %i"
+msgstr "Nahkampfschaden: %i"
 
 
 #: ../src/program.cpp:469
@@ -122,19 +122,19 @@ msgstr "Blockchance: %i%%"
 #: ../src/program.cpp:475
 #, c-format
 msgid "Reloading speed modifier: %i%%"
-msgstr "Verbesserung der Nachladegeschwindigkeit: %i%%"
+msgstr "Nachladegeschwindigkeit: %i%%"
 
 
 #: ../src/program.cpp:482
 #, c-format
 msgid "Accuracy deviation modifier: %i%%"
-msgstr "Verbesserung der Zielgenauigkeit: %i%%"
+msgstr "Rückstoß: %i%%"
 
 
 #: ../src/program.cpp:488
 #, c-format
 msgid "Health regeneration: %.2f/min"
-msgstr "Heilung: %.2f/min"
+msgstr "Regeneration: %.2f/min"
 
 
 #: ../src/program.cpp:606
@@ -149,7 +149,7 @@ msgstr "Vergiftete Kugeln: Nach einem Treffer verlieren Gegner langsam Leben und
 
 #: ../src/program.cpp:626
 msgid "Big calibre: your bullets can wound a few monsters in a row."
-msgstr "Große Wumme: deine Kugeln können mehrere hintereinander stehende Gegner verwunden."
+msgstr "Großkaliber: deine Kugeln können mehrere hintereinander stehende Gegner verwunden."
 
 
 #: ../src/program.cpp:636
@@ -159,7 +159,7 @@ msgstr "Telekinese: nützliche Gegenstände werden von dir angezogen."
 
 #: ../src/program.cpp:645
 msgid "Night vision: you can see in the dark."
-msgstr "Nachtsichtgerät: Du kannst im Dunkeln sehen."
+msgstr "Nachtsicht: Du kannst im Dunkeln sehen."
 
 
 #: ../src/program.cpp:654
@@ -413,7 +413,7 @@ msgstr "Handgranate aufgehoben"
 
 #: ../src/program.cpp:2250
 msgid "You have taken a teleport."
-msgstr "Du hast einen Teleporter verwendet."
+msgstr "Du wurdest teleportiert."
 
 
 #: ../src/program.cpp:2260
@@ -430,7 +430,7 @@ msgstr "FPS: %i"
 
 #: ../src/game/HUD.cpp:219
 msgid "They have overcome..."
-msgstr "Du wurdest abgeschlachtet..."
+msgstr "Du wurdest überwältigt..."
 
 
 #: ../src/game/HUD.cpp:223
@@ -578,7 +578,7 @@ msgstr "Vergiftete Kugeln"
 
 #: ../src/windows/CharStatsWindow.cpp:28
 msgid "Big calibre"
-msgstr "Große Wumme"
+msgstr "Großkaliber"
 
 
 #: ../src/windows/CharStatsWindow.cpp:33
@@ -588,7 +588,7 @@ msgstr "Telekinese"
 
 #: ../src/windows/CharStatsWindow.cpp:38
 msgid "Night vision"
-msgstr "Nachtsichtgerät"
+msgstr "Nachtsicht"
 
 
 #: ../src/windows/CharStatsWindow.cpp:42
