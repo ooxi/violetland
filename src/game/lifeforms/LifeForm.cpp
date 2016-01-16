@@ -87,12 +87,14 @@ void LifeForm::move(float direction, int deltaTime) {
 
 	m_walking = true;
 
+	//bla: Collisions or pushes can cause Speed > MaxSpeed, so deceleration is needed.
+	//bla: If Speed close to MaxSpeed, set it to MaxSpeed. Speed cap is 2 * MaxSpeed.
 	if ( Speed != MaxSpeed() ) {
 		if ( Speed < MaxSpeed() )
 			Speed += Acceleration * deltaTime;
-		else if ( Speed - Acceleration * deltaTime < MaxSpeed() )		//bla: If Speed close to MaxSpeed, set it to MaxSpeed.
+		else if ( Speed - Acceleration * deltaTime < MaxSpeed() )
 			Speed = MaxSpeed();
-		else {			//bla: Collisions or pushes can cause Speed > MaxSpeed, so deceleration is needed.
+		else {
 			if ( Speed > MaxSpeed() * 2.0f )
 				Speed = MaxSpeed() * 2.0f;
 			Speed -= Acceleration * deltaTime;
