@@ -1,6 +1,10 @@
 violetland contributors (sorted alphabeticaly)
 ==============================================
 
+* **[bla-rs](https://github.com/bla-rs)**
+
+	 * Documentation
+
 * **Charlie Hron Weigle**
 
 	 * Gameplay improvements
