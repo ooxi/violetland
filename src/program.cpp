@@ -1675,6 +1675,18 @@ void handleLifeForms() {
 		} else {
 			++it;
 		}
+
+		map<string, LifeForm*>::iterator collIt = gameState->lifeForms.end();
+		--collIt;
+		LifeForm* collCheck = collIt->second;
+
+		while ( collIt != it ) {
+			if ( collCheck->detectCollide(lifeForm) ) {
+				//lifeForm->collisionPush(collCheck);
+			}
+			--collIt;
+			collCheck = collIt->second;
+		}
 	}
 }
 
