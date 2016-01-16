@@ -1389,12 +1389,12 @@ void handleLifeForms() {
 			++it;
 		}
 
+		//bla: Detect and resolve Collisions.
 		map<string, LifeForm*>::iterator collIt = gameState->lifeForms.end();
 		--collIt;
 		LifeForm* collCheck = collIt->second;
-
 		while ( collIt != it ) {
-			if ( collCheck->detectCollide(lifeForm) ) {
+			if ( lifeForm->detectCollide(collCheck) ) {
 				//lifeForm->collisionPush(collCheck);
 			}
 			--collIt;
