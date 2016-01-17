@@ -153,6 +153,7 @@ set(VIOLET_SOURCES
 	${VIOLET_SOURCE_DIR}/system/utility/UidGenerator.cpp
 
 	# src/windows
+	${VIOLET_SOURCE_DIR}/windows/ChangeInputBindingWindow.cpp
 	${VIOLET_SOURCE_DIR}/windows/CharStatsWindow.cpp
 	${VIOLET_SOURCE_DIR}/windows/ControlsMenuWindow.cpp
 	${VIOLET_SOURCE_DIR}/windows/HighscoresWindow.cpp

@@ -1,16 +1,21 @@
+#include "CharStatsWindow.h"
+
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <boost/math/special_functions/round.hpp>
 #include <libintl.h>
-#include <locale.h>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
-#include "CharStatsWindow.h"
+
 #define _(STRING)            gettext(STRING)
 
 using namespace violet;
+
+
+
+
 
 const char* CharStatsWindow::perkIds[] = {
 	"unstoppable",

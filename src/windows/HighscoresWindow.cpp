@@ -2,14 +2,14 @@
 
 #include <boost/bind.hpp>
 #include <libintl.h>
-#include <locale.h>
-#define _(STRING) gettext(STRING)
 #include <set>
 #include <sstream>
 
 #include "../game/Highscores.h"
 #include "../system/Configuration.h"
 #include "../system/graphic/text/TextManager.h"
+
+#define _(STRING) gettext(STRING)
 
 
 

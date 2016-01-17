@@ -63,6 +63,7 @@
 #include "game/WeaponManager.h"
 #include "game/Highscores.h"
 #include "game/HUD.h"
+#include "windows/ChangeInputBindingWindow.h"
 #include "windows/CharStatsWindow.h"
 #include "windows/ControlsMenuWindow.h"
 #include "windows/HighscoresWindow.h"
@@ -606,14 +607,7 @@ void drawWindows() {
 }
 
 void ControlsMenuWindow::onEventClick(std::string elementName) {
-	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
-			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
-
-	w->addElement("pressakey", _("Press a key, please..."),
-			videoManager->RegularText, config->Screen.Width / 2,
-			config->Screen.Height / 2, TextManager::CENTER, TextManager::MIDDLE);
-
-	windows["pressakey"] = w;
+	windows["pressakey"] = new ChangeInputBindingWindow(config, videoManager->RegularText);
 
 	drawWindows();
 	SDL_GL_SwapBuffers();

@@ -2,12 +2,12 @@
 
 #include <boost/bind.hpp>
 #include <libintl.h>
-#include <locale.h>
-#define _(STRING) gettext(STRING)
 
 #include "../game/GameState.h"
 #include "../system/Configuration.h"
 #include "../system/graphic/text/TextManager.h"
+
+#define _(STRING) gettext(STRING)
 
 using namespace violet;
 using namespace std;

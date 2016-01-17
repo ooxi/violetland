@@ -1,9 +1,13 @@
+#include "Powerup.h"
+
 #include <libintl.h>
-#include <locale.h>
+
+#include "Game.h"
+
 #define _(STRING)			gettext(STRING)
 
-#include "Powerup.h"
-#include "Game.h"
+
+
 
 
 violet::BasePowerup::BasePowerup(float x, float y, Texture *tex) : 
