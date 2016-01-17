@@ -69,7 +69,6 @@
 #include "windows/HighscoresWindow.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/OptionsWindow.h"
-#include "windows/Window.h"
 
 using namespace std;
 using namespace violet;
