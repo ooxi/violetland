@@ -59,6 +59,7 @@ public:
 	bool Burning;
 	int Frozen;
 
+	void collisionPush (LifeForm*);
 	void setHealth(float value) { m_health = fixHealth(value); }
 	const float getHealth() { return m_health = fixHealth(m_health); }
 	virtual float getStrength() const { return Strength; }

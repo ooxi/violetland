@@ -101,8 +101,60 @@ void LifeForm::move(float direction, int deltaTime) {
 		}
 	}
 
-
 	turn(direction, MaxSpeed(), deltaTime);
+}
+
+void LifeForm::collisionPush(LifeForm* lf) {
+
+	//	float weightRatio = getWeight() / ( getWeight() +  lf->getWeight() );
+	//	float strengthRatio = getStrength() / ( getStrength() + lf->getStrength() );
+
+	//bla: Overlapping distance.
+	float dist = HitR * Scale * m_width
+			+ lf->HitR * lf->Scale * lf->m_width
+			- calc_dist(X, Y, lf->X, lf->Y);
+
+	// Overlapping distance seperated by axis.
+	float diffX = 0.5f * abs(0.5f * dist * cos(calc_angle(X, Y, lf->X, lf->Y)));
+	float diffY = 0.5f * abs(0.5f * dist * sin(calc_angle(X, Y, lf->X, lf->Y)));
+
+	//bla: Resolve XY.
+	if ( X != lf->X || Y != lf->Y ) {
+		if ( X > lf->X ) {
+			X		+= diffX;
+			lf->X	-= diffX;
+		} else {
+			X		-= diffX;
+			lf->X	+= diffX;
+		}
+		if ( Y > lf->Y ) {
+			Y		+= diffY;
+			lf->Y 	-= diffY;
+		} else {
+			Y		-= diffY;
+			lf->Y	+= diffY;
+		}
+	}
+
+	/*bla:
+	 * The following lines are for testing.
+	 * I observed a hard to reproducible bug, where the initial spawned monsters dissapeared.
+	 * They where pushed out of the field with very large diffX/Y but i couldnt investigate further.
+	 * There is another bug (Speed = 2*MaxSpeed) with the initial monsters. Maybe the cause lays there.
+	*/
+	else
+		std::cout << "ERROR: Identical XY with " << Name << "-" << Id << "\tand "
+				<< lf->Name << "-" << lf->Id << std::endl;
+
+	if ( diffX > 200 || diffY > 200 )
+		std::cout << "ERROR: diffXY with " << diffX << "\tand " << diffY
+				<< "\twith " << Name << "-" << Id << "\tand " << lf->Name << "-" << lf->Id
+				<< std::endl;
+
+	if ( Id == lf->Id )
+		std::cout << "ERROR: Id XY with " << Name << "\tand " << lf->Name << std::endl;
+	//bla: End of testing.
+
 }
 
 const float LifeForm::MaxHealth() const {
