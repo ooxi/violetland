@@ -1,15 +1,18 @@
-#include <iostream>
-#include <exception>
-
-#include <libintl.h>
-#include <locale.h>
-#include <boost/static_assert.hpp>
-
 #include "InputHandler.h"
+
+#include <boost/static_assert.hpp>
+#include <exception>
+#include <iostream>
+#include <libintl.h>
 
 #define _(STRING)            gettext(STRING)
 #define MAX_CHARACTERS 20
+
 using namespace std;
+
+
+
+
 
 string violet::InputHandler::m_eventIdentifiers[] = {
 	"Restart", 

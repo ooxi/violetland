@@ -63,9 +63,12 @@
 #include "game/WeaponManager.h"
 #include "game/Highscores.h"
 #include "game/HUD.h"
-#include "windows/Window.h"
-#include "windows/MainMenuWindow.h"
+#include "windows/ChangeInputBindingWindow.h"
 #include "windows/CharStatsWindow.h"
+#include "windows/ControlsMenuWindow.h"
+#include "windows/HighscoresWindow.h"
+#include "windows/MainMenuWindow.h"
+#include "windows/OptionsWindow.h"
 
 using namespace std;
 using namespace violet;
@@ -168,7 +171,7 @@ void spawnEnemy(float x, float y, float r, int baseLvl, int lvl) {
 }
 
 // Start the game in selected mode
-void startGame(std::string elementName) {
+void MainMenuWindow::onStartClick() {
 	cam->setW(1600);
 
 	hud->reset();
@@ -221,7 +224,7 @@ void startGame(std::string elementName) {
 		spawnEnemy(0, 0, (float) cam->getW(), 1, 1);
 	}
 
-	windows["mainmenu"]->CloseFlag = true;
+	CloseFlag = true;
 
 	hud->addMessage(_("Try to survive as long as you can."));
 	hud->addMessage(
@@ -456,70 +459,27 @@ void shutdownSystem() {
 	delete splash;
 }
 
-void backFromOptionsAndSave(std::string elementName);
-
-void refreshOptionsWindow() {
-	const int l = videoManager->getVideoMode().Width * 0.1f;
-	const int r = videoManager->getVideoMode().Width * 0.6f;
-	const int h = videoManager->RegularText->getHeight();
-
-	Window* w = windows.find("options")->second;
-
-	if (config->AutoReload)
-		w->addElement("+autoreload", "+", videoManager->RegularText, l, 6 * h,
-				TextManager::LEFT, TextManager::MIDDLE);
-	else
-		w->removeElement("+autoreload", false);
-
-	if (config->AutoWeaponPickup)
-		w->addElement("+autopickup", "+", videoManager->RegularText, l, 7 * h,
-				TextManager::LEFT, TextManager::MIDDLE);
-	else
-		w->removeElement("+autopickup", false);
-
-	if (config->FriendlyFire)
-		w->addElement("+friendlyfire", "+", videoManager->RegularText, l,
-				8 * h, TextManager::LEFT, TextManager::MIDDLE);
-	else
-		w->removeElement("+friendlyfire", false);
-
-	if (config->Screen.Full)
-		w->addElement("+fullscreen", "+", videoManager->RegularText, r, 6 * h,
-				TextManager::LEFT, TextManager::MIDDLE);
-	else
-		w->removeElement("+fullscreen", false);
-
-	ostringstream oss;
-	oss << tempConfig->Screen.Width << 'x' << tempConfig->Screen.Height;
-	w->addElement("+resolution", oss.str(), videoManager->RegularText,
-			r + 8 * h, 7 * h, TextManager::LEFT, TextManager::MIDDLE);
-
-	oss.str("");
-	oss << config->SoundVolume * 10 << '%';
-	w->addElement("+soundvolume", oss.str(), videoManager->RegularText, l,
-			12 * h, TextManager::LEFT, TextManager::MIDDLE);
-
-	oss.str("");
-	oss << config->MusicVolume * 10 << '%';
-	w->addElement("+musicvolume", oss.str(), videoManager->RegularText, l,
-			13 * h, TextManager::LEFT, TextManager::MIDDLE);
+void OptionsWindow::onAutoReloadClick() {
+	config->AutoReload = !config->AutoReload;
+	refresh(tempConfig);
 }
 
-void switchGameOption(std::string elementName) {
-	map<string, bool*> m;
-	m["autoreload"] = &config->AutoReload;
-	m["autopickup"] = &config->AutoWeaponPickup;
-	m["friendlyfire"] = &config->FriendlyFire;
-	m["fullscreen"] = &config->Screen.Full;
-
-	map<string, bool*>::iterator it = m.find(elementName);
-	if (it != m.end()) {
-		*it->second = !*it->second;
-		refreshOptionsWindow();
-	}
+void OptionsWindow::onAutoWeaponPickupClick() {
+	config->AutoWeaponPickup = !config->AutoWeaponPickup;
+	refresh(tempConfig);
 }
 
-void switchVolumeDown(std::string elementName) {
+void OptionsWindow::onFriendlyFireClick() {
+	config->FriendlyFire = !config->FriendlyFire;
+	refresh(tempConfig);
+}
+
+void OptionsWindow::onFullscreenClick() {
+	config->Screen.Full = !config->Screen.Full;
+	refresh(tempConfig);
+}
+
+void OptionsWindow::switchVolumeDown(std::string elementName) {
 	if (elementName == "musicvolume") {
 		if (config->MusicVolume > 0) {
 			config->MusicVolume--;
@@ -543,10 +503,10 @@ void switchVolumeDown(std::string elementName) {
 	} else
 		return;
 
-	refreshOptionsWindow();
+	refresh(tempConfig);
 }
 
-void switchVolumeUp(std::string elementName) {
+void OptionsWindow::switchVolumeUp(std::string elementName) {
 	if (elementName == "musicvolume") {
 		if (config->MusicVolume <= 9) {
 			config->MusicVolume++;
@@ -570,10 +530,10 @@ void switchVolumeUp(std::string elementName) {
 	} else
 		return;
 
-	refreshOptionsWindow();
+	refresh(tempConfig);
 }
 
-void switchResolutionDown(std::string elementName) {
+void OptionsWindow::onResolutionDownClick() {
 	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
 
 	bool set = false;
@@ -591,10 +551,10 @@ void switchResolutionDown(std::string elementName) {
 		tempConfig->Screen.Height = modes[modes.size() - 1].h;
 	}
 
-	refreshOptionsWindow();
+	refresh(tempConfig);
 }
 
-void switchResolutionUp(std::string elementName) {
+void OptionsWindow::onResolutionUpClick() {
 	vector<SDL_Rect> modes = videoManager->GetAvailableModes();
 
 	bool set = false;
@@ -612,75 +572,17 @@ void switchResolutionUp(std::string elementName) {
 		tempConfig->Screen.Height = modes[0].h;
 	}
 
-	refreshOptionsWindow();
+	refresh(tempConfig);
 }
 
-void refreshControlsMenuWindow();
-
-void changeControlStyle(std::string elementName) {
+void ControlsMenuWindow::onControlStyleClick() {
 	enum ControlStyle style = GetNextControlStyle(config->Control);
 	config->Control = style;
 	
 	std::cout << (boost::format(_("Changed control style to %s.")) % ControlStyleToString(style)) << std::endl;
 	config->write();
 
-	refreshControlsMenuWindow();
-}
-
-void controlsMenuWindowController(std::string elementName);
-
-inline void addControlElement(Window* w, unsigned i, unsigned strN,
-		unsigned lx, unsigned rx) {
-	unsigned y = videoManager->RegularText->getHeight() * strN;
-	string eventId = InputHandler::getEventIdentifier(i);
-	string eventName = InputHandler::getEventName(i);
-	string keyName = InputHandler::getKeyName(config->PlayerInputBinding[i]);
-
-	w->addElement(eventId, eventName, videoManager->RegularText, lx, y,
-			TextManager::LEFT, TextManager::MIDDLE);
-
-	w->addElement(eventId + "key", keyName, videoManager->RegularText, rx, y,
-			TextManager::RIGHT, TextManager::MIDDLE);
-
-	w->addHandler(Window::hdl_lclick, eventId, boost::bind(&controlsMenuWindowController, _1));
-}
-
-void refreshControlsMenuWindow() {
-	Window* w = windows.find("controls")->second;
-
-	const int col1_l = videoManager->getVideoMode().Width * 0.1f;
-	const int col1_r = videoManager->getVideoMode().Width * 0.45f;
-
-	w->addElement("controls", _("Controls"), videoManager->RegularText,
-			col1_l, videoManager->RegularText->getHeight() * 2.0f,
-			TextManager::LEFT, TextManager::MIDDLE
-	);
-	const int col2_l = videoManager->getVideoMode().Width * 0.55f;
-	const int col2_r = videoManager->getVideoMode().Width * 0.9f;
-
-
-	/* Change the control style
-	 */
-	w->addElement("control-style", _("Control style"),
-			videoManager->RegularText,
-			col1_l,  (videoManager->RegularText->getHeight() + 35) * 2.0f,
-			TextManager::LEFT, TextManager::MIDDLE
-	);
-	w->addElement("control-style-value", ControlStyleToString(config->Control),
-			videoManager->RegularText,
-			col1_r,  (videoManager->RegularText->getHeight() + 35) * 2.0f,
-			TextManager::RIGHT, TextManager::MIDDLE
-	);
-	w->addHandler(Window::hdl_lclick, "control-style", boost::bind(changeControlStyle, _1));
-
-
-	unsigned col1_items = (InputHandler::GameInputEventsCount + 1) / 2;
-
-	for (unsigned i = 0; i < col1_items; i++)
-		addControlElement(w, i, i + 6, col1_l, col1_r);
-
-	for (unsigned i = col1_items; i < InputHandler::GameInputEventsCount; i++)
-		addControlElement(w, i, i - col1_items + 6, col2_l, col2_r);
+	refresh();
 }
 
 void drawWindows() {
@@ -703,15 +605,8 @@ void drawWindows() {
 	}
 }
 
-void controlsMenuWindowController(std::string elementName) {
-	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
-			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
-
-	w->addElement("pressakey", _("Press a key, please..."),
-			videoManager->RegularText, config->Screen.Width / 2,
-			config->Screen.Height / 2, TextManager::CENTER, TextManager::MIDDLE);
-
-	windows["pressakey"] = w;
+void ControlsMenuWindow::onEventClick(std::string elementName) {
+	windows["pressakey"] = new ChangeInputBindingWindow(config, videoManager->RegularText);
 
 	drawWindows();
 	SDL_GL_SwapBuffers();
@@ -752,249 +647,67 @@ void controlsMenuWindowController(std::string elementName) {
 
 	windows["pressakey"]->CloseFlag = true;
 
-	refreshControlsMenuWindow();
+	refresh();
 }
 
-void drawWindows();
-void showHighScores(std::string);
+void OptionsWindow::onControlsMenuClick() {
+	windows["controls"] = new ControlsMenuWindow(config, videoManager->RegularText);
 
-void createControlsMenuWindow(std::string elementName) {
-	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
-			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
-
-	windows["controls"] = w;
-
-	refreshControlsMenuWindow();
-
-	windows["options"]->CloseFlag = true;
+	CloseFlag = true;
 }
 
-void resetControls(std::string elementName) {
+void OptionsWindow::onResetControlsClick() {
 	Configuration* config_default = new Configuration(fileUtility);
 	for (int i = 0; i < InputHandler::GameInputEventsCount; i++)
 		config->PlayerInputBinding[i] = config_default->PlayerInputBinding[i];
 }
 
-void createOptionsWindow() {
+void MainMenuWindow::onOptionsClick() {
 	tempConfig = new Configuration(*config);
 
-	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
-			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
-
-	const int l = videoManager->getVideoMode().Width * 0.1f;
-	const int r = videoManager->getVideoMode().Width * 0.6f;
-	const int h = videoManager->RegularText->getHeight();
-
-	w->addElement("options", _("Options"), videoManager->RegularText, l, 2 * h,
-			TextManager::LEFT, TextManager::MIDDLE);
-
-	vector<Label> gameplayLabels;
-	gameplayLabels.push_back(Label("autoreload", _("Weapon autoreloading")));
-	gameplayLabels.push_back(Label("autopickup", _("Weapon autotaking")));
-	gameplayLabels.push_back(Label("friendlyfire", _("Friendly fire")));
-
-	w->addElement("sectiongame", _("Gameplay"), videoManager->RegularText, l,
-			4 * h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElements(gameplayLabels, videoManager->RegularText, l + 2 * h, 6 * h,
-			h, TextManager::LEFT, TextManager::MIDDLE);
-
-	vector<Label> graphicsLabels;
-	graphicsLabels.push_back(Label("fullscreen", _("Fullscreen")));
-	graphicsLabels.push_back(Label("resolution", _("Resolution")));
-
-	w->addElement("sectiongraphics", _("Graphics"), videoManager->RegularText,
-			r, 4 * h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElements(graphicsLabels, videoManager->RegularText, r + 2 * h, 6 * h,
-			h, TextManager::LEFT, TextManager::MIDDLE);
-
-	vector<Label> soundLabels;
-	soundLabels.push_back(Label("soundvolume", _("Sound volume")));
-	soundLabels.push_back(Label("musicvolume", _("Music volume")));
-
-	w->addElement("sectionsound", _("Sound"), videoManager->RegularText, l,
-			10 * h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElements(soundLabels, videoManager->RegularText, l + 3 * h, 12 * h,
-			h, TextManager::LEFT, TextManager::MIDDLE);
-
-	vector<Label> controlsLabels;
-	controlsLabels.push_back(Label("controlsmenu", _("Edit Controls")));
-	controlsLabels.push_back(Label("controlsreset", _("Reset Controls")));
-
-	w->addElement("controlstitle", _("Controls"), videoManager->RegularText, r,
-			10 * h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElements(controlsLabels, videoManager->RegularText, r + 2 * h,
-			12 * h, h, TextManager::LEFT, TextManager::MIDDLE);
-
-	w->addHandler(Window::hdl_lclick, "autoreload", boost::bind(switchGameOption, _1));
-	w->addHandler(Window::hdl_lclick, "autopickup", boost::bind(switchGameOption, _1));
-	w->addHandler(Window::hdl_lclick, "friendlyfire", boost::bind(switchGameOption, _1));
-	w->addHandler(Window::hdl_lclick, "soundvolume", boost::bind(switchVolumeUp, _1));
-	w->addHandler(Window::hdl_rclick, "soundvolume", boost::bind(switchVolumeDown, _1));
-	w->addHandler(Window::hdl_lclick, "musicvolume", boost::bind(switchVolumeUp, _1));
-	w->addHandler(Window::hdl_rclick, "musicvolume", boost::bind(switchVolumeDown, _1));
-	w->addHandler(Window::hdl_lclick, "fullscreen", boost::bind(switchGameOption, _1));
-	w->addHandler(Window::hdl_lclick, "resolution", boost::bind(switchResolutionUp, _1));
-	w->addHandler(Window::hdl_rclick, "resolution", boost::bind(switchResolutionDown, _1));
-	w->addHandler(Window::hdl_lclick, "controlsmenu", boost::bind(createControlsMenuWindow, _1));
-	w->addHandler(Window::hdl_lclick, "controlsreset", boost::bind(resetControls, _1));
-
-	w->addElement("savereturn", _("Save and return"),
-			videoManager->RegularText, l, 16 * h, TextManager::LEFT,
-			TextManager::MIDDLE);
-	w->addHandler(Window::hdl_lclick, "savereturn", boost::bind(backFromOptionsAndSave, _1));
-
+	OptionsWindow *w = new OptionsWindow(config, videoManager->RegularText);
 	windows["options"] = w;
-
-	refreshOptionsWindow();
+	w->refresh(tempConfig);
+	
+	CloseFlag = true;
 }
 
-void showOptions(std::string elementName) {
-	windows["mainmenu"]->CloseFlag = true;
-	createOptionsWindow();
-}
-
-void resumeGame(std::string elementName) {
-	Window* w = windows.find("mainmenu")->second;
-	w->CloseFlag = true;
+void MainMenuWindow::onResumeClick() {
+	CloseFlag = true;
 	switchGamePause();
 }
 
-void refreshMainMenuWindow() {
-	Window* w = windows.find("mainmenu")->second;
-
-	const int r = videoManager->getVideoMode().Width * 0.3f;
-
-	string strGameMode = _("Unknown");
-	switch (gameState->Mode) {
-	case GAMEMODE_SURVIVAL:
-		strGameMode = _("Violetland Survival");
-		break;
-	case GAMEMODE_WAVES:
-		strGameMode = _("Attack waves");
-		break;
-	}
-
-	w->addElement("gamemode", strGameMode, videoManager->RegularText, r,
-			videoManager->RegularText->getHeight() * 8.0f, TextManager::LEFT,
-			TextManager::MIDDLE);
-}
-
-void switchGameMode(std::string elementName) {
-	switch (gameState->Mode) {
-	case GAMEMODE_SURVIVAL:
-		gameState->Mode = GAMEMODE_WAVES;
-		break;
-	case GAMEMODE_WAVES:
-		gameState->Mode = GAMEMODE_SURVIVAL;
-		break;
-	}
-
-	refreshMainMenuWindow();
-}
-
 void createMainMenuWindow() {
-	Window *mainMenu = new MainMenuWindow(config, gameState,
-			videoManager->RegularText);
-
-	mainMenu->addHandler(Window::hdl_lclick, "resume", boost::bind(resumeGame, _1));
-	mainMenu->addHandler(Window::hdl_lclick, "start", boost::bind(startGame, _1));
-	mainMenu->addHandler(Window::hdl_lclick, "gamemode", boost::bind(switchGameMode, _1));
-	mainMenu->addHandler(Window::hdl_lclick, "options", boost::bind(showOptions, _1));
-	mainMenu->addHandler(Window::hdl_lclick, "highscores", boost::bind(showHighScores, _1));
-
+	
+	/* Remove main window, if existing
+	 */
 	std::map<std::string, Window*>::iterator it = windows.find("mainmenu");
+	
 	if (it != windows.end())
 		delete it->second;
-	windows["mainmenu"] = mainMenu;
-
-	refreshMainMenuWindow();
+	
+	/* Create and open main window
+	 */
+	windows["mainmenu"] = new MainMenuWindow(
+		config, gameState,
+		videoManager->RegularText
+	);
 }
 
-void highScoresWindowController(std::string elementName) {
-	if (elementName == "back") {
-		windows["highscores"]->CloseFlag = true;
-		createMainMenuWindow();
-	} else if (elementName == "reset") {
-		Highscores s(fileUtility);
-		s.clear();
-		highScoresWindowController("back");
-	}
+void HighscoresWindow::onBackClick() {
+	CloseFlag = true;
+	createMainMenuWindow();
 }
 
-void createHighscoresWindow() {
-	Window *w = new Window(0.0f, 0.0f, config->Screen.Width,
-			config->Screen.Height, 0.0f, 0.0f, 0.0f, 0.5f);
-
-	const int l = videoManager->getVideoMode().Width * 0.1f;
-	const int r2 = l * 2.0f;
-	const int r3 = l * 5.0f;
-	const int r4 = l * 7.0f;
-	const int h = videoManager->RegularText->getHeight();
-
-	w->addElement("highscores", _("Highscores"), videoManager->RegularText, l,
-			2 * h, TextManager::LEFT, TextManager::MIDDLE);
-
-	w->addElement("headerXp", _("XP"), videoManager->RegularText, l, 4 * h,
-			TextManager::LEFT, TextManager::MIDDLE);
-	w->addElement("headerParams", _("Str/Agil/Vital"),
-			videoManager->RegularText, r2, 4 * h, TextManager::LEFT,
-			TextManager::MIDDLE);
-	w->addElement("headerTime", _("Time"), videoManager->RegularText, r3,
-			4 * h, TextManager::LEFT, TextManager::MIDDLE);
-	w->addElement("headerName", _("Name"), videoManager->RegularText, r4,
-			4 * h, TextManager::LEFT, TextManager::MIDDLE);
-
+void HighscoresWindow::onResetClick() {
 	Highscores s(fileUtility);
-	set<HighscoresEntry> highscores = s.getData();
-	set<HighscoresEntry>::reverse_iterator it = highscores.rbegin();
-	for (unsigned i = 0; it != highscores.rend(); ++it, ++i) {
-		ostringstream oss1, oss2;
-
-		oss1 << "xp" << i;
-		oss2 << it->Xp;
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, l,
-				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
-
-		oss1.str("");
-		oss2.str("");
-		oss1 << "params" << i;
-		oss2 << (int) (it->Strength * 100) << '/' << (int) (it->Agility * 100)
-				<< '/' << (int) (it->Vitality * 100);
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, r2,
-				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
-
-		const int minutes = it->Time / 60000;
-		const int seconds = (it->Time - minutes * 60000) / 1000;
-
-		oss1.str("");
-		oss2.str("");
-		oss1 << "time" << i;
-		oss2 << minutes << "m " << seconds << 's';
-		w->addElement(oss1.str(), oss2.str(), videoManager->RegularText, r3,
-				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
-
-		oss1.str("");
-		oss1 << "name" << i;
-		w->addElement(oss1.str(), it->Name, videoManager->RegularText, r4,
-				(5 + i) * h, TextManager::LEFT, TextManager::MIDDLE);
-	}
-
-	w->addElement("back", _("Back to main menu"), videoManager->RegularText, l,
-			16 * h, TextManager::LEFT, TextManager::MIDDLE);
-
-	w->addElement("reset", _("Reset list"), videoManager->RegularText, r3,
-			16 * h, TextManager::LEFT, TextManager::MIDDLE);
-
-	w->addHandler(Window::hdl_lclick, "back", boost::bind(highScoresWindowController, _1));
-
-	w->addHandler(Window::hdl_lclick, "reset", boost::bind(highScoresWindowController, _1));
-
-	windows["highscores"] = w;
+	s.clear();
+	onBackClick();
 }
 
-void showHighScores(std::string elementName) {
-	windows["mainmenu"]->CloseFlag = true;
-	createHighscoresWindow();
+void MainMenuWindow::onHighScoresClick() {
+	CloseFlag = true;
+	windows["highscores"] = new HighscoresWindow(config, videoManager->RegularText, Highscores(fileUtility));
 }
 
 void unloadResources() {
@@ -1009,7 +722,7 @@ void unloadResources() {
 	delete config;
 }
 
-void backFromOptionsAndSave(std::string elementName) {
+void OptionsWindow::onSaveAndReturnClick() {
 	bool changeVideoMode = config->Screen.Width != tempConfig->Screen.Width
 			|| config->Screen.Height != tempConfig->Screen.Height;
 
@@ -1027,7 +740,7 @@ void backFromOptionsAndSave(std::string elementName) {
 		videoManager->setMode(config->Screen, cam);
 	}
 
-	windows["options"]->CloseFlag = true;
+	CloseFlag = true;
 	createMainMenuWindow();
 }
 

@@ -21,14 +21,14 @@ void violet::Window::addElement(std::string id, TextObject* element)
 }
 
 void violet::Window::addElement(std::string id, std::string text, 
-	TextManager* manager, int x, int y, TextManager::TextHAlignFlag halign, 
+	TextManager const* manager, int x, int y, TextManager::TextHAlignFlag halign, 
 	TextManager::TextVAlignFlag valign) {
 	removeElement(id, true);
 	TextObject* element = manager->getObject(text, x, y, halign, valign);
 	m_elements[id] = element;
 }
 
-inline void violet::Window::addElement(Label label, TextManager* manager, int x, int y, 
+inline void violet::Window::addElement(Label label, TextManager const* manager, int x, int y, 
 	TextManager::TextHAlignFlag halign, 
 	TextManager::TextVAlignFlag valign) {
 	addElement(label.id, label.text, manager, x, y, halign, valign);
@@ -36,7 +36,7 @@ inline void violet::Window::addElement(Label label, TextManager* manager, int x,
 
 
 void violet::Window::addElements(const std::vector<Label>& labels, 
-	TextManager* manager, int x, int y, int vstep, 
+	TextManager const* manager, int x, int y, int vstep, 
 	TextManager::TextHAlignFlag halign, TextManager::TextVAlignFlag valign) {
 	
 	for (unsigned i = 0; i < labels.size(); ++i)

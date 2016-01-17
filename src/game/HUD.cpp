@@ -1,10 +1,13 @@
 #include "HUD.h"
 
 #include <libintl.h>
-#include <locale.h>
 #include <sstream>
 
 #define _(STRING)            gettext(STRING)
+
+
+
+
 
 violet::HUD::HUD(VideoManager* videoManager, Resources* resources) {
 	m_videoManager = videoManager;
