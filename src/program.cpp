@@ -1687,7 +1687,8 @@ void handleLifeForms() {
 			if ( collCheck->Type > 0 && lifeForm->State < 2 && collCheck->State < 2 ) {
 
 			if ( lifeForm->detectCollide(collCheck) )
-				lifeForm->collisionPush(collCheck); }
+				lifeForm->collisionPush(collCheck);
+			}
 
 			--collIt;
 			collCheck = collIt->second;
