@@ -82,6 +82,10 @@ void LifeForm::process(int deltaTime) {
 }
 
 void LifeForm::move(float direction, int deltaTime) {
+
+	if ( fabs(Speed) > 2.0f * MaxSpeed() )
+		Speed *= 0.5f;
+
 	if (m_walkDelay > 0)
 		return;
 
@@ -92,13 +96,10 @@ void LifeForm::move(float direction, int deltaTime) {
 	if ( Speed != MaxSpeed() ) {
 		if ( Speed < MaxSpeed() )
 			Speed += Acceleration * deltaTime;
-		else if ( Speed - Acceleration * deltaTime < MaxSpeed() )
+		if ( Speed - Acceleration * deltaTime < MaxSpeed() )
 			Speed = MaxSpeed();
-		else {
-			if ( Speed > MaxSpeed() * 2.0f )
-				Speed = MaxSpeed() * 2.0f;
+		else
 			Speed -= Acceleration * deltaTime;
-		}
 	}
 
 	turn(direction, MaxSpeed(), deltaTime);
@@ -106,55 +107,42 @@ void LifeForm::move(float direction, int deltaTime) {
 
 void LifeForm::collisionPush(LifeForm* lf) {
 
-	//	float weightRatio = getWeight() / ( getWeight() +  lf->getWeight() );
-	//	float strengthRatio = getStrength() / ( getStrength() + lf->getStrength() );
+	//bla: Overlapping distance seperated by axis, collision angle and ratio.
+	const float ratio = 0.5f * ( getWeight() / (getWeight() + lf->getWeight())
+			+ getStrength() / (getStrength() + lf->getStrength()) );
+	const float collAngle = calc_angle(X, Y, lf->X, lf->Y);
+	const float diffX = fabs(sin(collAngle * M_PI / 180.0f)) * (
+			HitR * Scale * m_width + lf->HitR * lf->Scale * lf->m_width
+			- calc_dist(X, Y, lf->X, lf->Y) );
+	const float diffY = fabs(cos(collAngle * M_PI / 180.0f)) * (
+			HitR * Scale * m_width + lf->HitR * lf->Scale * lf->m_width
+			- calc_dist(X, Y, lf->X, lf->Y) );
 
-	//bla: Overlapping distance.
-	float dist = HitR * Scale * m_width
-			+ lf->HitR * lf->Scale * lf->m_width
-			- calc_dist(X, Y, lf->X, lf->Y);
-
-	// Overlapping distance seperated by axis.
-	float diffX = 0.5f * abs(0.5f * dist * cos(calc_angle(X, Y, lf->X, lf->Y)));
-	float diffY = 0.5f * abs(0.5f * dist * sin(calc_angle(X, Y, lf->X, lf->Y)));
-
-	//bla: Resolve XY.
-	if ( X != lf->X || Y != lf->Y ) {
-		if ( X > lf->X ) {
-			X		+= diffX;
-			lf->X	-= diffX;
-		} else {
-			X		-= diffX;
-			lf->X	+= diffX;
-		}
-		if ( Y > lf->Y ) {
-			Y		+= diffY;
-			lf->Y 	-= diffY;
-		} else {
-			Y		-= diffY;
-			lf->Y	+= diffY;
-		}
+	//bla: Resolve X, Y.
+	if ( X > lf->X ) {
+		X		+= (1.0f - ratio) * diffX;
+		lf->X	-= ratio * diffX;
+	} else {
+		X		-= (1.0f - ratio) * diffX;
+		lf->X	+= ratio * diffX;
+	}
+	if ( Y > lf->Y ) {
+		Y		+= (1.0f - ratio) * diffY;
+		lf->Y	-= ratio * diffY;
+	} else {
+		Y		-= (1.0f - ratio) * diffY;
+		lf->Y	+= ratio * diffY;
 	}
 
-	/*bla:
-	 * The following lines are for testing.
-	 * I observed a hard to reproducible bug, where the initial spawned monsters dissapeared.
-	 * They where pushed out of the field with very large diffX/Y but i couldnt investigate further.
-	 * There is another bug (Speed = 2*MaxSpeed) with the initial monsters. Maybe the cause lays there.
-	*/
-	else
-		std::cout << "ERROR: Identical XY with " << Name << "-" << Id << "\tand "
-				<< lf->Name << "-" << lf->Id << std::endl;
+	//bla: Exceptions for Speed/Angle changes.
+	if ( Frozen > 0 || lf->Frozen > 0)
+		return;
 
-	if ( diffX > 200 || diffY > 200 )
-		std::cout << "ERROR: diffXY with " << diffX << "\tand " << diffY
-				<< "\twith " << Name << "-" << Id << "\tand " << lf->Name << "-" << lf->Id
-				<< std::endl;
-
-	if ( Id == lf->Id )
-		std::cout << "ERROR: Id XY with " << Name << "\tand " << lf->Name << std::endl;
-	//bla: End of testing.
-
+	//bla: Speed transfer.
+	const float newSpeed1 = (1.0f - ratio) * fabs((lf->Speed+Speed)/2.0f) * cos((collAngle - Angle) * M_PI / 180.0f);
+	const float newSpeed2 = ratio * fabs((Speed+lf->Speed)/2.0f) * cos((collAngle - lf->Angle - 180.0f) * M_PI / 180.0f);
+	lf->Speed -= 0.9f * newSpeed2;
+	Speed -= 0.9f * newSpeed1;
 }
 
 const float LifeForm::MaxHealth() const {
@@ -189,7 +177,7 @@ const int LifeForm::AttackDelay() const {
 }
 
 const float LifeForm::MaxSpeed() const {
-	return 1.75f * getAgility() / ( getAgility() * getWeight() + 7.5f );
+	return 1.5f * getAgility() / ( getAgility() * getWeight() + 7.5f );
 }
 
 const float LifeForm::HealthRegen() const {
