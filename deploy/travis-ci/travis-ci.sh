@@ -21,8 +21,6 @@ DIRECTORY_OF_TRAVIS_CI_SH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD_DATE=`date --iso-8601`
 VERSION=`head -n 1 ${DIRECTORY_OF_TRAVIS_CI_SH}/../../VERSION`
 
-ARTIFACT_NAME_PREFIX="violetland-${VERSION}-b${TRAVIS_BUILD_NUMBER}-${TARGET}"
-
 
 
 #
@@ -36,8 +34,9 @@ ARTIFACT_NAME_PREFIX="violetland-${VERSION}-b${TRAVIS_BUILD_NUMBER}-${TARGET}"
 #
 
 if [ "master" == "${TRAVIS_BRANCH}" ] && [ "false" == "${TRAVIS_PULL_REQUEST}" ]; then
-	ARTIFACT_NAME="${ARTIFACT_NAME_PREFIX}"
+	ARTIFACT_NAME="violetland-${VERSION}-b${TRAVIS_BUILD_NUMBER}-${TARGET}"
 fi
+
 
 
 #
@@ -54,8 +53,9 @@ if [ "master" != "${TRAVIS_BRANCH}" ] && [ "false" == "${TRAVIS_PULL_REQUEST}" ]
 
 	# @see http://serverfault.com/a/348485/207752
 	SAFE_BRANCH_NAME=$(echo "${TRAVIS_BRANCH}" | sed -e 's/[^A-Za-z0-9._-]/_/g')
-	ARTIFACT_NAME="${ARTIFACT_NAME_PREFIX}_${SAFE_BRANCH_NAME}"
+	ARTIFACT_NAME="branch-${SAFE_BRANCH_NAME}-b${TRAVIS_BUILD_NUMBER}"
 fi
+
 
 
 #
@@ -72,6 +72,6 @@ if [ "false" != "${TRAVIS_PULL_REQUEST}" ]; then
 
 	# @see http://serverfault.com/a/348485/207752
 	SAFE_PULL_REQUEST=$(echo "${TRAVIS_PULL_REQUEST}" | sed -e 's/[^A-Za-z0-9._-]/_/g')
-	ARTIFACT_NAME="${ARTIFACT_NAME_PREFIX}_${SAFE_PULL_REQUEST}"
+	ARTIFACT_NAME="pull-request-${SAFE_PULL_REQUEST}-b${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT:0:7}"
 fi
 
