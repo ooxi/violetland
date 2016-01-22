@@ -3,7 +3,8 @@ language: cpp
 dist: trusty
 
 env:
-  secure: XEiVzrXzqXsck1gjoW4/VUA9rnCO0VD1E0tEyvGCJWrG++zeutvSiMyN8EkDDYdHC7l0wDl/yh8ikyVM8jYrIL5PtX0qIE6WnmM0QLWKKiWSWqkveIw9NOE/TtIPihGYG+pdjeYbTSCC+2gCuAT3cfsowHyWQpMx2tOoGUXr89U=
+  global:
+     - secure: XEiVzrXzqXsck1gjoW4/VUA9rnCO0VD1E0tEyvGCJWrG++zeutvSiMyN8EkDDYdHC7l0wDl/yh8ikyVM8jYrIL5PtX0qIE6WnmM0QLWKKiWSWqkveIw9NOE/TtIPihGYG+pdjeYbTSCC+2gCuAT3cfsowHyWQpMx2tOoGUXr89U=
 
   matrix:
      - TARGET='trusty-amd64-gcc'
@@ -21,6 +22,8 @@ before_install:
 #  - sudo apt-get install -y $PACKAGES
 
 script:
+  - echo "ABC $TRAVIS_SECURE_ENV_VARS DEF"
+  - echo "XY $MY_SECRET_ENV AB"
   - ./deploy/travis-ci/$TARGET/script.sh
 #  - echo $TARGET
 #  - echo $TRAVIS_BRANCH
