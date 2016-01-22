@@ -4,7 +4,7 @@ dist: trusty
 
 env:
   global:
-     - secure: XEiVzrXzqXsck1gjoW4/VUA9rnCO0VD1E0tEyvGCJWrG++zeutvSiMyN8EkDDYdHC7l0wDl/yh8ikyVM8jYrIL5PtX0qIE6WnmM0QLWKKiWSWqkveIw9NOE/TtIPihGYG+pdjeYbTSCC+2gCuAT3cfsowHyWQpMx2tOoGUXr89U=
+     - secure: "aRxEKBXnGy2PWEYtjVX9wBKFIsX738w44/h+8cJX8Tqr5dUNuJ5SzXqvavjrM8guTi8GMh1DgtTcwYIlc+RbjQ1U6ynFeP4BBveYMhyI/18A4EZsIFjcAQ9oaoqLBl8YR77Lk7GVEEohvRjfbdNfnyldjRQe5rSuI2c7s/xlQAk="
 
   matrix:
      - TARGET='trusty-amd64-gcc'
