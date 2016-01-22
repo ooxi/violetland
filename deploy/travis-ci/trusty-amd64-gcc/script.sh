@@ -21,14 +21,11 @@ mkdir "${BUILD_DIRECTORY}" && cd "${BUILD_DIRECTORY}" && $CMAKE -DCMAKE_INSTALL_
 
 
 # Deploy
-source "${DIRECTORY_OF_SCRIPT_SH}/../travis-ci.sh"
-tar -cjvf "${BUILD_DIRECTORY}/${ARTIFACT_NAME}" "${DIST_DIRECTORY}"
-
-du -s --si "${BUILD_DIRECTORY}/${ARTIFACT_NAME}"
-
 if [ "${TRAVIS_SECURE_ENV_VARS}" == "true" ]; then
-	echo "SECURE AVAILABLE"
-fi
+	source "${DIRECTORY_OF_SCRIPT_SH}/../travis-ci.sh"
 
-echo "AB ${MY_SECRET_ENV} CD"
+	tar -cjvf "${BUILD_DIRECTORY}/${ARTIFACT_NAME}.tar.bz2" "${DIST_DIRECTORY}"
+
+	curl -T "${BUILD_DIRECTORY}/${ARTIFACT_NAME}.tar.bz2" "-u${MY_SECRET_ENV}" "https://api.bintray.com/content/ooxi/violetland/travis-ci/${BUILD_DATE}-b${TRAVIS_BUILD_NUMBER}/${ARTIFACT_NAME}.tar.bz2"
+fi
 

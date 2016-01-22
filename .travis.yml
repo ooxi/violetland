@@ -22,8 +22,6 @@ before_install:
 #  - sudo apt-get install -y $PACKAGES
 
 script:
-  - echo "ABC $TRAVIS_SECURE_ENV_VARS DEF"
-  - echo "XY $MY_SECRET_ENV AB"
   - ./deploy/travis-ci/$TARGET/script.sh
 #  - echo $TARGET
 #  - echo $TRAVIS_BRANCH
