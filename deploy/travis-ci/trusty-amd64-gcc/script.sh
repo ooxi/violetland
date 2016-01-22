@@ -24,8 +24,9 @@ mkdir "${BUILD_DIRECTORY}" && cd "${BUILD_DIRECTORY}" && $CMAKE -DCMAKE_INSTALL_
 if [ "${TRAVIS_SECURE_ENV_VARS}" == "true" ]; then
 	source "${DIRECTORY_OF_SCRIPT_SH}/../travis-ci.sh"
 
+	echo "Will artifact ${ARTIFACT_NAME} to Bintray"
 	tar -cjvf "${BUILD_DIRECTORY}/${ARTIFACT_NAME}.tar.bz2" "${DIST_DIRECTORY}"
-
-	curl -T "${BUILD_DIRECTORY}/${ARTIFACT_NAME}.tar.bz2" "-uooxi:${BINTRAY_DEPLOYMENT_API_KEY}" "https://api.bintray.com/content/ooxi/violetland/travis-ci/${BUILD_DATE}-b${TRAVIS_BUILD_NUMBER}/${ARTIFACT_NAME}.tar.bz2"
+#	curl -T "${BUILD_DIRECTORY}/${ARTIFACT_NAME}.tar.bz2" "-uooxi:${BINTRAY_DEPLOYMENT_API_KEY}" "https://api.bintray.com/content/ooxi/violetland/travis-ci/${BUILD_DATE}/${ARTIFACT_NAME}.tar.bz2?publish=1"
+	curl -T "${BUILD_DIRECTORY}/${ARTIFACT_NAME}.tar.bz2" "-uooxi:${BINTRAY_DEPLOYMENT_API_KEY}" "https://api.bintray.com/content/ooxi/violetland/${TARGET}/${BUILD_DATE}/${ARTIFACT_NAME}.tar.bz2?publish=1"
 fi
 
