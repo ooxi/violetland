@@ -939,7 +939,7 @@ void handleMonster(LifeForm* lf) {
 
 		float range = Object::calc_dist(enemy->X, enemy->Y, enemy->TargetX,
 				enemy->TargetY);
-#error DO NOT MERGE
+
 		if (range < enemy->getWidth() * enemy->Scale * enemy->HitR * 5) {
 			enemy->TargetX = (rand() % (gameState->GameAreaSize * 2))
 					- gameState->GameAreaSize;
