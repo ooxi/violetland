@@ -35,7 +35,9 @@ VERSION=`head -n 1 ${DIRECTORY_OF_TRAVIS_CI_SH}/../../VERSION`
 #
 
 if [ "master" == "${TRAVIS_BRANCH}" ] && [ "false" == "${TRAVIS_PULL_REQUEST}" ]; then
-	ARTIFACT_NAME="violetland-${VERSION}-b${TRAVIS_BUILD_NUMBER}-${TARGET}"
+	BINTRAY_VERSION="${TRAVIS_BUILD_NUMBER}"
+	BINTRAY_DIRECTORY="travis-ci/master/${BINTRAY_VERSION}"
+	BINTRAY_FILE="violetland-${VERSION}-b${TRAVIS_BUILD_NUMBER}-${TARGET}"
 fi
 
 
@@ -47,14 +49,14 @@ fi
 # TRAVIS_BRANCH		feature/automatic-windows-deployment
 # TRAVIS_PULL_REQUEST	false
 #
-# ARTIFACT_NAME		violetland-0.5-b167-trusty-amd64-gcc_feature-automatic-windows-deployment
+# ARTIFACT_NAME		branch-feature_automatic-windows-deployment-b167-trusty-amd64-gcc
 #
 
 if [ "master" != "${TRAVIS_BRANCH}" ] && [ "false" == "${TRAVIS_PULL_REQUEST}" ]; then
 
-	# @see http://serverfault.com/a/348485/207752
-	SAFE_BRANCH_NAME=$(echo "${TRAVIS_BRANCH}" | sed -e 's/[^A-Za-z0-9._-]/_/g')
-	ARTIFACT_NAME="branch-${SAFE_BRANCH_NAME}-b${TRAVIS_BUILD_NUMBER}"
+	BINTRAY_VERSION="${TRAVIS_BUILD_NUMBER}"
+	BINTRAY_DIRECTORY="travis-ci/branches/${TRAVIS_BRANCH}"
+	BINTRAY_FILE="violetland-${VERSION}-b${TRAVIS_BUILD_NUMBER}-${TARGET}-${TRAVIS_COMMIT:0:7}"
 fi
 
 
@@ -66,13 +68,13 @@ fi
 # TRAVIS_BRANCH		master
 # TRAVIS_PULL_REQUEST	104
 # 
-# ARTIFACT_NAME		violetland-0.5-b167-trusty-amd64-gcc_pull-request-104
+# ARTIFACT_NAME		pull-request-104-b167-b6b90f7-trusty-amd64-gcc
 #
 
 if [ "false" != "${TRAVIS_PULL_REQUEST}" ]; then
 
-	# @see http://serverfault.com/a/348485/207752
-	SAFE_PULL_REQUEST=$(echo "${TRAVIS_PULL_REQUEST}" | sed -e 's/[^A-Za-z0-9._-]/_/g')
-	ARTIFACT_NAME="pull-request-${SAFE_PULL_REQUEST}-b${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT:0:7}"
+	BINTRAY_VERSION="${TRAVIS_BUILD_NUMBER}"
+	BINTRAY_DIRECTORY="travis-ci/pull-requests/${TRAVIS_PULL_REQUEST}"
+	BINTRAY_FILE="violetland-${VERSION}-b${TRAVIS_BUILD_NUMBER}-${TARGET}-${TRAVIS_COMMIT:0:7}"
 fi
 
