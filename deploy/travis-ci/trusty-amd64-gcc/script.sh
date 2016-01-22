@@ -12,7 +12,8 @@ DIST_DIRECTORY="${ROOT_DIRECTORY}/dist"
 
 
 CMAKE=cmake
-CXX=g++
+#CXX=g++
+CXX=clang++
 
 mkdir "${BUILD_DIRECTORY}" && cd "${BUILD_DIRECTORY}" && $CMAKE -DCMAKE_INSTALL_PREFIX=${DIST_DIRECTORY} "${ROOT_DIRECTORY}" && make install
 
