@@ -24,7 +24,8 @@ script:
   - echo $TRAVIS_JOB_ID
   - echo $TRAVIS_JOB_NUMBER
   - echo $TRAVIS_PULL_REQUEST
+  - echo $TRAVIS_BRANCH
   - test "$TRAVIS_PULLL_REQUEST = false" && echo "No pull request"
-  - test "$TRAVIS_PULLL_REQUEST != false" && echo "Pull request #$TRAVIS_PULL_REQUEST"
+  - test "$TRAVIS_PULLL_REQUEST != false" && echo "Pull request $TRAVIS_PULL_REQUEST"
   - mkdir build && cd build && $CMAKE -DCMAKE_INSTALL_PREFIX=../dist .. && make install && cd ..
 
