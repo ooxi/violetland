@@ -26,3 +26,9 @@ tar -cjvf "${BUILD_DIRECTORY}/${ARTIFACT_NAME}" "${DIST_DIRECTORY}"
 
 du -s --si "${BUILD_DIRECTORY}/${ARTIFACT_NAME}"
 
+if [ "${TRAVIS_SECURE_ENV_VARS}" == "true" ]; then
+	echo "SECURE AVAILABLE"
+fi
+
+echo "AB ${MY_SECRET_ENV} CD"
+
