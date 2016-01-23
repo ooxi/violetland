@@ -30,7 +30,7 @@ public:
 		return m_ident;
 	}
 	TextObject* getObject(const std::string& textBuf, float x, float y,
-			TextHAlignFlag halign, TextVAlignFlag valign);
+			TextHAlignFlag halign, TextVAlignFlag valign) const;
 	virtual ~TextManager();
 };
 }

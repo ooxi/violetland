@@ -10,7 +10,7 @@
 
 namespace violet {
 
-class CharStatsWindow: public Window {
+class CharStatsWindow : public Window {
 	VideoManager* m_videoManager;
 	Player* m_player;
 	std::map<std::string, std::string> m_perkDetails;

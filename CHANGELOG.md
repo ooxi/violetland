@@ -9,6 +9,9 @@ Legend
 Upcoming release
 ----------------
 
+ * `[+]` [Automatic windows builds](https://github.com/ooxi/violetland/pull/105), deploying Windows development snapshots to [Bintray](https://dl.bintray.com/ooxi/violetland/travis-ci/)
+ * `[*]` [Improved M-32 reload sound](https://github.com/ooxi/violetland/pull/101)
+ * `[*]` [Window subsystem refactored](https://github.com/ooxi/violetland/pull/96), moved window creation from `program.cpp` to individual subclasses
  * `[+]` [bla-rs](https://github.com/bla-rs) added [weapon documentation](https://github.com/ooxi/violetland/pull/98)
  * `[*]` [Clearified `ConfigFile.h` origin and license](https://github.com/ooxi/violetland/commit/ebb4081312dbbfc076fe02f698cf89c057526b44)
  * `[*]` [Unified namespace `violet` and include guard prefix `VIOLET_`](https://github.com/ooxi/violetland/pull/95)
