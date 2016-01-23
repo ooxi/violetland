@@ -100,7 +100,8 @@ function deploy_as_tarbz2 {
 		echo "Will deploy artifact ${ARTIFACT_NAME} to Bintray"
 		
 		sudo apt-get install -y curl tar bzip2
-		tar -cjvf "${BUILD_DIRECTORY}/${BINTRAY_FILE}.tar.bz2" "${DIST_DIRECTORY}"
+		mv "${DIST_DIRECTORY}" "${ROOT_DIRECTORY}/${BINTRAY_FILE}"
+		tar -cjvf "${BUILD_DIRECTORY}/${BINTRAY_FILE}.tar.bz2" "${ROOT_DIRECTORY}/${BINTRAY_FILE}"
 
 		BINTRAY_RESPONSE=`curl -T "${BUILD_DIRECTORY}/${BINTRAY_FILE}.tar.bz2" "-uooxi:${BINTRAY_DEPLOYMENT_API_KEY}" "https://api.bintray.com/content/ooxi/violetland/travis-ci/${BINTRAY_VERSION}/${BINTRAY_DIRECTORY}/${BINTRAY_FILE}.tar.bz2?publish=1"`
 
@@ -122,8 +123,9 @@ function deploy_as_zip {
 	if [ "${TRAVIS_SECURE_ENV_VARS}" == "true" ]; then
 		echo "Will deploy artifact ${ARTIFACT_NAME} to Bintray"
 		
-		sudo apt-get install -y curl zip
-		zip -r "${BUILD_DIRECTORY}/${BINTRAY_FILE}.zip" "${DIST_DIRECTORY}"
+		# @see http://stackoverflow.com/a/20545763
+		sudo apt-get install -y curl p7zip-full
+		7z a -tzip "${BUILD_DIRECTORY}/${BINTRAY_FILE}.zip" -w "${DIST_DIRECTORY}/."
 
 		BINTRAY_RESPONSE=`curl -T "${BUILD_DIRECTORY}/${BINTRAY_FILE}.zip" "-uooxi:${BINTRAY_DEPLOYMENT_API_KEY}" "https://api.bintray.com/content/ooxi/violetland/travis-ci/${BINTRAY_VERSION}/${BINTRAY_DIRECTORY}/${BINTRAY_FILE}.zip?publish=1"`
 
