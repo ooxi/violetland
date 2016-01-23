@@ -18,27 +18,9 @@ env:
 
 before_install:
   - ./deploy/travis-ci/$TARGET/before-install.sh
-#  - test -n $VIOLET_CXX && export CXX=$VIOLET_CXX
-#  - echo "deb http://pkg.mxe.cc/repos/apt/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mxeapt.list
-#  - sudo apt-key adv --keyserver x-hkp://keys.gnupg.net --recv-keys D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB
-#  - sudo apt-get update
-#  - sudo apt-get install -y $PACKAGES
 
 script:
   - ./deploy/travis-ci/$TARGET/script.sh
-#  - echo $TARGET
-#  - echo $TRAVIS_BRANCH
-#  - echo $TRAVIS_BUILD_ID
-#  - echo $TRAVIS_BUILD_NUMBER
-#  - echo $TRAVIS_COMMIT
-#  - echo $TRAVIS_JOB_ID
-#  - echo $TRAVIS_JOB_NUMBER
-#  - echo $TRAVIS_PULL_REQUEST
-#  - echo $TRAVIS_BRANCH
-#  - test "$TRAVIS_PULLL_REQUEST" = false && echo "No pull request" || true
-#  - test "$TRAVIS_PULLL_REQUEST" != false && echo "Pull request $TRAVIS_PULL_REQUEST" || true
-#  - mkdir build && cd build && $CMAKE -DCMAKE_INSTALL_PREFIX=../dist .. && make install && cd ..
 
 after_success:
  - ./deploy/travis-ci/$TARGET/after-success.sh
-
