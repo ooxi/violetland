@@ -84,7 +84,7 @@ void LifeForm::process(int deltaTime) {
 void LifeForm::move(float direction, int deltaTime) {
 
 	if ( fabs(Speed) > 2.0f * MaxSpeed() )
-		Speed *= 0.5f;
+		Speed *= 0.75f;
 
 	if (m_walkDelay > 0)
 		return;
@@ -96,10 +96,10 @@ void LifeForm::move(float direction, int deltaTime) {
 	if ( Speed != MaxSpeed() ) {
 		if ( Speed < MaxSpeed() )
 			Speed += Acceleration * deltaTime;
-		if ( Speed - Acceleration * deltaTime < MaxSpeed() )
+		else if ( Speed - Acceleration * deltaTime < MaxSpeed() )
 			Speed = MaxSpeed();
 		else
-			Speed -= Acceleration * deltaTime;
+			Speed *= 0.95f;
 	}
 
 	turn(direction, MaxSpeed(), deltaTime);
@@ -111,38 +111,31 @@ void LifeForm::collisionPush(LifeForm* lf) {
 	const float ratio = 0.5f * ( getWeight() / (getWeight() + lf->getWeight())
 			+ getStrength() / (getStrength() + lf->getStrength()) );
 	const float collAngle = calc_angle(X, Y, lf->X, lf->Y);
-	const float diffX = fabs(sin(collAngle * M_PI / 180.0f)) * (
+	const float diffX = sin(collAngle * M_PI / 180.0f) * (
 			HitR * Scale * m_width + lf->HitR * lf->Scale * lf->m_width
 			- calc_dist(X, Y, lf->X, lf->Y) );
-	const float diffY = fabs(cos(collAngle * M_PI / 180.0f)) * (
+	const float diffY = cos(collAngle * M_PI / 180.0f) * (
 			HitR * Scale * m_width + lf->HitR * lf->Scale * lf->m_width
 			- calc_dist(X, Y, lf->X, lf->Y) );
 
 	//bla: Resolve X, Y.
-	if ( X > lf->X ) {
-		X		+= (1.0f - ratio) * diffX;
-		lf->X	-= ratio * diffX;
-	} else {
-		X		-= (1.0f - ratio) * diffX;
-		lf->X	+= ratio * diffX;
-	}
-	if ( Y > lf->Y ) {
-		Y		+= (1.0f - ratio) * diffY;
-		lf->Y	-= ratio * diffY;
-	} else {
-		Y		-= (1.0f - ratio) * diffY;
-		lf->Y	+= ratio * diffY;
-	}
+	X		-= (1.0f - ratio) * diffX;
+	lf->X	+= ratio * diffX;
+	Y		+= (1.0f - ratio) * diffY;
+	lf->Y	-= ratio * diffY;
 
 	//bla: Exceptions for Speed/Angle changes.
-	if ( Frozen > 0 || lf->Frozen > 0)
+	if ( Frozen > 0 || lf->Frozen > 0 )
 		return;
 
 	//bla: Speed transfer.
-	const float newSpeed1 = (1.0f - ratio) * fabs((lf->Speed+Speed)/2.0f) * cos((collAngle - Angle) * M_PI / 180.0f);
-	const float newSpeed2 = ratio * fabs((Speed+lf->Speed)/2.0f) * cos((collAngle - lf->Angle - 180.0f) * M_PI / 180.0f);
-	lf->Speed -= 0.9f * newSpeed2;
-	Speed -= 0.9f * newSpeed1;
+	const float newSpeed1 = (1.0f - ratio) * fabs((lf->Speed+Speed)/2.0f)
+			* cos((collAngle - Angle) * M_PI / 180.0f);
+	const float newSpeed2 = ratio * fabs((lf->Speed+Speed)/2.0f)
+			* cos((collAngle - lf->Angle - 180.0f) * M_PI / 180.0f);
+
+	lf->Speed -= newSpeed2;
+	Speed -= newSpeed1;
 }
 
 const float LifeForm::MaxHealth() const {
