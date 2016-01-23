@@ -17,3 +17,6 @@ before_install:
 
 script:
   - ./deploy/travis-ci/$TARGET/script.sh
+
+after_success:
+ - ./deploy/travis-ci/$TARGET/after-success.sh
