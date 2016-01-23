@@ -36,3 +36,6 @@ script:
 #  - test "$TRAVIS_PULLL_REQUEST" != false && echo "Pull request $TRAVIS_PULL_REQUEST" || true
 #  - mkdir build && cd build && $CMAKE -DCMAKE_INSTALL_PREFIX=../dist .. && make install && cd ..
 
+after_success:
+ - ./deploy/travis-ci/$TARGET/after-success.sh
+
