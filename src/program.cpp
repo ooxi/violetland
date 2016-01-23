@@ -1684,12 +1684,11 @@ void handleLifeForms() {
 
 			//bla: This exception prevents collisions between player: m_arms + m_body and dead/dying LFs
 			//bla: This shouldnt be here ... m_arms shouldnt be part of lifeForms.
-			if ( collCheck->Type > 0 && lifeForm->State < 2 && collCheck->State < 2 ) {
-
-			if ( lifeForm->detectCollide(collCheck) )
-				lifeForm->collisionPush(collCheck);
-			}
-
+			if ( collCheck->Type != LIFEFORM_PLAYER
+					&& lifeForm->State == LIFEFORM_STATE_ALIVE
+					&& collCheck->State == LIFEFORM_STATE_ALIVE )
+				if ( lifeForm->detectCollide(collCheck) )
+					lifeForm->collisionPush(collCheck);
 			--collIt;
 			collCheck = collIt->second;
 		}
