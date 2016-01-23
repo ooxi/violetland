@@ -125,7 +125,7 @@ function deploy_as_zip {
 		
 		# @see http://stackoverflow.com/a/20545763
 		sudo apt-get install -y curl p7zip-full
-		7z a -tzip "${BUILD_DIRECTORY}/${BINTRAY_FILE}.zip" -w "${DIST_DIRECTORY}/."
+		7z a -tzip "${BUILD_DIRECTORY}/${BINTRAY_FILE}.zip" -w "${DIST_DIRECTORY}"
 
 		BINTRAY_RESPONSE=`curl -T "${BUILD_DIRECTORY}/${BINTRAY_FILE}.zip" "-uooxi:${BINTRAY_DEPLOYMENT_API_KEY}" "https://api.bintray.com/content/ooxi/violetland/travis-ci/${BINTRAY_VERSION}/${BINTRAY_DIRECTORY}/${BINTRAY_FILE}.zip?publish=1"`
 
