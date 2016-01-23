@@ -8,6 +8,8 @@ env:
 
   matrix:
      - TARGET='trusty-amd64-gcc'
+	 - TARGET='trusty-amd64-clang'
+	 - TARGET='windows-i686'
 #    - PACKAGES='g++ cmake gettext libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev' CMAKE=cmake VIOLET_CXX=g++
 #    - PACKAGES='clang-3.6 cmake gettext libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev' CMAKE=cmake VIOLET_CXX=clang++
 #    - PACKAGES='mxe-i686-w64-mingw32.static-gcc cmake mxe-i686-w64-mingw32.static-gettext mxe-i686-w64-mingw32.static-sdl mxe-i686-w64-mingw32.static-sdl-ttf mxe-i686-w64-mingw32.static-sdl-mixer mxe-i686-w64-mingw32.static-sdl-image mxe-i686-w64-mingw32.static-boost' CMAKE=/usr/lib/mxe/usr/bin/i686-w64-mingw32.static-cmake
