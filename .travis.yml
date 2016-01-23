@@ -3,19 +3,17 @@ language: cpp
 dist: trusty
 
 env:
+  global:
+     - secure: "aRxEKBXnGy2PWEYtjVX9wBKFIsX738w44/h+8cJX8Tqr5dUNuJ5SzXqvavjrM8guTi8GMh1DgtTcwYIlc+RbjQ1U6ynFeP4BBveYMhyI/18A4EZsIFjcAQ9oaoqLBl8YR77Lk7GVEEohvRjfbdNfnyldjRQe5rSuI2c7s/xlQAk="
+
   matrix:
-    - PACKAGES='g++ cmake gettext libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev' CMAKE=cmake VIOLET_CXX=g++
-    - PACKAGES='clang-3.6 cmake gettext libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev' CMAKE=cmake VIOLET_CXX=clang++
-    - PACKAGES='mxe-i686-w64-mingw32.static-gcc cmake mxe-i686-w64-mingw32.static-gettext mxe-i686-w64-mingw32.static-sdl mxe-i686-w64-mingw32.static-sdl-ttf mxe-i686-w64-mingw32.static-sdl-mixer mxe-i686-w64-mingw32.static-sdl-image mxe-i686-w64-mingw32.static-boost' CMAKE=/usr/lib/mxe/usr/bin/i686-w64-mingw32.static-cmake
-    - PACKAGES='mxe-x86-64-w64-mingw32.static-gcc cmake mxe-x86-64-w64-mingw32.static-gettext mxe-x86-64-w64-mingw32.static-sdl mxe-x86-64-w64-mingw32.static-sdl-ttf mxe-x86-64-w64-mingw32.static-sdl-mixer mxe-x86-64-w64-mingw32.static-sdl-image mxe-x86-64-w64-mingw32.static-boost' CMAKE=/usr/lib/mxe/usr/bin/x86_64-w64-mingw32.static-cmake
+     - TARGET='trusty-amd64-clang'
+     - TARGET='trusty-amd64-gcc'
+     - TARGET='windows-amd64'
+     - TARGET='windows-i686'
 
 before_install:
-  - test -n $VIOLET_CXX && export CXX=$VIOLET_CXX
-  - echo "deb http://pkg.mxe.cc/repos/apt/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mxeapt.list
-  - sudo apt-key adv --keyserver x-hkp://keys.gnupg.net --recv-keys D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB
-  - sudo apt-get update
-  - sudo apt-get install -y $PACKAGES
+  - ./deploy/travis-ci/$TARGET/before-install.sh
 
 script:
-  - mkdir build && cd build && $CMAKE -DCMAKE_INSTALL_PREFIX=../dist .. && make install && cd ..
-
+  - ./deploy/travis-ci/$TARGET/script.sh
