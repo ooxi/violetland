@@ -1,5 +1,5 @@
 #################################################
-#						Weapon File Template								#
+#		Weapon File Template		#
 #################################################
 
 	Attributes seperated by free spaces.
@@ -7,15 +7,15 @@
 	"0 9mm 40 0.28 100 2000 1000 3 2 1 35 -7"
 
 0	9mm	40	0.28	100	2000	1000	3	2	1	35 -7
-|	|		|	|		|		|		|		|	|	|	|
-|	|		|	|		|		|		|		|	|	|	XDiff-YDiff. Position of weapon muzzle, relative to player(X, Y).
-|	|		|	|		|		|		|		|	|	BulletsAtOnce. Projectiles per shot.
-|	|		|	|		|		|		|		|	ReturnForce / Recoil / Accuracy.
-|	|		|	|		|		|		|		BulletSpeed.
-|	|		|	|		|		|		FireRange.
-|	|		|	|		|		ReloadTime.
-|	|		|	|		FireDelayTime.
-|	|		|	Damage.
-|	|		ClipSize.
+|	|	|	|	|	|	|	|	|	|	|
+|	|	|	|	|	|	|	|	|	|	XDiff, YDiff. Position of weapon muzzle, relative to player(X, Y).
+|	|	|	|	|	|	|	|	|	BulletsAtOnce. Projectiles per shot.
+|	|	|	|	|	|	|	|	ReturnForce / Recoil / Accuracy.
+|	|	|	|	|	|	|	BulletSpeed.
+|	|	|	|	|	|	FireRange.
+|	|	|	|	|	ReloadTime.
+|	|	|	|	FireDelayTime.
+|	|	|	Damage.
+|	|	ClipSize.
 |	Shell type to be ejected. [9mm, no]
 Projectile type. [0=Bullet, 1=Laserbeam, 2=Explosive]
