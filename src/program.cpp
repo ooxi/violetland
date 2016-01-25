@@ -1672,10 +1672,6 @@ void handleLifeForms() {
 		--collIt;
 		LifeForm* collCheck = collIt->second;
 		while ( collIt != it ) {
-if ( lifeForm->Angle > 180.0f )
-cout<<"Angle größer = "<<lifeForm->Angle<<endl;
-if ( lifeForm->Angle < -180.0f )
-cout<<"Angle kleiner"<<lifeForm->Angle<<endl;
 
 			//bla: This exception prevents collisions between player: m_arms + m_body and dead/dying LFs
 			//bla: This shouldnt be here ... m_arms shouldnt be part of lifeForms.
