@@ -1683,9 +1683,6 @@ void handleLifeForms() {
 			--collIt;
 			collCheck = collIt->second;
 		}
-//if ( lifeForm->Speed != lifeForm->MaxSpeed() )
-//cout<<"Speed="<<lifeForm->Speed<<"\tAcc="<<lifeForm->Acceleration<<"\tMSpeed="<<lifeForm->MaxSpeed()
-//<<"\tRatio="<<lifeForm->Speed/lifeForm->MaxSpeed()<<endl;
 	}
 }
 
