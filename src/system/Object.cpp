@@ -23,13 +23,21 @@ violet::Object::~Object()
 }
 
 float violet::Object::fixAngle(float angle) {
-	if (angle < 0)
-		angle += 360;
-	else if (angle > 360)
-		angle -= 360;
-
-	return angle;
+	if (angle > 180.0f) {
+		return fixAngle(angle - 360.f);
+	} else if (angle < -180.0f) {
+		return fixAngle(angle + 360.f);
+	} else {
+		return angle;
+	}
 }
+//float violet::Object::fixAngle(float angle) {
+//	if ( angle > 180.0f )
+//		angle -= 360.0f;
+//	if ( angle < -180.0f )
+//		angle += 360.0f;
+//	return angle;
+//}
 
 void violet::Object::turn(float targetAngle, float angleSpeed, int deltaTime) {
 	float arch1;
