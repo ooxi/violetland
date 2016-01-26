@@ -13,8 +13,8 @@ DIRECTORY_OF_TRAVIS_CI_SH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # ===================
 #
 ROOT_DIRECTORY="${DIRECTORY_OF_TRAVIS_CI_SH}/../.."
-BUILD_DIRECTORY="${ROOT_DIRECTORY}/build"
-DIST_DIRECTORY="${ROOT_DIRECTORY}/dist"
+BUILD_DIRECTORY=`mktemp --directory --dry-run`
+DIST_DIRECTORY="${ROOT_DIRECTORY}/dist/${TARGET}"
 
 
 
