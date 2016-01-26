@@ -8,8 +8,8 @@ source "${DIRECTORY_OF_THIS_FILE}/../travis-ci.sh"
 
 
 # Build
-CMAKE=/usr/lib/mxe/usr/bin/x86_64-w64-mingw32.static-cmake
-CXX=g++
+export CMAKE=/usr/lib/mxe/usr/bin/x86_64-w64-mingw32.static-cmake
+export CXX=g++
 
 mkdir "${BUILD_DIRECTORY}" && cd "${BUILD_DIRECTORY}" && $CMAKE -DCMAKE_INSTALL_PREFIX=${DIST_DIRECTORY} "${ROOT_DIRECTORY}" && make install
 
