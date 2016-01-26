@@ -84,7 +84,7 @@ void LifeForm::process(int deltaTime) {
 void LifeForm::move(float direction, int deltaTime) {
 
 	if ( fabs(Speed) > 2.0f * MaxSpeed() )
-		Speed *= 0.75f;
+		Speed *= 0.95f;
 
 	if (m_walkDelay > 0)
 		return;
@@ -99,7 +99,7 @@ void LifeForm::move(float direction, int deltaTime) {
 		else if ( Speed - Acceleration * deltaTime < MaxSpeed() )
 			Speed = MaxSpeed();
 		else
-			Speed *= 0.95f;
+			Speed -= 2.0f * Acceleration * deltaTime;
 	}
 
 	turn(direction, MaxSpeed(), deltaTime);
@@ -110,32 +110,48 @@ void LifeForm::collisionPush(LifeForm* lf) {
 	//bla: Overlapping distance seperated by axis, collision angle and ratio.
 	const float ratio = 0.5f * ( getWeight() / (getWeight() + lf->getWeight())
 			+ getStrength() / (getStrength() + lf->getStrength()) );
-	const float collAngle = calc_angle(X, Y, lf->X, lf->Y);
-	const float diffX = sin(collAngle * M_PI / 180.0f) * (
+	const float collAngle1 = calc_angle(X, Y, lf->X, lf->Y);
+	const float collAngle2 = collAngle1 > 0.0f ?
+			collAngle1 - 180.0f :
+			collAngle1 + 180.0f;
+	const float XDiff = sin(collAngle1 * M_PI / 180.0f) * (
 			HitR * Scale * m_width + lf->HitR * lf->Scale * lf->m_width
 			- calc_dist(X, Y, lf->X, lf->Y) );
-	const float diffY = cos(collAngle * M_PI / 180.0f) * (
+	const float YDiff = cos(collAngle1 * M_PI / 180.0f) * (
 			HitR * Scale * m_width + lf->HitR * lf->Scale * lf->m_width
 			- calc_dist(X, Y, lf->X, lf->Y) );
 
 	//bla: Resolve X, Y.
-	X		-= (1.0f - ratio) * diffX;
-	lf->X	+= ratio * diffX;
-	Y		+= (1.0f - ratio) * diffY;
-	lf->Y	-= ratio * diffY;
+	X	-= (1.0f - ratio) * XDiff;
+	lf->X	+= ratio * XDiff;
+	Y	+= (1.0f - ratio) * YDiff;
+	lf->Y	-= ratio * YDiff;
 
 	//bla: Exceptions for Speed/Angle changes.
 	if ( Frozen > 0 || lf->Frozen > 0 )
 		return;
 
-	//bla: Speed transfer.
-	const float newSpeed1 = (1.0f - ratio) * fabs((lf->Speed+Speed)/2.0f)
-			* cos((collAngle - Angle) * M_PI / 180.0f);
-	const float newSpeed2 = ratio * fabs((lf->Speed+Speed)/2.0f)
-			* cos((collAngle - lf->Angle - 180.0f) * M_PI / 180.0f);
+	//bla: Angle and Speed deltas.
+	const float dAngle1 = fixAngle(collAngle2 - Angle) * pow( (1.0f - ratio)
+			* fabs(lf->Speed) / (fabs(lf->Speed) + lf->MaxSpeed()), 2 )
+			* sin((collAngle1 - Angle) * M_PI / 180.0f);
 
-	lf->Speed -= newSpeed2;
-	Speed -= newSpeed1;
+	const float dAngle2 = fixAngle(collAngle1 - lf->Angle) * pow( ratio
+			* fabs(Speed) / (fabs(Speed) + MaxSpeed()), 2 )
+			* sin((collAngle2 - lf->Angle) * M_PI / 180.0f);
+
+	const float dSpeed1 = (1.0f - ratio) * ( fabs(lf->Speed) + fabs(Speed) / 2.0f )
+			* cos((collAngle1 - Angle) * M_PI / 180.0f);
+
+	const float dSpeed2 = ratio * ( fabs(Speed) + fabs(lf->Speed) / 2.0f )
+			* cos((collAngle2 - lf->Angle) * M_PI / 180.0f);
+
+	//bla: Angle and Speed exchange.
+	Angle -= dAngle1;
+	lf->Angle -= dAngle2;
+
+	Speed -= dSpeed1;
+	lf->Speed -= dSpeed2;
 }
 
 const float LifeForm::MaxHealth() const {
