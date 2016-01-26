@@ -11,4 +11,5 @@ source "${DIRECTORY_OF_THIS_FILE}/../travis-ci.sh"
 export CMAKE=cmake
 export CXX=clang++-3.6
 
-mkdir "${BUILD_DIRECTORY}" && cd "${BUILD_DIRECTORY}" && $CMAKE -DCMAKE_INSTALL_PREFIX=${DIST_DIRECTORY} "${ROOT_DIRECTORY}" && make install
+mkdir -p "${BUILD_DIRECTORY}" && cd "${BUILD_DIRECTORY}" && $CMAKE -DCMAKE_INSTALL_PREFIX=${DIST_DIRECTORY} "${ROOT_DIRECTORY}" && make install
+
