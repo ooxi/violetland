@@ -83,6 +83,15 @@ add_definitions(-DVIOLETLAND_VERSION="${VIOLETLAND_VERSION}")
 
 
 
+# Windows resources
+set(VIOLET_RESOURCE_DIR rc)
+
+set(VIOLET_RESOURCES
+	# rc/
+	${VIOLET_RESOURCE_DIR}/icon.rc
+)
+
+
 # Sources, ordered by
 #
 #  1) first files, than directories
@@ -186,7 +195,7 @@ endif()
 
 # Build executable
 include_directories(${VIOLET_INCLUDE_DIRS})
-add_executable(violetland ${VIOLET_SOURCES})
+add_executable(violetland ${VIOLET_RESOURCES} ${VIOLET_SOURCES})
 target_link_libraries(violetland ${VIOLET_LIBRARIES})
 
 
