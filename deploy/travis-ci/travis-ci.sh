@@ -13,8 +13,8 @@ DIRECTORY_OF_TRAVIS_CI_SH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # ===================
 #
 ROOT_DIRECTORY="${DIRECTORY_OF_TRAVIS_CI_SH}/../.."
-BUILD_DIRECTORY="${ROOT_DIRECTORY}/build"
-DIST_DIRECTORY="${ROOT_DIRECTORY}/dist"
+BUILD_DIRECTORY="${ROOT_DIRECTORY}/build/${TARGET}"
+DIST_DIRECTORY="${ROOT_DIRECTORY}/dist/${TARGET}"
 
 
 
@@ -101,7 +101,7 @@ function deploy_as_tarbz2 {
 		
 		sudo apt-get install -y curl tar bzip2
 		mv "${DIST_DIRECTORY}" "${ROOT_DIRECTORY}/${BINTRAY_FILE}"
-		tar -cjvf "${BUILD_DIRECTORY}/${BINTRAY_FILE}.tar.bz2" "${ROOT_DIRECTORY}/${BINTRAY_FILE}"
+		tar -cjvf "${BUILD_DIRECTORY}/${BINTRAY_FILE}.tar.bz2" "${ROOT_DIRECTORY}/${BINTRAY_FILE}" || exit 1
 
 		BINTRAY_RESPONSE=`curl -T "${BUILD_DIRECTORY}/${BINTRAY_FILE}.tar.bz2" "-uooxi:${BINTRAY_DEPLOYMENT_API_KEY}" "https://api.bintray.com/content/ooxi/violetland/travis-ci/${BINTRAY_VERSION}/${BINTRAY_DIRECTORY}/${BINTRAY_FILE}.tar.bz2?publish=1"`
 
@@ -129,7 +129,7 @@ function deploy_as_zip {
 		
 		# @see http://stackoverflow.com/a/20545763
 		sudo apt-get install -y curl p7zip-full
-		7z a -tzip "${BUILD_DIRECTORY}/${BINTRAY_FILE}.zip" -w "${DIST_DIRECTORY}/share/violetland"
+		7z a -tzip "${BUILD_DIRECTORY}/${BINTRAY_FILE}.zip" -w "${DIST_DIRECTORY}/share/violetland" || exit 1
 
 		BINTRAY_RESPONSE=`curl -T "${BUILD_DIRECTORY}/${BINTRAY_FILE}.zip" "-uooxi:${BINTRAY_DEPLOYMENT_API_KEY}" "https://api.bintray.com/content/ooxi/violetland/travis-ci/${BINTRAY_VERSION}/${BINTRAY_DIRECTORY}/${BINTRAY_FILE}.zip?publish=1"`
 

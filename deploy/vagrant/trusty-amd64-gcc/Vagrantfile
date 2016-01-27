@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+	config.vm.box = "ubuntu/trusty64"
+
+
+	# Sync source
+	config.vm.synced_folder "../../../", "/violetland"
+	
+	config.vm.provision "shell", inline: <<-SHELL
+		export TARGET=trusty-amd64-gcc
+
+		# Install dependencies
+		/violetland/deploy/travis-ci/${TARGET}/before-install.sh
+
+		# Initialize submodules
+		sudo apt-get install -y git
+		bash -c "cd /violetland && git submodule init && git submodule update"
+
+		# Compile violetland
+		/violetland/deploy/travis-ci/${TARGET}/script.sh
+	SHELL
+
+end
+
+
