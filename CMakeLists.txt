@@ -193,6 +193,24 @@ endif()
 
 
 
+# Generated executable should use the GUI subsystem on Windows instead of the
+# character subsystem (thus not spawning a console window).
+#
+# @see https://msdn.microsoft.com/en-us/windows/hardware/gg463119.aspx
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+
+	# GCC's `-mwindows` will instruct the linker to set the PE header subsystem
+	# type appropriately
+	#
+	# @see https://gcc.gnu.org/onlinedocs/gcc-5.3.0/gcc/x86-Windows-Options.html#x86-Windows-Options
+	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mwindows")
+	endif()
+
+endif()
+
+
+
 # Build executable
 include_directories(${VIOLET_INCLUDE_DIRS})
 add_executable(violetland ${VIOLET_RESOURCES} ${VIOLET_SOURCES})
