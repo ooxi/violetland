@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[+]` [Windows executable uses GUI subsystem](https://github.com/ooxi/violetland/pull/111) thus not spawning a console
  * `[+]` [Icon for Windows executables](https://github.com/ooxi/violetland/pull/109)
  * `[+]` [Isolated build environment](https://github.com/ooxi/violetland/pull/107) using [Vagrant](https://www.vagrantup.com/)
  * `[+]` [Automatic Windows builds](https://github.com/ooxi/violetland/pull/105), deploying Windows development snapshots to [Bintray](https://dl.bintray.com/ooxi/violetland/travis-ci/)
