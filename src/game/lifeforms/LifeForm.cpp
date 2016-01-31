@@ -12,6 +12,7 @@ LifeForm::LifeForm(float x, float y, int w, int h) :
 	Strength = 1.0f;
 	Agility = 1.0f;
 	Vitality = 1.0f;
+	Weight = 1.0f;
 	m_health = MaxHealth();
 	State = LIFEFORM_STATE_ALIVE;
 	m_lastAttackTime = SDL_GetTicks();
