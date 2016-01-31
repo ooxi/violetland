@@ -12,7 +12,7 @@ Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
 	Id = "20-" + Id;
 	Xp = 0;
 	LastLevelXp = 0;
-	NextLevelXp = 100;
+	NextLevelXp = 200;
 	Kills = 0;
 	LevelPoints = 0;
 	ActionMode = PLAYER_ACT_MODE_FIRE;
