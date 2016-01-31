@@ -100,7 +100,7 @@ const float LifeForm::MaxHealth() const {
 }
 
 const float LifeForm::ChanceToEvade() const {
-	float chance = (getAgility() - 1.0f) / 4.0f + (getStrength() - 1.0f) / 4.0f;
+	float chance = ( getAgility() + getStrength() - 2.0f ) / ( getAgility() + getStrength() + 2.0f );
 	if (chance < 0) chance = 0;
 	return chance;
 }
