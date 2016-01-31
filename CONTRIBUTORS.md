@@ -3,7 +3,8 @@ violetland contributors (sorted alphabeticaly)
 
 * **[bla-rs](https://github.com/bla-rs)**
 
-	 * Documentation
+	 * [Gameplay balancing](https://github.com/ooxi/violetland/pull/115)
+	 * [Weapon Documentation](https://github.com/ooxi/violetland/pull/98)
 
 * **Charlie Hron Weigle**
 
