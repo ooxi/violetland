@@ -95,8 +95,9 @@ void LifeForm::move(float direction, int deltaTime) {
 }
 
 const float LifeForm::MaxHealth() const {
-	return getVitality() > 0.8f ? 1.0f + (getVitality() - 1.0f) * 2.0f
-			+ (getStrength() - 1.0f) : 0.4f;
+	return ( getVitality() + getStrength() ) > 0.6f ?
+			( 4 * getVitality() + getStrength() ) / ( getStrength() + getVitality() + 3.0f )
+			: 0.2f;
 }
 
 const float LifeForm::ChanceToEvade() const {
