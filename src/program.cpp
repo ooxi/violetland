@@ -1025,7 +1025,6 @@ void levelUp(Player* player) {
 
 
 
-
 /**
  * Classic controller where the player's direction is absolute (press arrow up
  * and Violet will go north)
