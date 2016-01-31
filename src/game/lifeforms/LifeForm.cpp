@@ -117,7 +117,7 @@ const bool LifeForm::Attack() {
 }
 
 const float LifeForm::Damage() const {
-	return getStrength() / 8.0f;
+	return getStrength() / ( getStrength() + 6.0f );
 }
 
 const int LifeForm::AttackDelay() const {
