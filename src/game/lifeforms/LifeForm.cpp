@@ -136,7 +136,7 @@ const float LifeForm::ReloadSpeedMod() const {
 }
 
 const float LifeForm::WeaponRetForceMod() const {
-	return getStrength() > 1.0f ? 1.0f - (getStrength() - 1.0f) * 1.1f : 1.0f;
+	return 1.0f - ( getStrength() - 1.0f ) / ( getStrength() + 1.0f );
 }
 
 const float LifeForm::fixHealth(float health) const {
