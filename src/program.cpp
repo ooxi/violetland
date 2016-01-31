@@ -258,10 +258,10 @@ string getDefaultName() {
 #ifdef _WIN32
 	return DEFAULT_CHAR_NAME;
 #else
-
+	
 	// Try to read username from system environment
 	char* user = getenv("USER");
-
+	
 	// `user' can be null if `USER' environment property not found
 	//
 	// @see http://linux.die.net/man/3/getenv
@@ -269,7 +269,7 @@ string getDefaultName() {
 	if (!user) {
 		return DEFAULT_CHAR_NAME;
 	}
-
+	
 	string name = user;
 	if (name.empty()) {
 		struct passwd *p;
@@ -578,7 +578,7 @@ void OptionsWindow::onResolutionUpClick() {
 void ControlsMenuWindow::onControlStyleClick() {
 	enum ControlStyle style = GetNextControlStyle(config->Control);
 	config->Control = style;
-
+	
 	std::cout << (boost::format(_("Changed control style to %s.")) % ControlStyleToString(style)) << std::endl;
 	config->write();
 
@@ -1099,7 +1099,7 @@ static void handlePlayerModernStyle(Player* player) {
 		if (-1 == parallel) {
 			direction = Object::fixAngle(direction + 180.f);
 		}
-
+		
 		/* Strafe left
 		 */
 		if (-1 == perpendicular) {
@@ -1107,7 +1107,7 @@ static void handlePlayerModernStyle(Player* player) {
 		} else if (1 == perpendicular) {
 			direction = Object::fixAngle(direction + 90.f);
 		}
-
+			
 		/* Go in the desired direction :-)
 		 */
 		player->move(
