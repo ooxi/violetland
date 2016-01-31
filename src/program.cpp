@@ -1021,16 +1021,6 @@ void levelUp(Player* player) {
 	player->setHealth(player->MaxHealth());
 }
 
-static float fixFuckedupAngle(float angle) {
-	if (angle > 180.1f) {
-		return fixFuckedupAngle(angle - 360.f);
-	} else if (angle < -180.1f) {
-		return fixFuckedupAngle(angle + 360.f);
-	} else {
-		return angle;
-	}
-}
-
 
 
 
@@ -1107,15 +1097,15 @@ static void handlePlayerModernStyle(Player* player) {
 		 * going
 		 */
 		if (-1 == parallel) {
-			direction = fixFuckedupAngle(direction + 180.f);
+			direction = Object::fixAngle(direction + 180.f);
 		}
 		
 		/* Strafe left
 		 */
 		if (-1 == perpendicular) {
-			direction = fixFuckedupAngle(direction - 90.f);
+			direction = Object::fixAngle(direction - 90.f);
 		} else if (1 == perpendicular) {
-			direction = fixFuckedupAngle(direction + 90.f);
+			direction = Object::fixAngle(direction + 90.f);
 		}
 			
 		/* Go in the desired direction :-)
