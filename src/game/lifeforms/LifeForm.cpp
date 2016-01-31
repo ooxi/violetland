@@ -126,7 +126,7 @@ const int LifeForm::AttackDelay() const {
 }
 
 const float LifeForm::MaxSpeed() const {
-	return getAgility() / 5.0f;
+	return 1.5f * getAgility() / ( getAgility() * getWeight() + 7.5f );
 }
 
 const float LifeForm::HealthRegen() const {
