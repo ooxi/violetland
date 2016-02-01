@@ -97,9 +97,9 @@ In addition you can install the executable and the game data to the separate dir
 
 ### NOTE FOR FEDORA USERS
 
-In order to build Violetland on Fedora 17, you need to install the following packages
+In order to build Violetland on Fedora 23, you need to install the following packages
 
-    # yum install boost-devel cmake gcc-c++ SDL-devel SDL_image-devel SDL_mixer-devel SDL_ttf-devel
+    # dnf install boost-devel cmake make gcc-c++ SDL-devel SDL_image-devel SDL_mixer-devel SDL_ttf-devel
 
 The rest of the build and installation procedure is identical to Ubuntu.
 
