@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[+]` [Local preview of GitHub flavoured Markdown](https://github.com/ooxi/violetland/pull/127)
  * `[*]` [Violet will level up faster](https://github.com/ooxi/violetland/pull/115)
  * `[+]` [Windows executable uses GUI subsystem](https://github.com/ooxi/violetland/pull/111) thus not spawning a console
  * `[+]` [Icon for Windows executables](https://github.com/ooxi/violetland/pull/109)
