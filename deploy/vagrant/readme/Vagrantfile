@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+	config.vm.box = "ubuntu/trusty64"
+
+
+	# Sync source
+	config.vm.synced_folder "../../../", "/violetland"
+
+	# Forward grip port 6419
+	config.vm.network "forwarded_port", guest: 6419, host: 6419
+	
+	# Install grip via pip
+	config.vm.provision "shell", inline: <<-SHELL
+		apt-get update
+		apt-get install -y python-pip
+		pip install grip
+
+		cat <<EOT >> preview.sh
+#!/bin/bash
+
+bash -c "cd /violetland; find . -type f -iwholename '*.md'; grip . 0.0.0.0"
+EOT
+
+		chmod +x preview.sh
+	SHELL
+
+end
+
+
