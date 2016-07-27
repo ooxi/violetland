@@ -19,7 +19,7 @@ http://groups.google.com/group/violetland
 
 Прежде чем скачивать игру, убедитесь, что у вас установлена видеокарта и свежие драйвера для нее с поддержкой аппаратного ускорения OpenGL.
 
-На данный момент поддерживаются операционные системы gnu/linux, windows, freebsd и mac os x.
+На данный момент поддерживаются операционные системы gnu/linux, windows, freebsd, netbsd и mac os x.
 
 3. WINDOWS
 

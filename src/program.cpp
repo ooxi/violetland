@@ -246,8 +246,11 @@ void printVersion() {
 	env = "GNU/LINUX";
 #endif //__linux__
 #ifdef __FreeBSD__
-	env = "BSD";
+	env = "FREEBSD";
 #endif //__FreeBSD__
+#ifdef __NetBSD__
+	env = "NETBSD";
+#endif //__NetBSD__
 #ifdef __APPLE__
 	env = "MAC";
 #endif //__APPLE__

@@ -11,7 +11,7 @@ Violetland is an open source cross-platform game similar to Crimsonland. In this
  * character improves with experience.
  * firearms, hand grenades, teleports, bonuses.
  * [languages](http://www.getlocalization.com/violetland/): english, [french](https://www.getlocalization.com/violetland/editor/8553/), [galician](https://www.getlocalization.com/violetland/editor/8554/), [german](https://www.getlocalization.com/violetland/editor/8549/), [russian](https://www.getlocalization.com/violetland/editor/8551/), [spanish](https://www.getlocalization.com/violetland/editor/8552/).
- * works on gnu/linux, freebds, windows, mac.
+ * works on gnu/linux, freebds, netbsd, windows, mac.
 
 ### Community
 
@@ -35,7 +35,7 @@ SYSTEM REQUIREMENTS
 
 Before you enjoy the game make sure that you have a 3D-accelerated video card and latest drivers for your card with 3D-acceleration support.
 
-Currently are supported: windows, gnu/linux, freebsd, mac os x.
+Currently are supported: windows, gnu/linux, freebsd, netbsd, mac os x.
 
 WINDOWS
 -------
@@ -117,6 +117,20 @@ OpenBSD
     $ make install
 
 
+NetBSD (pkgsrc)
+---------------
+
+[NetBSD](http://www.netbsd.org/) ships with violetland in pkgsrc.
+
+The easiest way to install the game is with pkgin:
+
+    pkgin install violetland
+
+Alternatively install from sources:
+
+    cd /usr/pkgsrc/games/violetland && make install
+
+
 Controls
 --------
 
@@ -132,4 +146,3 @@ Controls
  * `esc` - Main menu pause
  * `right mouse click` - Fire
  * `left mouse click` - Reload
-

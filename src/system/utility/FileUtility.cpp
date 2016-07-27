@@ -35,7 +35,7 @@ violet::FileUtility* violet::FileUtility::ofWindows(char const* argvZero) {
  *
  * @return Initialized FileUtility instance for UNIX
  */
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
 violet::FileUtility* violet::FileUtility::ofUnix() {
 	
 	/* Application binary
@@ -96,7 +96,7 @@ violet::FileUtility* violet::FileUtility::ofOs(char const* argvZero) {
 	 */
 #if defined(_WIN32)
 	return FileUtility::ofWindows(argvZero);
-#elif defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#elif defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
 	return FileUtility::ofUnix();
 #else
 	#error Missing environment specification
