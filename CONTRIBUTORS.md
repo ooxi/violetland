@@ -18,6 +18,11 @@ violetland contributors (sorted alphabeticaly)
 
 	* [Added tags for older releases](https://github.com/ooxi/violetland/issues/70) by doing an extensive history search
 
+* **[Kamil Rytarowski](https://github.com/krytarowski)**
+
+	* [NetBSD support](https://github.com/ooxi/violetland/pull/130)
+	* [NetBSD maintainer](http://cvsweb.netbsd.org/bsdweb.cgi/pkgsrc/games/violetland/)
+
 * **[Nikita Makarov](https://github.com/guidebot)**
 
 	* **Founding developer**
