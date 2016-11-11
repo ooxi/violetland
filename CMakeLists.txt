@@ -236,3 +236,10 @@ install(DIRECTORY
 DESTINATION ${relResPath}
 PATTERN ".*" EXCLUDE
 PATTERN "*~" EXCLUDE)
+install(FILES
+    violetland.desktop
+DESTINATION share/applications)
+install(FILES
+    icon-light.png
+DESTINATION share/pixmaps
+RENAME violetland.png)
