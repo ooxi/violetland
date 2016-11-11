@@ -1,6 +1,3 @@
 [submodule "lib/CMake-Gettext"]
 	path = lib/CMake-Gettext
 	url = https://github.com/jarro2783/CMake-Gettext.git
-[submodule "lib/fcitx"]
-	path = lib/fcitx
-	url = https://github.com/fcitx/fcitx.git
