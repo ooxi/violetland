@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[!]` [Removed `#pragma comment` compiler warnings](https://github.com/ooxi/violetland/pull/135)
  * `[*]` [Violet will speed up slower](https://github.com/ooxi/violetland/pull/120)
  * `[*]` [Use standard libintl detection module](https://github.com/ooxi/violetland/pull/134)
  * `[+]` [Local preview of GitHub flavoured Markdown](https://github.com/ooxi/violetland/pull/127)

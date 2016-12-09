@@ -1,12 +1,5 @@
 // MS Windows compatibility
 #ifdef _WIN32
-#pragma comment(lib, "SDL")
-#pragma comment(lib, "SDLmain")
-#pragma comment(lib, "SDL_image")
-#pragma comment(lib, "SDL_ttf")
-#pragma comment(lib, "SDL_mixer")
-#pragma comment(lib, "opengl32")
-#pragma comment(lib, "libintl")
 #define _USE_MATH_DEFINES
 #include <windows.h>
 #include <winbase.h>
