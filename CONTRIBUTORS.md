@@ -17,6 +17,7 @@ violetland contributors (sorted alphabeticaly)
 * **[Dmitry Marakasov](https://github.com/AMDmi3)**
 
 	* [Added tags for older releases](https://github.com/ooxi/violetland/issues/70) by doing an extensive history search
+	* [Simplified FreeBSD packaging](https://github.com/ooxi/violetland/pull/134)
 
 * **[Kamil Rytarowski](https://github.com/krytarowski)**
 
