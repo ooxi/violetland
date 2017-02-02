@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[!]` [Fixed gettext detection](https://github.com/ooxi/violetland/pull/137)
  * `[!]` [Removed `#pragma comment` compiler warnings](https://github.com/ooxi/violetland/pull/135)
  * `[*]` [Violet will speed up slower](https://github.com/ooxi/violetland/pull/120)
  * `[*]` [Use standard libintl detection module](https://github.com/ooxi/violetland/pull/134)
