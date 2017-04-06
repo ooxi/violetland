@@ -66,6 +66,7 @@ First download and unpack the distribution package or get files from the reposit
 
 Next go to the root distribution directory and make the program using cmake (the default install prefix is `/usr/local`):
 
+    $ git submodule init
     $ git submodule update
     $ mkdir build
     $ cd build
