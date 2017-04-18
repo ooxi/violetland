@@ -134,7 +134,7 @@ const float LifeForm::HealthRegen() const {
 }
 
 const float LifeForm::ReloadSpeedMod() const {
-	return 1.0f / getAgility();
+	return 2.0f / 2.0f * getAgility();
 }
 
 const float LifeForm::WeaponRetForceMod() const {
