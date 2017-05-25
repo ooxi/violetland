@@ -40,21 +40,13 @@ violet::FileUtility* violet::FileUtility::ofUnix() {
 	
 	/* Application binary
 	 */
-#ifndef INSTALL_PREFIX
-#define INSTALL_PREFIX "/usr/local";
-#endif //INSTALL_PREFIX
 	boost::filesystem::path application = INSTALL_PREFIX;
 	application /= "bin";
 	
 	
 	/* Application resources
 	 */
-#ifndef DATA_INSTALL_DIR
-	boost::filesystem::path resources = application;
-	resources /= "../share/violetland";
-#else //DATA_INSTALL_DIR
-	resources = DATA_INSTALL_DIR;
-#endif //DATA_INSTALL_DIR
+	boost::filesystem::path resources = DATA_INSTALL_DIR;
 	
 	
 	/* User data
