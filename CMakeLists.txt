@@ -161,13 +161,6 @@ set(VIOLET_SOURCES
 
 
 
-# Specify C++ standard, I would love to use C++11 but at least on Ubuntu boost
-# is compiled with C++98 which will result in linking errors. Seems to be fixed
-# in boost 1.57 but Ubuntu before wily does not ship that version.
-#
-# @see https://svn.boost.org/trac/boost/ticket/6779
-add_compile_options(-std=c++98)
-
 # Compiler diagnostics are most useful
 add_compile_options(-Wall -Wextra -Wno-ignored-qualifiers -Wno-unused-parameter)
 
