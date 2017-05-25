@@ -209,10 +209,12 @@ add_definitions(-DDATA_INSTALL_DIR="${CMAKE_INSTALL_FULL_DATADIR}/violetland/")
 
 install(TARGETS violetland DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES
-	README.md
-	README_RU.TXT
 	icon-light.png
 DESTINATION ${CMAKE_INSTALL_DATADIR}/violetland)
+install(FILES
+	README.md
+	README_RU.TXT
+DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(DIRECTORY
 	fonts
 	sounds
