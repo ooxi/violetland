@@ -4,11 +4,11 @@ PROJECT(violetland)
 # identify Clang, otherwise we can go back to 2.6.0
 #
 # @see https://cmake.org/cmake/help/v2.8.10/cmake.html#variable:CMAKE_LANG_COMPILER_ID
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
 
-
+# Adhere to GNU filesystem layout conventions
+include(GNUInstallDirs)
 
 
 # SDL
@@ -57,15 +57,8 @@ set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${Intl_LIBRARIES})
 
 
 
-# LOCALEDIR must be set up before including po/CMakeLists.txt
-if (DEFINED LOCALE_INSTALL_DIR)
-	set(LOCALEDIR "${LOCALE_INSTALL_DIR}")
-else(DEFINED LOCALE_INSTALL_DIR)
-	set(LOCALEDIR "${CMAKE_INSTALL_PREFIX}/locale")
-endif(DEFINED LOCALE_INSTALL_DIR)
-
 add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
-add_definitions(-DLOCALE_DIR="${LOCALEDIR}")
+add_definitions(-DLOCALE_DIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 
 add_subdirectory(po)
 
@@ -168,21 +161,13 @@ set(VIOLET_SOURCES
 
 
 
-# Specify C++ standard, I would love to use C++11 but at least on Ubuntu boost
-# is compiled with C++98 which will result in linking errors. Seems to be fixed
-# in boost 1.57 but Ubuntu before wily does not ship that version.
-#
-# @see https://svn.boost.org/trac/boost/ticket/6779
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
-
 # Compiler diagnostics are most useful
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wno-ignored-qualifiers -Wno-unused-parameter")
+add_compile_options(-Wall -Wextra -Wno-ignored-qualifiers -Wno-unused-parameter)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	# clang++ does not understand boost_static_assert_typedef's unused
 	# attribute
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef")
+	add_compile_options(-Wno-unused-local-typedef)
 endif()
 
 
@@ -198,7 +183,7 @@ if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
 	#
 	# @see https://gcc.gnu.org/onlinedocs/gcc-5.3.0/gcc/x86-Windows-Options.html#x86-Windows-Options
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mwindows")
+		add_compile_options(-mwindows)
 	endif()
 
 endif()
@@ -213,19 +198,16 @@ target_link_libraries(violetland ${VIOLET_LIBRARIES})
 
 
 # Install executable and assets
-if(DEFINED DATA_INSTALL_DIR)
-	set(relResPath ${DATA_INSTALL_DIR})
-	add_definitions(-DDATA_INSTALL_DIR="${DATA_INSTALL_DIR}/")
-else(DEFINED DATA_INSTALL_DIR)
-	set(relResPath share/violetland/)
-endif(DEFINED DATA_INSTALL_DIR)
+add_definitions(-DDATA_INSTALL_DIR="${CMAKE_INSTALL_FULL_DATADIR}/violetland/")
 
-install(TARGETS violetland DESTINATION bin)
+install(TARGETS violetland DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES
+	icon-light.png
+DESTINATION ${CMAKE_INSTALL_DATADIR}/violetland)
 install(FILES
 	README.md
 	README_RU.TXT
-	icon-light.png
-DESTINATION ${relResPath})
+DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(DIRECTORY
 	fonts
 	sounds
@@ -233,13 +215,13 @@ install(DIRECTORY
 	monsters
 	weapon
 	music
-DESTINATION ${relResPath}
+DESTINATION ${CMAKE_INSTALL_DATADIR}/violetland
 PATTERN ".*" EXCLUDE
 PATTERN "*~" EXCLUDE)
 install(FILES
     violetland.desktop
-DESTINATION share/applications)
+DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
 install(FILES
     icon-light.png
-DESTINATION share/pixmaps
+DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps
 RENAME violetland.png)
