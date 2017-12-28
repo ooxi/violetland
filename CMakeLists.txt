@@ -1,11 +1,10 @@
 PROJECT(violetland)
 
-# CMake 2.8.10 documents the `CMAKE_<LANG>_COMPILER_ID' variable necessary to
-# identify Clang, otherwise we can go back to 2.6.0
-#
-# @see https://cmake.org/cmake/help/v2.8.10/cmake.html#variable:CMAKE_LANG_COMPILER_ID
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+# CMake 3.2 is necessary in order to use FindIntl. If you want to compile
+# violetland on an older system (like plain Ubuntu 14.04) you can revert
+# da80351581f826f0f4c1c2f7b494ed51a6acec51 and it will work most likely down to
+# CMake 2.8.12
+CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 
 
 
