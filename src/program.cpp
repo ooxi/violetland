@@ -581,6 +581,17 @@ void ControlsMenuWindow::onControlStyleClick() {
 	refresh();
 }
 
+void ControlsMenuWindow::onControlPresetClick() {
+    config->ControlPreset++;
+    if(config->ControlPreset > VIOLET_CONTROL_PRESET_NUMBER)
+	config->ControlPreset = 1;
+
+    std::cout << "Changed control preset to " << config->ControlPreset << "." << std::endl;
+    config->write();
+
+    refresh();
+}
+
 void drawWindows() {
 	if (!windows.empty()) {
 		std::map<std::string, Window*>::iterator win, victim;
@@ -619,13 +630,13 @@ void ControlsMenuWindow::onEventClick(std::string elementName) {
 
 		switch (sdlEvent.type) {
 		case SDL_KEYDOWN:
-			config->PlayerInputBinding[key].Type = InputHandler::Keyboard;
-			config->PlayerInputBinding[key].Value = sdlEvent.key.keysym.sym;
+			config->PlayerInputBinding[key].Type[config->ControlPreset-1] = InputHandler::Keyboard;
+			config->PlayerInputBinding[key].Value[config->ControlPreset-1] = sdlEvent.key.keysym.sym;
 			ok = true;
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			config->PlayerInputBinding[key].Type = InputHandler::Mouse;
-			config->PlayerInputBinding[key].Value = sdlEvent.button.button;
+			config->PlayerInputBinding[key].Type[config->ControlPreset-1] = InputHandler::Mouse;
+			config->PlayerInputBinding[key].Value[config->ControlPreset-1] = sdlEvent.button.button;
 			ok = true;
 			break;
 		case SDL_QUIT:
@@ -636,7 +647,7 @@ void ControlsMenuWindow::onEventClick(std::string elementName) {
 	}
 
 	cout << (boost::format(_("Bind action %s to key %s.")) % elementName
-			% InputHandler::getKeyName(config->PlayerInputBinding[key]))
+		 % InputHandler::getKeyName(config->PlayerInputBinding[key].Type[config->ControlPreset-1],config->PlayerInputBinding[key].Value[config->ControlPreset-1]))
 			<< endl;
 
 	config->write();
