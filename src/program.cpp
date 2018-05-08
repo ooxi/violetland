@@ -581,6 +581,17 @@ void ControlsMenuWindow::onControlStyleClick() {
 	refresh();
 }
 
+void ControlsMenuWindow::onControlPresetClick() {
+    config->ControlPreset++;
+    if(config->ControlPreset > 4)
+	config->ControlPreset = 1;
+
+    std::cout << "Changed control preset to " << config->ControlPreset << "." << std::endl;
+    config->write();
+
+    refresh();
+}
+
 void drawWindows() {
 	if (!windows.empty()) {
 		std::map<std::string, Window*>::iterator win, victim;

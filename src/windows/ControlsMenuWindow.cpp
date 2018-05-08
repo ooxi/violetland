@@ -73,6 +73,20 @@ void violet::ControlsMenuWindow::refresh() {
 	);
 	addHandler(Window::hdl_lclick, "control-style", boost::bind(&ControlsMenuWindow::onControlStyleClick, this));
 
+	/* Change the control preset
+	 */
+	addElement("control-preset", _("Control Preset"),
+			m_text,
+			col2_l,  (m_text->getHeight() + 35) * 2.0f,
+			TextManager::LEFT, TextManager::MIDDLE
+	);
+	addElement("control-preset-value", ControlPresetToString(m_config->ControlPreset),
+			m_text,
+			col2_r,  (m_text->getHeight() + 35) * 2.0f,
+			TextManager::RIGHT, TextManager::MIDDLE
+	);
+	addHandler(Window::hdl_lclick, "control-preset", boost::bind(&ControlsMenuWindow::onControlPresetClick, this));
+
 
 	unsigned col1_items = (InputHandler::GameInputEventsCount + 1) / 2;
 

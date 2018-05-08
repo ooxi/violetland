@@ -19,6 +19,7 @@ violet::Configuration::Configuration(FileUtility* fileUtility) {
 	AutoWeaponPickup = true;
 	FriendlyFire = false;
 	Control = violet::E_CONTROL_STYLE_MODERN;
+	ControlPreset = 1;
 
 	PlayerInputBinding[InputHandler::Teleport].Value = SDLK_q;
 	PlayerInputBinding[InputHandler::MoveLeft].Value = SDLK_a;
