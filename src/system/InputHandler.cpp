@@ -129,7 +129,8 @@ void violet::InputHandler::resetMouseButtons() {
 
 void violet::InputHandler::processEvent(BindingType type, bool down, int value) {
 	for (int i = 0; i < GameInputEventsCount; i++) {
-		if (m_binding[i].Type == type && m_binding[i].Value == value)
+	    for(int j = 0; j < VIOLET_CONTROL_PRESET_NUMBER; ++j)
+		if (m_binding[i].Type[j] == type && m_binding[i].Value[j] == value)
 			m_event[i] = down;
 	}
 }
@@ -215,17 +216,17 @@ const unsigned violet::InputHandler::getEventNumber(std::string eventIdentifier)
 	throw exception();
 }
 
-string violet::InputHandler::getKeyName(Binding bind) {
-	if (bind.Type == InputHandler::Keyboard)
+string violet::InputHandler::getKeyName(BindingType Type, int Value) {
+	if (Type == InputHandler::Keyboard)
 	{
-		string keyName = SDL_GetKeyName(SDLKey(bind.Value));
+		string keyName = SDL_GetKeyName(SDLKey(Value));
 		return keyName;
 	}
 	else 
 	{
-		if (bind.Type == InputHandler::Mouse)
+		if (Type == InputHandler::Mouse)
 		{
-			switch (bind.Value) {
+			switch (Value) {
 			default:
 			case SDL_BUTTON_LEFT:
 				return "left mouse";

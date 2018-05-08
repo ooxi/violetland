@@ -17,6 +17,7 @@ private:
 	void addControlElement(unsigned i, unsigned strN, unsigned lx, unsigned rx);
 	
 	void onControlStyleClick();
+	void onControlPresetClick();
 	void onEventClick(std::string eventId);
 	
 	void refresh();

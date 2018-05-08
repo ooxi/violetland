@@ -125,6 +125,7 @@ set(VIOLET_SOURCES
 	# src/system
 	${VIOLET_SOURCE_DIR}/system/ConfigFile.cpp
 	${VIOLET_SOURCE_DIR}/system/Configuration.cpp
+	${VIOLET_SOURCE_DIR}/system/ControlPreset.cpp
 	${VIOLET_SOURCE_DIR}/system/ControlStyle.cpp
 	${VIOLET_SOURCE_DIR}/system/InputHandler.cpp
 	${VIOLET_SOURCE_DIR}/system/Object.cpp
