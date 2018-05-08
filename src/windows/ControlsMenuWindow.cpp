@@ -34,7 +34,10 @@ void violet::ControlsMenuWindow::addControlElement(
 	unsigned y = m_text->getHeight() * strN;
 	std::string eventId = InputHandler::getEventIdentifier(i);
 	std::string eventName = InputHandler::getEventName(i);
-	std::string keyName = InputHandler::getKeyName(m_config->PlayerInputBinding[i]);
+	std::string keyName = InputHandler::getKeyName(
+	    m_config->PlayerInputBinding[i].Type[m_config->ControlPreset-1],
+	    m_config->PlayerInputBinding[i].Value[m_config->ControlPreset-1]
+	    );
 
 	addElement(eventId, eventName, m_text, lx, y,
 			TextManager::LEFT, TextManager::MIDDLE);
@@ -72,6 +75,20 @@ void violet::ControlsMenuWindow::refresh() {
 			TextManager::RIGHT, TextManager::MIDDLE
 	);
 	addHandler(Window::hdl_lclick, "control-style", boost::bind(&ControlsMenuWindow::onControlStyleClick, this));
+
+	/* Change the control preset
+	 */
+	addElement("control-preset", _("Control Preset"),
+			m_text,
+			col2_l,  (m_text->getHeight() + 35) * 2.0f,
+			TextManager::LEFT, TextManager::MIDDLE
+	);
+	addElement("control-preset-value", ControlPresetToString(m_config->ControlPreset),
+			m_text,
+			col2_r,  (m_text->getHeight() + 35) * 2.0f,
+			TextManager::RIGHT, TextManager::MIDDLE
+	);
+	addHandler(Window::hdl_lclick, "control-preset", boost::bind(&ControlsMenuWindow::onControlPresetClick, this));
 
 
 	unsigned col1_items = (InputHandler::GameInputEventsCount + 1) / 2;
