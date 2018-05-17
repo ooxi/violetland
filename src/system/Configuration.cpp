@@ -1,4 +1,5 @@
 #include "Configuration.h"
+#include <sstream>
 
 violet::Configuration::Configuration(FileUtility* fileUtility) {
 	m_fileUtility = fileUtility;
@@ -21,29 +22,32 @@ violet::Configuration::Configuration(FileUtility* fileUtility) {
 	Control = violet::E_CONTROL_STYLE_MODERN;
 	ControlPreset = 1;
 
-	PlayerInputBinding[InputHandler::Teleport].Value = SDLK_q;
-	PlayerInputBinding[InputHandler::MoveLeft].Value = SDLK_a;
-	PlayerInputBinding[InputHandler::MoveUp].Value = SDLK_w;
-	PlayerInputBinding[InputHandler::MoveRight].Value = SDLK_d;
-	PlayerInputBinding[InputHandler::MoveDown].Value = SDLK_s;
-	PlayerInputBinding[InputHandler::Restart].Value = SDLK_RETURN;
-	PlayerInputBinding[InputHandler::Menu].Value = SDLK_ESCAPE;
-	PlayerInputBinding[InputHandler::MenuClickA].Type = InputHandler::Mouse;
-	PlayerInputBinding[InputHandler::MenuClickA].Value = SDL_BUTTON_LEFT;
-	PlayerInputBinding[InputHandler::MenuClickB].Type = InputHandler::Mouse;
-	PlayerInputBinding[InputHandler::MenuClickB].Value = SDL_BUTTON_RIGHT;
-	PlayerInputBinding[InputHandler::Exit].Value = SDLK_F12;
-	PlayerInputBinding[InputHandler::ToggleLight].Value = SDLK_f;
-	PlayerInputBinding[InputHandler::ToggleLaser].Value = SDLK_g;
-	PlayerInputBinding[InputHandler::Pause].Value = SDLK_p;
-	PlayerInputBinding[InputHandler::ShowChar].Value = SDLK_c;
-	PlayerInputBinding[InputHandler::Help].Value = SDLK_F1;
-	PlayerInputBinding[InputHandler::Pickup].Value = SDLK_e;
-	PlayerInputBinding[InputHandler::ThrowGrenade].Value = SDLK_SPACE;
-	PlayerInputBinding[InputHandler::Fire].Value = SDL_BUTTON_LEFT;
-	PlayerInputBinding[InputHandler::Fire].Type = InputHandler::Mouse;
-	PlayerInputBinding[InputHandler::Reload].Value = SDL_BUTTON_RIGHT;
-	PlayerInputBinding[InputHandler::Reload].Type = InputHandler::Mouse;
+	for(int i = 0; i < VIOLET_CONTROL_PRESET_NUMBER; ++i)
+	{
+	    PlayerInputBinding[InputHandler::Teleport].Value[i] = SDLK_q;
+	    PlayerInputBinding[InputHandler::MoveLeft].Value[i] = SDLK_a;
+	    PlayerInputBinding[InputHandler::MoveUp].Value[i] = SDLK_w;
+	    PlayerInputBinding[InputHandler::MoveRight].Value[i] = SDLK_d;
+	    PlayerInputBinding[InputHandler::MoveDown].Value[i] = SDLK_s;
+	    PlayerInputBinding[InputHandler::Restart].Value[i] = SDLK_RETURN;
+	    PlayerInputBinding[InputHandler::Menu].Value[i] = SDLK_ESCAPE;
+	    PlayerInputBinding[InputHandler::MenuClickA].Type[i] = InputHandler::Mouse;
+	    PlayerInputBinding[InputHandler::MenuClickA].Value[i] = SDL_BUTTON_LEFT;
+	    PlayerInputBinding[InputHandler::MenuClickB].Type[i] = InputHandler::Mouse;
+	    PlayerInputBinding[InputHandler::MenuClickB].Value[i] = SDL_BUTTON_RIGHT;
+	    PlayerInputBinding[InputHandler::Exit].Value[i] = SDLK_F12;
+	    PlayerInputBinding[InputHandler::ToggleLight].Value[i] = SDLK_f;
+	    PlayerInputBinding[InputHandler::ToggleLaser].Value[i] = SDLK_g;
+	    PlayerInputBinding[InputHandler::Pause].Value[i] = SDLK_p;
+	    PlayerInputBinding[InputHandler::ShowChar].Value[i] = SDLK_c;
+	    PlayerInputBinding[InputHandler::Help].Value[i] = SDLK_F1;
+	    PlayerInputBinding[InputHandler::Pickup].Value[i] = SDLK_e;
+	    PlayerInputBinding[InputHandler::ThrowGrenade].Value[i] = SDLK_SPACE;
+	    PlayerInputBinding[InputHandler::Fire].Value[i] = SDL_BUTTON_LEFT;
+	    PlayerInputBinding[InputHandler::Fire].Type[i] = InputHandler::Mouse;
+	    PlayerInputBinding[InputHandler::Reload].Value[i] = SDL_BUTTON_RIGHT;
+	    PlayerInputBinding[InputHandler::Reload].Type[i] = InputHandler::Mouse;
+	}
 }
 
 void violet::Configuration::read() {
@@ -83,23 +87,33 @@ void violet::Configuration::read() {
 void violet::Configuration::ReadPlayerBinding(ConfigFile* cFile,
 		InputHandler::Binding* binding, std::string eventIdentifier) {
 	int type;
-	std::string keyType = "playerInputBinding_" + eventIdentifier + "Type";
-	std::string keyValue = "playerInputBinding_" + eventIdentifier + "Value";
+	for(int i = 0; i < VIOLET_CONTROL_PRESET_NUMBER; ++i)
+	{
+	    std::ostringstream ss;
+	    ss << i+1;
+	    std::string keyType = "playerInputBinding_" + eventIdentifier + "Type_" + ss.str();
+	    std::string keyValue = "playerInputBinding_" + eventIdentifier + "Value_" + ss.str();
 
-	if (cFile->keyExists(keyType)) {
+	    if (cFile->keyExists(keyType)) {
 		cFile->readInto(type, keyType);
-		binding->Type = (InputHandler::BindingType) type;
-		cFile->readInto(binding->Value, keyValue);
+		binding->Type[i] = (InputHandler::BindingType) type;
+		cFile->readInto(binding->Value[i], keyValue);
+	    }
 	}
 }
 
 void violet::Configuration::WritePlayerBinding(ConfigFile* cFile,
 		InputHandler::Binding* binding, std::string eventIdentifier) {
-	std::string keyType = "playerInputBinding_" + eventIdentifier + "Type";
-	std::string keyValue = "playerInputBinding_" + eventIdentifier + "Value";
+	for(int i = 0; i < VIOLET_CONTROL_PRESET_NUMBER; ++i)
+	{
+	    std::ostringstream ss;
+	    ss << i+1;
+	    std::string keyType = "playerInputBinding_" + eventIdentifier + "Type_" + ss.str();
+	    std::string keyValue = "playerInputBinding_" + eventIdentifier + "Value_" + ss.str();
 
-	cFile->add(keyType, (int) binding->Type);
-	cFile->add(keyValue, binding->Value);
+	    cFile->add(keyType, (int) binding->Type[i]);
+	    cFile->add(keyValue, binding->Value[i]);
+	}
 }
 
 void violet::Configuration::write() {

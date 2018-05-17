@@ -34,7 +34,10 @@ void violet::ControlsMenuWindow::addControlElement(
 	unsigned y = m_text->getHeight() * strN;
 	std::string eventId = InputHandler::getEventIdentifier(i);
 	std::string eventName = InputHandler::getEventName(i);
-	std::string keyName = InputHandler::getKeyName(m_config->PlayerInputBinding[i]);
+	std::string keyName = InputHandler::getKeyName(
+	    m_config->PlayerInputBinding[i].Type[m_config->ControlPreset-1],
+	    m_config->PlayerInputBinding[i].Value[m_config->ControlPreset-1]
+	    );
 
 	addElement(eventId, eventName, m_text, lx, y,
 			TextManager::LEFT, TextManager::MIDDLE);
