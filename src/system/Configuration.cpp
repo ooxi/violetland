@@ -36,6 +36,7 @@ violet::Configuration::Configuration(FileUtility* fileUtility) {
 	    PlayerInputBinding[InputHandler::MenuClickA].Value[i] = SDL_BUTTON_LEFT;
 	    PlayerInputBinding[InputHandler::MenuClickB].Type[i] = InputHandler::Mouse;
 	    PlayerInputBinding[InputHandler::MenuClickB].Value[i] = SDL_BUTTON_RIGHT;
+	    PlayerInputBinding[InputHandler::SwitchCursorStyle].Value[i] = SDLK_r;
 	    PlayerInputBinding[InputHandler::Exit].Value[i] = SDLK_F12;
 	    PlayerInputBinding[InputHandler::ToggleLight].Value[i] = SDLK_f;
 	    PlayerInputBinding[InputHandler::ToggleLaser].Value[i] = SDLK_g;

@@ -1226,6 +1226,15 @@ void handlePlayer(LifeForm* lf) {
 	if (input->getDownInput(InputHandler::Reload))
 		player->reload();
 
+	if (input->getPressInput(InputHandler::SwitchCursorStyle))
+	{
+		config->FreeCursorMove = !config->FreeCursorMove;
+		if(config->FreeCursorMove)
+		    hud->addMessage(_("Cursor can be moved freely"));
+		else
+		    hud->addMessage(_("Cursor moves around you"));
+	}
+
 	if (input->getPressInput(InputHandler::Teleport)) {
 		if (player->ActionMode != 1 && player->Teleports > 0) {
 			player->ActionMode = PLAYER_ACT_MODE_TELEPORT;
