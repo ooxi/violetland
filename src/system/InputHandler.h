@@ -1,5 +1,6 @@
 #ifndef VIOLET_INPUTHANDLER_H_
 #define VIOLET_INPUTHANDLER_H_
+#define VIOLET_CONTROL_PRESET_NUMBER 2
 
 #include <string>
 
@@ -14,11 +15,12 @@ public:
 	};
 	struct Binding {
 	public:
-		int Value;
-		BindingType Type;
+		int Value[VIOLET_CONTROL_PRESET_NUMBER];
+		BindingType Type[VIOLET_CONTROL_PRESET_NUMBER];
 
 		Binding() {
-			Type = Keyboard;
+		    for(int i = 0; i < VIOLET_CONTROL_PRESET_NUMBER; ++i)
+			Type[i] = Keyboard;
 		}
 	};
 	enum GameInputEvents {
@@ -65,7 +67,7 @@ public:
 	static std::string getEventName(int eventNumber);
 	static std::string getEventIdentifier(int eventNumber);
 	static const unsigned getEventNumber(std::string eventIdentifier);
-	static std::string getKeyName(Binding bind);
+	static std::string getKeyName(BindingType Type, int Value);
 	static void initEventNames();
 private:
 	void processEvent(BindingType type, bool down, int value);
