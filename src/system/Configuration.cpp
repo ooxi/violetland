@@ -16,6 +16,7 @@ violet::Configuration::Configuration(FileUtility* fileUtility) {
 	MonstersAtStart = 12;
 	AimColorA = 0x000000;
 	AimColorB = 0xFFFFFF;
+	FreeCursorMove = true;
 	AutoWeaponPickup = true;
 	FriendlyFire = false;
 	Control = violet::E_CONTROL_STYLE_MODERN;
@@ -63,6 +64,7 @@ void violet::Configuration::read() {
 		cFile.readInto(MusicVolume, "musicVolume");
 		cFile.readInto(AimColorA, "aimColorA");
 		cFile.readInto(AimColorB, "aimColorB");
+		cFile.readInto(FreeCursorMove, "freeCursorMove");
 		cFile.readInto(AutoWeaponPickup, "autoWeaponPickup");
 		cFile.readInto(FriendlyFire, "friendlyFire");
 
@@ -117,6 +119,7 @@ void violet::Configuration::write() {
 	cFile.add("screenHeight", Screen.Height);
 	cFile.add("screenWidth", Screen.Width);
 	cFile.add("autoWeaponPickup", AutoWeaponPickup);
+	cFile.add("freeCursorMove", FreeCursorMove);
 	cFile.add("friendlyFire", FriendlyFire);
 	cFile.add("controlStyle", Control);
 

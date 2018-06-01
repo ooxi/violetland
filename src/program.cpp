@@ -465,6 +465,11 @@ void OptionsWindow::onAutoWeaponPickupClick() {
 	refresh(tempConfig);
 }
 
+void OptionsWindow::onFreeCursorMoveClick() {
+	config->FreeCursorMove = !config->FreeCursorMove;
+	refresh(tempConfig);
+}
+
 void OptionsWindow::onFriendlyFireClick() {
 	config->FriendlyFire = !config->FriendlyFire;
 	refresh(tempConfig);

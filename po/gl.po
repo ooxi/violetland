@@ -11,10 +11,10 @@ msgstr ""
 "Last-Translator: Adrián Chaves Fernández (Gallaecio) <adriyetichaves@gmail."
 "com>\n"
 "Language-Team: Proxecto Trasno <proxecto@trasno.net>\n"
+"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: gl\n"
 "X-Generator: Lokalize 1.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -505,4 +505,3 @@ msgstr "Iniciar"
 #: ../src/windows/MainMenuWindow.cpp:23
 msgid "High scores"
 msgstr "Récords"
-

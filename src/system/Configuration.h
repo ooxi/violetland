@@ -36,6 +36,7 @@ public:
 	unsigned int MonstersAtStart;
 	int AimColorA, AimColorB;
 	bool AutoWeaponPickup;
+	bool FreeCursorMove;
 	bool FriendlyFire;
 	violet::ControlStyle Control;
 	int ControlPreset;
