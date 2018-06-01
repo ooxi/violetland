@@ -69,6 +69,7 @@ using namespace violet;
 const string PROJECT = "violetland";
 const string VERSION = VIOLETLAND_VERSION;
 const string DEFAULT_CHAR_NAME = "Violet";
+const int MOUSEORBIT = 200;
 
 Configuration* config;
 Configuration* tempConfig;
@@ -1232,7 +1233,7 @@ void handlePlayer(LifeForm* lf) {
 		if(config->FreeCursorMove)
 		    hud->addMessage(_("Cursor can be moved freely"));
 		else
-		    hud->addMessage(_("Cursor moves around you"));
+		    hud->addMessage(_("Cursor orbits you"));
 	}
 
 	if (input->getPressInput(InputHandler::Teleport)) {
