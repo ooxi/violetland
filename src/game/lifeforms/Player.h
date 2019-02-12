@@ -17,6 +17,7 @@ enum PlayerBonusType {
 	PLAYER_BONUS_AGILITYBOOST,
 	PLAYER_BONUS_STRENGTHBOOST,
 	PLAYER_BONUS_FREEZE,
+	PLAYER_BONUS_SHIELD, 
 	PLAYER_BONUS_COUNT
 };
 
@@ -25,6 +26,7 @@ private:
 	static const unsigned TELEKINESIS_DELAY = 2000;
 
 	Sprite *m_deathSprite;
+	DynamicObject *m_shield;
 	StaticObject *m_arms;
 	std::vector<DynamicObject*> m_shells;
 	std::vector<Sound*> m_hitSounds;
@@ -66,6 +68,7 @@ public:
 	Player(float x, float y,
 			Sprite *legsSprite,
 			Sprite *deathSprite,
+			Sprite *shieldSprite,
 			std::vector<Sound*> hitSounds,
 			Sound* dyingSound);
 	virtual ~Player();

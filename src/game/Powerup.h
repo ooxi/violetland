@@ -25,6 +25,7 @@ enum BonusType {
 	BONUS_VITALITYROIDS,
 	BONUS_AGILITYROIDS,
 	BONUS_STRENGTHROIDS,
+	BONUS_SHIELD, 
 	BONUS_TELEPORTS
 };
 
@@ -167,6 +168,18 @@ public:
 	const std::string getHudInfo() const;
 	BonusType getType() const {
 		return BONUS_TELEPORTS;
+	}
+	bool modify(Game* game, Player* player);
+};
+
+class ShieldPowerup: public BasePowerup {
+public:
+	ShieldPowerup(float x, float y, Texture *tex): 
+				BasePowerup(x, y, tex)
+				{}
+	const std::string getHudInfo() const;
+	BonusType getType() const {
+		return BONUS_SHIELD;
 	}
 	bool modify(Game* game, Player* player);
 };
