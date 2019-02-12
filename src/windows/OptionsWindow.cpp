@@ -32,6 +32,7 @@ violet::OptionsWindow::OptionsWindow(
 	std::vector<Label> gameplayLabels;
 	gameplayLabels.push_back(Label("autoreload", _("Weapon autoreloading")));
 	gameplayLabels.push_back(Label("autopickup", _("Weapon autotaking")));
+	gameplayLabels.push_back(Label("freecursormove", _("Move cursor freely")));
 	gameplayLabels.push_back(Label("friendlyfire", _("Friendly fire")));
 
 	addElement("sectiongame", _("Gameplay"), m_text, l,
@@ -73,6 +74,7 @@ violet::OptionsWindow::OptionsWindow(
 	
 	addHandler(Window::hdl_lclick, "autoreload", boost::bind(&OptionsWindow::onAutoReloadClick, this));
 	addHandler(Window::hdl_lclick, "autopickup", boost::bind(&OptionsWindow::onAutoWeaponPickupClick, this));
+	addHandler(Window::hdl_lclick, "freecursormove", boost::bind(&OptionsWindow::onFreeCursorMoveClick, this));
 	addHandler(Window::hdl_lclick, "friendlyfire", boost::bind(&OptionsWindow::onFriendlyFireClick, this));
 	addHandler(Window::hdl_lclick, "soundvolume", boost::bind(&OptionsWindow::switchVolumeUp, this, _1));
 	addHandler(Window::hdl_rclick, "soundvolume", boost::bind(&OptionsWindow::switchVolumeDown, this, _1));
@@ -104,6 +106,12 @@ void violet::OptionsWindow::refresh(Configuration const* tempConfig) {
 				TextManager::LEFT, TextManager::MIDDLE);
 	else
 		removeElement("+autopickup", false);
+
+	if (m_config->FreeCursorMove)
+		addElement("+freecursormove", "+", m_text, l,
+				8 * h, TextManager::LEFT, TextManager::MIDDLE);
+	else
+		removeElement("+freecursormove", false);
 
 	if (m_config->FriendlyFire)
 		addElement("+friendlyfire", "+", m_text, l,
