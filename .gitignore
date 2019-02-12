@@ -9,3 +9,8 @@ dist
 # IDE directories
 /nbproject/
 
+# doxygen directories
+src/doxygen/
+src/Doxyfile
+
+
