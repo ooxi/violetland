@@ -198,6 +198,7 @@ void MainMenuWindow::onStartClick() {
 			resources->PlayerWalkSprite,
 			resources->PlayerDeathSprites[(rand()
 					% (int) resources->PlayerDeathSprites.size())],
+			resources->PlayerShieldSprite, 
 			resources->PlayerHitSounds, resources->PlayerDeathSound);
 
 	// TODO: add "default weapon" parameter to config file
@@ -1307,6 +1308,10 @@ void dropPowerup(float x, float y, float chance, bool forceWeapon) {
 	} else if (roulette(chance * 2)) {
 		newPowerup = new TeleportPowerup(x, y,
 				resources->PowerupTex[BONUS_TELEPORTS]);
+		newPowerup->Scale = 0.4f;
+	} else if (roulette(chance * 2)) {
+		newPowerup = new ShieldPowerup(x, y,
+				resources->PowerupTex[BONUS_SHIELD]);
 		newPowerup->Scale = 0.4f;
 	} else
 		return;

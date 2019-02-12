@@ -6,8 +6,9 @@
 
 namespace violet {
 
-Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
-		std::vector<Sound*> hitSounds, Sound* dyingSound) :
+    Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
+		   Sprite *shieldSprite, std::vector<Sound*> hitSounds,
+		   Sound* dyingSound) :
 	LifeForm(x, y, 128, 128) {
 	Id = "20-" + Id;
 	Xp = 0;
@@ -44,6 +45,7 @@ Player::Player(float x, float y, Sprite *legsSprite, Sprite *deathSprite,
 	m_arms = NULL;
 	m_body = new DynamicObject(x, y, legsSprite);
 	m_body->Frame = 8;
+	m_shield = new DynamicObject(x, y, shieldSprite);
 	m_deathSprite = deathSprite;
 	m_hitSounds = hitSounds;
 	m_dyingSound = dyingSound;
@@ -65,6 +67,8 @@ float Player::getVitality() const {
 }
 
 Sound* Player::hit(float damage, bool poison) {
+    if(this->bonusTimes[PLAYER_BONUS_SHIELD]>0)
+	return NULL;
 	LifeForm::hit(damage, poison);
 
 	setMask(1.0f, 0.0f, 0.0f, 1.0f);
@@ -207,6 +211,10 @@ void Player::process(int deltaTime) {
 
 	// Bonuses
 	processBonus(deltaTime);
+
+	// Roll shield state
+	m_shield->rollFrame(true);
+
 }
 
 void Player::processBonus(int deltaTime) {
@@ -235,6 +243,13 @@ void Player::draw() {
 
 	if (State == LIFEFORM_STATE_ALIVE)
 		m_arms->draw(false, false);
+
+	//  a not so elegant solution...
+	//  there are 31 identical shield animation image, and the AMask is changed based on the frame count
+	if(this->bonusTimes[PLAYER_BONUS_SHIELD] > 0)
+	{
+	    m_shield->draw(X, Y, 0.0f, Scale, RMask, GMask, BMask, 0.2f + 0.7f / m_shield->AnimSprite->getFramesCount() * m_shield->Frame);
+	}
 
 	for (int i = m_shells.size() - 1; i >= 0; i--) {
 		m_shells[i]->draw();
