@@ -58,6 +58,7 @@ public:
 	bool Poisoned;
 	bool Burning;
 	int Frozen;
+	int m_sinceLastHitTaken;
 
 	void setHealth(float value) { m_health = fixHealth(value); }
 	const float getHealth() { return m_health = fixHealth(m_health); }

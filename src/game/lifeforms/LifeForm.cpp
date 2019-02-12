@@ -19,6 +19,7 @@ LifeForm::LifeForm(float x, float y, int w, int h) :
 	TargetX = TargetY = 0.0f;
 	Poisoned = false;
 	m_walking = false;
+	m_sinceLastHitTaken = 0;
 	Frozen = 0;
 	Burning = false;
 	Level = 1;
@@ -31,6 +32,7 @@ void LifeForm::draw() {
 
 Sound* LifeForm::hit(float damage, bool poison) {
 	setHealth(getHealth() - damage);
+	m_sinceLastHitTaken = 0;
 
 	if (getHealth() == 0 && State == LIFEFORM_STATE_ALIVE) {
 		State = LIFEFORM_STATE_SMITTEN;
@@ -45,6 +47,9 @@ void LifeForm::process(int deltaTime) {
 		if (Frozen < 0)
 			Frozen = 0;
 	}
+
+	m_sinceLastHitTaken += deltaTime;
+
 
 	if (State == LIFEFORM_STATE_ALIVE && Frozen == 0) {
 		setHealth(getHealth() + HealthRegen() * deltaTime);

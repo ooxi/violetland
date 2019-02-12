@@ -9,6 +9,7 @@ Legend
 Upcoming release
 ----------------
 
+ * `[+]` [Added shield powerup](https://github.com/ooxi/violetland/pull/146)
  * `[!]` [Bumped CMake requirement to 3.2](https://github.com/ooxi/violetland/pull/144)
  * `[!]` [Fixed gettext detection](https://github.com/ooxi/violetland/pull/137)
  * `[!]` [Removed `#pragma comment` compiler warnings](https://github.com/ooxi/violetland/pull/135)
