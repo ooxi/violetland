@@ -22,6 +22,7 @@ private:
 public:
 	Resources(FileUtility* fileUtility, SoundManager* sndManager);
 	Sprite* PlayerWalkSprite;
+	Sprite* PlayerShieldSprite;
 	std::vector<Sprite*> PlayerDeathSprites;
 	Sound* PlayerDeathSound;
 	std::vector<Sound*> PlayerHitSounds;

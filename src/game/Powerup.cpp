@@ -161,6 +161,17 @@ bool violet::TeleportPowerup::modify(Game* game, Player* player) {
 	return true;
 }
 
+const std::string violet::ShieldPowerup::getHudInfo() const {
+	return _("a shield");
+}
+
+bool violet::ShieldPowerup::modify(Game* game, Player* player) {
+	game->hud->addMessage(_("You have taken a shield."));
+	player->bonusTimes[PLAYER_BONUS_SHIELD] = 5000;
+
+	return true;
+}
+
 
 bool violet::WeaponPowerup::modify(Game* game, Player* player) {
 	if (game->input->getDownInput(InputHandler::Pickup)

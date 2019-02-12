@@ -35,6 +35,10 @@ violet::HUD::HUD(VideoManager* videoManager, Resources* resources) {
 			PLAYER_BONUS_FREEZE, new StaticObject(0, 0, 128, 128,
 					m_resources->PowerupTex[BONUS_FREEZE], false)));
 
+	m_bonusImg.insert(std::map<PlayerBonusType, StaticObject*>::value_type(
+			PLAYER_BONUS_SHIELD, new StaticObject(0, 0, 128, 128,
+					m_resources->PowerupTex[BONUS_SHIELD], false)));
+
 	m_inventoryImg.push_back(new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[BONUS_GRENADES], false));
 	m_inventoryImg.push_back(new StaticObject(0, 0, 128, 128, m_resources->PowerupTex[BONUS_TELEPORTS], false));
 
