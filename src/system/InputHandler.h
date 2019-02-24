@@ -29,6 +29,7 @@ public:
 		Menu,
 		MenuClickA,
 		MenuClickB,
+		SwitchCursorStyle,
 		ToggleLight,
 		ToggleLaser,
 		ShowChar,

@@ -17,6 +17,7 @@ violet::Configuration::Configuration(FileUtility* fileUtility) {
 	MonstersAtStart = 12;
 	AimColorA = 0x000000;
 	AimColorB = 0xFFFFFF;
+	FreeCursorMove = true;
 	AutoWeaponPickup = true;
 	FriendlyFire = false;
 	Control = violet::E_CONTROL_STYLE_MODERN;
@@ -35,6 +36,7 @@ violet::Configuration::Configuration(FileUtility* fileUtility) {
 	    PlayerInputBinding[InputHandler::MenuClickA].Value[i] = SDL_BUTTON_LEFT;
 	    PlayerInputBinding[InputHandler::MenuClickB].Type[i] = InputHandler::Mouse;
 	    PlayerInputBinding[InputHandler::MenuClickB].Value[i] = SDL_BUTTON_RIGHT;
+	    PlayerInputBinding[InputHandler::SwitchCursorStyle].Value[i] = SDLK_r;
 	    PlayerInputBinding[InputHandler::Exit].Value[i] = SDLK_F12;
 	    PlayerInputBinding[InputHandler::ToggleLight].Value[i] = SDLK_f;
 	    PlayerInputBinding[InputHandler::ToggleLaser].Value[i] = SDLK_g;
@@ -67,6 +69,7 @@ void violet::Configuration::read() {
 		cFile.readInto(MusicVolume, "musicVolume");
 		cFile.readInto(AimColorA, "aimColorA");
 		cFile.readInto(AimColorB, "aimColorB");
+		cFile.readInto(FreeCursorMove, "freeCursorMove");
 		cFile.readInto(AutoWeaponPickup, "autoWeaponPickup");
 		cFile.readInto(FriendlyFire, "friendlyFire");
 
@@ -131,6 +134,7 @@ void violet::Configuration::write() {
 	cFile.add("screenHeight", Screen.Height);
 	cFile.add("screenWidth", Screen.Width);
 	cFile.add("autoWeaponPickup", AutoWeaponPickup);
+	cFile.add("freeCursorMove", FreeCursorMove);
 	cFile.add("friendlyFire", FriendlyFire);
 	cFile.add("controlStyle", Control);
 

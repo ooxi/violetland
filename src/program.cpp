@@ -69,6 +69,7 @@ using namespace violet;
 const string PROJECT = "violetland";
 const string VERSION = VIOLETLAND_VERSION;
 const string DEFAULT_CHAR_NAME = "Violet";
+const int MOUSEORBIT = 200;
 
 Configuration* config;
 Configuration* tempConfig;
@@ -463,6 +464,11 @@ void OptionsWindow::onAutoReloadClick() {
 
 void OptionsWindow::onAutoWeaponPickupClick() {
 	config->AutoWeaponPickup = !config->AutoWeaponPickup;
+	refresh(tempConfig);
+}
+
+void OptionsWindow::onFreeCursorMoveClick() {
+	config->FreeCursorMove = !config->FreeCursorMove;
 	refresh(tempConfig);
 }
 
@@ -1221,6 +1227,15 @@ void handlePlayer(LifeForm* lf) {
 
 	if (input->getDownInput(InputHandler::Reload))
 		player->reload();
+
+	if (input->getPressInput(InputHandler::SwitchCursorStyle))
+	{
+		config->FreeCursorMove = !config->FreeCursorMove;
+		if(config->FreeCursorMove)
+		    hud->addMessage(_("Cursor can be moved freely"));
+		else
+		    hud->addMessage(_("Cursor orbits you"));
+	}
 
 	if (input->getPressInput(InputHandler::Teleport)) {
 		if (player->ActionMode != 1 && player->Teleports > 0) {
