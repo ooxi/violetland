@@ -6,6 +6,7 @@
 #include "utility/FileUtility.h"
 #include "ConfigFile.h"
 #include "ControlStyle.h"
+#include "ControlPreset.h"
 #include "InputHandler.h"
 
 namespace violet {
@@ -35,8 +36,10 @@ public:
 	unsigned int MonstersAtStart;
 	int AimColorA, AimColorB;
 	bool AutoWeaponPickup;
+	bool FreeCursorMove;
 	bool FriendlyFire;
 	violet::ControlStyle Control;
+	int ControlPreset;
 	InputHandler::Binding
 			PlayerInputBinding[InputHandler::GameInputEventsCount];
 	void ReadPlayerBinding(ConfigFile* cFile, InputHandler::Binding* binding,

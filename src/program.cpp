@@ -69,6 +69,7 @@ using namespace violet;
 const string PROJECT = "violetland";
 const string VERSION = VIOLETLAND_VERSION;
 const string DEFAULT_CHAR_NAME = "Violet";
+const int MOUSEORBIT = 200;
 
 Configuration* config;
 Configuration* tempConfig;
@@ -198,6 +199,7 @@ void MainMenuWindow::onStartClick() {
 			resources->PlayerWalkSprite,
 			resources->PlayerDeathSprites[(rand()
 					% (int) resources->PlayerDeathSprites.size())],
+			resources->PlayerShieldSprite, 
 			resources->PlayerHitSounds, resources->PlayerDeathSound);
 
 	// TODO: add "default weapon" parameter to config file
@@ -465,6 +467,11 @@ void OptionsWindow::onAutoWeaponPickupClick() {
 	refresh(tempConfig);
 }
 
+void OptionsWindow::onFreeCursorMoveClick() {
+	config->FreeCursorMove = !config->FreeCursorMove;
+	refresh(tempConfig);
+}
+
 void OptionsWindow::onFriendlyFireClick() {
 	config->FriendlyFire = !config->FriendlyFire;
 	refresh(tempConfig);
@@ -581,6 +588,17 @@ void ControlsMenuWindow::onControlStyleClick() {
 	refresh();
 }
 
+void ControlsMenuWindow::onControlPresetClick() {
+    config->ControlPreset++;
+    if(config->ControlPreset > VIOLET_CONTROL_PRESET_NUMBER)
+	config->ControlPreset = 1;
+
+    std::cout << "Changed control preset to " << config->ControlPreset << "." << std::endl;
+    config->write();
+
+    refresh();
+}
+
 void drawWindows() {
 	if (!windows.empty()) {
 		std::map<std::string, Window*>::iterator win, victim;
@@ -619,13 +637,13 @@ void ControlsMenuWindow::onEventClick(std::string elementName) {
 
 		switch (sdlEvent.type) {
 		case SDL_KEYDOWN:
-			config->PlayerInputBinding[key].Type = InputHandler::Keyboard;
-			config->PlayerInputBinding[key].Value = sdlEvent.key.keysym.sym;
+			config->PlayerInputBinding[key].Type[config->ControlPreset-1] = InputHandler::Keyboard;
+			config->PlayerInputBinding[key].Value[config->ControlPreset-1] = sdlEvent.key.keysym.sym;
 			ok = true;
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			config->PlayerInputBinding[key].Type = InputHandler::Mouse;
-			config->PlayerInputBinding[key].Value = sdlEvent.button.button;
+			config->PlayerInputBinding[key].Type[config->ControlPreset-1] = InputHandler::Mouse;
+			config->PlayerInputBinding[key].Value[config->ControlPreset-1] = sdlEvent.button.button;
 			ok = true;
 			break;
 		case SDL_QUIT:
@@ -636,7 +654,7 @@ void ControlsMenuWindow::onEventClick(std::string elementName) {
 	}
 
 	cout << (boost::format(_("Bind action %s to key %s.")) % elementName
-			% InputHandler::getKeyName(config->PlayerInputBinding[key]))
+		 % InputHandler::getKeyName(config->PlayerInputBinding[key].Type[config->ControlPreset-1],config->PlayerInputBinding[key].Value[config->ControlPreset-1]))
 			<< endl;
 
 	config->write();
@@ -1210,6 +1228,15 @@ void handlePlayer(LifeForm* lf) {
 	if (input->getDownInput(InputHandler::Reload))
 		player->reload();
 
+	if (input->getPressInput(InputHandler::SwitchCursorStyle))
+	{
+		config->FreeCursorMove = !config->FreeCursorMove;
+		if(config->FreeCursorMove)
+		    hud->addMessage(_("Cursor can be moved freely"));
+		else
+		    hud->addMessage(_("Cursor orbits you"));
+	}
+
 	if (input->getPressInput(InputHandler::Teleport)) {
 		if (player->ActionMode != 1 && player->Teleports > 0) {
 			player->ActionMode = PLAYER_ACT_MODE_TELEPORT;
@@ -1296,6 +1323,10 @@ void dropPowerup(float x, float y, float chance, bool forceWeapon) {
 	} else if (roulette(chance * 2)) {
 		newPowerup = new TeleportPowerup(x, y,
 				resources->PowerupTex[BONUS_TELEPORTS]);
+		newPowerup->Scale = 0.4f;
+	} else if (roulette(chance * 2)) {
+		newPowerup = new ShieldPowerup(x, y,
+				resources->PowerupTex[BONUS_SHIELD]);
 		newPowerup->Scale = 0.4f;
 	} else
 		return;

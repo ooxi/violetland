@@ -11,10 +11,10 @@ msgstr ""
 "Last-Translator: Adrián Chaves Fernández (Gallaecio) <adriyetichaves@gmail."
 "com>\n"
 "Language-Team: Spanish\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
 "X-Generator: Lokalize 1.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -120,15 +120,14 @@ msgid ""
 "Poison bullets: after getting hit by your bullet, enemies slowly lose health "
 "until they die."
 msgstr ""
-"Balas envenenadas: las balas envenenan a los enemigos, que pierden lentamente "
-"vida hasta morir."
+"Balas envenenadas: las balas envenenan a los enemigos, que pierden "
+"lentamente vida hasta morir."
 
 #: ../src/program.cpp:626
 msgid "Big calibre: your bullets can wound a few monsters in a row."
 msgstr ""
 "Calibre alto: las balas pueden atravesar a los enemigos si los matan, "
-"siguiendo así "
-"su trayectoria (y a lo mejor acertándole a otro enemigo)."
+"siguiendo así su trayectoria (y a lo mejor acertándole a otro enemigo)."
 
 #: ../src/program.cpp:636
 msgid "Telekinesis: useful things slowly move towards you."
@@ -506,4 +505,3 @@ msgstr "Iniciar"
 #: ../src/windows/MainMenuWindow.cpp:23
 msgid "High scores"
 msgstr "Récords"
-

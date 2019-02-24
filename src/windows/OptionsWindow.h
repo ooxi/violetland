@@ -18,6 +18,7 @@ private:
 	
 	void onAutoReloadClick();
 	void onAutoWeaponPickupClick();
+	void onFreeCursorMoveClick();
 	void onFriendlyFireClick();
 	
 	void switchVolumeUp(std::string elementName);

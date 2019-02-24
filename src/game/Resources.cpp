@@ -13,6 +13,7 @@ violet::Resources::Resources(FileUtility* fileUtility,
 	PlayerHitSounds.push_back(loadSnd("player_hit_1.ogg"));
 	PlayerHitSounds.push_back(loadSnd("player_hit_2.ogg"));
 
+	PlayerShieldSprite = loadSprite(31, "player/shield/%i.png");
 	PlayerWalkSprite = loadSprite(25, "player/walk/%i.png");
 	PlayerDeathSprites.push_back(loadSprite(56, "player/death/0/%i.png"));
 	PlayerDeathSprites.push_back(loadSprite(42, "player/death/1/%i.png"));
@@ -42,6 +43,7 @@ violet::Resources::Resources(FileUtility* fileUtility,
 	loadPowerupTex(BONUS_VITALITYROIDS, "pill.png");
 	loadPowerupTex(BONUS_STRENGTHROIDS, "pill.png");
 	loadPowerupTex(BONUS_TELEPORTS, "teleport.png");
+	loadPowerupTex(BONUS_SHIELD, "shield.png");
 }
 
 violet::Sprite* violet::Resources::loadSprite(unsigned int frames,
