@@ -80,9 +80,6 @@ public:
     // Our window
     SDL_Window *Window;
 
-    // SDL renderer
-    SDL_Renderer *Renderer;
-
 	~VideoManager();
 };
 }

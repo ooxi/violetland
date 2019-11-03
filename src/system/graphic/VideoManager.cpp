@@ -9,7 +9,6 @@ violet::VideoManager::VideoManager(FileUtility* fileUtility) {
 	RegularText = NULL;
 	SmallText = NULL;
     Window = NULL;
-    Renderer = NULL;
     m_GLContext = NULL;
 
 	m_lastFrameTime = m_fpsCountingStart = SDL_GetTicks();
@@ -106,21 +105,14 @@ void violet::VideoManager::setMode(VideoMode mode, Camera* cam) {
     if (Window == NULL) {
         std::cerr << "Couldn't create Window: " << SDL_GetError() << std::endl;
 		exit(2);
-    }
+	}
 
-    m_GLContext = SDL_GL_CreateContext (Window);
-    if (m_GLContext == NULL) {
-        std::cerr << "Couldn't create GL context: " << SDL_GetError() << std::endl;
-        SDL_DestroyWindow (Window);
+	m_GLContext = SDL_GL_CreateContext (Window);
+	if (m_GLContext == NULL) {
+		std::cerr << "Couldn't create GL context: " << SDL_GetError() << std::endl;
+		SDL_DestroyWindow (Window);
 		exit(2);
-    }
-
-    Renderer = SDL_CreateRenderer (Window, -1, SDL_RENDERER_ACCELERATED);
-    if (Renderer == NULL) {
-        std::cerr << "Couldn't create Renderer: " << SDL_GetError() << std::endl;
-        SDL_DestroyWindow (Window);
-		exit(2);
-    }
+	}
 
 	std::cout << "Calculating aspect size..." << std::endl;
 
@@ -149,7 +141,6 @@ void violet::VideoManager::setMode(VideoMode mode, Camera* cam) {
 
 violet::VideoManager::~VideoManager() {
     if (m_GLContext != NULL) SDL_GL_DeleteContext (m_GLContext);
-    if (Renderer != NULL) SDL_DestroyRenderer (Renderer);
     if (Window != NULL) SDL_DestroyWindow (Window);
 
 	delete RegularText;
