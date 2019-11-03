@@ -150,11 +150,20 @@ void violet::InputHandler::processTextInput(SDL_Event sdlEvent) {
 		}
 		break;
 	default:
+        // FIXME: How to enter text in SDL2?
+#if 0
 		if (sdlEvent.key.keysym.unicode < 127 && m_curTextPos < MAX_CHARACTERS) {
 			char c = sdlEvent.key.keysym.unicode;
 			if (' ' <= c && c <= '~')
 				m_textContent.insert(m_curTextPos++, 1, c);
 		}
+#else
+        if (sdlEvent.key.keysym.sym < 127 && m_curTextPos < MAX_CHARACTERS) {
+			char c = sdlEvent.key.keysym.sym;
+			if (' ' <= c && c <= '~')
+				m_textContent.insert(m_curTextPos++, 1, c);
+		}
+#endif
 		break;
 	}
 }
@@ -218,7 +227,7 @@ const unsigned violet::InputHandler::getEventNumber(std::string eventIdentifier)
 string violet::InputHandler::getKeyName(Binding bind) {
 	if (bind.Type == InputHandler::Keyboard)
 	{
-		string keyName = SDL_GetKeyName(SDLKey(bind.Value));
+		string keyName = SDL_GetKeyName(SDL_Keycode(bind.Value));
 		return keyName;
 	}
 	else 

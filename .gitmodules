@@ -1,3 +1,6 @@
 [submodule "lib/CMake-Gettext"]
 	path = lib/CMake-Gettext
 	url = https://github.com/ooxi/CMake-Gettext.git
+[submodule "Modules/sdl2"]
+	path = Modules/sdl2
+	url = https://gitlab.com/aminosbh/sdl2-cmake-modules.git

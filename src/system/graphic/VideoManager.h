@@ -17,6 +17,7 @@ private:
 	int m_frameDeltaTime;
 	FileUtility* m_fileUtility;
 	VideoMode m_videoMode;
+    SDL_GLContext m_GLContext;
 public:
 	VideoManager(FileUtility* fileUtility);
 
@@ -75,6 +76,12 @@ public:
 
 	// Small text
 	TextManager* SmallText;
+
+    // Our window
+    SDL_Window *Window;
+
+    // SDL renderer
+    SDL_Renderer *Renderer;
 
 	~VideoManager();
 };

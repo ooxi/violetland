@@ -7,10 +7,9 @@ SDL_Surface* violet::ImageUtility::loadImage(boost::filesystem::path fileName) {
 		throw 1;
 	}
 
-	SDL_SetColorKey(image, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(
-		image->format, 255, 0, 255));
+	SDL_SetColorKey(image, SDL_TRUE, SDL_MapRGB(image->format, 255, 0, 255));
 
-	SDL_Surface *optimizedImage = SDL_DisplayFormatAlpha(image);
+	SDL_Surface *optimizedImage = SDL_ConvertSurfaceFormat (image, SDL_PIXELFORMAT_ARGB8888, 0);
 	SDL_FreeSurface(image);
 
 	return optimizedImage;
@@ -34,7 +33,8 @@ SDL_Surface* violet::ImageUtility::createImage(
 		resulting_text = TTF_RenderUTF8_Blended(font, text.c_str(),
 				tmpfontcolor);
 
-	SDL_Surface *optimizedImage = SDL_DisplayFormatAlpha(resulting_text);
+	SDL_Surface *optimizedImage = SDL_ConvertSurfaceFormat (resulting_text,
+                                                            SDL_PIXELFORMAT_ARGB8888, 0);
 	SDL_FreeSurface(resulting_text);
 
 	return optimizedImage;

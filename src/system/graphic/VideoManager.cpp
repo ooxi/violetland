@@ -8,6 +8,9 @@ violet::VideoManager::VideoManager(FileUtility* fileUtility) {
 
 	RegularText = NULL;
 	SmallText = NULL;
+    Window = NULL;
+    Renderer = NULL;
+    m_GLContext = NULL;
 
 	m_lastFrameTime = m_fpsCountingStart = SDL_GetTicks();
 	m_framesCount = 0;
@@ -37,6 +40,8 @@ void violet::VideoManager::countFrame(int frameDelay) {
 
 bool violet::VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
 		int* true_bpp) {
+    // FIXME: How to implement this?
+#if 0
 	Uint32 flags = SDL_OPENGL;
 	if (fullscreen)
 		flags = flags | SDL_FULLSCREEN;
@@ -44,6 +49,11 @@ bool violet::VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscree
 	if (true_bpp)
 		*true_bpp = r;
 	return (r != 0);
+#else
+    if (true_bpp != NULL)
+        *true_bpp = 32;
+    return 1;
+#endif
 }
 
 std::vector<SDL_Rect> violet::VideoManager::GetAvailableModes() {
@@ -89,8 +99,28 @@ void violet::VideoManager::setMode(VideoMode mode, Camera* cam) {
 
 	m_videoMode = mode;
 
-	SDL_Surface *screen = SDL_SetVideoMode(mode.Width, mode.Height, mode.Color,
-			mode.Full ? SDL_OPENGL | SDL_FULLSCREEN : SDL_OPENGL);
+    Window = SDL_CreateWindow ("",
+                               SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                               mode.Width, mode.Height,
+                               SDL_WINDOW_OPENGL | ((mode.Full)? SDL_WINDOW_FULLSCREEN: 0));
+    if (Window == NULL) {
+        std::cerr << "Couldn't create Window: " << SDL_GetError() << std::endl;
+		exit(2);
+    }
+
+    m_GLContext = SDL_GL_CreateContext (Window);
+    if (m_GLContext == NULL) {
+        std::cerr << "Couldn't create GL context: " << SDL_GetError() << std::endl;
+        SDL_DestroyWindow (Window);
+		exit(2);
+    }
+
+    Renderer = SDL_CreateRenderer (Window, -1, SDL_RENDERER_ACCELERATED);
+    if (Renderer == NULL) {
+        std::cerr << "Couldn't create Renderer: " << SDL_GetError() << std::endl;
+        SDL_DestroyWindow (Window);
+		exit(2);
+    }
 
 	std::cout << "Calculating aspect size..." << std::endl;
 
@@ -98,11 +128,6 @@ void violet::VideoManager::setMode(VideoMode mode, Camera* cam) {
 	WK = (float) mode.Width / cam->getW();
 	HK = (float) mode.Height / cam->getH();
 	Scale = (float) mode.Width / 800;
-
-	if (screen == NULL) {
-		std::cerr << "Couldn't set video mode: " << SDL_GetError() << std::endl;
-		exit(2);
-	}
 
 	std::cout << "glViewport..." << std::endl;
 	glViewport(0, 0, mode.Width, mode.Height);
@@ -123,6 +148,10 @@ void violet::VideoManager::setMode(VideoMode mode, Camera* cam) {
 }
 
 violet::VideoManager::~VideoManager() {
+    if (m_GLContext != NULL) SDL_GL_DeleteContext (m_GLContext);
+    if (Renderer != NULL) SDL_DestroyRenderer (Renderer);
+    if (Window != NULL) SDL_DestroyWindow (Window);
+
 	delete RegularText;
 	delete SmallText;
 }
