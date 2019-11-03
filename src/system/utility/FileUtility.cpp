@@ -49,9 +49,9 @@ violet::FileUtility* violet::FileUtility::ofUnix() {
 	
 	/* Application resources
 	 */
+    boost::filesystem::path resources;
 #ifndef DATA_INSTALL_DIR
-	boost::filesystem::path resources = application;
-	resources /= "../share/violetland";
+    resources = application / "../share/violetland";
 #else //DATA_INSTALL_DIR
 	resources = DATA_INSTALL_DIR;
 #endif //DATA_INSTALL_DIR
