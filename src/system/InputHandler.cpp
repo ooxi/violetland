@@ -150,7 +150,7 @@ void violet::InputHandler::processTextInput(SDL_Event sdlEvent) {
 		}
 		break;
 	default:
-        // FIXME: How to enter text in SDL2?
+		// FIXME: How to enter text in SDL2?
 #if 0
 		if (sdlEvent.key.keysym.unicode < 127 && m_curTextPos < MAX_CHARACTERS) {
 			char c = sdlEvent.key.keysym.unicode;
@@ -158,7 +158,7 @@ void violet::InputHandler::processTextInput(SDL_Event sdlEvent) {
 				m_textContent.insert(m_curTextPos++, 1, c);
 		}
 #else
-        if (sdlEvent.key.keysym.sym < 127 && m_curTextPos < MAX_CHARACTERS) {
+		if (sdlEvent.key.keysym.sym < 127 && m_curTextPos < MAX_CHARACTERS) {
 			char c = sdlEvent.key.keysym.sym;
 			if (' ' <= c && c <= '~')
 				m_textContent.insert(m_curTextPos++, 1, c);

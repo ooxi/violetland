@@ -332,7 +332,7 @@ void initSystem() {
 			fileUtility->getFullPath(FileUtility::common, "icon-light.png"));
 	SDL_SetWindowIcon(videoManager->Window, icon);
 	SDL_FreeSurface(icon);
-    SDL_SetWindowTitle(videoManager->Window, getProjectTitle().c_str());
+	SDL_SetWindowTitle(videoManager->Window, getProjectTitle().c_str());
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_COLOR_MATERIAL);
@@ -1048,7 +1048,7 @@ static void handlePlayerClassicStyle(Player* player) {
  * direction
  *
  * @warning All angles are in degree with 0 equals north, 180 = -180 equals
- *     south, -90 equals west and 90 equals east
+ *	   south, -90 equals west and 90 equals east
  */
 static void handlePlayerModernStyle(Player* player) {
 
