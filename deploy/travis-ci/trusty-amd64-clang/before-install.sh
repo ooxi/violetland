@@ -8,7 +8,7 @@ source "${DIRECTORY_OF_THIS_FILE}/../travis-ci.sh"
 
 
 # Install dependencies
-PACKAGES='clang-3.6 cmake gettext libsdl-ttf2.0-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libboost-all-dev'
+PACKAGES='clang-3.6 cmake gettext libegl1-mesa-dev libgles2-mesa-dev libsdl2-dev libsdl2-ttf-dev libsdl2-mixer-dev libsdl2-image-dev libboost-all-dev'
 
 sudo apt-get update
 sudo apt-get install -y $PACKAGES
