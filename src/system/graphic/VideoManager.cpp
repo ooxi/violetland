@@ -37,22 +37,18 @@ void violet::VideoManager::countFrame(int frameDelay) {
 		SDL_Delay(frameDelay - m_frameDeltaTime);
 }
 
-bool violet::VideoManager::isModeAvailable(int w, int h, int bpp, bool fullscreen,
-		int* true_bpp) {
-	// FIXME: How to implement this?
-#if 0
-	Uint32 flags = SDL_OPENGL;
-	if (fullscreen)
-		flags = flags | SDL_FULLSCREEN;
-	int r = SDL_VideoModeOK(w, h, bpp, flags);
-	if (true_bpp)
-		*true_bpp = r;
-	return (r != 0);
-#else
-	if (true_bpp != NULL)
-		*true_bpp = 32;
-	return 1;
-#endif
+bool violet::VideoManager::isModeAvailable(int w, int h) {
+	if (Window == NULL) return false;
+	int display = SDL_GetWindowDisplayIndex(Window);
+	SDL_DisplayMode mode, mode_supported;
+	mode.format = SDL_PIXELFORMAT_UNKNOWN;
+	mode.w = w;
+	mode.h = h;
+	mode.refresh_rate = 0;
+	mode.driverdata = NULL;
+
+	SDL_GetClosestDisplayMode(display, &mode, &mode_supported);
+	return (mode.w == mode_supported.w && mode.h == mode_supported.h);
 }
 
 std::vector<SDL_Rect> violet::VideoManager::GetAvailableModes() {
@@ -81,7 +77,7 @@ std::vector<SDL_Rect> violet::VideoManager::GetAvailableModes() {
 	// If the mode is supported, it will be added to the return list
 	std::vector<SDL_Rect> modes;
 	for (unsigned int i = 0; i < getStructSize(wL); i++) {
-		if (isModeAvailable(wL[i], hL[i], 16, true, NULL)) {
+		if (isModeAvailable(wL[i], hL[i])) {
 			SDL_Rect r;
 			r.w = wL[i];
 			r.h = hL[i];
