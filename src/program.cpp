@@ -62,6 +62,7 @@
 #include "windows/HighscoresWindow.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/OptionsWindow.h"
+#include "windows/RestartWindow.h"
 
 using namespace std;
 using namespace violet;
@@ -717,26 +718,29 @@ void unloadResources() {
 	delete config;
 }
 
-void OptionsWindow::onSaveAndReturnClick() {
-	bool changeVideoMode = config->Screen.Width != tempConfig->Screen.Width
-			|| config->Screen.Height != tempConfig->Screen.Height;
-
+void RestartWindow::onOKClick()
+{
+	CloseFlag = true;
 	config->Screen.Width = tempConfig->Screen.Width;
 	config->Screen.Height = tempConfig->Screen.Height;
 	config->write();
 
-	if (changeVideoMode) {
-#ifdef _WIN32
-		cout << _("Hot video mode changing is not supported on windows now. You should restart the game.");
-		unloadResources();
-		shutdownSystem();
-		exit(0);
-#endif //_WIN32
-		videoManager->setMode(config->Screen, cam);
-	}
+	unloadResources();
+	shutdownSystem();
+	exit(0);
+}
+
+void OptionsWindow::onSaveAndReturnClick() {
+	bool changeVideoMode = config->Screen.Width != tempConfig->Screen.Width
+			|| config->Screen.Height != tempConfig->Screen.Height;
 
 	CloseFlag = true;
-	createMainMenuWindow();
+	if (changeVideoMode) {
+		windows["restart"] = new RestartWindow(config, videoManager->RegularText);
+	} else {
+		config->write();
+		createMainMenuWindow();
+	}
 }
 
 void handleCommonControls() {
