@@ -185,7 +185,7 @@ void MainMenuWindow::onStartClick() {
 	videoManager->RegularText->draw(_("Please wait..."), 0, 0,
 			TextManager::CENTER, TextManager::MIDDLE);
 
-	SDL_GL_SwapWindow(videoManager->Window);
+	videoManager->refresh();
 
 	gameState->start();
 
@@ -330,9 +330,9 @@ void initSystem() {
 
 	SDL_Surface* icon = ImageUtility::loadImage(
 			fileUtility->getFullPath(FileUtility::common, "icon-light.png"));
-	SDL_SetWindowIcon(videoManager->Window, icon);
+	videoManager->setIcon(icon);
 	SDL_FreeSurface(icon);
-	SDL_SetWindowTitle(videoManager->Window, getProjectTitle().c_str());
+	videoManager->setWindowTitle(getProjectTitle());
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_COLOR_MATERIAL);
@@ -366,7 +366,7 @@ void initSystem() {
 	videoManager->RegularText->draw(_("Please wait..."), 0, 0,
 			TextManager::CENTER, TextManager::MIDDLE);
 
-	SDL_GL_SwapWindow(videoManager->Window);
+	videoManager->refresh();
 
 	cout << _("Preparing sound systems...") << endl;
 
@@ -470,6 +470,7 @@ void OptionsWindow::onFriendlyFireClick() {
 
 void OptionsWindow::onFullscreenClick() {
 	config->Screen.Full = !config->Screen.Full;
+	videoManager->setFullscreen(config->Screen.Full);
 	refresh(tempConfig);
 }
 
@@ -603,7 +604,7 @@ void ControlsMenuWindow::onEventClick(std::string elementName) {
 	windows["pressakey"] = new ChangeInputBindingWindow(config, videoManager->RegularText);
 
 	drawWindows();
-	SDL_GL_SwapWindow(videoManager->Window);
+	videoManager->refresh();
 
 	int key = InputHandler::getEventNumber(elementName);
 
@@ -1902,7 +1903,7 @@ void runMainLoop() {
 
 		drawWindows();
 
-		SDL_GL_SwapWindow(videoManager->Window);
+		videoManager->refresh();
 	}
 }
 

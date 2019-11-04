@@ -17,6 +17,7 @@ private:
 	int m_frameDeltaTime;
 	FileUtility* m_fileUtility;
 	VideoMode m_videoMode;
+	SDL_Window *Window;
     SDL_GLContext m_GLContext;
 public:
 	VideoManager(FileUtility* fileUtility);
@@ -60,6 +61,18 @@ public:
 		m_frameDeltaTime = 0;
 	}
 
+	// Set title of a game window
+	void setWindowTitle(std::string title);
+
+	// Set icon for a game window
+	void setIcon(SDL_Surface *icon);
+
+	// Refresh the window after drawing is done
+	void refresh();
+
+	// Set fullscreen mode
+	void setFullscreen(bool fullscreen);
+
 	/* Width and height factors
 	 * (for dealing with various aspect ratios)
 	 */
@@ -77,10 +90,7 @@ public:
 	// Small text
 	TextManager* SmallText;
 
-    // Our window
-    SDL_Window *Window;
-
-	~VideoManager();
+    ~VideoManager();
 };
 }
 

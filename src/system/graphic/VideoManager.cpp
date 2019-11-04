@@ -139,6 +139,26 @@ void violet::VideoManager::setMode(VideoMode mode, Camera* cam) {
 	SmallText = new TextManager(fontPath, 30 * WK);
 }
 
+void violet::VideoManager::setWindowTitle(std::string title)
+{
+	SDL_SetWindowTitle(Window, title.c_str());
+}
+
+void violet::VideoManager::setIcon(SDL_Surface *icon)
+{
+	SDL_SetWindowIcon(Window, icon);
+}
+
+void violet::VideoManager::refresh()
+{
+	SDL_GL_SwapWindow(Window);
+}
+
+void violet::VideoManager::setFullscreen(bool fullscreen)
+{
+	SDL_SetWindowFullscreen(Window, (fullscreen)? SDL_WINDOW_FULLSCREEN: 0);
+}
+
 violet::VideoManager::~VideoManager() {
 	if (m_GLContext != NULL) SDL_GL_DeleteContext (m_GLContext);
 	if (Window != NULL) SDL_DestroyWindow (Window);
