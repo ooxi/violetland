@@ -82,7 +82,8 @@ violet::InputHandler::InputHandler(Binding* binding) {
 	m_mode = Direct;
 	m_textValidated = false;
 	m_textContent = "";
-	m_curTextPos = 0;
+
+	SDL_StopTextInput();
 }
 
 void violet::InputHandler::setInputMode(InputMode mode) {
@@ -92,7 +93,9 @@ void violet::InputHandler::setInputMode(InputMode mode) {
 	if (mode == Text || mode == TextMandatory) {
 		m_textValidated = false;
 		m_textContent = "";
-		m_curTextPos = 0;
+		SDL_StartTextInput();
+	} else {
+		SDL_StopTextInput();
 	}
 
 	m_mode = mode;
@@ -109,7 +112,6 @@ void violet::InputHandler::setInputModeText(bool mandatory, std::string text) {
 		setInputMode(Text);
 
 	m_textContent = text;
-	m_curTextPos = strlen(m_textContent.c_str());
 }
 
 bool violet::InputHandler::getPressInput(GameInputEvents evnt) {
@@ -134,38 +136,34 @@ void violet::InputHandler::processEvent(BindingType type, bool down, int value) 
 	}
 }
 
-void violet::InputHandler::processTextInput(SDL_Event sdlEvent) {
-	switch (sdlEvent.key.keysym.sym) {
+void violet::InputHandler::processTextInput(SDL_KeyboardEvent sdlEvent) {
+	size_t len = m_textContent.length();
+
+	switch (sdlEvent.keysym.sym) {
 	case SDLK_ESCAPE:
 		setInputMode(Direct);
 		break;
 	case SDLK_BACKSPACE:
-		if (m_curTextPos > 0)
-			m_textContent.erase(--m_curTextPos, 1);
+		// Remove one character from the end of UTF-8 encoded string
+		while (len > 0) {
+			char ch = m_textContent[--len];
+			m_textContent.erase(len, 1);
+			if ((ch & 0xc0) != 0x80) break;
+		}
 		break;
 	case SDLK_RETURN:
-		if ((m_mode == TextMandatory && m_textContent.size() >= 1) || m_mode
-				== Text) {
+		if ((m_mode == TextMandatory && m_textContent.size() >= 1) ||
+			m_mode == Text) {
 			m_textValidated = true;
 		}
 		break;
 	default:
-		// FIXME: How to enter text in SDL2?
-#if 0
-		if (sdlEvent.key.keysym.unicode < 127 && m_curTextPos < MAX_CHARACTERS) {
-			char c = sdlEvent.key.keysym.unicode;
-			if (' ' <= c && c <= '~')
-				m_textContent.insert(m_curTextPos++, 1, c);
-		}
-#else
-		if (sdlEvent.key.keysym.sym < 127 && m_curTextPos < MAX_CHARACTERS) {
-			char c = sdlEvent.key.keysym.sym;
-			if (' ' <= c && c <= '~')
-				m_textContent.insert(m_curTextPos++, 1, c);
-		}
-#endif
 		break;
 	}
+}
+
+void violet::InputHandler::processTextInput(SDL_TextInputEvent sdlEvent) {
+	m_textContent += sdlEvent.text;
 }
 
 void violet::InputHandler::process() {
@@ -178,11 +176,15 @@ void violet::InputHandler::process() {
 				processEvent(Keyboard, true, sdlEvent.key.keysym.sym);
 
 			if (m_mode == Text || m_mode == TextMandatory)
-				processTextInput(sdlEvent);
+				processTextInput(sdlEvent.key);
 
 			break;
 		case SDL_KEYUP:
 			processEvent(Keyboard, false, sdlEvent.key.keysym.sym);
+
+			break;
+		case SDL_TEXTINPUT:
+			processTextInput(sdlEvent.text);
 
 			break;
 		case SDL_MOUSEBUTTONDOWN:
@@ -248,4 +250,3 @@ string violet::InputHandler::getKeyName(Binding bind) {
 
 	return NULL;
 }
-
