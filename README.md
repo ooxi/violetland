@@ -3,7 +3,7 @@ Violetland [![Build Status](https://travis-ci.org/ooxi/violetland.svg?branch=mas
 
 Violetland is an open source cross-platform game similar to Crimsonland. In this game the player should help a girl by name of Violet to struggle with hordes of monsters. For this purpose the various weapon, and also the special abilities of the heroine which are opening with experience can be used.
 
-![Violetland in action](https://cdn.jsdelivr.net/gh/ooxi/violetland/images/demo.gif)
+![Violetland in action](https://cdn.jsdelivr.net/gh/ooxi/violetland@master/images/demo.gif)
 
 ### Features
 
