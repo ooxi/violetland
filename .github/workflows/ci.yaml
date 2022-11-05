@@ -1,0 +1,24 @@
+name: CI
+
+
+on:
+  push:
+  pull_request:
+
+
+jobs:
+  ci:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Configure
+      run: npx --package mini-cross mc --no-tty ubuntu:22.04 cmake -S . -B 'build'
+
+    - name: Build
+      run: npx --package mini-cross mc --no-tty ubuntu:22.04 cmake --build 'build'
+
