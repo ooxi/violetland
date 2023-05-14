@@ -62,6 +62,7 @@
 #include "windows/HighscoresWindow.h"
 #include "windows/MainMenuWindow.h"
 #include "windows/OptionsWindow.h"
+#include "windows/RestartWindow.h"
 
 using namespace std;
 using namespace violet;
@@ -185,7 +186,7 @@ void MainMenuWindow::onStartClick() {
 	videoManager->RegularText->draw(_("Please wait..."), 0, 0,
 			TextManager::CENTER, TextManager::MIDDLE);
 
-	SDL_GL_SwapBuffers();
+	videoManager->refresh();
 
 	gameState->start();
 
@@ -328,14 +329,11 @@ void initSystem() {
 
 	cout << _("Preparing window...") << endl;
 
-	SDL_WM_SetCaption(getProjectTitle().c_str(), NULL);
-
 	SDL_Surface* icon = ImageUtility::loadImage(
 			fileUtility->getFullPath(FileUtility::common, "icon-light.png"));
-	SDL_WM_SetIcon(icon, NULL);
+	videoManager->setIcon(icon);
 	SDL_FreeSurface(icon);
-
-	SDL_EnableUNICODE(1);
+	videoManager->setWindowTitle(getProjectTitle());
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_COLOR_MATERIAL);
@@ -369,7 +367,7 @@ void initSystem() {
 	videoManager->RegularText->draw(_("Please wait..."), 0, 0,
 			TextManager::CENTER, TextManager::MIDDLE);
 
-	SDL_GL_SwapBuffers();
+	videoManager->refresh();
 
 	cout << _("Preparing sound systems...") << endl;
 
@@ -473,6 +471,7 @@ void OptionsWindow::onFriendlyFireClick() {
 
 void OptionsWindow::onFullscreenClick() {
 	config->Screen.Full = !config->Screen.Full;
+	videoManager->setFullscreen(config->Screen.Full);
 	refresh(tempConfig);
 }
 
@@ -606,7 +605,7 @@ void ControlsMenuWindow::onEventClick(std::string elementName) {
 	windows["pressakey"] = new ChangeInputBindingWindow(config, videoManager->RegularText);
 
 	drawWindows();
-	SDL_GL_SwapBuffers();
+	videoManager->refresh();
 
 	int key = InputHandler::getEventNumber(elementName);
 
@@ -719,26 +718,29 @@ void unloadResources() {
 	delete config;
 }
 
-void OptionsWindow::onSaveAndReturnClick() {
-	bool changeVideoMode = config->Screen.Width != tempConfig->Screen.Width
-			|| config->Screen.Height != tempConfig->Screen.Height;
-
+void RestartWindow::onOKClick()
+{
+	CloseFlag = true;
 	config->Screen.Width = tempConfig->Screen.Width;
 	config->Screen.Height = tempConfig->Screen.Height;
 	config->write();
 
-	if (changeVideoMode) {
-#ifdef _WIN32
-		cout << _("Hot video mode changing is not supported on windows now. You should restart the game.");
-		unloadResources();
-		shutdownSystem();
-		exit(0);
-#endif //_WIN32
-		videoManager->setMode(config->Screen, cam);
-	}
+	unloadResources();
+	shutdownSystem();
+	exit(0);
+}
+
+void OptionsWindow::onSaveAndReturnClick() {
+	bool changeVideoMode = config->Screen.Width != tempConfig->Screen.Width
+			|| config->Screen.Height != tempConfig->Screen.Height;
 
 	CloseFlag = true;
-	createMainMenuWindow();
+	if (changeVideoMode) {
+		windows["restart"] = new RestartWindow(config, videoManager->RegularText);
+	} else {
+		config->write();
+		createMainMenuWindow();
+	}
 }
 
 void handleCommonControls() {
@@ -1051,7 +1053,7 @@ static void handlePlayerClassicStyle(Player* player) {
  * direction
  *
  * @warning All angles are in degree with 0 equals north, 180 = -180 equals
- *     south, -90 equals west and 90 equals east
+ *	   south, -90 equals west and 90 equals east
  */
 static void handlePlayerModernStyle(Player* player) {
 
@@ -1905,7 +1907,7 @@ void runMainLoop() {
 
 		drawWindows();
 
-		SDL_GL_SwapBuffers();
+		videoManager->refresh();
 	}
 }
 

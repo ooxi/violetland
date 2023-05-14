@@ -17,16 +17,15 @@ private:
 	int m_frameDeltaTime;
 	FileUtility* m_fileUtility;
 	VideoMode m_videoMode;
+	SDL_Window *Window;
+    SDL_GLContext m_GLContext;
 public:
 	VideoManager(FileUtility* fileUtility);
 
 	// Test a video mode for availability on current hardware
 	// w - screen width
 	// h - screen height
-	// bpp - color (bits per pixel)
-	// fullscreen - true for fullscreen, false for window
-	// true_bpp - returns true bpp (not sure what is it)
-	bool isModeAvailable(int w, int h, int bpp, bool fullscreen, int* true_bpp);
+	bool isModeAvailable(int w, int h);
 
 	// Returns a list of available video modes on current hardware
 	std::vector<SDL_Rect> GetAvailableModes();
@@ -59,6 +58,18 @@ public:
 		m_frameDeltaTime = 0;
 	}
 
+	// Set title of a game window
+	void setWindowTitle(std::string title);
+
+	// Set icon for a game window
+	void setIcon(SDL_Surface *icon);
+
+	// Refresh the window after drawing is done
+	void refresh();
+
+	// Set fullscreen mode
+	void setFullscreen(bool fullscreen);
+
 	/* Width and height factors
 	 * (for dealing with various aspect ratios)
 	 */
@@ -76,7 +87,7 @@ public:
 	// Small text
 	TextManager* SmallText;
 
-	~VideoManager();
+    ~VideoManager();
 };
 }
 

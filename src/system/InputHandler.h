@@ -69,14 +69,14 @@ public:
 	static void initEventNames();
 private:
 	void processEvent(BindingType type, bool down, int value);
-	void processTextInput(SDL_Event sdlEvent);
+	void processTextInput(SDL_KeyboardEvent sdlEvent);
+	void processTextInput(SDL_TextInputEvent sdlEvent);
 	bool m_event[GameInputEventsCount];
 	static std::string m_eventNames[GameInputEventsCount];
 	static std::string m_eventIdentifiers[GameInputEventsCount];
 	InputMode m_mode;
 	bool m_textValidated;
 	std::string m_textContent;
-	int m_curTextPos;
 	Binding* m_binding;
 };
 }

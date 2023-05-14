@@ -5,33 +5,32 @@ PROJECT(violetland)
 # da80351581f826f0f4c1c2f7b494ed51a6acec51 and it will work most likely down to
 # CMake 2.8.12
 CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
-
-
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Modules/sdl2)
 
 
 
 # SDL
-find_package(SDL REQUIRED)
-set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDL_INCLUDE_DIR})
-set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDL_LIBRARY})
+find_package(SDL2 REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDL2_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDL2_LIBRARY})
 
 
 # SDL_image
-find_package(SDL_image REQUIRED)
-set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDLIMAGE_INCLUDE_DIR})
-set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDLIMAGE_LIBRARY})
+find_package(SDL2_image REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDL2_IMAGE_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDL2_IMAGE_LIBRARY})
 
 
 # SDL_ttf
-find_package(SDL_ttf REQUIRED)
-set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDLTTF_INCLUDE_DIR})
-set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDLTTF_LIBRARY})
+find_package(SDL2_ttf REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDL2_TTF_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDL2_TTF_LIBRARY})
 
 
 # SDL_mixer
-find_package(SDL_mixer REQUIRED)
-set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDLMIXER_INCLUDE_DIR})
-set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDLMIXER_LIBRARY})
+find_package(SDL2_mixer REQUIRED)
+set(VIOLET_INCLUDE_DIRS	${VIOLET_INCLUDE_DIRS}	${SDL2_MIXER_INCLUDE_DIR})
+set(VIOLET_LIBRARIES	${VIOLET_LIBRARIES}	${SDL2_MIXER_LIBRARY})
 
 
 # OpenGL
@@ -161,18 +160,13 @@ set(VIOLET_SOURCES
 	${VIOLET_SOURCE_DIR}/windows/HighscoresWindow.cpp
 	${VIOLET_SOURCE_DIR}/windows/MainMenuWindow.cpp
 	${VIOLET_SOURCE_DIR}/windows/OptionsWindow.cpp
+	${VIOLET_SOURCE_DIR}/windows/AlertWindow.cpp
 	${VIOLET_SOURCE_DIR}/windows/Window.cpp
 	${VIOLET_SOURCE_DIR}/windows/WindowManager.cpp
 )
 
-
-
-# Specify C++ standard, I would love to use C++11 but at least on Ubuntu boost
-# is compiled with C++98 which will result in linking errors. Seems to be fixed
-# in boost 1.57 but Ubuntu before wily does not ship that version.
-#
-# @see https://svn.boost.org/trac/boost/ticket/6779
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
+# Boost >= 1.79.0 requires C++11
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # Compiler diagnostics are most useful
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
